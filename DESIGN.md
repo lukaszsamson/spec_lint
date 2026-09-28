@@ -201,6 +201,40 @@ applied return `U(D)`.
      spec says `integer()` and inference says `integer() | binary()`);
    - `unknown`: only `unknown` components.
 
+7. **Per-clause evidence (added after Phase 0, bug O2).** The union `U(D)`
+   is top-only whenever a single contributing clause returns `dynamic()`
+   (recursion, `Enum.map` with a fun, protocol dispatch), which hid seven of
+   the nine real omissions found by hand in Phase 0. So after the union-level
+   steps, every contributing clause `k` with containment `contained` is
+   examined on its own with `R_k' = upper_bound(R_k)`:
+   - `R_k'` top or near-top: clause is `unknown`;
+   - `R_k'` non-empty and disjoint from `S_hi`: **`clause_conflict`**.
+     Evidence class `conflict`, reported under SL001 with the clause index
+     and domain: "the clause matching `(I_k)` returns `R_k`, entirely
+     outside the spec". Prerequisites: the SL001 prerequisites plus the
+     clause is contained and the compiler did not already flag it
+     unreachable. The stored clause return is used, not the wrapped
+     application result;
+   - otherwise `extra_k = difference(R_k', S_hi)` is classified with step 5
+     against `R_k` itself (structure must be present in `R_k`, never only
+     in the subtraction), giving a per-clause class.
+   The function class is the worst over the union-level class and all
+   per-clause classes. Clauses whose containment is `domain_escape` or
+   `containment_unknown` contribute only `possible_domain_escape`, never a
+   `clause_conflict`.
+8. **Near-top (added after Phase 0, bug O1).** `U` counts as near-top,
+   and is treated like top-only, when its upper bound contains `term()`
+   minus a finite set of atoms, or when `difference(U, S_hi)` contains all
+   of `pid()`, `port()`, `reference()` and `fun()` whole (no ordinary code
+   produces those by accident; their presence means inference gave up).
+   The reason `near_top` is recorded in the ledger.
+9. **Gradual payloads (Phase 0, bug O3).** A `structured` component whose
+   contributing `R_k` is gradual (`Descr.gradual?/1` on the stored clause
+   return) is tagged `payload_gradual`. The classifier takes an option
+   `require_static_return`; with it, such components downgrade the class to
+   `possible_gradual` (report-only). The experiment reports both settings
+   and the default is chosen by the measured numbers.
+
 Whole-kind omissions are real omissions in many codebases. Their default
 suppression is a measured tradeoff: the fixture corpus includes them and the
 experiment reports how many the filter drops.
@@ -234,6 +268,8 @@ revisiting this are in section 12.
 | Finding | `soundness` profile | `review` profile |
 | --- | --- | --- |
 | Supported conflict (SL001, SL003 with prerequisites met) | gate | gate |
+| `clause_conflict` (SL001, per-clause, prerequisites met) | gate | gate |
+| `possible_gradual` (SL002 with `require_static_return`) | report | report |
 | `structured_possible` return (SL002) | report | report |
 | SL006 | report | gate |
 | `possible_domain_escape`, `possible_input_approximate`, `whole_kind_possible` | report | report |
