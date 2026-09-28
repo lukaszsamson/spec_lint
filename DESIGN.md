@@ -236,7 +236,8 @@ applied return `U(D)`.
    return) is tagged `payload_gradual`. The classifier takes an option
    `require_static_return`; with it, such components downgrade the class to
    `possible_gradual` (report-only). The experiment reports both settings
-   and the default is chosen by the measured numbers.
+   and the default is chosen by the measured numbers: `false` after the
+   Phase 1 rerun (section 4).
 
 Whole-kind omissions are real omissions in many codebases. Their default
 suppression is a measured tradeoff: the fixture corpus includes them and the
@@ -265,14 +266,24 @@ prerequisites that were met.
 CI policy by evidence, independent of the rule's severity. SL002 is report-only
 in both profiles. That follows the Phase 0 measurements (`EXPERIMENTS.md`):
 on real code SL002 had 0 true positives out of 9 candidates, and none of the 9
-confirmed real omissions reached `structured_possible`. The conditions for
-revisiting this are in section 12.
+confirmed real omissions reached `structured_possible`. The Phase 1 rerun
+(`EXPERIMENTS.md`, "Phase 1 rerun") confirmed it: 2 candidates reviewed,
+precision 0 of 2, 0 confirmed omissions. The conditions for revisiting this
+are in section 12.
+
+**Decision (Phase 1 rerun): `require_static_return` defaults to `false`.**
+On 2038 real-code functions it only relabels two refuted report-only
+candidates, while on the fixtures `true` loses 2 of the 4 clause-conflict
+detections. **`clause_conflict` gates in both profiles**: 0 real-code
+candidates, so no gated noise, and 4 of 4 fixture detections with 0 false
+positives. Its unreachable-clause prerequisite cannot be read from the
+checker chunk and is reported as unchecked.
 
 | Finding | `soundness` profile | `review` profile |
 | --- | --- | --- |
 | Supported conflict (SL001, SL003 with prerequisites met) | gate | gate |
-| `clause_conflict` (SL001, per-clause, prerequisites met) | gate | gate |
-| `possible_gradual` (SL002 with `require_static_return`) | report | report |
+| `clause_conflict` (SL001, per-clause, prerequisites met; reachability unchecked) | gate | gate |
+| `possible_gradual` (SL002, only with `require_static_return: true`, default `false`) | report | report |
 | `structured_possible` return (SL002) | report | report |
 | SL006 | report | gate |
 | `possible_domain_escape`, `possible_input_approximate`, `whole_kind_possible` | report | report |
@@ -675,29 +686,32 @@ after measurement.
 ## 12. Open questions
 
 - **When SL002 may gate again.** SL002 is informational after Phase 0
-  (section 11, `EXPERIMENTS.md`). Re-run the experiment on the same pinned
-  corpora after the two items below are addressed. Promote SL002 to gating
-  in the `review` profile only if all three hold: at least 10 candidates
-  are reviewed, precision is at least 80%, and at least 3 real omissions
-  are confirmed. Otherwise it stays informational.
-- **Per-clause evidence under top-only unions.** A single `dynamic()` clause
-  makes `U(D)` top-only and hides precise clauses whose returns are
-  disjoint from `S_hi`. That hid 7 of the 9 real omissions found in Phase
-  0, including 4 stale ecto specs. The open questions:
-  - whether to classify the non-top contributing clauses one by one;
-  - whether a per-clause disjoint return can be an SL001 finding, and under
-    which prerequisites (the clause is contained, its return is static).
-- **Near-top inference.** Returns such as `dynamic(not :undefined)` or
-  `dynamic(not false and not nil)` evade the `top_only?` guard and become
-  `whole_kind_possible`, and once `structured_possible`. The open question
-  is which near-top test is principled: a finite literal set removed from
-  `term()`, or whole coverage of the opaque kinds.
-- **Static contributing returns for `structured_possible`.** The adapter can
-  read from the stored clause (section 2.2) whether a return is static.
-  Phase 0 data: every contributing clause of the 9 real-code candidates had
-  a gradual return, so the requirement would have removed all 9. It would
-  also drop 2 of the 5 fixture detections (struct-building clauses such as
-  `point/1` and `fetch/1` are gradual).
+  (section 11, `EXPERIMENTS.md`) and after the Phase 1 rerun (2
+  candidates reviewed, precision 0 of 2, 0 confirmed omissions). Re-run the
+  experiment on the same pinned corpora whenever the classifier or the
+  containment rule changes. Promote SL002 to gating in the `review` profile
+  only if all three hold: at least 10 candidates are reviewed, precision is
+  at least 80%, and at least 3 real omissions are confirmed. Otherwise it
+  stays informational.
+- **Per-clause evidence under top-only unions.** Resolved by section 3.1
+  step 7 (`clause_conflict`, gated as SL001). The Phase 1 rerun found 0
+  real-code clause conflicts: the clauses of the known stale specs escape
+  the spec domain, so they report as `possible_domain_escape` (2 of the 9
+  known omissions are now reported, none gated). The open part is
+  real-code precision, which is still 0/0. The first reviewed false
+  positive reopens the gating decision.
+- **Near-top inference.** Resolved by section 3.1 step 8: both tests
+  (term minus finite atoms, and whole coverage of pid, port, reference and
+  fun) are applied. 32 stdlib slices are near-top.
+- **Static contributing returns.** Resolved: `require_static_return`
+  defaults to `false` (Phase 1 rerun). On real code it only relabels the
+  two refuted `Calendar.ISO` candidates, and on the fixtures it drops 2 of
+  the 4 clause-conflict detections (`size_of/1`, `stale/1`) and 3 of the 4
+  `structured_possible` detections. The option stays configurable.
+- **Clause reachability.** The `clause_conflict` prerequisite "the compiler
+  did not flag the clause unreachable" is not in the checker chunk. It is
+  reported as unchecked. An upstream API or the body backend would close
+  it.
 - **Containment against typed struct fields.** A struct pattern leaves
   fields `term()`, so any function whose spec takes a struct with typed
   fields is `domain_escape`. That makes `structured_possible` unreachable

@@ -506,3 +506,152 @@ Not a bug:
 - **Spec gaps outside function returns.** Plug's `@type state` omits
   `:set_upgrade`, which `before_send` callbacks can observe. That is a spec
   gap in plug, but no return-based rule can see it.
+
+# Phase 1 rerun
+
+Date 2026-09-28. The same pinned corpora and toolchain as Phase 0, run with
+the classifier at `70316ce` (DESIGN 3.1 steps 7 to 9: per-clause evidence,
+near-top, gradual payloads). Every slice was classified twice, with
+`require_static_return` false and true. Raw results:
+`scratchpad/results_phase1/*.json` (real code) and
+`scratchpad/results_perclause/fixtures.json` (fixtures, 23 functions).
+
+This rerun is the revisit of DESIGN section 12 and decides three defaults
+before the Phase 1 product (Mix task, rules, baseline) is built on them.
+
+## Decisions
+
+1. **`require_static_return` defaults to `false`.** On 2038 real-code
+   functions the setting changes exactly two functions, both
+   `Calendar.ISO.parse_utc_datetime/1,2`, from `structured_possible` to
+   `possible_gradual`. Both classes are report-only, and both functions are
+   false positives refuted in Phase 0, so `true` removes no gated noise.
+   On the fixtures, `true` loses 5 of 8 detections, including 2 of the 4
+   clause conflicts (`size_of/1` and `stale/1`, the `Join.escape/3`
+   stale-spec shape). That is recall on the one gating class, for no
+   measured precision gain. The option stays available in `.spec_lint.exs`.
+2. **`clause_conflict` gates in both profiles, as designed.** It had 0
+   candidates on real code under either setting, so it adds no gated
+   findings and no false positives on 2038 functions. On the fixtures it
+   detects 4 of 4 intended cases (`lookup/1`, `labels/1`, `size_of/1`,
+   `stale/1`) with 0 false positives, and the overlap prerequisite
+   correctly blocks `pick/1`. Real-code precision is still unmeasured
+   (0/0). The first confirmed real-code false positive reopens this. The
+   prerequisite "the compiler did not flag the clause unreachable" cannot
+   be checked from the checker chunk. It is reported as unchecked, not as
+   met.
+3. **SL002 stays informational.** None of the three revisit conditions of
+   DESIGN section 12 holds: 2 candidates were reviewed (at least 10
+   needed), precision is 0 of 2 (at least 80% needed), and 0 omissions
+   were confirmed (at least 3 needed).
+
+## Coverage and runtime
+
+| Corpus | Modules (ok / out of scope) | Functions | Slices (exact / approximate) | Out-of-scope specs | Top-only / near-top slices | Overlap (certain / unknown) | Runtime |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| stdlib | 447 (413 / 34 Erlang) | 1711 | 1777 (896 / 881) | 96 generated, 30 protocol, 4 macro, 3 not exported | 913 / 32 | 0 / 2 | 2743 ms |
+| jason | 28 (28 / 0) | 20 | 20 (0 / 20) | 15 generated, 4 protocol, 1 not exported | 14 / 0 | 0 / 0 | 92 ms |
+| decimal | 7 (7 / 0) | 46 | 46 (0 / 46) | 3 generated | 23 / 0 | 0 / 0 | 66 ms |
+| nimble_options | 4 (4 / 0) | 5 | 5 (4 / 1) | 1 generated | 4 / 0 | 0 / 0 | 31 ms |
+| mime | 1 (1 / 0) | 5 | 5 (3 / 2) | 3 not exported | 0 / 0 | 0 / 0 | 15 ms |
+| plug | 62 (61 / 1 Erlang) | 86 | 86 (18 / 68) | 5 protocol, 2 generated | 34 / 1 | 0 / 0 | 402 ms |
+| ecto | 102 (102 / 0) | 165 | 165 (31 / 134) | 15 generated, 4 not exported, 3 protocol | 84 / 1 | 0 / 0 | 694 ms |
+| **Real code** | **651** | **2038** | **2104 (952 / 1152)** | | **1072 / 34** | **0 / 2** | |
+
+No corpus had an unsupported or unavailable slice. The function counts are
+lower than in Phase 0 because generated definitions (O7) are now out of
+scope.
+
+## Function classes
+
+The same numbers under both settings unless two values are shown
+(`false` / `true`).
+
+| Corpus | clause_conflict | structured_possible | possible_gradual | possible_domain_escape | possible_input_approximate | whole_kind_possible | unknown | none |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| stdlib | 0 | 2 / 0 | 0 / 2 | 11 | 4 | 0 | 1035 | 659 |
+| jason | 0 | 0 | 0 | 0 | 0 | 0 | 16 | 4 |
+| decimal | 0 | 0 | 0 | 2 | 0 | 0 | 28 | 16 |
+| nimble_options | 0 | 0 | 0 | 0 | 0 | 0 | 5 | 0 |
+| mime | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 5 |
+| plug | 0 | 0 | 0 | 0 | 0 | 0 | 79 | 7 |
+| ecto | 0 | 0 | 0 | 4 | 0 | 0 | 137 | 24 |
+| **Real code** | **0** | **2 / 0** | **0 / 2** | **17** | **4** | **0** | **1300** | **715** |
+
+Per-clause classes (DESIGN 3.1 step 7), over all contributing clauses:
+
+- stdlib: unknown 1155, none 88, possible_domain_escape 24,
+  possible_input_approximate 3, whole_kind_possible 3, structured_possible
+  2 (`true`: possible_gradual 2), clause_conflict 0;
+- ecto: unknown 195, none 101, possible_domain_escape 13, clause_conflict 0.
+  Of 309 contributing clauses, 54 are contained, 246 escape the spec domain
+  and 9 have unknown containment;
+- decimal: 6 of 102 clauses contained, 95 escape, 1 unknown;
+- plug: 10 of 107 clauses contained, 97 escape.
+
+Containment is the binding constraint. Most clauses of real code escape
+the spec domain because unguarded parameters and struct patterns infer as
+`term()` fields, so per-clause evidence rarely reaches a gating class.
+
+## Precision after refutation
+
+No new candidate appeared in a gating or near-gating class, so this rerun
+had nothing new to refute (refutation set: empty). The two remaining
+candidates were refuted twice in Phase 0.
+
+| Class | Setting | Real-code candidates | Confirmed true | Precision | Fixture detections / false positives |
+| --- | --- | --- | --- | --- | --- |
+| `clause_conflict` (SL001, gated) | `false` | 0 | 0 | n/a (0/0) | 4 / 0 (`pick/1` blocked by overlap) |
+| `clause_conflict` (SL001, gated) | `true` | 0 | 0 | n/a (0/0) | 2 / 0 (`size_of/1`, `stale/1` become `possible_gradual`) |
+| `structured_possible` (SL002) | `false` | 2 | 0 | 0/2 (0%) | 4 / 0 (`status/1`, `point/1`, `fetch/1`, `gradual_payload/1`) |
+| `structured_possible` (SL002) | `true` | 0 | 0 | n/a (0/0) | 1 / 0 (`status/1`; the other three become `possible_gradual`) |
+| `possible_gradual` (SL002, report) | `true` | 2 | 0 | 0/2 (0%) | not a detection class |
+
+Other reviewed classes (not gating, report-only):
+
+- stdlib: all 11 `possible_domain_escape` functions were reviewed. None is
+  an omission: they are numeric widening in `Kernel` arithmetic,
+  `DateTime.to_unix/2`, `Time.diff/3` and `String.count/2`, and the lost
+  input/output correlation of `Kernel.not/1` and `System.get_env/2`;
+- decimal: `scale/1` and `to_integer/1` (numeric widening over `term()`
+  struct fields), 0 omissions;
+- ecto: 4 reviewed. `Join.escape/3` and `quoted_type/2` are the known stale
+  specs, `field_missing?/2` and `CTE.escape/2` are not omissions;
+- jason: 6 extra `unknown` functions reviewed, nimble_options 5, 0
+  omissions.
+
+## Recall on the known omissions
+
+The 9 real omissions confirmed in Phase 0:
+
+| Function | Class now (both settings) | Gated | Reported |
+| --- | --- | --- | --- |
+| `Decimal.compare/2` | unknown (top-only) | no | no |
+| `Decimal.cmp/2` | unknown (top-only) | no | no |
+| `Plug.Conn.Query.decode/4` | unknown (top-only) | no | no |
+| `Plug.Conn.merge_private/2` | unknown (struct negation component) | no | no |
+| `Ecto.Changeset.apply_action/2` | unknown | no | no |
+| `Ecto.Query.Builder.Join.escape/3` | possible_domain_escape | no | yes (SL002) |
+| `Ecto.Query.Builder.quoted_type/2` | possible_domain_escape | no | yes (SL002) |
+| `Ecto.Repo.Assoc.query/4` | unknown | no | no |
+| `Ecto.Repo.Preloader.query/7` | unknown | no | no |
+
+- **Gating recall: 0 of 9** under both settings.
+- **Reported recall: 2 of 9**, up from 0 of 9 in Phase 0. Per-clause
+  evidence moved the two stale ecto specs out of `unknown`. Their clauses
+  still escape the spec domain (unguarded parameters), so they cannot
+  reach `clause_conflict`.
+- The other 7 stay `unknown`. 4 of them are top-only with no non-top
+  contributing clause that has structured or whole-kind extra.
+
+## Fixtures
+
+23 of 23 fixture functions get their expected class under both settings.
+
+| Setting | Detected | Suppressed | False positive | True negative |
+| --- | --- | --- | --- | --- |
+| `require_static_return: false` | 8 | 2 | 0 | 13 |
+| `require_static_return: true` | 3 | 7 | 0 | 13 |
+
+The two omissions suppressed under both settings are `secret/1` (opaque
+remote return) and `passthrough/1` (a negation component), as in Phase 0.
