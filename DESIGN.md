@@ -582,6 +582,32 @@ config digest, scope, capabilities, findings, ledger, baseline decisions and
 completion status. Sorted deterministically, written atomically, and byte
 identical across two runs on the same inputs.
 
+### 9.1 Implementation notes (Phase 1 product)
+
+These notes record choices the text above left open.
+
+- **Fingerprints.** The spec slice "after named-type expansion" is hashed
+  in two parts. One is the annotation-stripped spec AST. The other is the
+  translated bounds (`lo`, `hi`) of every argument and of the return,
+  through the adapter's canonical `Descr` serialisation
+  (`SpecLint.Compiler.canonical/1`). The slice and clause indexes are part
+  of the hash, so reordering spec clauses changes the fingerprint.
+  Reordering other functions, changing lines and recompiling do not. Tests
+  cover each case, plus a fresh VM.
+- **SL008 acknowledgement.** An `SL008` finding is acknowledged by an
+  inventory entry with the same subject (MFA, or the module for a
+  module-level failure), slice and status. It is not listed among the
+  baseline findings.
+- **Adapter change.** A baseline whose `adapter` differs from the running
+  adapter is not applied. CI exits 2 with a reconciliation message, and
+  local runs report it.
+- **SL007.** It is off by default. Requesting it, or `analysis: :bodies`,
+  exits 2 with a capability message.
+- **Clause reachability.** The `clause_conflict` prerequisite is reported
+  as `unchecked`. It does not block gating.
+- **SL002 on `no_return()` specs.** SL002 does not report a slice whose
+  spec return is empty. That is `SL006`'s case.
+
 ## 10. Qualification and tests
 
 - Translator tests per construct with expected `lo`, `hi` and losses.
