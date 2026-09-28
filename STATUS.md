@@ -250,8 +250,11 @@ documented limitations. "Sound" is not claimed.
 - **Minor gaps.** Message printing of nested negations is simplified, but
   it is presentation only. A module whose checker chunk version mismatches
   but that has no in-scope specs is not flagged. Umbrella aggregation
-  (`SpecLint.Project`) has no test yet: there is no umbrella consumer
-  fixture.
+  is covered by `SpecLint.Integration.CiQualificationTest` (a two-child
+  umbrella consumer). With no debug info the console and the summary line
+  still say "0 specs checked: no eligible specs found" next to the SL008
+  `missing_metadata` findings; the findings and the exit code are right,
+  the wording is misleading.
 
 ## Next steps
 
@@ -280,7 +283,7 @@ documented limitations. "Sound" is not claimed.
    differential tests for `apply_infer/2` and a published support matrix.
    Run the stdlib regression per revision.
 6. Stdlib dogfooding: migrate the prototype's 68-entry exclusion list to a
-   fingerprinted baseline, and add an umbrella consumer fixture.
+   fingerprinted baseline.
 7. Re-run the SL002 experiment whenever the classifier or containment
    changes (DESIGN section 12). The struct-field containment question is
    the most promising lever for recall.
