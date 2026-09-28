@@ -228,6 +228,11 @@ defmodule SpecLint.Compiler do
   @callback key_kind_descr(key_kind()) :: descr()
   @doc "Splits the upper bound of a type into per-kind components."
   @callback components(descr()) :: [component()]
+  @doc """
+  Canonical serialisable form of a type: a plain term with no functions,
+  references or VM-specific values, equal for equal inputs in every VM.
+  """
+  @callback canonical(descr()) :: term()
 
   @default_adapter SpecLint.Compiler.V121
 
@@ -467,4 +472,15 @@ defmodule SpecLint.Compiler do
   """
   @spec components(descr()) :: [component()]
   def components(descr), do: adapter().components(descr)
+
+  @doc """
+  Canonical serialisable form of `descr` for fingerprints (DESIGN.md
+  section 9): a plain term with no functions, references or VM-specific
+  values, so `:erlang.term_to_binary(canonical, [:deterministic])` is the
+  same for the same type in every VM. It is structural, not semantic: two
+  representations of the same set may differ. Never compare it for
+  subtyping; use it only to detect that stored evidence changed.
+  """
+  @spec canonical(descr()) :: term()
+  def canonical(descr), do: adapter().canonical(descr)
 end

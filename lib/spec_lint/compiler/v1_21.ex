@@ -497,13 +497,13 @@ defmodule SpecLint.Compiler.V121 do
     if Descr.empty?(complement) do
       "term()"
     else
-      direct = canonical(descr)
-      negated = "not " <> parenthesise(canonical(complement))
+      direct = normal_form_string(descr)
+      negated = "not " <> parenthesise(normal_form_string(complement))
       if String.length(negated) < String.length(direct), do: negated, else: direct
     end
   end
 
-  defp canonical(descr) do
+  defp normal_form_string(descr) do
     static = descr |> unfold_node() |> Descr.unfold()
     rest = Map.drop(static, [:tuple, :map])
 
@@ -788,4 +788,46 @@ defmodule SpecLint.Compiler.V121 do
   end
 
   defp literal_view(:list, {_, element, tail}), do: {:list, element, tail, false}
+
+  ## Canonical form
+  #
+  # This revision's descr terms are maps of per-kind parts whose values are
+  # bitmaps, `:sets` (maps in version 2), BDD tuples and literal tuples
+  # carrying `:erlang.phash2/1` hashes. `phash2` is portable, so the only
+  # VM-specific values are recursive type nodes (`{reference, state,
+  # generator}`), which inference does not produce today. They are unfolded
+  # to a fixed depth and cut off with a marker. Maps are turned into sorted
+  # key/value lists so the result does not depend on map iteration order.
+
+  @canonical_node_depth 3
+
+  @impl true
+  @spec canonical(SpecLint.Compiler.descr()) :: term()
+  def canonical(descr), do: canonical_term(descr, @canonical_node_depth)
+
+  defp canonical_term({id, _state, generator} = node, depth)
+       when is_reference(id) and is_function(generator, 1) do
+    if depth == 0,
+      do: :recursive_node,
+      else: {:recursive_node, canonical_term(Descr.unfold(node), depth - 1)}
+  end
+
+  defp canonical_term(map, depth) when is_map(map) do
+    map
+    |> Enum.map(fn {key, value} -> {canonical_term(key, depth), canonical_term(value, depth)} end)
+    |> Enum.sort()
+    |> then(&{:map, &1})
+  end
+
+  defp canonical_term(tuple, depth) when is_tuple(tuple) do
+    tuple |> Tuple.to_list() |> Enum.map(&canonical_term(&1, depth)) |> List.to_tuple()
+  end
+
+  defp canonical_term([head | tail], depth),
+    do: [canonical_term(head, depth) | canonical_term(tail, depth)]
+
+  defp canonical_term(fun, _depth) when is_function(fun), do: :function
+  defp canonical_term(ref, _depth) when is_reference(ref), do: :reference
+  defp canonical_term(pid, _depth) when is_pid(pid) or is_port(pid), do: :process
+  defp canonical_term(other, _depth), do: other
 end

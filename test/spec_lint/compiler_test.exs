@@ -106,6 +106,37 @@ defmodule SpecLint.CompilerTest do
     end
   end
 
+  describe "canonical/1" do
+    test "equal inputs serialise identically; different ones do not" do
+      a = C.union(C.tuple([C.atom([:ok]), C.integer()]), C.atom([:error, :none]))
+      b = C.union(C.atom([:none, :error]), C.tuple([C.atom([:ok]), C.integer()]))
+      bytes = &:erlang.term_to_binary(C.canonical(&1), [:deterministic])
+
+      assert bytes.(a) == bytes.(a)
+      assert bytes.(C.dynamic(a)) == bytes.(C.dynamic(a))
+      refute bytes.(a) == bytes.(C.tuple([C.atom([:ok]), C.binary()]))
+      refute bytes.(a) == bytes.(C.dynamic(a))
+      assert C.canonical(C.term()) == :term
+      assert is_list(elem(C.canonical(b), 1))
+    end
+
+    test "is plain data: no functions or references" do
+      node = {make_ref(), %{}, fn _recur -> C.atom([:leaf]) end}
+      canonical = C.canonical(%{tuple: node})
+      refute contains?(canonical, &(is_function(&1) or is_reference(&1)))
+      assert contains?(canonical, &(&1 == :recursive_node))
+    end
+  end
+
+  defp contains?(term, predicate) do
+    predicate.(term) or
+      case term do
+        tuple when is_tuple(tuple) -> tuple |> Tuple.to_list() |> contains?(predicate)
+        [head | tail] -> contains?(head, predicate) or contains?(tail, predicate)
+        _ -> false
+      end
+  end
+
   describe "checker chunk decoding" do
     test "a running compiler with an unqualified checker version is rejected" do
       running = :elixir_checker_v11
