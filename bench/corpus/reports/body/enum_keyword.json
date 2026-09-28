@@ -1,0 +1,4477 @@
+{
+  "adapter": "1.21.0-dev+c24c235",
+  "body_hook": true,
+  "changed": [
+    {
+      "body": "none",
+      "default": "unknown",
+      "mfa": "Keyword.put_new/3",
+      "signature": "unknown",
+      "warn_body": false,
+      "warn_body_guarded": false,
+      "warn_signature": false
+    },
+    {
+      "body": "none",
+      "default": "unknown",
+      "mfa": "Keyword.put_new_lazy/3",
+      "signature": "unknown",
+      "warn_body": false,
+      "warn_body_guarded": false,
+      "warn_signature": false
+    },
+    {
+      "body": "none",
+      "default": "unknown",
+      "mfa": "Keyword.to_list/1",
+      "signature": "unknown",
+      "warn_body": false,
+      "warn_body_guarded": false,
+      "warn_signature": false
+    }
+  ],
+  "checker_version": "elixir_checker_v10",
+  "ebins": [
+    "$ELIXIR_BODY/lib/elixir/ebin"
+  ],
+  "fixtures": null,
+  "function_rows": [
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Enum.all?/1",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Enum.all?/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Enum.any?/1",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Enum.any?/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "none",
+        "signature": "none"
+      },
+      "mfa": "Enum.at/3",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Enum.chunk_by/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Enum.chunk_every/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Enum.chunk_every/4",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Enum.chunk_while/4",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Enum.concat/1",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Enum.concat/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Enum.count/1",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Enum.count/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Enum.count_until/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Enum.count_until/3",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Enum.dedup/1",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Enum.dedup_by/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Enum.drop/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Enum.drop_every/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Enum.drop_while/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Enum.each/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Enum.empty?/1",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "none",
+        "signature": "none"
+      },
+      "mfa": "Enum.fetch/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "none",
+        "signature": "none"
+      },
+      "mfa": "Enum.fetch!/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Enum.filter/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "none",
+        "signature": "none"
+      },
+      "mfa": "Enum.find/3",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Enum.find_index/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "none",
+        "signature": "none"
+      },
+      "mfa": "Enum.find_value/3",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Enum.flat_map/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Enum.flat_map_reduce/3",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Enum.frequencies/1",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Enum.frequencies_by/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Enum.group_by/3",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Enum.intersperse/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "none",
+        "signature": "none"
+      },
+      "mfa": "Enum.into/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "none",
+        "signature": "none"
+      },
+      "mfa": "Enum.into/3",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Enum.join/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Enum.map/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Enum.map_every/3",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Enum.map_intersperse/3",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Enum.map_join/3",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Enum.map_reduce/3",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "none",
+        "signature": "none"
+      },
+      "mfa": "Enum.max/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "none",
+        "signature": "none"
+      },
+      "mfa": "Enum.max/3",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "none",
+        "signature": "none"
+      },
+      "mfa": "Enum.max_by/3",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "none",
+        "signature": "none"
+      },
+      "mfa": "Enum.max_by/4",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Enum.member?/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "none",
+        "signature": "none"
+      },
+      "mfa": "Enum.min/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "none",
+        "signature": "none"
+      },
+      "mfa": "Enum.min/3",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "none",
+        "signature": "none"
+      },
+      "mfa": "Enum.min_by/3",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "none",
+        "signature": "none"
+      },
+      "mfa": "Enum.min_by/4",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Enum.min_max/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "none",
+        "signature": "none"
+      },
+      "mfa": "Enum.min_max/3",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "none",
+        "signature": "none"
+      },
+      "mfa": "Enum.min_max_by/3",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "none",
+        "signature": "none"
+      },
+      "mfa": "Enum.min_max_by/4",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Enum.product/1",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Enum.product_by/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "none",
+        "signature": "none"
+      },
+      "mfa": "Enum.random/1",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "none",
+        "signature": "none"
+      },
+      "mfa": "Enum.reduce/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "none",
+        "signature": "none"
+      },
+      "mfa": "Enum.reduce/3",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "none",
+        "signature": "none"
+      },
+      "mfa": "Enum.reduce_while/3",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Enum.reject/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Enum.reverse/1",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Enum.reverse/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Enum.reverse_slice/3",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Enum.scan/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Enum.scan/3",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Enum.shuffle/1",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Enum.slice/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Enum.slice/3",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Enum.slide/3",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Enum.sort/1",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Enum.sort/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Enum.sort_by/3",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Enum.split/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Enum.split_while/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Enum.split_with/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Enum.sum/1",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Enum.sum_by/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Enum.take/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Enum.take_every/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Enum.take_random/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Enum.take_while/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Enum.to_list/1",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Enum.uniq/1",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Enum.uniq_by/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Enum.unzip/1",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Enum.with_index/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Enum.zip/1",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Enum.zip/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "none",
+        "signature": "none"
+      },
+      "mfa": "Enum.zip_reduce/3",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "none",
+        "signature": "none"
+      },
+      "mfa": "Enum.zip_reduce/4",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Enum.zip_with/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Enum.zip_with/3",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Keyword.delete/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Keyword.delete_first/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Keyword.drop/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "none",
+        "signature": "none"
+      },
+      "mfa": "Keyword.equal?/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "none",
+        "signature": "none"
+      },
+      "mfa": "Keyword.fetch/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "none",
+        "signature": "none"
+      },
+      "mfa": "Keyword.fetch!/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Keyword.filter/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Keyword.from_keys/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "none",
+        "signature": "none"
+      },
+      "mfa": "Keyword.get/3",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Keyword.get_and_update/3",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Keyword.get_and_update!/3",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "none",
+        "signature": "none"
+      },
+      "mfa": "Keyword.get_lazy/3",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Keyword.get_values/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Keyword.has_key?/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Keyword.intersect/3",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Keyword.keys/1",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Keyword.keyword?/1",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Keyword.merge/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Keyword.merge/3",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "none",
+        "signature": "none"
+      },
+      "mfa": "Keyword.new/0",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Keyword.new/1",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Keyword.new/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Keyword.pop/3",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Keyword.pop!/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Keyword.pop_first/3",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Keyword.pop_lazy/3",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Keyword.pop_values/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Keyword.put/3",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Keyword.put_new/3",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Keyword.put_new_lazy/3",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Keyword.reject/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Keyword.replace/3",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Keyword.replace!/3",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Keyword.replace_lazy/3",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Keyword.split/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Keyword.split_with/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Keyword.take/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Keyword.to_list/1",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Keyword.update/4",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Keyword.update!/3",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Keyword.validate/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Keyword.validate!/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Keyword.values/1",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    }
+  ],
+  "functions": [
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "none",
+        "signature": "none"
+      },
+      "line": 1872,
+      "mfa": "Enum.max/2",
+      "omission": null,
+      "sampled": false,
+      "slices": [
+        {
+          "body": {
+            "applied": [
+              0
+            ],
+            "applied_return": "term()",
+            "class": "none",
+            "clause_conflict_candidate": false,
+            "clause_evidence": [],
+            "clauses": [
+              "(term(), (-> term())) -> dynamic()"
+            ],
+            "extra": "none()",
+            "guard_blocked": false,
+            "near_top": false,
+            "reasons": [
+              "no_extra",
+              "return_inexact"
+            ],
+            "sl002_candidate": false,
+            "top_only": true,
+            "union_class": "none",
+            "warn": false
+          },
+          "body_error": null,
+          "body_guarded": {
+            "applied": [
+              0
+            ],
+            "applied_return": "term()",
+            "class": "none",
+            "clause_conflict_candidate": false,
+            "clause_evidence": [],
+            "clauses": [
+              "(term(), (-> term())) -> dynamic()"
+            ],
+            "extra": "none()",
+            "guard_blocked": false,
+            "near_top": false,
+            "reasons": [
+              "no_extra",
+              "return_inexact"
+            ],
+            "sl002_candidate": false,
+            "top_only": true,
+            "union_class": "none",
+            "warn": false
+          },
+          "body_us": 5060,
+          "default": {
+            "applied": [
+              0
+            ],
+            "applied_return": "term()",
+            "class": "none",
+            "clause_conflict_candidate": false,
+            "clause_evidence": [],
+            "clauses": [
+              "(term(), (-> term()) or (none(), none() -> term()) or atom()) -> dynamic()"
+            ],
+            "extra": "none()",
+            "guard_blocked": false,
+            "near_top": false,
+            "reasons": [
+              "no_extra",
+              "return_inexact"
+            ],
+            "sl002_candidate": false,
+            "top_only": true,
+            "union_class": "none",
+            "warn": false
+          },
+          "extra_warnings": [
+            "enum.ex:1930 (Enum.max/2): incompatible types given as default arguments to max/3:"
+          ],
+          "index": 0,
+          "loss_kinds": [
+            "type_variable_correlation"
+          ],
+          "redundant_in_target": 0,
+          "signature": {
+            "applied": [
+              0
+            ],
+            "applied_return": "term()",
+            "class": "none",
+            "clause_conflict_candidate": false,
+            "clause_evidence": [],
+            "clauses": [
+              "(term(), (-> term()) or (none(), none() -> term()) or atom()) -> dynamic()"
+            ],
+            "extra": "none()",
+            "guard_blocked": false,
+            "near_top": false,
+            "reasons": [
+              "no_extra",
+              "return_inexact"
+            ],
+            "sl002_candidate": false,
+            "top_only": true,
+            "union_class": "none",
+            "warn": false
+          },
+          "spec_args": [
+            "term()",
+            "(-> term())"
+          ],
+          "spec_return": "term()"
+        },
+        {
+          "body": {
+            "applied": [
+              0
+            ],
+            "applied_return": "term()",
+            "class": "none",
+            "clause_conflict_candidate": false,
+            "clause_evidence": [],
+            "clauses": [
+              "(term(), (term(), term() -> boolean()) or atom()) -> dynamic()"
+            ],
+            "extra": "none()",
+            "guard_blocked": false,
+            "near_top": false,
+            "reasons": [
+              "no_extra"
+            ],
+            "sl002_candidate": false,
+            "top_only": true,
+            "union_class": "none",
+            "warn": false
+          },
+          "body_error": null,
+          "body_guarded": {
+            "applied": [
+              0
+            ],
+            "applied_return": "term()",
+            "class": "none",
+            "clause_conflict_candidate": false,
+            "clause_evidence": [],
+            "clauses": [
+              "(term(), (term(), term() -> boolean()) or atom()) -> dynamic()"
+            ],
+            "extra": "none()",
+            "guard_blocked": false,
+            "near_top": false,
+            "reasons": [
+              "no_extra"
+            ],
+            "sl002_candidate": false,
+            "top_only": true,
+            "union_class": "none",
+            "warn": false
+          },
+          "body_us": 5876,
+          "default": {
+            "applied": [
+              0
+            ],
+            "applied_return": "term()",
+            "class": "none",
+            "clause_conflict_candidate": false,
+            "clause_evidence": [],
+            "clauses": [
+              "(term(), (-> term()) or (none(), none() -> term()) or atom()) -> dynamic()"
+            ],
+            "extra": "none()",
+            "guard_blocked": false,
+            "near_top": false,
+            "reasons": [
+              "no_extra"
+            ],
+            "sl002_candidate": false,
+            "top_only": true,
+            "union_class": "none",
+            "warn": false
+          },
+          "extra_warnings": [
+            "enum.ex:1872 (Enum.max/2): this guard will never succeed:",
+            "enum.ex:1878 (Enum.max/2): this guard will never succeed:"
+          ],
+          "index": 1,
+          "loss_kinds": [],
+          "redundant_in_target": 0,
+          "signature": {
+            "applied": [
+              0
+            ],
+            "applied_return": "term()",
+            "class": "none",
+            "clause_conflict_candidate": false,
+            "clause_evidence": [],
+            "clauses": [
+              "(term(), (-> term()) or (none(), none() -> term()) or atom()) -> dynamic()"
+            ],
+            "extra": "none()",
+            "guard_blocked": false,
+            "near_top": false,
+            "reasons": [
+              "no_extra"
+            ],
+            "sl002_candidate": false,
+            "top_only": true,
+            "union_class": "none",
+            "warn": false
+          },
+          "spec_args": [
+            "term()",
+            "(term(), term() -> boolean()) or atom()"
+          ],
+          "spec_return": "term()"
+        }
+      ],
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "none",
+        "signature": "none"
+      },
+      "line": 2057,
+      "mfa": "Enum.min/2",
+      "omission": null,
+      "sampled": false,
+      "slices": [
+        {
+          "body": {
+            "applied": [
+              0
+            ],
+            "applied_return": "term()",
+            "class": "none",
+            "clause_conflict_candidate": false,
+            "clause_evidence": [],
+            "clauses": [
+              "(term(), (-> term())) -> dynamic()"
+            ],
+            "extra": "none()",
+            "guard_blocked": false,
+            "near_top": false,
+            "reasons": [
+              "no_extra",
+              "return_inexact"
+            ],
+            "sl002_candidate": false,
+            "top_only": true,
+            "union_class": "none",
+            "warn": false
+          },
+          "body_error": null,
+          "body_guarded": {
+            "applied": [
+              0
+            ],
+            "applied_return": "term()",
+            "class": "none",
+            "clause_conflict_candidate": false,
+            "clause_evidence": [],
+            "clauses": [
+              "(term(), (-> term())) -> dynamic()"
+            ],
+            "extra": "none()",
+            "guard_blocked": false,
+            "near_top": false,
+            "reasons": [
+              "no_extra",
+              "return_inexact"
+            ],
+            "sl002_candidate": false,
+            "top_only": true,
+            "union_class": "none",
+            "warn": false
+          },
+          "body_us": 5185,
+          "default": {
+            "applied": [
+              0
+            ],
+            "applied_return": "term()",
+            "class": "none",
+            "clause_conflict_candidate": false,
+            "clause_evidence": [],
+            "clauses": [
+              "(term(), (-> term()) or (none(), none() -> term()) or atom()) -> dynamic()"
+            ],
+            "extra": "none()",
+            "guard_blocked": false,
+            "near_top": false,
+            "reasons": [
+              "no_extra",
+              "return_inexact"
+            ],
+            "sl002_candidate": false,
+            "top_only": true,
+            "union_class": "none",
+            "warn": false
+          },
+          "extra_warnings": [
+            "enum.ex:2115 (Enum.min/2): incompatible types given as default arguments to min/3:"
+          ],
+          "index": 0,
+          "loss_kinds": [
+            "type_variable_correlation"
+          ],
+          "redundant_in_target": 0,
+          "signature": {
+            "applied": [
+              0
+            ],
+            "applied_return": "term()",
+            "class": "none",
+            "clause_conflict_candidate": false,
+            "clause_evidence": [],
+            "clauses": [
+              "(term(), (-> term()) or (none(), none() -> term()) or atom()) -> dynamic()"
+            ],
+            "extra": "none()",
+            "guard_blocked": false,
+            "near_top": false,
+            "reasons": [
+              "no_extra",
+              "return_inexact"
+            ],
+            "sl002_candidate": false,
+            "top_only": true,
+            "union_class": "none",
+            "warn": false
+          },
+          "spec_args": [
+            "term()",
+            "(-> term())"
+          ],
+          "spec_return": "term()"
+        },
+        {
+          "body": {
+            "applied": [
+              0
+            ],
+            "applied_return": "term()",
+            "class": "none",
+            "clause_conflict_candidate": false,
+            "clause_evidence": [],
+            "clauses": [
+              "(term(), (term(), term() -> boolean()) or atom()) -> dynamic()"
+            ],
+            "extra": "none()",
+            "guard_blocked": false,
+            "near_top": false,
+            "reasons": [
+              "no_extra"
+            ],
+            "sl002_candidate": false,
+            "top_only": true,
+            "union_class": "none",
+            "warn": false
+          },
+          "body_error": null,
+          "body_guarded": {
+            "applied": [
+              0
+            ],
+            "applied_return": "term()",
+            "class": "none",
+            "clause_conflict_candidate": false,
+            "clause_evidence": [],
+            "clauses": [
+              "(term(), (term(), term() -> boolean()) or atom()) -> dynamic()"
+            ],
+            "extra": "none()",
+            "guard_blocked": false,
+            "near_top": false,
+            "reasons": [
+              "no_extra"
+            ],
+            "sl002_candidate": false,
+            "top_only": true,
+            "union_class": "none",
+            "warn": false
+          },
+          "body_us": 4453,
+          "default": {
+            "applied": [
+              0
+            ],
+            "applied_return": "term()",
+            "class": "none",
+            "clause_conflict_candidate": false,
+            "clause_evidence": [],
+            "clauses": [
+              "(term(), (-> term()) or (none(), none() -> term()) or atom()) -> dynamic()"
+            ],
+            "extra": "none()",
+            "guard_blocked": false,
+            "near_top": false,
+            "reasons": [
+              "no_extra"
+            ],
+            "sl002_candidate": false,
+            "top_only": true,
+            "union_class": "none",
+            "warn": false
+          },
+          "extra_warnings": [
+            "enum.ex:2057 (Enum.min/2): this guard will never succeed:",
+            "enum.ex:2063 (Enum.min/2): this guard will never succeed:"
+          ],
+          "index": 1,
+          "loss_kinds": [],
+          "redundant_in_target": 0,
+          "signature": {
+            "applied": [
+              0
+            ],
+            "applied_return": "term()",
+            "class": "none",
+            "clause_conflict_candidate": false,
+            "clause_evidence": [],
+            "clauses": [
+              "(term(), (-> term()) or (none(), none() -> term()) or atom()) -> dynamic()"
+            ],
+            "extra": "none()",
+            "guard_blocked": false,
+            "near_top": false,
+            "reasons": [
+              "no_extra"
+            ],
+            "sl002_candidate": false,
+            "top_only": true,
+            "union_class": "none",
+            "warn": false
+          },
+          "spec_args": [
+            "term()",
+            "(term(), term() -> boolean()) or atom()"
+          ],
+          "spec_return": "term()"
+        }
+      ],
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "line": 2243,
+      "mfa": "Enum.min_max/2",
+      "omission": null,
+      "sampled": false,
+      "slices": [
+        {
+          "body": {
+            "applied": [
+              0
+            ],
+            "applied_return": "term()",
+            "class": "unknown",
+            "clause_conflict_candidate": false,
+            "clause_evidence": [
+              {
+                "class": "unknown",
+                "clause": 0,
+                "containment": "contained",
+                "extra": "not {term(), term()}",
+                "reasons": [
+                  "top_only"
+                ]
+              }
+            ],
+            "clauses": [
+              "(term(), (term(), term() -> boolean()) or atom()) -> dynamic()"
+            ],
+            "extra": "not {term(), term()}",
+            "guard_blocked": false,
+            "near_top": false,
+            "reasons": [
+              "top_only"
+            ],
+            "sl002_candidate": false,
+            "top_only": true,
+            "union_class": "unknown",
+            "warn": false
+          },
+          "body_error": null,
+          "body_guarded": {
+            "applied": [
+              0
+            ],
+            "applied_return": "term()",
+            "class": "unknown",
+            "clause_conflict_candidate": false,
+            "clause_evidence": [
+              {
+                "class": "unknown",
+                "clause": 0,
+                "containment": "contained",
+                "extra": "not {term(), term()}",
+                "reasons": [
+                  "top_only"
+                ]
+              }
+            ],
+            "clauses": [
+              "(term(), (term(), term() -> boolean()) or atom()) -> dynamic()"
+            ],
+            "extra": "not {term(), term()}",
+            "guard_blocked": false,
+            "near_top": false,
+            "reasons": [
+              "top_only"
+            ],
+            "sl002_candidate": false,
+            "top_only": true,
+            "union_class": "unknown",
+            "warn": false
+          },
+          "body_us": 4274,
+          "default": {
+            "applied": [
+              0
+            ],
+            "applied_return": "term()",
+            "class": "unknown",
+            "clause_conflict_candidate": false,
+            "clause_evidence": [
+              {
+                "class": "unknown",
+                "clause": 0,
+                "containment": "domain_escape",
+                "extra": "not {term(), term()}",
+                "reasons": [
+                  "domain_escape=[0]",
+                  "top_only"
+                ]
+              }
+            ],
+            "clauses": [
+              "(term(), (-> term()) or (none(), none() -> term()) or atom()) -> dynamic()"
+            ],
+            "extra": "not {term(), term()}",
+            "guard_blocked": false,
+            "near_top": false,
+            "reasons": [
+              "top_only"
+            ],
+            "sl002_candidate": false,
+            "top_only": true,
+            "union_class": "unknown",
+            "warn": false
+          },
+          "extra_warnings": [
+            "enum.ex:2243 (Enum.min_max/1): incompatible types given as default arguments to min_max/2:",
+            "enum.ex:2245 (Enum.min_max/2): this guard will never succeed:",
+            "enum.ex:2249 (Enum.min_max/2): this guard will never succeed:",
+            "enum.ex:2261 (Enum.min_max/2): this guard will never succeed:"
+          ],
+          "index": 0,
+          "loss_kinds": [],
+          "redundant_in_target": 0,
+          "signature": {
+            "applied": [
+              0
+            ],
+            "applied_return": "term()",
+            "class": "unknown",
+            "clause_conflict_candidate": false,
+            "clause_evidence": [
+              {
+                "class": "unknown",
+                "clause": 0,
+                "containment": "domain_escape",
+                "extra": "not {term(), term()}",
+                "reasons": [
+                  "domain_escape=[0]",
+                  "top_only"
+                ]
+              }
+            ],
+            "clauses": [
+              "(term(), (-> term()) or (none(), none() -> term()) or atom()) -> dynamic()"
+            ],
+            "extra": "not {term(), term()}",
+            "guard_blocked": false,
+            "near_top": false,
+            "reasons": [
+              "top_only"
+            ],
+            "sl002_candidate": false,
+            "top_only": true,
+            "union_class": "unknown",
+            "warn": false
+          },
+          "spec_args": [
+            "term()",
+            "(term(), term() -> boolean()) or atom()"
+          ],
+          "spec_return": "{term(), term()}"
+        },
+        {
+          "body": {
+            "applied": [
+              0
+            ],
+            "applied_return": "term()",
+            "class": "none",
+            "clause_conflict_candidate": false,
+            "clause_evidence": [],
+            "clauses": [
+              "(term(), (-> term())) -> dynamic()"
+            ],
+            "extra": "none()",
+            "guard_blocked": false,
+            "near_top": false,
+            "reasons": [
+              "no_extra",
+              "return_inexact"
+            ],
+            "sl002_candidate": false,
+            "top_only": true,
+            "union_class": "none",
+            "warn": false
+          },
+          "body_error": null,
+          "body_guarded": {
+            "applied": [
+              0
+            ],
+            "applied_return": "term()",
+            "class": "none",
+            "clause_conflict_candidate": false,
+            "clause_evidence": [],
+            "clauses": [
+              "(term(), (-> term())) -> dynamic()"
+            ],
+            "extra": "none()",
+            "guard_blocked": false,
+            "near_top": false,
+            "reasons": [
+              "no_extra",
+              "return_inexact"
+            ],
+            "sl002_candidate": false,
+            "top_only": true,
+            "union_class": "none",
+            "warn": false
+          },
+          "body_us": 4648,
+          "default": {
+            "applied": [
+              0
+            ],
+            "applied_return": "term()",
+            "class": "none",
+            "clause_conflict_candidate": false,
+            "clause_evidence": [],
+            "clauses": [
+              "(term(), (-> term()) or (none(), none() -> term()) or atom()) -> dynamic()"
+            ],
+            "extra": "none()",
+            "guard_blocked": false,
+            "near_top": false,
+            "reasons": [
+              "no_extra",
+              "return_inexact"
+            ],
+            "sl002_candidate": false,
+            "top_only": true,
+            "union_class": "none",
+            "warn": false
+          },
+          "extra_warnings": [
+            "enum.ex:2266 (Enum.min_max/2): this guard will never succeed:",
+            "enum.ex:2270 (Enum.min_max/2): this guard will never succeed:"
+          ],
+          "index": 1,
+          "loss_kinds": [
+            "type_variable_correlation"
+          ],
+          "redundant_in_target": 0,
+          "signature": {
+            "applied": [
+              0
+            ],
+            "applied_return": "term()",
+            "class": "none",
+            "clause_conflict_candidate": false,
+            "clause_evidence": [],
+            "clauses": [
+              "(term(), (-> term()) or (none(), none() -> term()) or atom()) -> dynamic()"
+            ],
+            "extra": "none()",
+            "guard_blocked": false,
+            "near_top": false,
+            "reasons": [
+              "no_extra",
+              "return_inexact"
+            ],
+            "sl002_candidate": false,
+            "top_only": true,
+            "union_class": "none",
+            "warn": false
+          },
+          "spec_args": [
+            "term()",
+            "(-> term())"
+          ],
+          "spec_return": "term()"
+        }
+      ],
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "none",
+        "signature": "none"
+      },
+      "line": 2305,
+      "mfa": "Enum.min_max_by/3",
+      "omission": null,
+      "sampled": false,
+      "slices": [
+        {
+          "body": {
+            "applied": [
+              0
+            ],
+            "applied_return": "term()",
+            "class": "none",
+            "clause_conflict_candidate": false,
+            "clause_evidence": [],
+            "clauses": [
+              "(term(), (term() -> term()), (-> term())) -> dynamic()"
+            ],
+            "extra": "none()",
+            "guard_blocked": false,
+            "near_top": false,
+            "reasons": [
+              "no_extra",
+              "return_inexact"
+            ],
+            "sl002_candidate": false,
+            "top_only": true,
+            "union_class": "none",
+            "warn": false
+          },
+          "body_error": null,
+          "body_guarded": {
+            "applied": [
+              0
+            ],
+            "applied_return": "term()",
+            "class": "none",
+            "clause_conflict_candidate": false,
+            "clause_evidence": [],
+            "clauses": [
+              "(term(), (term() -> term()), (-> term())) -> dynamic()"
+            ],
+            "extra": "none()",
+            "guard_blocked": false,
+            "near_top": false,
+            "reasons": [
+              "no_extra",
+              "return_inexact"
+            ],
+            "sl002_candidate": false,
+            "top_only": true,
+            "union_class": "none",
+            "warn": false
+          },
+          "body_us": 4460,
+          "default": {
+            "applied": [
+              0
+            ],
+            "applied_return": "term()",
+            "class": "none",
+            "clause_conflict_candidate": false,
+            "clause_evidence": [],
+            "clauses": [
+              "(term(), (none() -> term()), (-> term()) or (none(), none() -> term()) or atom()) -> dynamic()"
+            ],
+            "extra": "none()",
+            "guard_blocked": false,
+            "near_top": false,
+            "reasons": [
+              "no_extra",
+              "return_inexact"
+            ],
+            "sl002_candidate": false,
+            "top_only": true,
+            "union_class": "none",
+            "warn": false
+          },
+          "extra_warnings": [
+            "enum.ex:2368 (Enum.min_max_by/3): incompatible types given as default arguments to min_max_by/4:"
+          ],
+          "index": 0,
+          "loss_kinds": [
+            "type_variable_correlation"
+          ],
+          "redundant_in_target": 0,
+          "signature": {
+            "applied": [
+              0
+            ],
+            "applied_return": "term()",
+            "class": "none",
+            "clause_conflict_candidate": false,
+            "clause_evidence": [],
+            "clauses": [
+              "(term(), (none() -> term()), (-> term()) or (none(), none() -> term()) or atom()) -> dynamic()"
+            ],
+            "extra": "none()",
+            "guard_blocked": false,
+            "near_top": false,
+            "reasons": [
+              "no_extra",
+              "return_inexact"
+            ],
+            "sl002_candidate": false,
+            "top_only": true,
+            "union_class": "none",
+            "warn": false
+          },
+          "spec_args": [
+            "term()",
+            "(term() -> term())",
+            "(-> term())"
+          ],
+          "spec_return": "term()"
+        },
+        {
+          "body": {
+            "applied": [
+              0
+            ],
+            "applied_return": "term()",
+            "class": "none",
+            "clause_conflict_candidate": false,
+            "clause_evidence": [],
+            "clauses": [
+              "(term(), (term() -> term()), (term(), term() -> boolean()) or atom()) -> dynamic()"
+            ],
+            "extra": "none()",
+            "guard_blocked": false,
+            "near_top": false,
+            "reasons": [
+              "no_extra"
+            ],
+            "sl002_candidate": false,
+            "top_only": true,
+            "union_class": "none",
+            "warn": false
+          },
+          "body_error": null,
+          "body_guarded": {
+            "applied": [
+              0
+            ],
+            "applied_return": "term()",
+            "class": "none",
+            "clause_conflict_candidate": false,
+            "clause_evidence": [],
+            "clauses": [
+              "(term(), (term() -> term()), (term(), term() -> boolean()) or atom()) -> dynamic()"
+            ],
+            "extra": "none()",
+            "guard_blocked": false,
+            "near_top": false,
+            "reasons": [
+              "no_extra"
+            ],
+            "sl002_candidate": false,
+            "top_only": true,
+            "union_class": "none",
+            "warn": false
+          },
+          "body_us": 4717,
+          "default": {
+            "applied": [
+              0
+            ],
+            "applied_return": "term()",
+            "class": "none",
+            "clause_conflict_candidate": false,
+            "clause_evidence": [],
+            "clauses": [
+              "(term(), (none() -> term()), (-> term()) or (none(), none() -> term()) or atom()) -> dynamic()"
+            ],
+            "extra": "none()",
+            "guard_blocked": false,
+            "near_top": false,
+            "reasons": [
+              "no_extra"
+            ],
+            "sl002_candidate": false,
+            "top_only": true,
+            "union_class": "none",
+            "warn": false
+          },
+          "extra_warnings": [
+            "enum.ex:2305 (Enum.min_max_by/3): this guard will never succeed:"
+          ],
+          "index": 1,
+          "loss_kinds": [],
+          "redundant_in_target": 0,
+          "signature": {
+            "applied": [
+              0
+            ],
+            "applied_return": "term()",
+            "class": "none",
+            "clause_conflict_candidate": false,
+            "clause_evidence": [],
+            "clauses": [
+              "(term(), (none() -> term()), (-> term()) or (none(), none() -> term()) or atom()) -> dynamic()"
+            ],
+            "extra": "none()",
+            "guard_blocked": false,
+            "near_top": false,
+            "reasons": [
+              "no_extra"
+            ],
+            "sl002_candidate": false,
+            "top_only": true,
+            "union_class": "none",
+            "warn": false
+          },
+          "spec_args": [
+            "term()",
+            "(term() -> term())",
+            "(term(), term() -> boolean()) or atom()"
+          ],
+          "spec_return": "term()"
+        }
+      ],
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "line": 3125,
+      "mfa": "Enum.slice/2",
+      "omission": null,
+      "sampled": false,
+      "slices": [
+        {
+          "body": {
+            "applied": [
+              0
+            ],
+            "applied_return": "term()",
+            "class": "unknown",
+            "clause_conflict_candidate": false,
+            "clause_evidence": [
+              {
+                "class": "unknown",
+                "clause": 0,
+                "containment": "containment_unknown",
+                "extra": "not list(term())",
+                "reasons": [
+                  "containment_unknown=[0]",
+                  "top_only"
+                ]
+              }
+            ],
+            "clauses": [
+              "(term(), %Range{first: integer(), last: integer(), step: integer()}) -> dynamic()"
+            ],
+            "extra": "not list(term())",
+            "guard_blocked": false,
+            "near_top": false,
+            "reasons": [
+              "top_only"
+            ],
+            "sl002_candidate": false,
+            "top_only": true,
+            "union_class": "unknown",
+            "warn": false
+          },
+          "body_error": null,
+          "body_guarded": {
+            "applied": [
+              0
+            ],
+            "applied_return": "term()",
+            "class": "unknown",
+            "clause_conflict_candidate": false,
+            "clause_evidence": [
+              {
+                "class": "unknown",
+                "clause": 0,
+                "containment": "containment_unknown",
+                "extra": "not list(term())",
+                "reasons": [
+                  "containment_unknown=[0]",
+                  "top_only"
+                ]
+              }
+            ],
+            "clauses": [
+              "(term(), %Range{first: integer(), last: integer(), step: integer()}) -> dynamic()"
+            ],
+            "extra": "not list(term())",
+            "guard_blocked": false,
+            "near_top": false,
+            "reasons": [
+              "top_only"
+            ],
+            "sl002_candidate": false,
+            "top_only": true,
+            "union_class": "unknown",
+            "warn": false
+          },
+          "body_us": 5951,
+          "default": {
+            "applied": [
+              0
+            ],
+            "applied_return": "term()",
+            "class": "unknown",
+            "clause_conflict_candidate": false,
+            "clause_evidence": [
+              {
+                "class": "unknown",
+                "clause": 0,
+                "containment": "domain_escape",
+                "extra": "not list(term())",
+                "reasons": [
+                  "domain_escape=[0]",
+                  "top_only"
+                ]
+              }
+            ],
+            "clauses": [
+              "(term(), %Range{} or (%{..., __struct__: Range, first: term(), last: term()} and not %Range{})) -> dynamic()"
+            ],
+            "extra": "not list(term())",
+            "guard_blocked": false,
+            "near_top": false,
+            "reasons": [
+              "top_only"
+            ],
+            "sl002_candidate": false,
+            "top_only": true,
+            "union_class": "unknown",
+            "warn": false
+          },
+          "extra_warnings": [
+            "enum.ex:3145 (Enum.slice/2): the following clause is redundant:"
+          ],
+          "index": 0,
+          "loss_kinds": [
+            "integer_refinement_erased"
+          ],
+          "redundant_in_target": 1,
+          "signature": {
+            "applied": [
+              0
+            ],
+            "applied_return": "term()",
+            "class": "unknown",
+            "clause_conflict_candidate": false,
+            "clause_evidence": [
+              {
+                "class": "unknown",
+                "clause": 0,
+                "containment": "domain_escape",
+                "extra": "not list(term())",
+                "reasons": [
+                  "domain_escape=[0]",
+                  "top_only"
+                ]
+              }
+            ],
+            "clauses": [
+              "(term(), %Range{} or (%{..., __struct__: Range, first: term(), last: term()} and not %Range{})) -> dynamic()"
+            ],
+            "extra": "not list(term())",
+            "guard_blocked": false,
+            "near_top": false,
+            "reasons": [
+              "top_only"
+            ],
+            "sl002_candidate": false,
+            "top_only": true,
+            "union_class": "unknown",
+            "warn": false
+          },
+          "spec_args": [
+            "term()",
+            "%Range{first: integer(), last: integer(), step: integer()}"
+          ],
+          "spec_return": "list(term())"
+        }
+      ],
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "line": 4083,
+      "mfa": "Enum.with_index/2",
+      "omission": null,
+      "sampled": false,
+      "slices": [
+        {
+          "body": {
+            "applied": [
+              0,
+              1
+            ],
+            "applied_return": "term()",
+            "class": "unknown",
+            "clause_conflict_candidate": false,
+            "clause_evidence": [
+              {
+                "class": "unknown",
+                "clause": 0,
+                "containment": "contained",
+                "extra": "non_empty_list(term(), term()) and not non_empty_list({term(), integer()})",
+                "reasons": [
+                  "unknown_components=1",
+                  "no_counted_component"
+                ]
+              },
+              {
+                "class": "unknown",
+                "clause": 1,
+                "containment": "contained",
+                "extra": "not list({term(), integer()})",
+                "reasons": [
+                  "top_only"
+                ]
+              }
+            ],
+            "clauses": [
+              "(empty_list() or non_empty_list(term(), term()), integer()) -> dynamic(empty_list() or non_empty_list(term(), term()))",
+              "(term(), integer()) -> dynamic()"
+            ],
+            "extra": "not list({term(), integer()})",
+            "guard_blocked": false,
+            "near_top": false,
+            "reasons": [
+              "top_only"
+            ],
+            "sl002_candidate": false,
+            "top_only": true,
+            "union_class": "unknown",
+            "warn": false
+          },
+          "body_error": null,
+          "body_guarded": {
+            "applied": [
+              0,
+              1
+            ],
+            "applied_return": "term()",
+            "class": "unknown",
+            "clause_conflict_candidate": false,
+            "clause_evidence": [
+              {
+                "class": "unknown",
+                "clause": 0,
+                "containment": "contained",
+                "extra": "non_empty_list(term(), term()) and not non_empty_list({term(), integer()})",
+                "reasons": [
+                  "unknown_components=1",
+                  "no_counted_component"
+                ]
+              },
+              {
+                "class": "unknown",
+                "clause": 1,
+                "containment": "contained",
+                "extra": "not list({term(), integer()})",
+                "reasons": [
+                  "top_only"
+                ]
+              }
+            ],
+            "clauses": [
+              "(empty_list() or non_empty_list(term(), term()), integer()) -> dynamic(empty_list() or non_empty_list(term(), term()))",
+              "(term(), integer()) -> dynamic()"
+            ],
+            "extra": "not list({term(), integer()})",
+            "guard_blocked": false,
+            "near_top": false,
+            "reasons": [
+              "top_only"
+            ],
+            "sl002_candidate": false,
+            "top_only": true,
+            "union_class": "unknown",
+            "warn": false
+          },
+          "body_us": 4584,
+          "default": {
+            "applied": [
+              0,
+              1
+            ],
+            "applied_return": "term()",
+            "class": "unknown",
+            "clause_conflict_candidate": false,
+            "clause_evidence": [
+              {
+                "class": "unknown",
+                "clause": 0,
+                "containment": "domain_escape",
+                "extra": "non_empty_list(term(), term()) and not non_empty_list({term(), integer()})",
+                "reasons": [
+                  "domain_escape=[0]",
+                  "unknown_components=1",
+                  "no_counted_component"
+                ]
+              },
+              {
+                "class": "unknown",
+                "clause": 1,
+                "containment": "domain_escape",
+                "extra": "not list({term(), integer()})",
+                "reasons": [
+                  "domain_escape=[1]",
+                  "top_only"
+                ]
+              }
+            ],
+            "clauses": [
+              "(empty_list() or non_empty_list(term(), term()), (none(), none() -> term()) or integer()) -> dynamic(empty_list() or non_empty_list(term(), term()))",
+              "(term(), (none(), none() -> term()) or integer()) -> dynamic()"
+            ],
+            "extra": "not list({term(), integer()})",
+            "guard_blocked": false,
+            "near_top": false,
+            "reasons": [
+              "top_only"
+            ],
+            "sl002_candidate": false,
+            "top_only": true,
+            "union_class": "unknown",
+            "warn": false
+          },
+          "extra_warnings": [
+            "enum.ex:4089 (Enum.with_index/2): this guard will never succeed:",
+            "enum.ex:4099 (Enum.with_index/2): this guard will never succeed:"
+          ],
+          "index": 0,
+          "loss_kinds": [],
+          "redundant_in_target": 0,
+          "signature": {
+            "applied": [
+              0,
+              1
+            ],
+            "applied_return": "term()",
+            "class": "unknown",
+            "clause_conflict_candidate": false,
+            "clause_evidence": [
+              {
+                "class": "unknown",
+                "clause": 0,
+                "containment": "domain_escape",
+                "extra": "non_empty_list(term(), term()) and not non_empty_list({term(), integer()})",
+                "reasons": [
+                  "domain_escape=[0]",
+                  "unknown_components=1",
+                  "no_counted_component"
+                ]
+              },
+              {
+                "class": "unknown",
+                "clause": 1,
+                "containment": "domain_escape",
+                "extra": "not list({term(), integer()})",
+                "reasons": [
+                  "domain_escape=[1]",
+                  "top_only"
+                ]
+              }
+            ],
+            "clauses": [
+              "(empty_list() or non_empty_list(term(), term()), (none(), none() -> term()) or integer()) -> dynamic(empty_list() or non_empty_list(term(), term()))",
+              "(term(), (none(), none() -> term()) or integer()) -> dynamic()"
+            ],
+            "extra": "not list({term(), integer()})",
+            "guard_blocked": false,
+            "near_top": false,
+            "reasons": [
+              "top_only"
+            ],
+            "sl002_candidate": false,
+            "top_only": true,
+            "union_class": "unknown",
+            "warn": false
+          },
+          "spec_args": [
+            "term()",
+            "integer()"
+          ],
+          "spec_return": "list({term(), integer()})"
+        },
+        {
+          "body": {
+            "applied": [
+              0,
+              1
+            ],
+            "applied_return": "term()",
+            "class": "unknown",
+            "clause_conflict_candidate": false,
+            "clause_evidence": [
+              {
+                "class": "unknown",
+                "clause": 0,
+                "containment": "contained",
+                "extra": "non_empty_list(term(), not empty_list())",
+                "reasons": [
+                  "unknown_components=1",
+                  "no_counted_component"
+                ]
+              },
+              {
+                "class": "unknown",
+                "clause": 1,
+                "containment": "contained",
+                "extra": "not list(term())",
+                "reasons": [
+                  "top_only"
+                ]
+              }
+            ],
+            "clauses": [
+              "(empty_list() or non_empty_list(term(), term()), (term(), integer() -> term())) -> dynamic(empty_list() or non_empty_list(term(), term()))",
+              "(term(), (term(), integer() -> term())) -> dynamic()"
+            ],
+            "extra": "not list(term())",
+            "guard_blocked": false,
+            "near_top": false,
+            "reasons": [
+              "top_only",
+              "return_inexact"
+            ],
+            "sl002_candidate": false,
+            "top_only": true,
+            "union_class": "unknown",
+            "warn": false
+          },
+          "body_error": null,
+          "body_guarded": {
+            "applied": [
+              0,
+              1
+            ],
+            "applied_return": "term()",
+            "class": "unknown",
+            "clause_conflict_candidate": false,
+            "clause_evidence": [
+              {
+                "class": "unknown",
+                "clause": 0,
+                "containment": "contained",
+                "extra": "non_empty_list(term(), not empty_list())",
+                "reasons": [
+                  "unknown_components=1",
+                  "no_counted_component"
+                ]
+              },
+              {
+                "class": "unknown",
+                "clause": 1,
+                "containment": "contained",
+                "extra": "not list(term())",
+                "reasons": [
+                  "top_only"
+                ]
+              }
+            ],
+            "clauses": [
+              "(empty_list() or non_empty_list(term(), term()), (term(), integer() -> term())) -> dynamic(empty_list() or non_empty_list(term(), term()))",
+              "(term(), (term(), integer() -> term())) -> dynamic()"
+            ],
+            "extra": "not list(term())",
+            "guard_blocked": false,
+            "near_top": false,
+            "reasons": [
+              "top_only",
+              "return_inexact"
+            ],
+            "sl002_candidate": false,
+            "top_only": true,
+            "union_class": "unknown",
+            "warn": false
+          },
+          "body_us": 4625,
+          "default": {
+            "applied": [
+              0,
+              1
+            ],
+            "applied_return": "term()",
+            "class": "unknown",
+            "clause_conflict_candidate": false,
+            "clause_evidence": [
+              {
+                "class": "unknown",
+                "clause": 0,
+                "containment": "domain_escape",
+                "extra": "non_empty_list(term(), not empty_list())",
+                "reasons": [
+                  "domain_escape=[0]",
+                  "unknown_components=1",
+                  "no_counted_component"
+                ]
+              },
+              {
+                "class": "unknown",
+                "clause": 1,
+                "containment": "domain_escape",
+                "extra": "not list(term())",
+                "reasons": [
+                  "domain_escape=[1]",
+                  "top_only"
+                ]
+              }
+            ],
+            "clauses": [
+              "(empty_list() or non_empty_list(term(), term()), (none(), none() -> term()) or integer()) -> dynamic(empty_list() or non_empty_list(term(), term()))",
+              "(term(), (none(), none() -> term()) or integer()) -> dynamic()"
+            ],
+            "extra": "not list(term())",
+            "guard_blocked": false,
+            "near_top": false,
+            "reasons": [
+              "top_only",
+              "return_inexact"
+            ],
+            "sl002_candidate": false,
+            "top_only": true,
+            "union_class": "unknown",
+            "warn": false
+          },
+          "extra_warnings": [
+            "enum.ex:4083 (Enum.with_index/1): incompatible types given as default arguments to with_index/2:",
+            "enum.ex:4085 (Enum.with_index/2): this guard will never succeed:",
+            "enum.ex:4093 (Enum.with_index/2): this guard will never succeed:"
+          ],
+          "index": 1,
+          "loss_kinds": [
+            "type_variable_correlation"
+          ],
+          "redundant_in_target": 0,
+          "signature": {
+            "applied": [
+              0,
+              1
+            ],
+            "applied_return": "term()",
+            "class": "unknown",
+            "clause_conflict_candidate": false,
+            "clause_evidence": [
+              {
+                "class": "unknown",
+                "clause": 0,
+                "containment": "domain_escape",
+                "extra": "non_empty_list(term(), not empty_list())",
+                "reasons": [
+                  "domain_escape=[0]",
+                  "unknown_components=1",
+                  "no_counted_component"
+                ]
+              },
+              {
+                "class": "unknown",
+                "clause": 1,
+                "containment": "domain_escape",
+                "extra": "not list(term())",
+                "reasons": [
+                  "domain_escape=[1]",
+                  "top_only"
+                ]
+              }
+            ],
+            "clauses": [
+              "(empty_list() or non_empty_list(term(), term()), (none(), none() -> term()) or integer()) -> dynamic(empty_list() or non_empty_list(term(), term()))",
+              "(term(), (none(), none() -> term()) or integer()) -> dynamic()"
+            ],
+            "extra": "not list(term())",
+            "guard_blocked": false,
+            "near_top": false,
+            "reasons": [
+              "top_only",
+              "return_inexact"
+            ],
+            "sl002_candidate": false,
+            "top_only": true,
+            "union_class": "unknown",
+            "warn": false
+          },
+          "spec_args": [
+            "term()",
+            "(term(), integer() -> term())"
+          ],
+          "spec_return": "list(term())"
+        }
+      ],
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "line": 863,
+      "mfa": "Keyword.put_new/3",
+      "omission": null,
+      "sampled": false,
+      "slices": [
+        {
+          "body": {
+            "applied": [
+              0
+            ],
+            "applied_return": "list({atom(), term()})",
+            "class": "none",
+            "clause_conflict_candidate": false,
+            "clause_evidence": [],
+            "clauses": [
+              "(list({atom(), term()}), atom(), term()) -> dynamic(list({atom(), term()}))"
+            ],
+            "extra": "none()",
+            "guard_blocked": false,
+            "near_top": false,
+            "reasons": [
+              "no_extra"
+            ],
+            "sl002_candidate": false,
+            "top_only": false,
+            "union_class": "none",
+            "warn": false
+          },
+          "body_error": null,
+          "body_guarded": {
+            "applied": [
+              0
+            ],
+            "applied_return": "list({atom(), term()})",
+            "class": "none",
+            "clause_conflict_candidate": false,
+            "clause_evidence": [],
+            "clauses": [
+              "(list({atom(), term()}), atom(), term()) -> dynamic(list({atom(), term()}))"
+            ],
+            "extra": "none()",
+            "guard_blocked": false,
+            "near_top": false,
+            "reasons": [
+              "no_extra"
+            ],
+            "sl002_candidate": false,
+            "top_only": false,
+            "union_class": "none",
+            "warn": false
+          },
+          "body_us": 1830,
+          "default": {
+            "applied": [
+              0
+            ],
+            "applied_return": "empty_list() or non_empty_list(term(), term())",
+            "class": "unknown",
+            "clause_conflict_candidate": false,
+            "clause_evidence": [
+              {
+                "class": "unknown",
+                "clause": 0,
+                "containment": "domain_escape",
+                "extra": "non_empty_list(term(), term()) and not non_empty_list({atom(), term()})",
+                "reasons": [
+                  "domain_escape=[0]",
+                  "unknown_components=1",
+                  "no_counted_component"
+                ]
+              }
+            ],
+            "clauses": [
+              "(empty_list() or non_empty_list(term(), term()), atom(), term()) -> dynamic(empty_list() or non_empty_list(term(), term()))"
+            ],
+            "extra": "non_empty_list(term(), term()) and not non_empty_list({atom(), term()})",
+            "guard_blocked": false,
+            "near_top": false,
+            "reasons": [
+              "domain_escape=[0]",
+              "unknown_components=1",
+              "no_counted_component"
+            ],
+            "sl002_candidate": false,
+            "top_only": false,
+            "union_class": "unknown",
+            "warn": false
+          },
+          "extra_warnings": [],
+          "index": 0,
+          "loss_kinds": [],
+          "redundant_in_target": 0,
+          "signature": {
+            "applied": [
+              0
+            ],
+            "applied_return": "empty_list() or non_empty_list(term(), term())",
+            "class": "unknown",
+            "clause_conflict_candidate": false,
+            "clause_evidence": [
+              {
+                "class": "unknown",
+                "clause": 0,
+                "containment": "domain_escape",
+                "extra": "non_empty_list(term(), term()) and not non_empty_list({atom(), term()})",
+                "reasons": [
+                  "domain_escape=[0]",
+                  "unknown_components=1",
+                  "no_counted_component"
+                ]
+              }
+            ],
+            "clauses": [
+              "(empty_list() or non_empty_list(term(), term()), atom(), term()) -> dynamic(empty_list() or non_empty_list(term(), term()))"
+            ],
+            "extra": "non_empty_list(term(), term()) and not non_empty_list({atom(), term()})",
+            "guard_blocked": false,
+            "near_top": false,
+            "reasons": [
+              "domain_escape=[0]",
+              "unknown_components=1",
+              "no_counted_component"
+            ],
+            "sl002_candidate": false,
+            "top_only": false,
+            "union_class": "unknown",
+            "warn": false
+          },
+          "spec_args": [
+            "list({atom(), term()})",
+            "atom()",
+            "term()"
+          ],
+          "spec_return": "list({atom(), term()})"
+        }
+      ],
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "line": 843,
+      "mfa": "Keyword.put_new_lazy/3",
+      "omission": null,
+      "sampled": false,
+      "slices": [
+        {
+          "body": {
+            "applied": [
+              0
+            ],
+            "applied_return": "list({atom(), term()})",
+            "class": "none",
+            "clause_conflict_candidate": false,
+            "clause_evidence": [],
+            "clauses": [
+              "(list({atom(), term()}), atom(), (-> term())) -> dynamic(list({atom(), term()}))"
+            ],
+            "extra": "none()",
+            "guard_blocked": false,
+            "near_top": false,
+            "reasons": [
+              "no_extra"
+            ],
+            "sl002_candidate": false,
+            "top_only": false,
+            "union_class": "none",
+            "warn": false
+          },
+          "body_error": null,
+          "body_guarded": {
+            "applied": [
+              0
+            ],
+            "applied_return": "list({atom(), term()})",
+            "class": "none",
+            "clause_conflict_candidate": false,
+            "clause_evidence": [],
+            "clauses": [
+              "(list({atom(), term()}), atom(), (-> term())) -> dynamic(list({atom(), term()}))"
+            ],
+            "extra": "none()",
+            "guard_blocked": false,
+            "near_top": false,
+            "reasons": [
+              "no_extra"
+            ],
+            "sl002_candidate": false,
+            "top_only": false,
+            "union_class": "none",
+            "warn": false
+          },
+          "body_us": 7347,
+          "default": {
+            "applied": [
+              0
+            ],
+            "applied_return": "empty_list() or non_empty_list(term(), term())",
+            "class": "unknown",
+            "clause_conflict_candidate": false,
+            "clause_evidence": [
+              {
+                "class": "unknown",
+                "clause": 0,
+                "containment": "domain_escape",
+                "extra": "non_empty_list(term(), term()) and not non_empty_list({atom(), term()})",
+                "reasons": [
+                  "domain_escape=[0]",
+                  "unknown_components=1",
+                  "no_counted_component"
+                ]
+              }
+            ],
+            "clauses": [
+              "(empty_list() or non_empty_list(term(), term()), atom(), (-> term())) -> dynamic(empty_list() or non_empty_list(term(), term()))"
+            ],
+            "extra": "non_empty_list(term(), term()) and not non_empty_list({atom(), term()})",
+            "guard_blocked": false,
+            "near_top": false,
+            "reasons": [
+              "domain_escape=[0]",
+              "unknown_components=1",
+              "no_counted_component"
+            ],
+            "sl002_candidate": false,
+            "top_only": false,
+            "union_class": "unknown",
+            "warn": false
+          },
+          "extra_warnings": [],
+          "index": 0,
+          "loss_kinds": [],
+          "redundant_in_target": 0,
+          "signature": {
+            "applied": [
+              0
+            ],
+            "applied_return": "empty_list() or non_empty_list(term(), term())",
+            "class": "unknown",
+            "clause_conflict_candidate": false,
+            "clause_evidence": [
+              {
+                "class": "unknown",
+                "clause": 0,
+                "containment": "domain_escape",
+                "extra": "non_empty_list(term(), term()) and not non_empty_list({atom(), term()})",
+                "reasons": [
+                  "domain_escape=[0]",
+                  "unknown_components=1",
+                  "no_counted_component"
+                ]
+              }
+            ],
+            "clauses": [
+              "(empty_list() or non_empty_list(term(), term()), atom(), (-> term())) -> dynamic(empty_list() or non_empty_list(term(), term()))"
+            ],
+            "extra": "non_empty_list(term(), term()) and not non_empty_list({atom(), term()})",
+            "guard_blocked": false,
+            "near_top": false,
+            "reasons": [
+              "domain_escape=[0]",
+              "unknown_components=1",
+              "no_counted_component"
+            ],
+            "sl002_candidate": false,
+            "top_only": false,
+            "union_class": "unknown",
+            "warn": false
+          },
+          "spec_args": [
+            "list({atom(), term()})",
+            "atom()",
+            "(-> term())"
+          ],
+          "spec_return": "list({atom(), term()})"
+        }
+      ],
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "line": 1492,
+      "mfa": "Keyword.to_list/1",
+      "omission": null,
+      "sampled": false,
+      "slices": [
+        {
+          "body": {
+            "applied": [
+              0
+            ],
+            "applied_return": "list({atom(), term()})",
+            "class": "none",
+            "clause_conflict_candidate": false,
+            "clause_evidence": [],
+            "clauses": [
+              "(list({atom(), term()})) -> dynamic(list({atom(), term()}))"
+            ],
+            "extra": "none()",
+            "guard_blocked": false,
+            "near_top": false,
+            "reasons": [
+              "no_extra"
+            ],
+            "sl002_candidate": false,
+            "top_only": false,
+            "union_class": "none",
+            "warn": false
+          },
+          "body_error": null,
+          "body_guarded": {
+            "applied": [
+              0
+            ],
+            "applied_return": "list({atom(), term()})",
+            "class": "none",
+            "clause_conflict_candidate": false,
+            "clause_evidence": [],
+            "clauses": [
+              "(list({atom(), term()})) -> dynamic(list({atom(), term()}))"
+            ],
+            "extra": "none()",
+            "guard_blocked": false,
+            "near_top": false,
+            "reasons": [
+              "no_extra"
+            ],
+            "sl002_candidate": false,
+            "top_only": false,
+            "union_class": "none",
+            "warn": false
+          },
+          "body_us": 2633,
+          "default": {
+            "applied": [
+              0
+            ],
+            "applied_return": "empty_list() or non_empty_list(term(), term())",
+            "class": "unknown",
+            "clause_conflict_candidate": false,
+            "clause_evidence": [
+              {
+                "class": "unknown",
+                "clause": 0,
+                "containment": "domain_escape",
+                "extra": "non_empty_list(term(), term()) and not non_empty_list({atom(), term()})",
+                "reasons": [
+                  "domain_escape=[0]",
+                  "unknown_components=1",
+                  "no_counted_component"
+                ]
+              }
+            ],
+            "clauses": [
+              "(empty_list() or non_empty_list(term(), term())) -> dynamic(empty_list() or non_empty_list(term(), term()))"
+            ],
+            "extra": "non_empty_list(term(), term()) and not non_empty_list({atom(), term()})",
+            "guard_blocked": false,
+            "near_top": false,
+            "reasons": [
+              "domain_escape=[0]",
+              "unknown_components=1",
+              "no_counted_component"
+            ],
+            "sl002_candidate": false,
+            "top_only": false,
+            "union_class": "unknown",
+            "warn": false
+          },
+          "extra_warnings": [],
+          "index": 0,
+          "loss_kinds": [],
+          "redundant_in_target": 0,
+          "signature": {
+            "applied": [
+              0
+            ],
+            "applied_return": "empty_list() or non_empty_list(term(), term())",
+            "class": "unknown",
+            "clause_conflict_candidate": false,
+            "clause_evidence": [
+              {
+                "class": "unknown",
+                "clause": 0,
+                "containment": "domain_escape",
+                "extra": "non_empty_list(term(), term()) and not non_empty_list({atom(), term()})",
+                "reasons": [
+                  "domain_escape=[0]",
+                  "unknown_components=1",
+                  "no_counted_component"
+                ]
+              }
+            ],
+            "clauses": [
+              "(empty_list() or non_empty_list(term(), term())) -> dynamic(empty_list() or non_empty_list(term(), term()))"
+            ],
+            "extra": "non_empty_list(term(), term()) and not non_empty_list({atom(), term()})",
+            "guard_blocked": false,
+            "near_top": false,
+            "reasons": [
+              "domain_escape=[0]",
+              "unknown_components=1",
+              "no_counted_component"
+            ],
+            "sl002_candidate": false,
+            "top_only": false,
+            "union_class": "unknown",
+            "warn": false
+          },
+          "spec_args": [
+            "list({atom(), term()})"
+          ],
+          "spec_return": "list({atom(), term()})"
+        }
+      ],
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    }
+  ],
+  "label": "enum_keyword",
+  "modules": [
+    {
+      "default_run_us": 13876,
+      "default_warnings": 0,
+      "error": null,
+      "module": "Enum",
+      "sampled": false
+    },
+    {
+      "default_run_us": 1463,
+      "default_warnings": 0,
+      "error": null,
+      "module": "Keyword",
+      "sampled": false
+    }
+  ],
+  "omissions": [],
+  "otp_release": "28",
+  "sample": {
+    "modules": [],
+    "seed": 20260928,
+    "size": 0
+  },
+  "totals": {
+    "body_errors": 0,
+    "body_unavailable": 0,
+    "cost": {
+      "body_calls": 142,
+      "body_max_us": 8644,
+      "body_median_us": 4377,
+      "body_p90_us": 5007,
+      "body_total_ms": 542,
+      "default_calls": 2,
+      "default_total_ms": 15
+    },
+    "extra_warning_slices": 11,
+    "extra_warnings": 20,
+    "function_classes": {
+      "body": {
+        "none": 33,
+        "unknown": 104
+      },
+      "body_guarded": {
+        "none": 33,
+        "unknown": 104
+      },
+      "default": {
+        "none": 30,
+        "unknown": 107
+      },
+      "signature": {
+        "none": 30,
+        "unknown": 107
+      }
+    },
+    "functions": 137,
+    "module_errors": 0,
+    "modules": 2,
+    "modules_sampled": 0,
+    "slice_classes": {
+      "body": {
+        "none": 37,
+        "unknown": 105
+      },
+      "body_guarded": {
+        "none": 37,
+        "unknown": 105
+      },
+      "default": {
+        "none": 34,
+        "unknown": 108
+      },
+      "signature": {
+        "none": 34,
+        "unknown": 108
+      }
+    },
+    "slices": 142,
+    "top_only_slices": {
+      "body": 121,
+      "body_guarded": 121,
+      "default": 121,
+      "signature": 121
+    },
+    "warn_functions": {
+      "body": 0,
+      "body_guarded": 0,
+      "default": 0,
+      "signature": 0
+    }
+  }
+}

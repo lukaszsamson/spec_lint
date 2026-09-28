@@ -28,7 +28,7 @@ It has about 8,000 lines in `lib` and 4,000 in `test`:
 | Run | `SpecLint.Run` | One run with exit code 0, 1 or 2. Completion is complete, partial or incomplete. Coverage is checked whatever rules are selected. |
 | Reports | `SpecLint.Report.Console`, `SpecLint.Report.Json`, `SpecLint.Explain` | Console output, a versioned deterministic JSON envelope written atomically, and `--explain`. |
 | Mix tasks | `mix spec_lint`, `mix spec_lint.baseline` | Options are parsed before compile. Compile failure exits 2. With `--format json` to stdout, compiler output goes to stderr. |
-| Bench | `bench/experiment.exs`, `bench/run_on_ebin.exs` | The SL002 experiment runner, and the product pipeline run over explicit ebins (OSS corpora). |
+| Bench | `bench/experiment.exs`, `bench/run_on_ebin.exs`, `bench/body_experiment.exs` | The SL002 experiment runner, the product pipeline run over explicit ebins (OSS corpora), and the body-backend experiment (runs only under a compiler carrying the `warnings/7` hook; `bench/corpus/body_run.sh`). |
 
 The tests cover the following. Some are unit tests, some are fixture
 corpora (`test/support`), and one is a consumer integration project built
@@ -107,6 +107,19 @@ check blocks the redundant-clause fixture `shadowed/1`.
 (`Ecto.Query.Builder.Join.escape/3` and `quoted_type/2`, both as
 `possible_domain_escape`). The remaining 7 are `unknown`, mostly because
 inference is top-only.
+
+**Body backend experiment** (EXPERIMENTS.md "Body backend experiment"). The
+body is type-checked under each spec slice's domain through the
+`warnings/7` hook, on a patched `c24c235` build.
+- Gating recall on the 9 known omissions goes from 0 to 1
+  (`Ecto.Query.Builder.quoted_type/2`). Reported recall stays 2 of 9.
+- It found one new real omission, `Ecto.Changeset.apply_changes/1`
+  (report-only).
+- It added 2 fixture false positives, 1 after the redundancy guard.
+- It added no false positive on 297 real-code slices.
+- Each slice costs about one module re-check: 1.7 s over decimal, plug and
+  ecto.
+- Decision: not adopted.
 
 **Stdlib before and after the review fixes.** Function classes are
 unchanged except for `DateTime.from_iso8601/2,3`, which moved from
@@ -236,10 +249,12 @@ documented limitations. "Sound" is not claimed.
 ## Known limitations
 
 - **Signature backend only.** There is no body analysis, so SL007 and
-  `analysis: :bodies` exit 2. Containment is the binding constraint:
-  unguarded parameters and struct patterns infer `term()` fields, so most
-  real clauses escape the spec domain. Gating recall on known real
-  omissions is 0 of 9.
+  `analysis: :bodies` exit 2. The body-backend experiment measured what
+  body analysis would add (1 of 9 known omissions gated) and it was not
+  adopted (EXPERIMENTS.md "Body backend experiment"). Containment is the
+  binding constraint: unguarded parameters and struct patterns infer
+  `term()` fields, so most real clauses escape the spec domain. Gating
+  recall on known real omissions is 0 of 9.
 - **Top-only inference hides most evidence.** On the stdlib, 913 of 1,777
   slices are top-only.
 - **One pinned compiler revision.** Every internal used (`Descr`, the
@@ -266,18 +281,29 @@ documented limitations. "Sound" is not claimed.
 
 ## Next steps
 
-1. **Body analysis backend** (DESIGN section 7). Qualify the
-   `Module.Types.warnings/7` hook on a pinned build. Check one slice at a
-   time with the full tuple domain, in fresh checker context, in
-   dynamic-domain mode. Diff ordinary diagnostics against spec-domain
-   ones. Measure per-slice cost on `Enum` and `Keyword`, and validate
-   local-call caching, recursion and widening. This is the path to
-   resolving `possible_domain_escape` and `possible_input_approximate`,
-   and to SL007.
-2. **Upstream API request.** Ask for "infer this definition under these
-   argument domains", returning diagnostics, a signature and a capability
-   version. In the same request, ask to export the compiler's per-clause
-   redundancy verdict, which would replace the shadowing approximation.
+1. **Body analysis backend: measured, not adopted** (EXPERIMENTS.md "Body
+   backend experiment", DESIGN section 7).
+   - Gated recall on the 9 known omissions goes from 0 to 1, and reported
+     recall stays at 2.
+   - 7 of the 8 misses are top-only returns from helpers analysed under
+     default domains, or from generic `Enum`/`Map` calls.
+   - The patched build is a detached worktree of `~/elixir` at `c24c235`
+     plus hunk `b88a257a3`, kept in the session scratchpad
+     (`elixir-body`); the recipe is in `bench/corpus/body_run.sh`.
+   - Revisit only with the upstream API below, plus call-site-sensitive
+     helper inference or parametric `Enum`/`Map` signatures.
+   - Recursion, mutual recursion and widening fixtures (DESIGN 7 item 5)
+     were not built, because the backend was not adopted.
+2. **Upstream API request.** Use the proposal in EXPERIMENTS.md "Minimal
+   compiler API":
+   - `Module.Types.infer_under_domains/7`, which checks only the targets
+     and what they reach;
+   - signatures in stored (compacted) form;
+   - reachability per source clause, which also replaces the shadowing
+     approximation;
+   - diagnostics;
+   - a `Module.Types.capabilities/0` version.
+
    Also ask for a stable, documented reader for the `ExCk` chunk.
 3. **SARIF output** next to the console and JSON reporters. Map rule IDs,
    evidence and fingerprints (as `partialFingerprints`) and the baseline

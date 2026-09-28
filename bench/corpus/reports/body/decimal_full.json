@@ -1,0 +1,1011 @@
+{
+  "adapter": "1.21.0-dev+c24c235",
+  "body_hook": true,
+  "changed": [
+    {
+      "body": "none",
+      "default": "possible_domain_escape",
+      "mfa": "Decimal.scale/1",
+      "signature": "possible_domain_escape",
+      "warn_body": false,
+      "warn_body_guarded": false,
+      "warn_signature": false
+    },
+    {
+      "body": "possible_input_approximate",
+      "default": "possible_domain_escape",
+      "mfa": "Decimal.to_integer/1",
+      "signature": "possible_domain_escape",
+      "warn_body": false,
+      "warn_body_guarded": false,
+      "warn_signature": false
+    }
+  ],
+  "checker_version": "elixir_checker_v10",
+  "ebins": [
+    "$OSS_BODY/decimal/lib/decimal/ebin"
+  ],
+  "fixtures": null,
+  "function_rows": [
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Decimal.abs/1",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Decimal.add/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Decimal.apply_context/1",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Decimal.cast/1",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Decimal.cast/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Decimal.cmp/2",
+      "omission": "Decimal.cmp/2",
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Decimal.compare/2",
+      "omission": "Decimal.compare/2",
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Decimal.compare/3",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Decimal.div/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Decimal.div_int/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Decimal.div_rem/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "none",
+        "signature": "none"
+      },
+      "mfa": "Decimal.eq?/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "none",
+        "signature": "none"
+      },
+      "mfa": "Decimal.eq?/3",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "none",
+        "signature": "none"
+      },
+      "mfa": "Decimal.equal?/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Decimal.from_float/1",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "none",
+        "signature": "none"
+      },
+      "mfa": "Decimal.gt?/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "none",
+        "signature": "none"
+      },
+      "mfa": "Decimal.gte?/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "none",
+        "signature": "none"
+      },
+      "mfa": "Decimal.inf?/1",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Decimal.integer?/1",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "none",
+        "signature": "none"
+      },
+      "mfa": "Decimal.lt?/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "none",
+        "signature": "none"
+      },
+      "mfa": "Decimal.lte?/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Decimal.max/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Decimal.min/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Decimal.mult/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "none",
+        "signature": "none"
+      },
+      "mfa": "Decimal.nan?/1",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Decimal.negate/1",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "none",
+        "signature": "none"
+      },
+      "mfa": "Decimal.negative?/1",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Decimal.new/1",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "none",
+        "signature": "none"
+      },
+      "mfa": "Decimal.new/3",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Decimal.normalize/1",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Decimal.parse/1",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Decimal.parse/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "none",
+        "signature": "none"
+      },
+      "mfa": "Decimal.positive?/1",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Decimal.rem/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Decimal.round/3",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "possible_domain_escape",
+        "signature": "possible_domain_escape"
+      },
+      "mfa": "Decimal.scale/1",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Decimal.sqrt/1",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Decimal.sub/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "none",
+        "signature": "none"
+      },
+      "mfa": "Decimal.to_float/1",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "possible_input_approximate",
+        "body_guarded": "possible_input_approximate",
+        "default": "possible_domain_escape",
+        "signature": "possible_domain_escape"
+      },
+      "mfa": "Decimal.to_integer/1",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Decimal.to_string/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Decimal.to_string/3",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Decimal.Context.get/0",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "none",
+        "signature": "none"
+      },
+      "mfa": "Decimal.Context.set/1",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "none",
+        "signature": "none"
+      },
+      "mfa": "Decimal.Context.update/1",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "none",
+        "signature": "none"
+      },
+      "mfa": "Decimal.Context.with/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    }
+  ],
+  "label": "decimal_full",
+  "modules": [
+    {
+      "default_run_us": 17625,
+      "default_warnings": 0,
+      "error": null,
+      "module": "Decimal",
+      "sampled": false
+    },
+    {
+      "default_run_us": 327,
+      "default_warnings": 0,
+      "error": null,
+      "module": "Decimal.Context",
+      "sampled": false
+    },
+    {
+      "default_run_us": 34,
+      "default_warnings": 0,
+      "error": null,
+      "module": "Decimal.Error",
+      "sampled": false
+    },
+    {
+      "default_run_us": 383,
+      "default_warnings": 0,
+      "error": null,
+      "module": "Decimal.Macros",
+      "sampled": false
+    },
+    {
+      "default_run_us": 15,
+      "default_warnings": 0,
+      "error": null,
+      "module": "Inspect.Decimal",
+      "sampled": false
+    },
+    {
+      "default_run_us": 1047,
+      "default_warnings": 0,
+      "error": null,
+      "module": "JSON.Encoder.Decimal",
+      "sampled": false
+    },
+    {
+      "default_run_us": 12,
+      "default_warnings": 0,
+      "error": null,
+      "module": "String.Chars.Decimal",
+      "sampled": false
+    }
+  ],
+  "omissions": [
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "detected": false,
+      "detected_guarded": false,
+      "mfa": "Decimal.cmp/2",
+      "omission": "Decimal.cmp/2",
+      "slices": [
+        {
+          "body": "unknown",
+          "body_extra": "not (:eq or :gt or :lt)",
+          "body_reasons": [
+            "top_only"
+          ],
+          "body_top_only": true,
+          "default": "unknown",
+          "index": 0,
+          "signature": "unknown"
+        }
+      ],
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "detected": false,
+      "detected_guarded": false,
+      "mfa": "Decimal.compare/2",
+      "omission": "Decimal.compare/2",
+      "slices": [
+        {
+          "body": "unknown",
+          "body_extra": "not (:eq or :gt or :lt)",
+          "body_reasons": [
+            "top_only"
+          ],
+          "body_top_only": true,
+          "default": "unknown",
+          "index": 0,
+          "signature": "unknown"
+        }
+      ],
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    }
+  ],
+  "otp_release": "28",
+  "sample": {
+    "modules": [],
+    "seed": 20260928,
+    "size": 0
+  },
+  "totals": {
+    "body_errors": 0,
+    "body_unavailable": 0,
+    "cost": {
+      "body_calls": 46,
+      "body_max_us": 11560,
+      "body_median_us": 7925,
+      "body_p90_us": 8663,
+      "body_total_ms": 345,
+      "default_calls": 7,
+      "default_total_ms": 19
+    },
+    "extra_warning_slices": 0,
+    "extra_warnings": 0,
+    "function_classes": {
+      "body": {
+        "none": 17,
+        "possible_input_approximate": 1,
+        "unknown": 28
+      },
+      "body_guarded": {
+        "none": 17,
+        "possible_input_approximate": 1,
+        "unknown": 28
+      },
+      "default": {
+        "none": 16,
+        "possible_domain_escape": 2,
+        "unknown": 28
+      },
+      "signature": {
+        "none": 16,
+        "possible_domain_escape": 2,
+        "unknown": 28
+      }
+    },
+    "functions": 46,
+    "module_errors": 0,
+    "modules": 7,
+    "modules_sampled": 0,
+    "slice_classes": {
+      "body": {
+        "none": 17,
+        "possible_input_approximate": 1,
+        "unknown": 28
+      },
+      "body_guarded": {
+        "none": 17,
+        "possible_input_approximate": 1,
+        "unknown": 28
+      },
+      "default": {
+        "none": 16,
+        "possible_domain_escape": 2,
+        "unknown": 28
+      },
+      "signature": {
+        "none": 16,
+        "possible_domain_escape": 2,
+        "unknown": 28
+      }
+    },
+    "slices": 46,
+    "top_only_slices": {
+      "body": 23,
+      "body_guarded": 23,
+      "default": 23,
+      "signature": 23
+    },
+    "warn_functions": {
+      "body": 0,
+      "body_guarded": 0,
+      "default": 0,
+      "signature": 0
+    }
+  }
+}

@@ -498,6 +498,22 @@ Before any body result gates CI:
 Long term, ask upstream for a small API "infer this definition under these
 argument domains" returning diagnostics, signature and capability version.
 
+**Decision (body backend experiment, EXPERIMENTS.md):** not adopted.
+- **Recall.** Checking each slice's body under its spec domain through the
+  `warnings/7` hook gates 1 of the 9 known omissions (`quoted_type/2`), up
+  from 0. It reports the same 2 of 9.
+- **False positives.** It adds 1 fixture false positive that no diagnostic
+  guard removes: an unreachable `case` catch-all.
+- **Cost.** Each slice costs about one re-check of the module.
+- **What limits it.** The binding limits are helpers inferred under default
+  domains, generic `Enum`/`Map` signatures, and translation input
+  approximation. A spec domain on the target fixes none of them.
+- **Hook artefact.** `warnings/7` returns uncompacted local signatures. A
+  consumer must apply the compiler's `group_clauses_by_return/1` before
+  applying them, or many-clause functions pass the 16-clause cutoff.
+
+The minimal API proposal is in EXPERIMENTS.md "Minimal compiler API".
+
 ## 8. Mix task and configuration
 
 ```

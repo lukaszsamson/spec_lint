@@ -7,7 +7,9 @@ nine real omissions as executable reproducers.
     bench/corpus/
       README.md        this file
       run.sh           regenerates reports/
+      body_run.sh      regenerates reports/body/ (body-backend experiment)
       reports/         one JSON pair per corpus (see below)
+      reports/body/    body-backend experiment reports (see the last section)
       omissions/       README.md mapping the nine fixtures to their origin
 
 The omission fixtures themselves are `test/support/omission_fixtures.ex`,
@@ -149,3 +151,33 @@ Headline numbers of the current reports (functions / classes):
 No corpus of real code has a `clause_conflict` function, which is the one
 gating class: gating recall on the nine known real omissions is 0 of 9
 (see `omissions/README.md`).
+
+## Body-backend experiment (`reports/body/`)
+
+These are the reports behind EXPERIMENTS.md "Body backend experiment",
+written by `bench/body_experiment.exs`. The runner needs a build of
+`c24c235` carrying the `Module.Types.warnings/7` hook; it cannot run under
+the plain toolchain. `body_run.sh` states how to build it (a worktree of
+the Elixir checkout, one hunk of `b88a257a3`, `make compile`), and it
+recompiles decimal, plug and ecto with that build into a separate
+`MIX_BUILD_PATH`:
+
+    ELIXIR_BODY=/path/to/elixir-body SPEC_LINT_OSS=$OSS \
+      [SPEC_LINT_OSS_BODY=/path/to/oss-body] bench/corpus/body_run.sh
+
+Files:
+
+- `fixtures.json`: the omission reproducers and the experiment fixtures.
+- `enum_keyword.json`: cost on `Enum` and `Keyword`.
+- `decimal.json`, `plug.json`, `ecto.json`: the omission modules plus 30
+  random other modules (seed 20260928).
+- `*_full.json`: every module of each library, as totals, omissions, class
+  changes and one row per function.
+
+Each report keeps full detail only for omissions, for functions whose class
+or warning differs between modes, and for functions with an extra checker
+diagnostic. Every function has a row in `function_rows`. Paths are
+normalised as above.
+
+The cost fields (`body_us`, `default_run_us`, `totals.cost`) are wall-clock
+times, so two runs differ there. Everything else is deterministic.

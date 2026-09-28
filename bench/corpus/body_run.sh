@@ -1,0 +1,104 @@
+#!/usr/bin/env bash
+# Regenerates bench/corpus/reports/body/*.json, the body-backend experiment
+# of EXPERIMENTS.md "Body backend experiment" (bench/body_experiment.exs).
+#
+#     ELIXIR_BODY=/path/to/elixir-body SPEC_LINT_OSS=/path/to/oss \
+#       [SPEC_LINT_OSS_BODY=/path/to/oss-body] bench/corpus/body_run.sh
+#
+# ELIXIR_BODY is a build of the pinned revision c24c235 with only the
+# Module.Types.warnings/7 hook applied (see the README in this directory):
+#
+#     git -C ~/elixir worktree add --detach "$ELIXIR_BODY" c24c235
+#     git -C ~/elixir show b88a257a3 -- lib/elixir/lib/module/types.ex |
+#       git -C "$ELIXIR_BODY" apply
+#     make -C "$ELIXIR_BODY" compile
+#
+# SPEC_LINT_OSS holds the decimal, plug and ecto checkouts (bench/corpus/README.md).
+# They are compiled with the patched build into SPEC_LINT_OSS_BODY (default: a
+# temporary directory) with MIX_BUILD_PATH, so the checkouts' own _build is
+# not touched. The fixtures are compiled with the patched elixirc.
+#
+# Reports are normalised (paths replaced by $ELIXIR_BODY, $OSS, $OSS_BODY,
+# $SPEC_LINT and $TMP, keys sorted). They keep the wall-clock cost fields
+# (`body_us`, `default_run_us`, `totals.cost`), so two runs differ there.
+set -euo pipefail
+
+root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+body="${ELIXIR_BODY:?set ELIXIR_BODY to the patched Elixir build}"
+oss="${SPEC_LINT_OSS:?set SPEC_LINT_OSS to the directory holding the corpus checkouts}"
+out="$root/bench/corpus/reports/body"
+raw="$(mktemp -d)"
+trap 'rm -rf "$raw"' EXIT
+oss_body="${SPEC_LINT_OSS_BODY:-$raw/oss-body}"
+
+command -v jq >/dev/null || { echo "jq is required" >&2; exit 2; }
+
+"$body/bin/elixir" -e 'Code.ensure_loaded!(Module.Types)
+  unless function_exported?(Module.Types, :warnings, 7), do: System.halt(3)' ||
+  { echo "$body has no Module.Types.warnings/7" >&2; exit 2; }
+
+cd "$root"
+mkdir -p "$out"
+MIX_ENV=test mix compile >/dev/null
+spec_lint_ebin="$root/_build/test/lib/spec_lint/ebin"
+
+run() {
+  local name="$1"
+  shift
+  echo "== $name" >&2
+  "$body/bin/elixir" -pa "$spec_lint_ebin" bench/body_experiment.exs -- "$@" \
+    --label "$name" --out "$raw/$name.json" 2>"$raw/$name.log" ||
+    { cat "$raw/$name.log" >&2; exit 1; }
+  sed -e "s#$oss_body#\$OSS_BODY#g" -e "s#$oss#\$OSS#g" -e "s#$body#\$ELIXIR_BODY#g" \
+    -e "s#$root#\$SPEC_LINT#g" -e "s#$raw#\$TMP#g" "$raw/$name.json" | jq -S "$reduce" >"$raw/$name.reduced.json"
+  case "$name" in
+    # The full runs repeat the detail of the sampled runs; keep their totals,
+    # omissions, class changes and one row per function.
+    *_full) jq -S 'del(.functions)' "$raw/$name.reduced.json" >"$out/$name.json" ;;
+    *) mv "$raw/$name.reduced.json" "$out/$name.json" ;;
+  esac
+}
+
+# Full detail only for the functions that matter to the experiment: an
+# omission, a class that differs between the modes, a warning in any mode or
+# an extra checker diagnostic. Every other function keeps one row (MFA,
+# classes, warn flags) so the class counts can be recomputed.
+reduce='.functions as $all
+  | .functions = [$all[] | select(.omission != null
+      or ([.class[]] | unique | length) > 1
+      or ([.warn[]] | any)
+      or ([.slices[].extra_warnings[]] | length) > 0)]
+  | .function_rows = [$all[] | {mfa, class, warn, sampled, omission}]'
+
+# Fixtures: the omission reproducers and the experiment fixtures, compiled
+# with the patched compiler (SpecLint.Fixtures is only needed to compile them).
+mkdir -p "$raw/fixtures_ebin"
+"$body/bin/elixirc" -o "$raw/fixtures_ebin" test/support/fixtures.ex \
+  test/support/omission_fixtures.ex test/support/experiment_fixtures.ex >/dev/null
+run fixtures --ebin "$raw/fixtures_ebin" \
+  --prefix SpecLint.OmissionFixtures --prefix SpecLint.ExperimentFixtures
+
+# Cost on two stdlib modules (DESIGN.md section 7, item 4).
+run enum_keyword --ebin "$body/lib/elixir/ebin" --module Enum --module Keyword
+
+# decimal, plug, ecto: the omission modules plus 30 random others (the whole
+# candidate pool of decimal, 1, and of plug, 11, then 18 from ecto; seed
+# 20260928), then every module of each library.
+for lib in decimal plug ecto; do
+  if [ ! -d "$oss_body/$lib/lib/$lib/ebin" ]; then
+    echo "== compiling $lib with the patched build into $oss_body/$lib" >&2
+    (cd "$oss/$lib" && PATH="$body/bin:$PATH" MIX_ENV=test MIX_BUILD_PATH="$oss_body/$lib" \
+      "$body/bin/mix" compile >"$raw/$lib.compile.log" 2>&1) ||
+      { cat "$raw/$lib.compile.log" >&2; exit 1; }
+  fi
+done
+
+declare -A sample=([decimal]=1 [plug]=11 [ecto]=18)
+
+for lib in decimal plug ecto; do
+  cp_args=()
+  for d in "$oss_body/$lib"/lib/*/ebin; do cp_args+=(--code-path "$d"); done
+  ebin="$oss_body/$lib/lib/$lib/ebin"
+  run "$lib" --ebin "$ebin" "${cp_args[@]}" --sample "${sample[$lib]}" --seed 20260928
+  run "${lib}_full" --ebin "$ebin" "${cp_args[@]}"
+done

@@ -715,3 +715,355 @@ Two fixtures were added:
 The four clause-conflict detections (`lookup/1`, `labels/1`, `size_of/1`,
 `stale/1`) are unchanged: none of their conflicting clauses is shadowed and
 none has an `arrow_polarity` argument.
+
+# Body backend experiment
+
+Date 2026-09-28. DESIGN section 7, STATUS next step 1, external review
+item 4. The question: does type-checking function bodies under the
+argument domain of one spec slice find the nine known omissions that the
+stored signature misses? Does it add false positives on the fixtures or on
+real code, and what does it cost?
+
+## Decision
+
+**Body analysis does not materially improve recall, so it is not added to
+the product.** SpecLint stays signature-only: SL007 and `analysis: :bodies`
+keep exiting 2, and `SpecLint.Bodies` is not built.
+
+On the nine known omissions:
+
+- **Gating recall goes from 0 of 9 to 1 of 9.**
+  `Ecto.Query.Builder.quoted_type/2` becomes a gated `clause_conflict`. Its
+  `:atom` clause is contained once the `vars` argument is typed from the
+  spec.
+- **Reported recall stays at 2 of 9**, and they are the same two functions.
+  `Join.escape/3` moves from `possible_domain_escape` to
+  `possible_input_approximate`.
+- **The other seven stay `unknown`.**
+
+The nine reproducers in `test/support/omission_fixtures.ex` give the same
+results.
+
+The measured gains elsewhere are small and all report-only:
+
+- **One new real omission, found and confirmed by running it.**
+  `Ecto.Changeset.apply_changes(%Ecto.Changeset{})` returns `nil`, but the
+  spec says `Ecto.Schema.t() | map()`. The root cause is the same as
+  `apply_action/2`. It is reported as `possible_domain_escape`, not gated.
+- **Two of the four report-only false positives on decimal, plug and ecto
+  are removed:** `Decimal.scale/1` and `Ecto.Query.Builder.CTE.escape/2`.
+- **18 more obligations are established** (`unknown` to `none`): 13 in
+  plug, mostly `Plug.Conn` struct updates, and 5 in ecto.
+
+The measured costs:
+
+- **Fixtures.** Two new false positives on the 25 experiment fixtures.
+  - `name/1` returns `nil` from a head clause that the body run itself
+    reports as redundant.
+  - `display/1` returns `nil` from a `case` branch that cannot be reached
+    under the spec domain. The checker does not flag that branch, even in
+    `:static` mode.
+
+  The redundancy guard removes `name/1` and cannot remove `display/1`. A
+  defensive catch-all is a common real-code shape, and body analysis turns
+  it from `domain_escape` into contained evidence.
+- **Real code.** On real code the body run added no warning except
+  `quoted_type/2`, a true omission: 0 new false positives on the 30 random
+  modules (114 functions), and 0 on all of decimal, plug and ecto (297
+  slices).
+- **Time.** Each slice re-checks the whole module: a median of 3 to 8 ms
+  per slice on OSS modules and 4.4 ms on `Enum`. Over the three libraries
+  this is 1.7 s of body calls, against 1.2 s for the whole signature
+  analysis.
+
+**What body analysis does not solve**, counting the 8 misses (the cause
+lists overlap):
+
+- **Top-only returns from callees**, which the spec domain does not reach.
+  - Helper insensitivity (3): `Decimal.compare/2`, `cmp/2` and
+    `Ecto.Changeset.apply_action/2`. Helpers keep the `:default` domain
+    (DESIGN 7 item 1), so a value passed through a private helper or a
+    public callee comes back as `dynamic()`.
+  - Generic stdlib calls without parametric signatures (4):
+    `Plug.Conn.Query.decode/4`, `merge_private/2`, `Ecto.Repo.Assoc.query/4`
+    and `Ecto.Repo.Preloader.query/7`. `Enum.map/2`, `Enum.reduce/3`,
+    `Enum.into/2` and `Map.new/1` return `dynamic()` whatever the fun or
+    the input returns.
+- **Input approximation from translation** (primary in 1, secondary in 3).
+  `Join.escape/3`: `Macro.t()` (`recursive_cutoff`) and `Macro.Env.t()`
+  (`map_key_widened`, `integer_refinement_erased`) make every clause
+  `containment_unknown`. Its clause returns (5-tuples) are disjoint from
+  the spec, so an exact domain would give a `clause_conflict`. `Decimal.t()`,
+  `Plug.Conn.t()` and `Ecto.Changeset.t()` cap three more at
+  `possible_input_approximate` even if their returns became precise.
+- **Representation and recogniser limits.**
+  - Negated struct fields (`merge_private/2`) and improper-list negations
+    (`Preloader.query/7`) are not structured components.
+  - A list of rows under a spec of `[struct()]` (`Assoc.query/4`) shares
+    `[]` with the spec, so it is not disjoint, and a list whose elements
+    are lists is not recognised.
+  - Pattern parts not bound to a variable keep their pattern type
+    (`term()` fields). The spec domain only refines variables, so struct
+    clauses of `Decimal.compare/2` still escape.
+- **Recursion.** A self-call during inference yields `dynamic()`, so
+  recursive clauses stay top-only (`Join.escape/3`, `quoted_type/2`, the
+  helper `unextract/3`). Per-clause evidence (DESIGN 3.1 step 7) already
+  isolates these clauses, so recursion is never the only blocker.
+
+**What would reopen the decision:**
+
+- an upstream API with call-site-sensitive helper inference, or parametric
+  signatures for `Enum` and `Map`;
+- a translator that keeps `D_lo` for recursive and struct types;
+- a corpus where the body run gates at least 3 confirmed omissions that
+  the signature misses, with no confirmed false positive.
+
+| Measure | Signature (product) | Body (spec domain) |
+| --- | --- | --- |
+| Known omissions gated (`clause_conflict` or SL002 candidate) | 0 of 9 | **1 of 9** (`quoted_type/2`) |
+| Known omissions reported (any SL001 or SL002 class) | 2 of 9 | 2 of 9 |
+| Reproducers gated / reported | 0 / 2 of 9 | 1 / 2 of 9 |
+| Experiment fixtures: detected / false positives (25) | 9 / 0 | 9 / 2 (9 / 1 with the redundancy guard) |
+| New warnings on the 30 random modules (114 functions) | n/a | 0 |
+| New warnings on all of decimal, plug and ecto (297 functions) | n/a | 1 (`quoted_type/2`, a true omission) |
+| Reported functions (SL001 or SL002) on decimal, plug and ecto: true / false positives | 2 / 4 | 3 / 2 |
+| Top-only slices on decimal, plug and ecto | 141 | 129 (132 from remote resolution alone) |
+| Cost over decimal, plug and ecto | 1.16 s (whole analysis) | +1.67 s of body calls, +0.34 s of default runs |
+
+## Setup
+
+- **Compiler.** The pinned revision `c24c235` in a detached worktree of
+  `~/elixir`, with only the `Module.Types.warnings/7` hunk of `b88a257a3`
+  (`ls-typespec-tightening`) applied. It applied cleanly: 25 lines added,
+  3 removed.
+
+      git -C ~/elixir worktree add --detach $ELIXIR_BODY c24c235
+      git -C ~/elixir show b88a257a3 -- lib/elixir/lib/module/types.ex |
+        git -C $ELIXIR_BODY apply
+      make -C $ELIXIR_BODY compile          # 31 s
+
+  The build reports `1.21.0-dev (c24c235)`. `:elixir_erl.checker_version()`
+  is still `:elixir_checker_v10`, and `SpecLint.Compiler.preflight/0`
+  accepts it with `body_hook: true`. `~/elixir` was not modified. The
+  worktree is kept in the session scratchpad at
+  `$SCRATCHPAD/elixir-body`, where `$SCRATCHPAD` is
+  `/private/tmp/claude-501/-Users-lukaszsamson-claude-fun-spec-lint/4edd4a29-0707-4a4d-91b9-c1bef7d15467/scratchpad`.
+  It is not durable, and the commands above recreate it.
+- **Corpora.**
+  - decimal, plug and ecto at the pinned revisions, compiled with the
+    patched build into a separate `MIX_BUILD_PATH` (`$SCRATCHPAD/oss-body`),
+    so the pinned checkouts stay untouched.
+  - The fixtures (`test/support/{fixtures,omission_fixtures,experiment_fixtures}.ex`),
+    compiled with the patched `elixirc`.
+  - `Enum` and `Keyword`, for cost only.
+- **Runner.** `bench/body_experiment.exs` runs under the patched `elixir`
+  with `-pa _build/test/lib/spec_lint/ebin`, not under `mix run`.
+  `bench/corpus/body_run.sh` issues every invocation and writes
+  `bench/corpus/reports/body/*.json`:
+
+      ELIXIR_BODY=... SPEC_LINT_OSS=... [SPEC_LINT_OSS_BODY=...] bench/corpus/body_run.sh
+
+- **Selection.** Two runs per library:
+  - the modules holding the omissions plus 30 random other modules with
+    at least one compared slice, drawn with seed 20260928. That is
+    decimal 1 and plug 11 (each library's whole pool), and ecto 18;
+  - every module of the library (`*_full`).
+
+  Both runs give the same class changes.
+- **Modes.** Each compared slice is classified four times, with the
+  existing `SpecLint.Compare.slice/3` and `SpecLint.Evidence.classify/1`:
+  - `signature`: the stored `ExCk` signature, as the product sees it;
+  - `default`: `warnings/7` with every domain `:default`. The checker runs
+    in `:dynamic` mode here and resolves remote calls, which the `:infer`
+    pass that writes the chunk skips. This isolates that effect;
+  - `body`: `warnings/7` with the target's domain
+    `{:dynamic, [dynamic(D_hi_i)]}` of this slice and every other
+    definition `:default`. Each call is one slice with the whole tuple
+    domain in a fresh checker context (`warnings/7` builds a new context
+    per call; only the remote-export cache is shared). The target's
+    `local_sigs` entry, compacted as the compiler does before writing the
+    chunk, replaces the inferred clauses;
+  - `body_guarded`: `body`, except that a slice does not warn when the body
+    run reports one of the target's clauses as redundant.
+- **Detection.** A function is detected when a slice is a gated SL001
+  `clause_conflict` or an SL002 `structured_possible` candidate. The
+  prerequisites are those of `bench/experiment.exs`.
+- **One environment difference in the `signature` column.**
+  `Plug.Conn.get_ssl_data/1` is `unknown` here and `none` in
+  `bench/corpus/reports/plug.json`. Under plain `elixir` every OTP
+  application is on the code path, so `:ssl.connection_info()` resolves.
+  Under `mix run`, Mix prunes the code path, so the remote type is
+  unresolved (`term()`). Every other function of decimal, plug and ecto has
+  the same signature class as the committed reports.
+- **Hook artefact found and corrected.** `warnings/7` returns `local_sigs`
+  without the `group_clauses_by_return/1` compaction that `infer/7`
+  applies before storing. Uncompacted, `Plug.Conn.Status.code/1` (70
+  clauses) passes the 16-clause application cutoff and becomes top-only,
+  which is a spurious regression. The runner copies the compaction.
+
+## Recall on the nine known omissions
+
+| Omission | Signature class | Body class | Detected | Why not |
+| --- | --- | --- | --- | --- |
+| `Decimal.compare/2` | unknown (top-only) | unknown (top-only) | no | Helper insensitivity: the NaN clauses return through the `error/4` macro and the private `handle_error/4`, which is inferred with `dynamic()` arguments, so the clause returns `dynamic()`. The struct-pattern clauses still escape (unbound fields keep `term()`). `Decimal.t()` is input-approximate (`1 \| -1`, `non_neg_integer()`) and would cap the class at `possible_input_approximate`. |
+| `Decimal.cmp/2` | unknown (top-only) | unknown (top-only) | no | Helper insensitivity: delegates to `compare/2`, which is analysed under its default domain and returns `dynamic()`. |
+| `Plug.Conn.Query.decode/4` | unknown (top-only) | unknown (top-only) | no | Generic stdlib calls: `Map.new/1` and `Enum.reduce/3` return `dynamic()`. The `""` clause and the `is_binary` clause share the argument type `binary()`, so they merge into one clause. |
+| `Plug.Conn.merge_private/2` | unknown | unknown | no | `Enum.into/2` is generic, so `private` is `term()`. The extra is a struct whose `private` field is negated, which is not a counted component (representation limit). `Plug.Conn.t()` is input-approximate. |
+| `Ecto.Changeset.apply_action/2` | unknown | unknown | no | Helper insensitivity: `apply_changes/1` is analysed under its default domain, so `{:ok, term()}` is a subtraction payload. The same body run on `apply_changes/1` itself finds the `nil` (see below). |
+| `Ecto.Query.Builder.Join.escape/3` | possible_domain_escape | possible_input_approximate | no | Input approximation: `Macro.t()` and `Macro.Env.t()` losses make all 10 clauses `containment_unknown`. Nine clause returns are 5-tuples disjoint from the spec (would be `clause_conflict` with an exact domain). The recursive clause is top-only. |
+| `Ecto.Query.Builder.quoted_type/2` | possible_domain_escape | **clause_conflict** | **yes** | The literal-atom clause (`is_atom and not is_nil`) returns `:atom`, which is not in `Ecto.Type.primitive()`. The clause is contained once `vars` is `Keyword.t()`. The other stale clauses stay `containment_unknown`. |
+| `Ecto.Repo.Assoc.query/4` | unknown (top-only) | unknown (top-only) | no | `Enum.map(rows, fun)` gives `dynamic()` although `fun` is typed (no parametric signature). The `for` clause gives `list(non_empty_list(term(), term()))`, which shares `[]` with `[struct()]`, and its list-of-lists extra is not recognised. |
+| `Ecto.Repo.Preloader.query/7` | unknown (top-only) | unknown (top-only) | no | `Enum.map` with an untyped `fun()`, plus the recursive private `unextract/3`, give an improper-list negation extra. |
+
+Gated recall is 0 of 9 before and 1 of 9 after. Reported recall is 2 of 9
+before and after. All nine fixture reproducers
+(`SpecLint.OmissionFixtures.Cases`) give the same signature class, the
+same body class and the same detection as their originals.
+
+The `default` column (not shown) equals `signature` for all nine: remote
+resolution alone changes nothing on them.
+
+## False positives
+
+**The 25 experiment fixtures:**
+
+| Mode | Detected | Suppressed | False positive | True negative |
+| --- | --- | --- | --- | --- |
+| `signature` | 9 | 2 | 0 | 14 |
+| `default` | 9 | 2 | 0 | 14 |
+| `body` | 9 | 2 | **2** (`name/1`, `display/1`) | 12 |
+| `body_guarded` | 9 | 2 | **1** (`display/1`) | 13 |
+
+- **`name/1`** (`def name(a) when is_atom(a)`, then `def name(_), do:
+  nil`, spec `atom() -> String.t()`). Under the spec domain the second
+  clause is redundant, and the body run says so. Its argument type is
+  still `atom()`, so the two clauses merge into
+  `(atom()) -> dynamic(binary()) or nil`, and `nil` becomes contained
+  structured evidence.
+- **`display/1`** (the same catch-all inside a `case`). The checker does
+  not report the `_ -> nil` branch as unreachable under
+  `dynamic(atom())`, nor under `atom()` in `:static` mode. The guard cannot
+  see it.
+- **Other class changes are harmless.**
+  - `kind/1` and `Secret.new/1` become `none`.
+  - `count/1` moves from `possible_domain_escape` to
+    `whole_kind_possible`: `1 + dynamic()` still gives `float()`.
+  - `wrap/1` becomes `unknown`: the helper call is now a type error under
+    the domain.
+
+**Real code.** No new warning appears on the 30 random modules or on the
+rest of the three libraries. The only new warning in all 297 slices is
+`quoted_type/2`, a true omission.
+
+Every class change was triaged by reading the source:
+
+| Function | Signature → body | Verdict |
+| --- | --- | --- |
+| `Ecto.Query.Builder.quoted_type/2` | possible_domain_escape → clause_conflict (gated) | True omission (known). `quoted_type(:foo, vars)` returns `:atom`. |
+| `Ecto.Changeset.apply_changes/1` | unknown → possible_domain_escape | **New true omission.** `apply_changes(%Ecto.Changeset{})` returns `nil` (run on the pinned ecto), outside `Ecto.Schema.t() \| data` with `data :: map()`. Report-only: the clause escapes because its unbound struct fields keep `term()`. |
+| `Ecto.Query.Builder.Join.escape/3` | possible_domain_escape → possible_input_approximate | True omission (known), still report-only. |
+| `Decimal.to_integer/1` | possible_domain_escape → possible_input_approximate | False positive kept: a `float()` from arithmetic, the O3 shape. |
+| `Ecto.Changeset.field_missing?/2` | possible_domain_escape → possible_input_approximate | False positive kept: the falsy branch of `&&`. |
+| `Decimal.scale/1` | possible_domain_escape → none | False positive removed. |
+| `Ecto.Query.Builder.CTE.escape/2` | possible_domain_escape → unknown | False positive removed. |
+| 13 `Plug.Conn` functions, `Ecto.put_meta/2`, 4 `Ecto.Changeset` functions, 3 `Keyword` functions | unknown → none | The obligation is now established. A struct update of `dynamic(Plug.Conn.t())` keeps the typed fields. |
+
+In the 30 random modules, the only class changes are `Ecto.put_meta/2`
+(unknown → none) and `CTE.escape/2` (false positive removed).
+
+**Diagnostic diff** (DESIGN 7 item 3). These are the checker warnings the
+spec-domain run adds to the default run. All were read, and none is a bug.
+
+| Corpus | Extra warnings | What they are |
+| --- | --- | --- |
+| decimal | 0 | |
+| plug | 2 on 2 slices | `Plug.Conn.resp/3`: the `nil` body clause cannot match. `Plug.forward/4`: the `{mod, fun}` clause of `do_forward/3` is unused because the spec says `atom()` (a spec narrower than the code). |
+| ecto | 8 on 5 slices | Defensive `Builder.error!` clauses that are redundant or can never match under the spec (`CTE.apply/5`, `From.build/5`, `Join.build/10`, `Windows.build/4`), and one tuple pattern in `Builder.escape/5`. |
+| Enum, Keyword | 20 on 11 slices | Clauses that belong to the other spec overload: `max/2`, `min/2`, `min_max/2`, `min_max_by/3` and `with_index/2` report "guard will never succeed" or "incompatible default arguments". `Enum.slice/2` has a redundant clause. |
+| fixtures | 4 on 4 slices | Redundant clauses (`name/1`, `pick/1`), a constant conditional (`kind/1`), and the badapply in `wrap/1`. |
+
+The guard fires on 7 slices in total, and changes the outcome only on
+`name/1`.
+
+## Cost
+
+These are wall-clock times of `warnings/7` calls, from the committed
+reports (`totals.cost`). Signature analysis is the Phase 1 runtime of the
+whole corpus.
+
+| Corpus | Slices | Body calls total | Median / p90 / max per slice | Default runs | Signature analysis |
+| --- | --- | --- | --- | --- | --- |
+| fixtures | 37 | 18 ms | 0.45 / 0.68 / 1.3 ms | 7 ms | |
+| `Enum` + `Keyword` | 142 | 542 ms | 4.4 / 5.0 / 8.6 ms | 15 ms | |
+| decimal (all) | 46 | 345 ms | 7.9 / 8.7 / 11.6 ms | 19 ms | 66 ms |
+| plug (all) | 86 | 533 ms | 5.3 / 12.0 / 24.8 ms | 70 ms | 402 ms |
+| ecto (all) | 165 | 788 ms | 2.9 / 13.8 / 16.5 ms | 250 ms | 694 ms |
+
+- **One slice costs about one re-check of the whole module.** `warnings/7`
+  traverses every definition of the module, not only the target and what
+  it reaches. For example, `Ecto.Changeset` costs 32 ms for one default
+  run, and its slices cost up to 20 ms each. The per-module cost is
+  therefore slices times module size.
+- **Whole runs**, including VM start, signature analysis and all
+  `warnings/7` calls: decimal 1.2 s, plug 2.3 s, ecto 3.6 s.
+- **The stdlib was not run.** At the `Enum` rate of about 4 ms per slice,
+  its 1,777 slices would take about 8 s, against 2.7 s for signature
+  analysis.
+- **Batching** (DESIGN 7 item 4) is not needed at these sizes.
+
+## Minimal compiler API
+
+This is what the experiment needed from the compiler, and what the
+current hook lacks.
+
+```elixir
+# Capability probe; replaces function_exported?(Module.Types, :warnings, 7).
+Module.Types.capabilities() :: %{infer_under_domains: 1, checker: :elixir_checker_v10}
+
+Module.Types.infer_under_domains(module, file, attrs, defs, no_warn_undefined, cache,
+  targets :: %{{atom(), arity()} => {:dynamic | :static, [Descr.t()]}}
+) :: %{
+  version: 1,
+  # Per target, in the form stored in ExCk (group_clauses_by_return applied).
+  signatures: %{{atom(), arity()} => {:infer, domain, [{[Descr.t()], Descr.t()}]}},
+  # Per target and source clause: which signature clause it feeds, and
+  # whether it is reachable under the given domain.
+  clauses: %{{atom(), arity()} => [%{clause: non_neg_integer(),
+                                     signature_clause: non_neg_integer(),
+                                     reachability: :reachable | :redundant | :unused}]},
+  diagnostics: [{module(), warning :: term(), location :: term()}]
+}
+```
+
+Contract:
+
+- **Only the targets are checked**, plus the local definitions they reach.
+  `local_handler/5` already infers lazily. Today `warnings/7` walks every
+  definition, which makes one slice cost one module.
+- **One target per call has its own fresh context.** Helpers are inferred
+  under `:default`.
+- **Signatures come in stored form.** The returned signature is compacted
+  as it is when written to `ExCk`, so the SpecLint application copy
+  (`apply_infer/2`, 16-clause cutoff) applies unchanged.
+- **Reachability is per source clause.** This lets a consumer drop the
+  return of a clause the domain makes redundant, instead of blocking the
+  slice. It also replaces the stored-domain shadowing approximation
+  (DESIGN 3.1 step 7).
+- **The capability is versioned separately** from the checker chunk
+  version. The hook does not change the chunk.
+
+The `ls-typespec-tightening` hook (`warnings/7`, a domains callback
+returning `:default | {mode, [arg_descr]}` and `{warnings, local_sigs}`)
+covers the first two points in spirit. Its gaps are these: it returns
+uncompacted `local_sigs` with the internal `{kind, info, mapping}` shape,
+has no reachability per clause, checks the whole module, and can only be
+detected by `function_exported?/3`.
+
+Two things would matter more for recall than this API, and neither is a
+hook:
+
+- call-site-sensitive helper inference;
+- parametric signatures for `Enum.map/2`, `Enum.reduce/3`, `Enum.into/2`
+  and `Map.new/1`.
+
+Together they cover 7 of the 8 misses.

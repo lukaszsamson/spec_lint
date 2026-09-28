@@ -1,0 +1,2164 @@
+{
+  "adapter": "1.21.0-dev+c24c235",
+  "body_hook": true,
+  "changed": [
+    {
+      "body": "none",
+      "default": "unknown",
+      "mfa": "Plug.Conn.assign/3",
+      "signature": "unknown",
+      "warn_body": false,
+      "warn_body_guarded": false,
+      "warn_signature": false
+    },
+    {
+      "body": "none",
+      "default": "unknown",
+      "mfa": "Plug.Conn.get_cookies/1",
+      "signature": "unknown",
+      "warn_body": false,
+      "warn_body_guarded": false,
+      "warn_signature": false
+    },
+    {
+      "body": "none",
+      "default": "unknown",
+      "mfa": "Plug.Conn.get_resp_cookies/1",
+      "signature": "unknown",
+      "warn_body": false,
+      "warn_body_guarded": false,
+      "warn_signature": false
+    },
+    {
+      "body": "none",
+      "default": "unknown",
+      "mfa": "Plug.Conn.halt/1",
+      "signature": "unknown",
+      "warn_body": false,
+      "warn_body_guarded": false,
+      "warn_signature": false
+    },
+    {
+      "body": "none",
+      "default": "unknown",
+      "mfa": "Plug.Conn.inform/3",
+      "signature": "unknown",
+      "warn_body": false,
+      "warn_body_guarded": false,
+      "warn_signature": false
+    },
+    {
+      "body": "none",
+      "default": "unknown",
+      "mfa": "Plug.Conn.inform!/3",
+      "signature": "unknown",
+      "warn_body": false,
+      "warn_body_guarded": false,
+      "warn_signature": false
+    },
+    {
+      "body": "none",
+      "default": "unknown",
+      "mfa": "Plug.Conn.prepend_req_headers/2",
+      "signature": "unknown",
+      "warn_body": false,
+      "warn_body_guarded": false,
+      "warn_signature": false
+    },
+    {
+      "body": "none",
+      "default": "unknown",
+      "mfa": "Plug.Conn.prepend_resp_headers/2",
+      "signature": "unknown",
+      "warn_body": false,
+      "warn_body_guarded": false,
+      "warn_signature": false
+    },
+    {
+      "body": "none",
+      "default": "unknown",
+      "mfa": "Plug.Conn.push/3",
+      "signature": "unknown",
+      "warn_body": false,
+      "warn_body_guarded": false,
+      "warn_signature": false
+    },
+    {
+      "body": "none",
+      "default": "unknown",
+      "mfa": "Plug.Conn.push!/3",
+      "signature": "unknown",
+      "warn_body": false,
+      "warn_body_guarded": false,
+      "warn_signature": false
+    },
+    {
+      "body": "none",
+      "default": "unknown",
+      "mfa": "Plug.Conn.put_private/3",
+      "signature": "unknown",
+      "warn_body": false,
+      "warn_body_guarded": false,
+      "warn_signature": false
+    },
+    {
+      "body": "none",
+      "default": "unknown",
+      "mfa": "Plug.Conn.put_status/2",
+      "signature": "unknown",
+      "warn_body": false,
+      "warn_body_guarded": false,
+      "warn_signature": false
+    },
+    {
+      "body": "none",
+      "default": "unknown",
+      "mfa": "Plug.Conn.resp/3",
+      "signature": "unknown",
+      "warn_body": false,
+      "warn_body_guarded": false,
+      "warn_signature": false
+    }
+  ],
+  "checker_version": "elixir_checker_v10",
+  "ebins": [
+    "$OSS_BODY/plug/lib/plug/ebin"
+  ],
+  "fixtures": null,
+  "function_rows": [
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.forward/4",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.run/3",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.BasicAuth.basic_auth/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "none",
+        "signature": "none"
+      },
+      "mfa": "Plug.BasicAuth.encode_basic_auth/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.BasicAuth.parse_basic_auth/1",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.BasicAuth.request_basic_auth/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.Builder.compile/3",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.Conn.assign/3",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.Conn.chunk/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.Conn.clear_session/1",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.Conn.configure_session/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.Conn.delete_req_header/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.Conn.delete_resp_cookie/3",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.Conn.delete_resp_header/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.Conn.delete_session/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.Conn.fetch_cookies/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.Conn.fetch_query_params/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.Conn.fetch_session/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.Conn.get_cookies/1",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.Conn.get_http_protocol/1",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.Conn.get_peer_data/1",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.Conn.get_req_header/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.Conn.get_resp_cookies/1",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.Conn.get_resp_header/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.Conn.get_session/1",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "none",
+        "signature": "none"
+      },
+      "mfa": "Plug.Conn.get_session/3",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.Conn.get_sock_data/1",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.Conn.get_ssl_data/1",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.Conn.halt/1",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.Conn.inform/3",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.Conn.inform!/3",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.Conn.merge_assigns/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.Conn.merge_private/2",
+      "omission": "Plug.Conn.merge_private/2",
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.Conn.merge_req_headers/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.Conn.merge_resp_headers/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.Conn.prepend_req_headers/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.Conn.prepend_resp_headers/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.Conn.push/3",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.Conn.push!/3",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.Conn.put_private/3",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.Conn.put_req_header/3",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.Conn.put_resp_content_type/3",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.Conn.put_resp_cookie/4",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.Conn.put_resp_header/3",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.Conn.put_session/3",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.Conn.put_status/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.Conn.read_body/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.Conn.read_part_body/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.Conn.read_part_headers/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.Conn.register_before_send/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.Conn.resp/3",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.Conn.send_chunked/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.Conn.send_file/5",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.Conn.send_resp/1",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.Conn.send_resp/3",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.Conn.update_req_header/4",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.Conn.update_resp_header/4",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.Conn.upgrade_adapter/3",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.Conn.Query.decode/4",
+      "omission": "Plug.Conn.Query.decode/4",
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.Conn.Query.decode_done/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.Conn.Query.decode_each/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "none",
+        "signature": "none"
+      },
+      "mfa": "Plug.Conn.Query.decode_init/0",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.Conn.Query.encode/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "none",
+        "signature": "none"
+      },
+      "mfa": "Plug.Conn.Status.code/1",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "none",
+        "signature": "none"
+      },
+      "mfa": "Plug.Conn.Status.reason_atom/1",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "none",
+        "body_guarded": "none",
+        "default": "none",
+        "signature": "none"
+      },
+      "mfa": "Plug.Conn.Status.reason_phrase/1",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.Conn.Utils.content_type/1",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.Conn.Utils.list/1",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.Conn.Utils.media_type/1",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.Conn.Utils.params/1",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.Conn.Utils.token/1",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.Conn.Utils.validate_utf8!/3",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.HTML.html_escape/1",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.HTML.html_escape_to_iodata/1",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.RequestId.generate/0",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.Router.match_path/1",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.SSL.configure/1",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.Test.conn/3",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.Test.delete_req_cookie/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.Test.init_test_session/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.Test.put_req_cookie/4",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.Test.recycle_cookies/2",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.Upload.delete/1",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.Upload.give_away/3",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.Upload.random_file/1",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "mfa": "Plug.Upload.random_file!/1",
+      "omission": null,
+      "sampled": false,
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    }
+  ],
+  "label": "plug_full",
+  "modules": [
+    {
+      "default_run_us": 5364,
+      "default_warnings": 0,
+      "error": null,
+      "module": "Inspect.Plug.Conn",
+      "sampled": false
+    },
+    {
+      "default_run_us": 3695,
+      "default_warnings": 0,
+      "error": null,
+      "module": "Plug",
+      "sampled": false
+    },
+    {
+      "default_run_us": 625,
+      "default_warnings": 0,
+      "error": null,
+      "module": "Plug.Adapters.Cowboy",
+      "sampled": false
+    },
+    {
+      "default_run_us": 8050,
+      "default_warnings": 0,
+      "error": null,
+      "module": "Plug.Adapters.Test.Conn",
+      "sampled": false
+    },
+    {
+      "default_run_us": 301,
+      "default_warnings": 0,
+      "error": null,
+      "module": "Plug.Application",
+      "sampled": false
+    },
+    {
+      "default_run_us": 39,
+      "default_warnings": 0,
+      "error": null,
+      "module": "Plug.BadRequestError",
+      "sampled": false
+    },
+    {
+      "default_run_us": 494,
+      "default_warnings": 0,
+      "error": null,
+      "module": "Plug.BasicAuth",
+      "sampled": false
+    },
+    {
+      "default_run_us": 2962,
+      "default_warnings": 0,
+      "error": null,
+      "module": "Plug.Builder",
+      "sampled": false
+    },
+    {
+      "default_run_us": 3911,
+      "default_warnings": 0,
+      "error": null,
+      "module": "Plug.CSRFProtection",
+      "sampled": false
+    },
+    {
+      "default_run_us": 24,
+      "default_warnings": 0,
+      "error": null,
+      "module": "Plug.CSRFProtection.InvalidCSRFTokenError",
+      "sampled": false
+    },
+    {
+      "default_run_us": 25,
+      "default_warnings": 0,
+      "error": null,
+      "module": "Plug.CSRFProtection.InvalidCrossOriginRequestError",
+      "sampled": false
+    },
+    {
+      "default_run_us": 7036,
+      "default_warnings": 0,
+      "error": null,
+      "module": "Plug.Conn",
+      "sampled": false
+    },
+    {
+      "default_run_us": 98,
+      "default_warnings": 0,
+      "error": null,
+      "module": "Plug.Conn.Adapter",
+      "sampled": false
+    },
+    {
+      "default_run_us": 43,
+      "default_warnings": 0,
+      "error": null,
+      "module": "Plug.Conn.AlreadySentError",
+      "sampled": false
+    },
+    {
+      "default_run_us": 28,
+      "default_warnings": 0,
+      "error": null,
+      "module": "Plug.Conn.CookieOverflowError",
+      "sampled": false
+    },
+    {
+      "default_run_us": 1461,
+      "default_warnings": 0,
+      "error": null,
+      "module": "Plug.Conn.Cookies",
+      "sampled": false
+    },
+    {
+      "default_run_us": 22,
+      "default_warnings": 0,
+      "error": null,
+      "module": "Plug.Conn.InvalidHeaderError",
+      "sampled": false
+    },
+    {
+      "default_run_us": 26,
+      "default_warnings": 0,
+      "error": null,
+      "module": "Plug.Conn.InvalidQueryError",
+      "sampled": false
+    },
+    {
+      "default_run_us": 25,
+      "default_warnings": 0,
+      "error": null,
+      "module": "Plug.Conn.NotSentError",
+      "sampled": false
+    },
+    {
+      "default_run_us": 1040,
+      "default_warnings": 0,
+      "error": null,
+      "module": "Plug.Conn.Query",
+      "sampled": false
+    },
+    {
+      "default_run_us": 601,
+      "default_warnings": 0,
+      "error": null,
+      "module": "Plug.Conn.Status",
+      "sampled": false
+    },
+    {
+      "default_run_us": 52,
+      "default_warnings": 0,
+      "error": null,
+      "module": "Plug.Conn.Unfetched",
+      "sampled": false
+    },
+    {
+      "default_run_us": 1044,
+      "default_warnings": 0,
+      "error": null,
+      "module": "Plug.Conn.Utils",
+      "sampled": false
+    },
+    {
+      "default_run_us": 1546,
+      "default_warnings": 0,
+      "error": null,
+      "module": "Plug.Conn.WrapperError",
+      "sampled": false
+    },
+    {
+      "default_run_us": 8569,
+      "default_warnings": 0,
+      "error": null,
+      "module": "Plug.Debugger",
+      "sampled": false
+    },
+    {
+      "default_run_us": 600,
+      "default_warnings": 0,
+      "error": null,
+      "module": "Plug.ErrorHandler",
+      "sampled": false
+    },
+    {
+      "default_run_us": 925,
+      "default_warnings": 0,
+      "error": null,
+      "module": "Plug.Exception",
+      "sampled": false
+    },
+    {
+      "default_run_us": 801,
+      "default_warnings": 0,
+      "error": null,
+      "module": "Plug.Exception.Any",
+      "sampled": false
+    },
+    {
+      "default_run_us": 103,
+      "default_warnings": 0,
+      "error": null,
+      "module": "Plug.HTML",
+      "sampled": false
+    },
+    {
+      "default_run_us": 29,
+      "default_warnings": 0,
+      "error": null,
+      "module": "Plug.Head",
+      "sampled": false
+    },
+    {
+      "default_run_us": 75,
+      "default_warnings": 0,
+      "error": null,
+      "module": "Plug.Logger",
+      "sampled": false
+    },
+    {
+      "default_run_us": 16,
+      "default_warnings": 0,
+      "error": null,
+      "module": "Plug.MIME",
+      "sampled": false
+    },
+    {
+      "default_run_us": 143,
+      "default_warnings": 0,
+      "error": null,
+      "module": "Plug.MethodOverride",
+      "sampled": false
+    },
+    {
+      "default_run_us": 1050,
+      "default_warnings": 0,
+      "error": null,
+      "module": "Plug.Parsers",
+      "sampled": false
+    },
+    {
+      "default_run_us": 23,
+      "default_warnings": 0,
+      "error": null,
+      "module": "Plug.Parsers.BadEncodingError",
+      "sampled": false
+    },
+    {
+      "default_run_us": 1106,
+      "default_warnings": 0,
+      "error": null,
+      "module": "Plug.Parsers.JSON",
+      "sampled": false
+    },
+    {
+      "default_run_us": 4334,
+      "default_warnings": 0,
+      "error": null,
+      "module": "Plug.Parsers.MULTIPART",
+      "sampled": false
+    },
+    {
+      "default_run_us": 38,
+      "default_warnings": 0,
+      "error": null,
+      "module": "Plug.Parsers.ParseError",
+      "sampled": false
+    },
+    {
+      "default_run_us": 29,
+      "default_warnings": 0,
+      "error": null,
+      "module": "Plug.Parsers.RequestTooLargeError",
+      "sampled": false
+    },
+    {
+      "default_run_us": 81,
+      "default_warnings": 0,
+      "error": null,
+      "module": "Plug.Parsers.URLENCODED",
+      "sampled": false
+    },
+    {
+      "default_run_us": 23,
+      "default_warnings": 0,
+      "error": null,
+      "module": "Plug.Parsers.UnsupportedMediaTypeError",
+      "sampled": false
+    },
+    {
+      "default_run_us": 600,
+      "default_warnings": 0,
+      "error": null,
+      "module": "Plug.RequestId",
+      "sampled": false
+    },
+    {
+      "default_run_us": 436,
+      "default_warnings": 0,
+      "error": null,
+      "module": "Plug.RewriteOn",
+      "sampled": false
+    },
+    {
+      "default_run_us": 2504,
+      "default_warnings": 0,
+      "error": null,
+      "module": "Plug.Router",
+      "sampled": false
+    },
+    {
+      "default_run_us": 42,
+      "default_warnings": 0,
+      "error": null,
+      "module": "Plug.Router.InvalidSpecError",
+      "sampled": false
+    },
+    {
+      "default_run_us": 27,
+      "default_warnings": 0,
+      "error": null,
+      "module": "Plug.Router.MalformedURIError",
+      "sampled": false
+    },
+    {
+      "default_run_us": 722,
+      "default_warnings": 0,
+      "error": null,
+      "module": "Plug.Router.Utils",
+      "sampled": false
+    },
+    {
+      "default_run_us": 1384,
+      "default_warnings": 0,
+      "error": null,
+      "module": "Plug.SSL",
+      "sampled": false
+    },
+    {
+      "default_run_us": 413,
+      "default_warnings": 0,
+      "error": null,
+      "module": "Plug.Session",
+      "sampled": false
+    },
+    {
+      "default_run_us": 1265,
+      "default_warnings": 0,
+      "error": null,
+      "module": "Plug.Session.COOKIE",
+      "sampled": false
+    },
+    {
+      "default_run_us": 340,
+      "default_warnings": 0,
+      "error": null,
+      "module": "Plug.Session.ETS",
+      "sampled": false
+    },
+    {
+      "default_run_us": 11,
+      "default_warnings": 0,
+      "error": null,
+      "module": "Plug.Session.Store",
+      "sampled": false
+    },
+    {
+      "default_run_us": 2579,
+      "default_warnings": 0,
+      "error": null,
+      "module": "Plug.Static",
+      "sampled": false
+    },
+    {
+      "default_run_us": 31,
+      "default_warnings": 0,
+      "error": null,
+      "module": "Plug.Static.InvalidPathError",
+      "sampled": false
+    },
+    {
+      "default_run_us": 366,
+      "default_warnings": 0,
+      "error": null,
+      "module": "Plug.Telemetry",
+      "sampled": false
+    },
+    {
+      "default_run_us": 605,
+      "default_warnings": 0,
+      "error": null,
+      "module": "Plug.Test",
+      "sampled": false
+    },
+    {
+      "default_run_us": 52,
+      "default_warnings": 0,
+      "error": null,
+      "module": "Plug.TimeoutError",
+      "sampled": false
+    },
+    {
+      "default_run_us": 2135,
+      "default_warnings": 0,
+      "error": null,
+      "module": "Plug.Upload",
+      "sampled": false
+    },
+    {
+      "default_run_us": 62,
+      "default_warnings": 0,
+      "error": null,
+      "module": "Plug.Upload.Supervisor",
+      "sampled": false
+    },
+    {
+      "default_run_us": 471,
+      "default_warnings": 0,
+      "error": null,
+      "module": "Plug.Upload.Terminator",
+      "sampled": false
+    },
+    {
+      "default_run_us": 53,
+      "default_warnings": 0,
+      "error": null,
+      "module": "Plug.UploadError",
+      "sampled": false
+    }
+  ],
+  "omissions": [
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "detected": false,
+      "detected_guarded": false,
+      "mfa": "Plug.Conn.merge_private/2",
+      "omission": "Plug.Conn.merge_private/2",
+      "slices": [
+        {
+          "body": "unknown",
+          "body_extra": "%Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: not %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n}",
+          "body_reasons": [
+            "input_approximate",
+            "containment_unknown=[0]",
+            "unknown_components=1",
+            "no_counted_component",
+            "return_inexact"
+          ],
+          "body_top_only": false,
+          "default": "unknown",
+          "index": 0,
+          "signature": "unknown"
+        }
+      ],
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    },
+    {
+      "class": {
+        "body": "unknown",
+        "body_guarded": "unknown",
+        "default": "unknown",
+        "signature": "unknown"
+      },
+      "detected": false,
+      "detected_guarded": false,
+      "mfa": "Plug.Conn.Query.decode/4",
+      "omission": "Plug.Conn.Query.decode/4",
+      "slices": [
+        {
+          "body": "unknown",
+          "body_extra": "not %{binary() => term()}",
+          "body_reasons": [
+            "top_only"
+          ],
+          "body_top_only": true,
+          "default": "unknown",
+          "index": 0,
+          "signature": "unknown"
+        }
+      ],
+      "warn": {
+        "body": false,
+        "body_guarded": false,
+        "default": false,
+        "signature": false
+      }
+    }
+  ],
+  "otp_release": "28",
+  "sample": {
+    "modules": [],
+    "seed": 20260928,
+    "size": 0
+  },
+  "totals": {
+    "body_errors": 0,
+    "body_unavailable": 0,
+    "cost": {
+      "body_calls": 86,
+      "body_max_us": 24781,
+      "body_median_us": 5263,
+      "body_p90_us": 11966,
+      "body_total_ms": 533,
+      "default_calls": 61,
+      "default_total_ms": 70
+    },
+    "extra_warning_slices": 2,
+    "extra_warnings": 2,
+    "function_classes": {
+      "body": {
+        "none": 19,
+        "unknown": 67
+      },
+      "body_guarded": {
+        "none": 19,
+        "unknown": 67
+      },
+      "default": {
+        "none": 6,
+        "unknown": 80
+      },
+      "signature": {
+        "none": 6,
+        "unknown": 80
+      }
+    },
+    "functions": 86,
+    "module_errors": 0,
+    "modules": 61,
+    "modules_sampled": 0,
+    "slice_classes": {
+      "body": {
+        "none": 19,
+        "unknown": 67
+      },
+      "body_guarded": {
+        "none": 19,
+        "unknown": 67
+      },
+      "default": {
+        "none": 6,
+        "unknown": 80
+      },
+      "signature": {
+        "none": 6,
+        "unknown": 80
+      }
+    },
+    "slices": 86,
+    "top_only_slices": {
+      "body": 28,
+      "body_guarded": 28,
+      "default": 29,
+      "signature": 34
+    },
+    "warn_functions": {
+      "body": 0,
+      "body_guarded": 0,
+      "default": 0,
+      "signature": 0
+    }
+  }
+}
