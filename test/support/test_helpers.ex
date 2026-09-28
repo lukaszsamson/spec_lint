@@ -44,6 +44,31 @@ defmodule SpecLint.TestHelpers do
     Enum.find(result.functions, &(&1.mfa == {module, name, arity}))
   end
 
+  @doc """
+  Analyses `module` with `SpecLint.Fixtures.Synthetic.weird()` seeded in the
+  type cache as an unsupported construct, so every spec slice that refers
+  to it is unsupported (or, at an argument, untranslatable).
+  """
+  @spec seeded_analysis(module()) :: Analysis.result()
+  def seeded_analysis(module) do
+    cache = TypeCache.new()
+    weird = {:type, 0, :weird_builtin, []}
+
+    try do
+      :ok =
+        TypeCache.put_module(
+          cache,
+          SpecLint.Fixtures.Synthetic,
+          nil,
+          {:ok, [type: {:weird, weird, []}]}
+        )
+
+      Analysis.module(beam_path(module), cache: cache)
+    after
+      TypeCache.delete(cache)
+    end
+  end
+
   @doc false
   @spec project() :: SpecLint.Project.t()
   def project do

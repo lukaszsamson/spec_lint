@@ -75,7 +75,7 @@ go to standard error, so standard output is only the JSON report.
 | --- | --- |
 | 0 | Accepted. Without `--ci` or `--warnings-as-errors`, findings never fail the run. |
 | 1 | New gated findings, or a coverage violation. |
-| 2 | Invalid options or configuration (including a configuration file that raises, throws or exits, and an invalid baseline file), compilation failure, unsupported compiler or checker chunk (in CI) or backend, a filter that matches nothing, or an incomplete run (an internal failure while analysing a module). |
+| 2 | Invalid options or configuration (including a configuration file that raises, throws or exits, and an invalid baseline file), compilation failure, a missing build directory (ebin) for an owned application, unsupported compiler or checker chunk (in CI) or backend, a filter that matches nothing, or an incomplete run (an internal failure while analysing a module). |
 
 ## Rules
 
@@ -93,7 +93,9 @@ go to standard error, so standard output is only the JSON report.
 A gated finding still has to meet its prerequisites to fail the build:
 
 - no untranslatable construct;
-- no overlapping spec clauses;
+- no overlapping spec clauses (an overload that cannot be translated counts
+  as possibly overlapping, unless the arguments that can be translated
+  show it disjoint);
 - no function type in the return;
 - no function-type argument that translated inexactly (`arrow_polarity`);
 - for a per-clause conflict, the clause is not covered by the clauses
@@ -165,8 +167,10 @@ Review the file and commit it. You can add a `reason`, an `owner` and an
 `expires` date (`"2026-12-31"`) to each finding. `expires` must be `null` or
 a `YYYY-MM-DD` date; any other value makes the baseline invalid (exit 2).
 When you regenerate the file, those values are kept for entries that still
-match, and the entries of rules turned `:off` in the configuration are kept
-unchanged. `mix spec_lint.baseline` rejects `--module`, `--app`, `--rules`
+match, and the entries of rules turned `:off` in the configuration are kept.
+A kept entry written by another compiler adapter is marked
+`"pending_reconciliation": true` and keeps its adapter: it acknowledges
+nothing until the rule runs again and the file is regenerated. `mix spec_lint.baseline` rejects `--module`, `--app`, `--rules`
 and `--except`, and refuses to overwrite an output file that is not a valid
 baseline.
 
@@ -182,7 +186,11 @@ baseline.
 - **Coverage.** Every `unsupported` or `unavailable` slice, and every
   module without debug info, must be acknowledged in the inventory.
   Otherwise CI exits 1. A slice that the inventory lists as compared and
-  that can no longer be analysed is a regression.
+  that can no longer be analysed is a regression. Removing a `@spec` while
+  the function stays exported is one too: the slice is reported as
+  `unanalysed` (`spec_removed`) until the baseline is regenerated, which
+  records the acknowledgement. Deleting the function, or making it private,
+  is not a regression.
 - **Stale entries.** They are listed as warnings and never fail a run. A
   partial run (`--module`, `--app`) or an incomplete run never declares
   entries stale. Neither does analysis that did not happen: a finding of a
@@ -207,7 +215,8 @@ baseline.
 - scope and capabilities;
 - findings, with prerequisites, fingerprints and baseline decisions;
 - the coverage ledger, per function and slice;
-- baseline decisions, including stale entries;
+- baseline decisions, including stale entries and entries pending
+  reconciliation after an adapter change;
 - completion status and exit code.
 
 Keys are sorted and paths are relative to the project root. Two runs on the
@@ -227,7 +236,9 @@ Every run reports what it did and did not analyse, with denominators:
   mismatches and unknown, and the unknown ones by reason (`top_only`,
   `near_top`, `no_counted_component`, `other`).
 
-A project with no eligible specs succeeds and says so.
+A project with no eligible specs succeeds and says so ("0 specs checked").
+A missing build directory is different: it exits 2, because nothing was
+discovered at all.
 
 ## Running on a project you cannot modify
 

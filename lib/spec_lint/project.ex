@@ -11,6 +11,13 @@ defmodule SpecLint.Project do
   `current/0` reads the running Mix project; `from_ebins/2` builds a
   project from explicit ebin directories (for scripts such as
   `bench/run_on_ebin.exs`).
+
+  A missing compile path is not the same as an empty one:
+  `check_build_paths/1` reports `{:error, :missing_build_path}` when the
+  ebin directory of an owned application does not exist (nothing was
+  compiled there, or the path is wrong), which `SpecLint.Run` turns into a
+  configuration error (exit 2). An ebin that exists but holds no BEAM file
+  is a project with zero specs: the run succeeds and says so.
   """
 
   @typedoc "One owned application and its ebin directory."
@@ -87,6 +94,24 @@ defmodule SpecLint.Project do
            "application (owned: #{Enum.map_join(owned, ", ", &Atom.to_string/1)})"}
     end
   end
+
+  @doc """
+  `:ok` when the ebin directory of every application in `project` exists,
+  `{:error, :missing_build_path}` otherwise (`missing_build_paths/1` lists
+  the applications). An existing ebin without BEAM files is `:ok`: that
+  is a project with zero specs, not a missing build.
+  """
+  @spec check_build_paths(t()) :: :ok | {:error, :missing_build_path}
+  def check_build_paths(project) do
+    case missing_build_paths(project) do
+      [] -> :ok
+      _missing -> {:error, :missing_build_path}
+    end
+  end
+
+  @doc "The applications of `project` whose ebin directory does not exist."
+  @spec missing_build_paths(t()) :: [app()]
+  def missing_build_paths(project), do: Enum.reject(project.apps, &File.dir?(&1.ebin))
 
   @doc """
   The BEAM files of the project, sorted, as `{app, path}`. When `modules`

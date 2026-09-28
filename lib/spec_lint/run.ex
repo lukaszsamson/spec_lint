@@ -15,7 +15,9 @@ defmodule SpecLint.Run do
   not checked) or `:incomplete` (an internal failure, or a checker chunk
   written by another checker version, which fails preflight: exit 2 in CI).
 
-  Coverage (`SL008`) is always evaluated. When rule selection (`--rules`,
+  Coverage (`SL008`) is always evaluated, including slices the baseline
+  inventory lists whose function is still exported but lost its spec
+  (`SpecLint.Coverage.lost_analysis/2`). When rule selection (`--rules`,
   `--except`, `rules: [analysis_unavailable: :off]`) leaves SL008 out, its
   findings are not reported, but the ones that would block become coverage
   violations, so selecting rules never bypasses the coverage policy. Stale
@@ -95,7 +97,8 @@ defmodule SpecLint.Run do
               applied: false,
               reason: :missing,
               stale_findings: [],
-              stale_inventory: []
+              stale_inventory: [],
+              pending_reconciliation: []
             },
             coverage_violations: [],
             completion: :complete,
@@ -115,8 +118,9 @@ defmodule SpecLint.Run do
 
   @doc """
   Runs SpecLint over `project` with `config`. Returns `{:error, message}`
-  for configuration errors found before analysis (exit code 2), otherwise
-  the finished run.
+  for configuration errors found before analysis (exit code 2), including
+  a missing ebin directory of an owned application
+  (`SpecLint.Project.check_build_paths/1`), otherwise the finished run.
   """
   @spec execute(Project.t(), Config.t(), [option()]) :: {:ok, t()} | {:error, String.t()}
   def execute(%Project{} = project, %Config{} = config, opts \\ []) do
@@ -135,6 +139,7 @@ defmodule SpecLint.Run do
     with {:ok, rules} <- Config.enabled_rules(config, opts[:only], opts[:except]),
          :ok <- check_backend(config, rules),
          {:ok, project} <- Project.select_apps(project, filters.apps),
+         :ok <- check_build_paths(project),
          {:ok, beams} <- beams(project, filters.modules),
          {:ok, baseline} <- load_baseline(project, config) do
       run = %{run | project: project, rules: rules, baseline: baseline}
@@ -164,6 +169,25 @@ defmodule SpecLint.Run do
         {:error,
          "rule #{Enum.join(ids, ", ")} requires the body analysis backend, which is not " <>
            "available in this build"}
+    end
+  end
+
+  # A missing ebin is a configuration error (exit 2), never "0 specs".
+  defp check_build_paths(project) do
+    case Project.check_build_paths(project) do
+      :ok ->
+        :ok
+
+      {:error, :missing_build_path} ->
+        missing =
+          Enum.map_join(Project.missing_build_paths(project), ", ", fn app ->
+            "#{app.app} (#{Project.relative(project, app.ebin)})"
+          end)
+
+        {:error,
+         "missing build directory for #{missing}: the project is not compiled there, " <>
+           "so no module can be discovered; compile it first (an existing but empty " <>
+           "ebin is a project with 0 specs)"}
     end
   end
 
@@ -272,11 +296,11 @@ defmodule SpecLint.Run do
   end
 
   defp finish(run, failures, opts) do
-    inventory = Coverage.inventory(run.modules, run.evidence)
+    inventory = Coverage.inventory(run.modules, run.evidence, run.baseline)
     regressions = Coverage.regressions(inventory, run.baseline)
 
     issues =
-      (run_rules(run) ++ coverage_issues(run))
+      (run_rules(run) ++ coverage_issues(run, inventory))
       |> Policy.apply_gates(run.config, regressions)
 
     chunk_reasons = unsupported_chunks(run.modules)
@@ -415,14 +439,29 @@ defmodule SpecLint.Run do
   defp run_rules(run),
     do: rule_issues(run, Enum.reject(run.rules, &match?({AnalysisUnavailable, _}, &1)))
 
-  defp coverage_issues(run) do
+  defp coverage_issues(run, inventory) do
     severity =
       case List.keyfind(run.rules, AnalysisUnavailable, 0) do
         {_rule, severity} -> severity
         nil -> AnalysisUnavailable.default_severity()
       end
 
-    rule_issues(run, [{AnalysisUnavailable, severity}])
+    lost = Enum.filter(inventory, &(&1.status == "unanalysed"))
+
+    lost_issues =
+      for module <- run.modules,
+          issue <-
+            AnalysisUnavailable.check_lost(
+              %{
+                module: module,
+                file: Project.relative(run.project, module.file),
+                severity: severity
+              },
+              lost
+            ),
+          do: issue
+
+    rule_issues(run, [{AnalysisUnavailable, severity}]) ++ lost_issues
   end
 
   defp rule_issues(run, rules) do

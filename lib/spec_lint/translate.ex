@@ -118,6 +118,50 @@ defmodule SpecLint.Translate do
   end
 
   @doc """
+  Upper bounds of the arguments of a spec clause, translated one position
+  at a time, for a slice `slice/2` reports unsupported: an overload whose
+  return or one argument cannot be translated still has a domain that can
+  be shown disjoint from its siblings' (`SpecLint.Compare.function/3`).
+
+  Each argument is translated on its own; `hi` of each is an upper bound
+  of that argument whatever the other positions are. A position whose
+  translation fails is `term()` with an `:unsupported_construct` loss.
+  `:error` when the clause has no argument list to translate (not a
+  function type, or an unsupported `when` constraint).
+  """
+  @spec argument_bounds(tuple(), context()) :: {:ok, [Bound.t()]} | :error
+  def argument_bounds(clause_ast, context) do
+    {fun_ast, constraints} = debound(clause_ast)
+
+    case fun_ast do
+      {:type, _, :fun, [{:type, _, :product, args}, _return]} ->
+        subst = constraint_substitution(constraints)
+
+        bounds =
+          args
+          |> Enum.with_index()
+          |> Enum.map(fn {arg, index} ->
+            path = [{:arg, index}]
+
+            case type(substitute_all(arg, subst), context, path) do
+              {:ok, bound} ->
+                bound
+
+              {:unsupported, _reason} ->
+                Bound.upper(Compiler.term(), :unsupported_construct, path)
+            end
+          end)
+
+        {:ok, bounds}
+
+      _other ->
+        :error
+    end
+  catch
+    {:unsupported, _reason} -> :error
+  end
+
+  @doc """
   Translates a single type AST in `context`. `path` prefixes loss paths.
   """
   @spec type(tuple(), context(), [Bound.segment()]) :: {:ok, Bound.t()} | {:unsupported, term()}

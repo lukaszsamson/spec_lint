@@ -1,7 +1,8 @@
 # SpecLint status
 
-Date 2026-09-28. This covers Phase 0, Phase 1 and the post-Phase 1 review
-fixes (commit `1b0fe93`). `DESIGN.md` is the authoritative design,
+Date 2026-09-28. This covers Phase 0, Phase 1, the post-Phase 1 review
+fixes (commit `1b0fe93`) and the fixes for four of the five external
+review findings (the commit after `6754fe3`). `DESIGN.md` is the authoritative design,
 `EXPERIMENTS.md` holds the measurements, and `README.md` is the user guide.
 
 ## What exists
@@ -22,8 +23,8 @@ It has about 8,000 lines in `lib` and 4,000 in `test`:
 | Evidence | `SpecLint.Evidence` | The DESIGN 3.1 classifier, steps 1 to 9: union level plus per-clause evidence, the F1 subtraction check with widening, near-top handling, and gradual payloads. |
 | Rules | `SpecLint.Rules.*` | SL001 (slice and clause conflict), SL002 (informational), SL003, SL004 and SL005 (hints, off by default), SL006, SL007 (a stub, since no backend exists), SL008. |
 | Policy | `SpecLint.Policy` | Gating by evidence for the `review` and `soundness` profiles, `--warnings-as-errors` (which never touches SL008), and the coverage policy. |
-| Coverage | `SpecLint.Coverage` | Per-slice inventory and a ledger with denominators. Unknown obligations are counted by reason, and regressions are checked against the baseline inventory. |
-| Baseline | `SpecLint.Baseline` | Structural fingerprints, acknowledgements with reason, owner and expiry, inventory acknowledgements, stale detection (only for analysis that happened), and adapter reconciliation. |
+| Coverage | `SpecLint.Coverage` | Per-slice inventory and a ledger with denominators. Unknown obligations are counted by reason, and regressions are checked against the baseline inventory, including specs removed from functions that are still exported (`unanalysed`). |
+| Baseline | `SpecLint.Baseline` | Structural fingerprints, acknowledgements with reason, owner and expiry, inventory acknowledgements, stale detection (only for analysis that happened), and adapter reconciliation per file and per entry (`pending_reconciliation`). |
 | Run | `SpecLint.Run` | One run with exit code 0, 1 or 2. Completion is complete, partial or incomplete. Coverage is checked whatever rules are selected. |
 | Reports | `SpecLint.Report.Console`, `SpecLint.Report.Json`, `SpecLint.Explain` | Console output, a versioned deterministic JSON envelope written atomically, and `--explain`. |
 | Mix tasks | `mix spec_lint`, `mix spec_lint.baseline` | Options are parsed before compile. Compile failure exits 2. With `--format json` to stdout, compiler output goes to stderr. |
@@ -69,12 +70,12 @@ MIX_ENV=test mix run bench/run_on_ebin.exs -- --ebin DIR [--code-path DIR ...] \
 MIX_ENV=test mix run bench/experiment.exs -- --ebin DIR ... --label NAME --out FILE.json
 ```
 
-Quality gates, all green at `1b0fe93`:
+Quality gates, all green after the external review fixes:
 
 ```
 mix format --check-formatted
 mix credo --strict            # no issues
-mix test                      # 218 tests, 0 failures (includes test/integration)
+mix test                      # 232 tests, 0 failures (includes test/integration)
 mix dialyzer                  # 0 errors (PLT in priv/plts)
 ```
 
@@ -176,17 +177,50 @@ Each decision is recorded in DESIGN; the section is given in parentheses.
 
 ## Open findings from external review (2026-09-28)
 
-1. Removing a `@spec` while keeping the exported function produces no
-   inventory entry, so coverage regression detection misses it (high).
-2. Baseline regeneration with a rule disabled carries that rule's old
-   acknowledgements across an adapter change without rechecking (medium).
-3. An unsupported sibling overload is dropped from overlap analysis, so a
-   supported slice can be marked `no_overlap` while a sibling was never
-   interpreted (medium).
-4. Empty module discovery is not distinguished from a missing build
-   directory.
-5. Corpus results and the nine omission reproducers live only in the
+1. Corpus results and the nine omission reproducers live only in the
    session scratchpad, not in the repository.
+
+## Fixed findings from external review
+
+Each fix has end-to-end regression tests; DESIGN section 9.1 records the
+decisions.
+
+1. **Spec removal bypassed coverage regression (high).** Coverage now
+   compares the baseline inventory with the current exports
+   (`SpecLint.Coverage.lost_analysis/2`). A compared slice whose function
+   is still exported but has no spec in scope is an `unanalysed` entry
+   (`spec_removed`), an SL008 finding and a regression (exit 1 in CI, or a
+   coverage violation naming the MFA when SL008 is not selected). A deleted
+   or no longer exported function is not a regression. Regenerating the
+   baseline acknowledges the removal. Tests:
+   `SpecLint.CoverageTest` "removing a @spec while keeping the function is
+   a coverage regression" and "a spec that is now out of scope ...", and
+   `SpecLint.Integration.BuildAndCoverageTest` (consumer project,
+   `mix spec_lint --ci` exits 1 with SL008 on `Consumer.greet/1`).
+2. **Old-adapter acknowledgements carried across a regeneration (medium).**
+   Baseline findings are checked for adapter compatibility per entry.
+   Entries of disabled rules from another adapter are kept with
+   `"pending_reconciliation": true`, never count as baselined when the rule
+   is re-enabled, are never stale, and are reported under
+   `pending_reconciliation`. Tests: `SpecLint.BaselineTest` "a disabled
+   rule's entries from another adapter are pending, never baselined" (the
+   review's repro), "an entry without its own adapter inherits the
+   file's", and "adapter change with a rule off, end to end".
+3. **Unsupported sibling overloads dropped from overlap (medium).** An
+   unsupported sibling makes a slice's overlap `unknown`, which blocks
+   SL001 and SL003, unless the upper bounds of whatever of its arguments
+   translate (`SpecLint.Translate.argument_bounds/2`) show it disjoint.
+   Tests: `SpecLint.CompareTest` (three comparator and analysis tests),
+   `SpecLint.TranslateTest` "argument bounds of an unsupported slice",
+   `SpecLint.RulesTest` "SL001 with an unsupported sibling overload is
+   gated only when shown disjoint".
+4. **Missing build directory reported as zero specs.**
+   `SpecLint.Project.check_build_paths/1` returns
+   `{:error, :missing_build_path}` for an owned app whose ebin does not
+   exist; the run is a configuration error (exit 2). An existing empty
+   ebin exits 0 with "0 specs checked". Tests: `SpecLint.CoverageTest`
+   "build directories", and `SpecLint.Integration.BuildAndCoverageTest`
+   (exit 0 on an empty ebin, exit 2 on a removed one).
 
 Wording: the analysis is conservative with tested gating prerequisites and
 documented limitations. "Sound" is not claimed.

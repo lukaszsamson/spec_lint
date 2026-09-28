@@ -126,16 +126,22 @@ defmodule SpecLint.Report.Console do
       "#{count(slices["unavailable"])} unavailable#{reasons(slices["unavailable"])}\n",
       "  obligations: #{pairs(ledger["obligations"])}\n",
       unknown_reasons(ledger["obligations_unknown_by_reason"]),
+      lost_analysis(ledger["lost_analysis"] || %{}),
       expanded(slices["expanded"]),
       "  specs out of scope: #{pairs(ledger["specs_out_of_scope"])}\n",
       "  body analysis: not requested (signature backend only)\n",
-      if(slices["found"] == 0, do: "  no eligible specs found\n", else: []),
+      if(slices["found"] == 0, do: "  0 specs checked: no eligible specs found\n", else: []),
       "\n"
     ]
   end
 
   defp unknown_reasons(map) when map_size(map) == 0, do: []
   defp unknown_reasons(map), do: "  unknown obligations by reason: #{pairs(map)}\n"
+
+  defp lost_analysis(map) when map_size(map) == 0, do: []
+
+  defp lost_analysis(map),
+    do: "  baseline slices no longer analysed (function still exported): #{pairs(map)}\n"
 
   defp expanded(0), do: []
 
@@ -184,7 +190,13 @@ defmodule SpecLint.Report.Console do
           "(#{entry["status"]})\n"
       end
 
-    [head, stale, stale_inventory, "\n"]
+    pending =
+      for entry <- decisions.pending_reconciliation do
+        "  pending reconciliation (adapter #{entry["adapter"]}, acknowledges nothing): " <>
+          "#{entry["rule"]} #{entry["mfa"]} slice #{entry["slice"]} (#{entry["fingerprint"]})\n"
+      end
+
+    [head, stale, stale_inventory, pending, "\n"]
   end
 
   defp result(run) do

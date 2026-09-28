@@ -206,6 +206,106 @@ defmodule SpecLint.CompareTest do
       assert [{:unsupported, :why}, {:ok, %{overlap?: false}}] = result.slices
     end
 
+    test "an unsupported sibling makes overlap unknown unless shown disjoint" do
+      atom_slice = exact_slice([C.atom()], C.integer())
+      clauses = [{[C.atom()], C.atom()}]
+
+      # No argument bounds: the sibling was never interpreted.
+      %{slices: [{:ok, rel}, {:unsupported, :why}]} =
+        Compare.function([{:ok, atom_slice}, {:unsupported, :why}], clauses, 1)
+
+      refute rel.overlap?
+      assert rel.overlap_unknown?
+      assert rel.overlaps_unknown_with == [1]
+
+      # Argument upper bounds that meet the slice's domain: still unknown,
+      # never a certain overlap.
+      term = Bound.upper(C.term(), :unsupported_construct, [{:arg, 0}])
+
+      for bounds <- [[term], [Bound.exact(C.atom([:a]))]] do
+        %{slices: [{:ok, rel}, {:unsupported, :why}]} =
+          Compare.function([{:ok, atom_slice}, {:unsupported, :why, bounds}], clauses, 1)
+
+        refute rel.overlap?
+        assert rel.overlaps_unknown_with == [1]
+      end
+
+      # Upper bounds disjoint from the slice's domain: no overlap.
+      %{slices: [{:ok, rel}, _]} =
+        Compare.function(
+          [{:ok, atom_slice}, {:unsupported, :why, [Bound.exact(C.integer())]}],
+          clauses,
+          1
+        )
+
+      refute rel.overlap?
+      refute rel.overlap_unknown?
+
+      # The sibling comes first: same tag on the supported slice.
+      %{slices: [{:unsupported, :why}, {:ok, rel}]} =
+        Compare.function([{:unsupported, :why}, {:ok, atom_slice}], clauses, 1)
+
+      assert rel.overlaps_unknown_with == [0]
+    end
+
+    test "an unsupported sibling is disjoint through any one translated position" do
+      slice = exact_slice([C.atom(), C.integer()], C.atom())
+      clauses = [{[C.atom(), C.integer()], C.atom()}]
+      unknown = Bound.upper(C.term(), :unsupported_construct, [{:arg, 0}])
+
+      # Position 0 is untranslatable (term()), position 1 is atom(): disjoint.
+      %{slices: [{:ok, rel}, _]} =
+        Compare.function(
+          [{:ok, slice}, {:unsupported, :why, [unknown, Bound.exact(C.atom())]}],
+          clauses,
+          2
+        )
+
+      refute rel.overlap_unknown?
+
+      # Disjoint integer intervals at position 1 (0 against pos_integer()).
+      pos = %Bound{
+        lo: C.none(),
+        hi: C.integer(),
+        losses: [Bound.loss(:integer_refinement_erased, [{:arg, 1}])],
+        integers: [{1, :infinity}]
+      }
+
+      zero = %{pos | integers: [{0, 0}]}
+      refined = %{args: [Bound.exact(C.atom()), zero], return: Bound.exact(C.atom())}
+
+      %{slices: [{:ok, rel}, _]} =
+        Compare.function([{:ok, refined}, {:unsupported, :why, [unknown, pos]}], clauses, 2)
+
+      refute rel.overlap_unknown?
+
+      # Both positions meet: unknown.
+      %{slices: [{:ok, rel}, _]} =
+        Compare.function(
+          [{:ok, slice}, {:unsupported, :why, [unknown, Bound.exact(C.term())]}],
+          clauses,
+          2
+        )
+
+      assert rel.overlaps_unknown_with == [1]
+    end
+
+    test "analysis passes an unsupported sibling's argument bounds to the overlap tag" do
+      alias SpecLint.Fixtures.Siblings
+      result = seeded_analysis(Siblings)
+      by_name = Map.new(result.functions, &{elem(&1.mfa, 1), &1})
+
+      # The sibling's only argument is untranslatable: overlap unknown.
+      assert [first, %{status: {:unsupported, _}}] = by_name.unsupported_sibling.slices
+      assert first.relations.overlaps_unknown_with == [1]
+      refute first.relations.overlap?
+
+      # The sibling's argument integer() translates and is disjoint.
+      assert [first, %{status: {:unsupported, _}}] = by_name.disjoint_sibling.slices
+      refute first.relations.overlap_unknown?
+      refute first.relations.overlap?
+    end
+
     test "integer literals and ranges do not create false overlap tags (O5)" do
       # Macro.generate_unique_arguments/2: (0, atom()) and (pos_integer(), atom())
       # both erase to (integer(), atom()) but are disjoint.

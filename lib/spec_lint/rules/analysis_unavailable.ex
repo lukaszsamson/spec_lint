@@ -12,6 +12,11 @@ defmodule SpecLint.Rules.AnalysisUnavailable do
   `SpecLint.Run` evaluates them even when SL008 is not selected, so rule
   selection never disables the coverage policy.
 
+  A slice the baseline inventory lists whose function is still exported
+  but no longer has a spec in scope (`SpecLint.Coverage.lost_analysis/2`)
+  is reported by `check_lost/2` with the status `unanalysed`: removing a
+  `@spec` must not make analysis disappear silently.
+
   A checker chunk whose version differs from the running checker's
   (DESIGN.md 5.1) has the reason `unsupported_chunk:<found version>`. It is
   a preflight failure, not a coverage gap: the run is incomplete (exit 2 in
@@ -124,6 +129,46 @@ defmodule SpecLint.Rules.AnalysisUnavailable do
       )
     end
   end
+
+  @doc """
+  Issues for the `unanalysed` inventory entries of one module
+  (`SpecLint.Coverage.lost_analysis/2`): the function is still exported,
+  its spec is gone or out of scope, and the baseline inventory lists the
+  slice. Entries of other modules are ignored.
+  """
+  @spec check_lost(Rule.module_context(), [SpecLint.Coverage.entry()]) :: [Issue.t()]
+  def check_lost(%{module: %{status: :ok} = result} = context, entries) do
+    for %{status: "unanalysed", mfa: mfa_string} = entry <- entries,
+        {module, name, arity} = mfa <- [SpecLint.Coverage.exported_mfa(result, mfa_string)] do
+      %Issue{
+        rule: id(),
+        name: name(),
+        module: module,
+        mfa: mfa,
+        slice: entry.slice,
+        evidence: :unavailable,
+        severity: context.severity,
+        file: context.file,
+        message:
+          "#{name}/#{arity} is still exported but its spec slice is no longer analysed: " <>
+            entry.reason,
+        details: [
+          {"status", "unanalysed: #{entry.reason}"},
+          {"baseline", "slice #{entry.slice} is in the baseline inventory"}
+        ],
+        data: %{status: "unanalysed", reason: entry.reason},
+        fingerprint:
+          Baseline.fingerprint(%{
+            rule: id(),
+            mfa: mfa,
+            slice: entry.slice,
+            extra: {:unanalysed, entry.reason}
+          })
+      }
+    end
+  end
+
+  def check_lost(_context, _entries), do: []
 
   defp module_from_path(path), do: path |> Path.basename(".beam") |> String.to_atom()
 end

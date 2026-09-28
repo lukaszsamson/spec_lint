@@ -29,6 +29,15 @@ defmodule SpecLint.Compare do
   overlap is unknown: the tag is `overlap_unknown?`, never `overlap?`, so a
   translation loss cannot create a false overlap.
 
+  An unsupported sibling slice still counts for overlap: it was never
+  interpreted, so the slices it may share inputs with get
+  `overlap_unknown?` with its index. The one exception is a sibling whose
+  argument domain is shown disjoint from the slice from what could be
+  translated of its arguments, taken as upper bounds
+  (`SpecLint.Translate.argument_bounds/2`, an untranslatable position being
+  `term()`): the same disjointness tests as above, on `hi` and on integer
+  intervals. A sibling without translatable arguments is unknown.
+
   All functions are pure.
   """
 
@@ -95,13 +104,30 @@ defmodule SpecLint.Compare do
           relation: relation() | :badapply
         }
 
-  @typedoc "A translated slice, or the reason it could not be translated."
-  @type slice_input :: {:ok, SpecLint.Translate.slice()} | {:unsupported, term()}
+  @typedoc """
+  A translated slice, or the reason it could not be translated, optionally
+  with the upper bounds of its arguments (`SpecLint.Translate.argument_bounds/2`).
+  Without them the unsupported slice's domain is unknown.
+  """
+  @type slice_input ::
+          {:ok, SpecLint.Translate.slice()}
+          | {:unsupported, term()}
+          | {:unsupported, term(), [Bound.t()]}
+
+  @typedoc """
+  A sibling slice for the overlap tag: translated, or unsupported with the
+  upper bounds of its arguments when known (`nil` when not).
+  """
+  @type sibling ::
+          {non_neg_integer(), SpecLint.Translate.slice()}
+          | {non_neg_integer(), {:unsupported, [Bound.t()] | nil}}
 
   @doc """
   Compares every slice of one function. Unsupported slices are passed
-  through; they still count for nothing else (overlap is computed among
-  translated slices only).
+  through as `{:unsupported, reason}`; they still count as siblings for the
+  overlap tag of the translated slices (see the moduledoc): a supported
+  slice is never tagged free of overlap while an unsupported sibling may
+  share its inputs.
   """
   @spec function([slice_input()], [Compiler.clause()], arity()) :: %{
           slices: [{:ok, relations()} | {:unsupported, term()}],
@@ -109,16 +135,20 @@ defmodule SpecLint.Compare do
         }
   def function(slices, clauses, arity) do
     translated = for {{:ok, slice}, index} <- Enum.with_index(slices), do: {index, slice}
+    siblings = slices |> Enum.with_index() |> Enum.map(&sibling/1)
 
     results =
       slices
       |> Enum.with_index()
       |> Enum.map(fn
         {{:ok, slice}, index} ->
-          others = for {other, s} <- translated, other != index, do: {other, s}
+          others = for {other, s} <- siblings, other != index, do: {other, s}
           {:ok, slice(slice, clauses, others)}
 
         {{:unsupported, reason}, _index} ->
+          {:unsupported, reason}
+
+        {{:unsupported, reason, _bounds}, _index} ->
           {:unsupported, reason}
       end)
 
@@ -126,14 +156,17 @@ defmodule SpecLint.Compare do
     %{slices: results, dynamic_probe: dynamic_probe(clauses, arity, spec_returns)}
   end
 
+  defp sibling({{:ok, slice}, index}), do: {index, slice}
+  defp sibling({{:unsupported, _reason}, index}), do: {index, {:unsupported, nil}}
+  defp sibling({{:unsupported, _reason, bounds}, index}), do: {index, {:unsupported, bounds}}
+
   @doc """
   Relations for one translated slice against the inferred `clauses`.
-  `others` are the function's other translated slices with their indexes,
-  used for the overlap tag.
+  `others` are the function's other slices with their indexes, used for
+  the overlap tag: translated slices, or unsupported ones as
+  `{:unsupported, argument_bounds | nil}` (see the moduledoc).
   """
-  @spec slice(SpecLint.Translate.slice(), [Compiler.clause()], [
-          {non_neg_integer(), SpecLint.Translate.slice()}
-        ]) :: relations()
+  @spec slice(SpecLint.Translate.slice(), [Compiler.clause()], [sibling()]) :: relations()
   def slice(%{args: args, return: return}, clauses, others \\ []) do
     d_hi = Enum.map(args, & &1.hi)
     d_lo = Enum.map(args, & &1.lo)
@@ -149,7 +182,7 @@ defmodule SpecLint.Compare do
     upper = Compiler.upper_bound(applied_return)
     inferred_domain = inferred_domain(clauses, length(args))
     spec_domain = Compiler.tuple(d_hi)
-    overlaps = for {index, other} <- others, do: {index, overlap(args, other.args)}
+    overlaps = for {index, other} <- others, do: {index, sibling_overlap(args, other)}
     overlaps_with = for {index, :yes} <- overlaps, do: index
     overlaps_unknown_with = for {index, :unknown} <- overlaps, do: index
     top_only? = applied != :badapply and Compiler.subtype?(Compiler.term(), upper)
@@ -333,16 +366,35 @@ defmodule SpecLint.Compare do
     end)
   end
 
-  # :yes, :no or :unknown (see the moduledoc).
-  defp overlap(args, other_args) do
+  # An unsupported sibling was never interpreted: its overlap is :no only
+  # when the upper bounds of its arguments are disjoint from the slice's,
+  # otherwise :unknown (never :yes, its lower bounds are unknown).
+  defp sibling_overlap(_args, {:unsupported, nil}), do: :unknown
+
+  defp sibling_overlap(args, {:unsupported, bounds}) do
+    if length(bounds) == length(args) and disjoint_upper?(args, bounds),
+      do: :no,
+      else: :unknown
+  end
+
+  defp sibling_overlap(args, %{args: other_args}), do: overlap(args, other_args)
+
+  # Whether the argument tuples are disjoint, from their upper bounds alone.
+  defp disjoint_upper?(args, other_args) do
     hi = args |> Enum.map(& &1.hi) |> Compiler.tuple()
     other_hi = other_args |> Enum.map(& &1.hi) |> Compiler.tuple()
+
+    Compiler.empty?(hi) or Compiler.disjoint?(hi, other_hi) or
+      Enum.any?(Enum.zip(args, other_args), &integers_disjoint?/1)
+  end
+
+  # :yes, :no or :unknown (see the moduledoc).
+  defp overlap(args, other_args) do
     lo = args |> Enum.map(& &1.lo) |> Compiler.tuple()
     other_lo = other_args |> Enum.map(& &1.lo) |> Compiler.tuple()
 
     cond do
-      Compiler.empty?(hi) or Compiler.disjoint?(hi, other_hi) -> :no
-      Enum.any?(Enum.zip(args, other_args), &integers_disjoint?/1) -> :no
+      disjoint_upper?(args, other_args) -> :no
       not Compiler.disjoint?(lo, other_lo) -> :yes
       true -> :unknown
     end

@@ -723,6 +723,40 @@ These notes record choices the text above left open.
   (`obligations_unknown_by_reason`), as steps 2 and 8 of section 3.1 ask.
 - **SL002 on `no_return()` specs.** SL002 does not report a slice whose
   spec return is empty. That is `SL006`'s case.
+- **Spec removal (external review fix).** A slice exists only while its
+  `@spec` does, so the inventory alone cannot see a removed spec. Coverage
+  compares the baseline inventory with the current exports: a slice listed
+  as `compared` whose function is still exported by an analysed module but
+  has no spec in scope is an `unanalysed` inventory entry (reason
+  `spec_removed`, or `spec_out_of_scope:<reason>`), an `SL008` finding and
+  a coverage regression. A function no longer exported (deleted, private,
+  now a macro), a module that is gone, excluded or outside a partial run,
+  and a function that still has specs in scope (with fewer clauses) are
+  not. Regenerating the baseline stores the entry as an acknowledged
+  `unanalysed` one, which later runs match like any inventory
+  acknowledgement and which goes stale when the spec comes back or the
+  function is deleted. The ledger counts these as `lost_analysis`, apart
+  from the slices found.
+- **Per-entry adapter (external review fix).** A baseline finding
+  acknowledges an issue only when its own `adapter` (or the file's, when
+  it has none) is the running adapter. `mix spec_lint.baseline` keeps the
+  entries of rules that are off; when such an entry comes from another
+  adapter it is kept with its adapter and `"pending_reconciliation":
+  true`, never counts as baselined, is never stale, and is listed under
+  `pending_reconciliation` in the decisions, until a regeneration with the
+  rule on replaces it.
+- **Unsupported sibling overloads (external review fix).** Overlap is
+  computed against every sibling slice, unsupported ones included. An
+  unsupported sibling makes the overlap `unknown` (which blocks SL001 and
+  SL003) unless what can be translated of its arguments, taken as upper
+  bounds one position at a time (an untranslatable position is `term()`),
+  is disjoint from the slice's domain by the usual tests (upper bounds or
+  integer intervals). It is never a certain overlap.
+- **Missing build directory (external review fix).** An owned
+  application whose ebin directory does not exist is a configuration
+  error (exit 2, `SpecLint.Project.check_build_paths/1` returns
+  `{:error, :missing_build_path}`). An existing ebin with no module is a
+  project with zero specs: exit 0, reported as "0 specs checked".
 
 ## 10. Qualification and tests
 

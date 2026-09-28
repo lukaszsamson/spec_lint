@@ -256,3 +256,24 @@ defmodule SpecLint.Fixtures.Shadow do
     end
   end
 end
+
+defmodule SpecLint.Fixtures.Siblings do
+  @moduledoc false
+  # Overloads whose second slice refers to a type that tests seed with an
+  # unsupported construct (on the code path the module does not exist, so
+  # the type is unresolved and the slice translates approximately).
+
+  # Slice 0 conflicts (an atom is returned where integer() is declared).
+  # Seeded, slice 1 is unsupported and so is its only argument: its domain
+  # is unknown, so slice 0 may overlap it.
+  @spec unsupported_sibling(atom()) :: integer()
+  @spec unsupported_sibling(SpecLint.Fixtures.Synthetic.weird()) :: atom()
+  def unsupported_sibling(x) when is_atom(x), do: x
+
+  # The same conflict, but seeded slice 1 is unsupported through its
+  # return only: its argument integer() is disjoint from slice 0's atom().
+  @spec disjoint_sibling(atom()) :: integer()
+  @spec disjoint_sibling(integer()) :: SpecLint.Fixtures.Synthetic.weird()
+  def disjoint_sibling(x) when is_atom(x), do: x
+  def disjoint_sibling(x) when is_integer(x), do: x
+end

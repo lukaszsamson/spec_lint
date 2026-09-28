@@ -545,5 +545,26 @@ defmodule SpecLint.TranslateTest do
       assert {:ok, %{args: [arg]}} = Translate.slice(good, ctx)
       assert_exact(arg, C.atom())
     end
+
+    test "argument bounds of an unsupported slice, one position at a time" do
+      ctx = context(Types)
+
+      bad =
+        {:type, 0, :fun,
+         [
+           {:type, 0, :product, [{:type, 0, :weird_builtin, []}, {:type, 0, :atom, []}]},
+           {:type, 0, :weird_builtin, []}
+         ]}
+
+      assert {:unsupported, _} = Translate.slice(bad, ctx)
+      assert {:ok, [unknown, atom]} = Translate.argument_bounds(bad, ctx)
+      assert C.equal?(unknown.hi, C.term())
+      assert C.empty?(unknown.lo)
+      assert loss_kinds(unknown.losses) == [:unsupported_construct]
+      assert_exact(atom, C.atom())
+
+      # Not a function type: no argument list to translate.
+      assert Translate.argument_bounds({:type, 0, :weird_builtin, []}, ctx) == :error
+    end
   end
 end

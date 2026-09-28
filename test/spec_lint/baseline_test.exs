@@ -302,6 +302,74 @@ defmodule SpecLint.BaselineTest do
       refute Enum.any?(dropped["findings"], &(&1["fingerprint"] == first.fingerprint))
     end
 
+    test "a disabled rule's entries from another adapter are pending, never baselined", ctx do
+      # The review's repro: a baseline written by an older adapter
+      # acknowledges an SL001 finding; SL001 is turned off and the baseline
+      # regenerated under the running adapter; SL001 is turned back on.
+      old_adapter = "1.21.0-dev+0ldc0de"
+
+      old =
+        ctx.baseline
+        |> Map.put("adapter", old_adapter)
+        |> Map.update!("findings", fn findings ->
+          Enum.map(findings, &Map.put(&1, "adapter", old_adapter))
+        end)
+
+      {:ok, previous} = parsed(old)
+      assert Enum.any?(ctx.run.issues, &(&1.rule == "SL001" and &1.gate))
+      rules = ctx.run.issues |> Enum.map(& &1.rule) |> Enum.uniq() |> List.delete("SL001")
+      remaining = Enum.reject(ctx.run.issues, &(&1.rule == "SL001"))
+
+      rebuilt = Baseline.build(remaining, ctx.run.inventory, ctx.adapter, previous, rules: rules)
+      assert rebuilt["adapter"] == ctx.adapter
+      {kept, fresh} = Enum.split_with(rebuilt["findings"], &(&1["rule"] == "SL001"))
+      assert kept != []
+
+      # The SL001 entries keep their adapter and are pending; the others
+      # were rechecked by the running adapter.
+      assert Enum.all?(kept, &(&1["adapter"] == old_adapter and &1["pending_reconciliation"]))
+      assert Enum.all?(fresh, &(&1["adapter"] == ctx.adapter))
+      refute Enum.any?(fresh, &Map.has_key?(&1, "pending_reconciliation"))
+
+      # SL001 re-enabled: its findings are new and gate; they are listed as
+      # pending reconciliation and are not stale.
+      {:ok, baseline} = parsed(rebuilt)
+
+      {issues, decisions} =
+        Baseline.decide(ctx.run.issues, baseline, adapter: ctx.adapter, complete?: true)
+
+      {sl001, others} = Enum.split_with(issues, &(&1.rule == "SL001"))
+      assert Enum.all?(sl001, &(&1.baseline == :new))
+      assert Enum.any?(sl001, &Issue.blocking?/1)
+      assert Enum.all?(others, &(&1.baseline == :baselined))
+      assert Enum.sort(decisions.pending_reconciliation) == Enum.sort(kept)
+      assert decisions.stale_findings == []
+
+      # Regenerating with SL001 running reconciles: written afresh under the
+      # running adapter, and every finding is acknowledged again.
+      reconciled = Baseline.build(ctx.run.issues, ctx.run.inventory, ctx.adapter, baseline)
+      assert Enum.all?(reconciled["findings"], &(&1["adapter"] == ctx.adapter))
+      refute Enum.any?(reconciled["findings"], &Map.has_key?(&1, "pending_reconciliation"))
+      {:ok, reconciled} = parsed(reconciled)
+      {issues, decisions} = Baseline.decide(ctx.run.issues, reconciled, adapter: ctx.adapter)
+      assert Enum.all?(issues, &(&1.baseline == :baselined))
+      assert decisions.pending_reconciliation == []
+    end
+
+    test "an entry without its own adapter inherits the file's", ctx do
+      findings = Enum.map(ctx.baseline["findings"], &Map.delete(&1, "adapter"))
+      {:ok, baseline} = parsed(%{ctx.baseline | "findings" => findings})
+      {issues, _} = Baseline.decide(ctx.run.issues, baseline, adapter: ctx.adapter)
+      assert Enum.all?(issues, &(&1.baseline == :baselined))
+
+      # A pending entry acknowledges nothing, even under the running adapter.
+      pending = Enum.map(findings, &Map.put(&1, "pending_reconciliation", true))
+      {:ok, baseline} = parsed(%{ctx.baseline | "findings" => pending})
+      {issues, decisions} = Baseline.decide(ctx.run.issues, baseline, adapter: ctx.adapter)
+      assert Enum.all?(issues, &(&1.baseline == :new))
+      assert length(decisions.pending_reconciliation) == length(pending)
+    end
+
     test "an expires value that is not a date never suppresses a finding", ctx do
       for bad <- ["2020-13-45", "31/12/2020", "tomorrow", "2020-01-01T00:00:00Z", 20_200_101] do
         broken =
@@ -377,6 +445,47 @@ defmodule SpecLint.BaselineTest do
     refute message =~ "unsupported"
 
     assert Baseline.load("tmp/definitely/missing.json") == :missing
+  end
+
+  test "adapter change with a rule off, end to end: the rule's old entries gate again",
+       %{tmp_dir: tmp_dir} do
+    ebin = Path.join(tmp_dir, "ebin")
+    File.mkdir_p!(ebin)
+    File.cp!(beam_path(Compare), Path.join(ebin, "#{Compare}.beam"))
+    project = Project.from_ebins([{:fx, ebin}], tmp_dir)
+    path = Path.join(tmp_dir, "baseline.json")
+    config = %Config{baseline: "baseline.json"}
+
+    # A baseline acknowledging everything, as written by an older adapter.
+    {:ok, first} = Run.execute(project, config, ci: true)
+    assert first.exit_code == 1
+    adapter = first.capabilities.adapter_id
+    written = Baseline.build(first.issues, first.inventory, "1.21.0-dev+0ldc0de", nil)
+    :ok = Baseline.write(path, written)
+
+    {:ok, mismatch} = Run.execute(project, config, ci: true)
+    assert mismatch.exit_code == 2
+
+    # Regenerated under the running adapter with SL001 off (what
+    # mix spec_lint.baseline does), then SL001 turned back on.
+    off = %Config{config | rules: %{"SL001" => :off}}
+    {:ok, previous} = Baseline.load(path)
+    {:ok, without} = Run.execute(project, off, ci: true)
+    ran = Enum.map(without.rules, fn {rule, _} -> rule.id() end)
+    rebuilt = Baseline.build(without.issues, without.inventory, adapter, previous, rules: ran)
+    :ok = Baseline.write(path, rebuilt)
+
+    {:ok, again} = Run.execute(project, config, ci: true)
+    assert again.baseline_decisions.applied
+    assert [_ | _] = sl001 = Enum.filter(again.issues, &(&1.rule == "SL001"))
+    assert Enum.all?(sl001, &(&1.baseline == :new))
+    assert again.exit_code == 1
+    assert again.baseline_decisions.pending_reconciliation != []
+
+    json = again |> SpecLint.Report.Json.envelope() |> SpecLint.Report.Json.encode()
+    pending = JSON.decode!(IO.iodata_to_binary(json))["baseline"]["pending_reconciliation"]
+    assert [_ | _] = pending
+    assert Enum.all?(pending, &(&1["rule"] == "SL001" and &1["pending_reconciliation"]))
   end
 
   test "baseline file end to end: acknowledge, go stale, acknowledge SL008", %{tmp_dir: tmp_dir} do

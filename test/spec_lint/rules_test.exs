@@ -81,6 +81,47 @@ defmodule SpecLint.RulesTest do
     refute issue.gate
   end
 
+  test "SL001 with an unsupported sibling overload is gated only when shown disjoint" do
+    alias SpecLint.{Evidence, Policy}
+    alias SpecLint.Fixtures.Siblings
+    alias SpecLint.Rules.ReturnConflict
+
+    result = seeded_analysis(Siblings)
+
+    sl001 = fn name ->
+      function = Enum.find(result.functions, &(&1.mfa == {Siblings, name, 1}))
+
+      slices =
+        for slice <- function.slices do
+          evidence = slice.relations && Evidence.classify(slice.relations)
+          %{slice: slice, evidence: evidence}
+        end
+
+      context = %{
+        module: result,
+        function: function,
+        file: nil,
+        slices: slices,
+        severity: :warning
+      }
+
+      Enum.map(ReturnConflict.check_function(context), &%{&1 | gate: Policy.gate?(&1, %Config{})})
+    end
+
+    # The sibling's argument cannot be translated: it may share inputs with
+    # slice 0, so no_overlap blocks.
+    assert [issue] = sl001.(:unsupported_sibling)
+    assert %Issue{rule: "SL001", evidence: :conflict, slice: 0} = issue
+    assert {:no_overlap, :blocked} in issue.prerequisites
+    refute issue.gate
+
+    # The sibling's argument translates and is disjoint: the conflict gates.
+    assert [issue] = sl001.(:disjoint_sibling)
+    assert %Issue{rule: "SL001", evidence: :conflict, slice: 0} = issue
+    assert {:no_overlap, :met} in issue.prerequisites
+    assert issue.gate
+  end
+
   test "SL002 is reported for every possible class and never gated" do
     run = run!([Cases])
     status = issues(run, {Cases, :status, 1})

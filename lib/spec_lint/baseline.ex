@@ -55,12 +55,31 @@ defmodule SpecLint.Baseline do
   `expires` must be `null` or an ISO 8601 date (`YYYY-MM-DD`); `parse/2`
   rejects anything else, so a mistyped date cannot suppress a finding
   forever.
+
+  ## Adapter compatibility per entry
+
+  Every finding records the adapter that produced it (`"adapter"`; an
+  entry without one inherits the file's). An entry acknowledges an issue
+  only when its adapter is the running one: the file-level check is not
+  enough, because `build/5` keeps the entries of rules that did not run.
+  When those entries come from another adapter, `build/5` keeps them with
+  `"pending_reconciliation": true` and their original adapter: they were
+  never rechecked by the running compiler, so `decide/3` never counts
+  them as baselined, and never declares them stale either. They are listed
+  in the decisions as `pending_reconciliation` until a regeneration with
+  the rule enabled replaces them (the rule's current findings are written
+  afresh) or drops them.
   """
 
   alias SpecLint.{Bound, Compiler, Issue}
   alias SpecLint.Report.Json
 
   @version 1
+
+  # Inventory statuses an acknowledgement applies to (`unanalysed`: a
+  # function still exported whose spec was removed,
+  # `SpecLint.Coverage.lost_analysis/2`).
+  @acknowledged_statuses ["unsupported", "unavailable", "unanalysed"]
 
   @typedoc "One acknowledged finding."
   @type finding :: %{
@@ -98,7 +117,8 @@ defmodule SpecLint.Baseline do
           applied: boolean(),
           reason: nil | :missing | :adapter_mismatch,
           stale_findings: [finding()],
-          stale_inventory: [inventory_entry()]
+          stale_inventory: [inventory_entry()],
+          pending_reconciliation: [finding()]
         }
 
   @doc "The baseline file format version."
@@ -300,15 +320,26 @@ defmodule SpecLint.Baseline do
 
   Options: `:rules`, the IDs of the rules that ran (default: every rule).
   Previous findings of rules that did not run (turned `:off` in the
-  configuration) are kept unchanged, so a narrower rule set never drops
-  acknowledged entries.
+  configuration) are kept, so a narrower rule set never drops acknowledged
+  entries. A kept entry written by another adapter (its own `"adapter"`,
+  or the previous file's when it has none) is kept with its adapter and
+  `"pending_reconciliation": true`: the running adapter never rechecked
+  it, so it acknowledges nothing (see "Adapter compatibility per entry").
   """
   @spec build([Issue.t()], [map()], String.t(), t() | nil, keyword()) :: map()
   def build(issues, inventory, adapter, previous, opts \\ []) do
     rules = Keyword.get(opts, :rules)
     previous_entries = (previous && previous.findings) || []
     previous_findings = Map.new(previous_entries, &{&1["fingerprint"], &1})
-    kept = Enum.reject(previous_entries, &ran?(&1["rule"], rules))
+
+    kept =
+      for entry <- previous_entries, not ran?(entry["rule"], rules) do
+        entry_adapter = entry_adapter(entry, previous)
+
+        if entry_adapter == adapter and not pending?(entry),
+          do: entry,
+          else: Map.merge(entry, %{"adapter" => entry_adapter, "pending_reconciliation" => true})
+      end
 
     previous_acks =
       Map.new((previous && previous.inventory) || [], &{inventory_key(&1), &1})
@@ -362,6 +393,15 @@ defmodule SpecLint.Baseline do
     }
   end
 
+  # The adapter an entry was written by: its own, or the file's.
+  defp entry_adapter(entry, baseline), do: entry["adapter"] || (baseline && baseline.adapter)
+
+  defp pending?(entry), do: entry["pending_reconciliation"] == true
+
+  # Whether an entry may acknowledge issues of the running adapter.
+  defp compatible?(entry, baseline, adapter),
+    do: entry_adapter(entry, baseline) == adapter and not pending?(entry)
+
   @doc "Writes a baseline map atomically as deterministic JSON."
   @spec write(Path.t(), map()) :: :ok | {:error, String.t()}
   def write(path, baseline), do: Json.write_atomic(path, Json.encode(baseline))
@@ -380,30 +420,49 @@ defmodule SpecLint.Baseline do
   `"SL008"` is listed; default: every rule), `:inventory` (the current
   inventory, `SpecLint.Coverage.entry/0`: a finding whose slice or module
   is not compared now is never stale).
+
+  A finding entry from another adapter, or marked
+  `"pending_reconciliation"`, never acknowledges an issue and is never
+  stale; it is listed in `pending_reconciliation`.
   """
   @spec decide([Issue.t()], t() | nil, keyword()) :: {[Issue.t()], decisions()}
-  def decide(issues, nil, _opts) do
-    {issues, %{applied: false, reason: :missing, stale_findings: [], stale_inventory: []}}
-  end
+  def decide(issues, nil, _opts), do: {issues, not_applied(:missing)}
 
   def decide(issues, %__MODULE__{} = baseline, opts) do
     adapter = Keyword.fetch!(opts, :adapter)
 
     if baseline.adapter != adapter do
-      {issues,
-       %{applied: false, reason: :adapter_mismatch, stale_findings: [], stale_inventory: []}}
+      {issues, not_applied(:adapter_mismatch)}
     else
       apply_baseline(issues, baseline, opts)
     end
   end
 
+  @doc "The decisions of a run no baseline was applied to, for `reason`."
+  @spec not_applied(:missing | :adapter_mismatch) :: decisions()
+  def not_applied(reason) do
+    %{
+      applied: false,
+      reason: reason,
+      stale_findings: [],
+      stale_inventory: [],
+      pending_reconciliation: []
+    }
+  end
+
   defp apply_baseline(issues, baseline, opts) do
     today = Keyword.get_lazy(opts, :today, &Date.utc_today/0)
-    findings = Map.new(baseline.findings, &{&1["fingerprint"], &1})
+    adapter = Keyword.fetch!(opts, :adapter)
+
+    {usable, pending} =
+      Enum.split_with(baseline.findings, &compatible?(&1, baseline, adapter))
+
+    baseline = %{baseline | findings: usable}
+    findings = Map.new(usable, &{&1["fingerprint"], &1})
 
     acks =
       for entry <- baseline.inventory,
-          entry["status"] in ["unsupported", "unavailable"],
+          entry["status"] in @acknowledged_statuses,
           into: %{},
           do: {inventory_key(entry), entry}
 
@@ -439,7 +498,8 @@ defmodule SpecLint.Baseline do
        applied: true,
        reason: nil,
        stale_findings: stale_findings,
-       stale_inventory: stale_inventory
+       stale_inventory: stale_inventory,
+       pending_reconciliation: pending
      }}
   end
 
@@ -497,7 +557,7 @@ defmodule SpecLint.Baseline do
             do: {Issue.subject(issue), issue.slice}
 
       for entry <- baseline.inventory,
-          entry["status"] in ["unsupported", "unavailable"],
+          entry["status"] in @acknowledged_statuses,
           not MapSet.member?(acknowledged, inventory_key(entry)),
           do: entry
     else

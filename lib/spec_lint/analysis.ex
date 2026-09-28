@@ -7,7 +7,9 @@ defmodule SpecLint.Analysis do
   functions, `behaviour_info/1`, generated definitions and specs of
   non-exported functions are listed under `out_of_scope` with a reason;
   they are never silently dropped. Nothing in the analysed module is
-  loaded or invoked.
+  loaded or invoked. The module's exports are kept (`exports`), so
+  coverage can tell a function whose spec was removed from a deleted
+  function (`SpecLint.Coverage.lost_analysis/2`).
 
   A definition is generated (DESIGN.md section 8) when its debug info
   metadata says `generated: true`, or when it is one of the definitions
@@ -68,7 +70,8 @@ defmodule SpecLint.Analysis do
           status: :ok | {:unavailable, term()} | {:out_of_scope, :erlang_module},
           debug_info: :ok | {:error, term()},
           functions: [function_result()],
-          out_of_scope: [%{mfa: mfa(), reason: out_of_scope_reason()}]
+          out_of_scope: [%{mfa: mfa(), reason: out_of_scope_reason()}],
+          exports: [{atom(), arity()}]
         }
 
   @doc """
@@ -102,7 +105,8 @@ defmodule SpecLint.Analysis do
       status: {:unavailable, reason},
       debug_info: debug_info,
       functions: [],
-      out_of_scope: []
+      out_of_scope: [],
+      exports: []
     }
   end
 
@@ -140,7 +144,8 @@ defmodule SpecLint.Analysis do
       status: :ok,
       debug_info: debug_info_status(beam),
       functions: [],
-      out_of_scope: []
+      out_of_scope: [],
+      exports: beam.exports
     }
 
     cond do
@@ -250,7 +255,22 @@ defmodule SpecLint.Analysis do
 
   defp compare(base, spec_clauses, clauses, arity, context) do
     translated = Enum.map(spec_clauses, &Translate.slice(&1, context))
-    %{slices: relations, dynamic_probe: probe} = Compare.function(translated, clauses, arity)
+
+    # An unsupported slice still takes part in the overlap tag of its
+    # siblings, with whatever of its arguments can be translated.
+    inputs =
+      Enum.zip_with(spec_clauses, translated, fn
+        spec, {:unsupported, reason} ->
+          case Translate.argument_bounds(spec, context) do
+            {:ok, bounds} -> {:unsupported, reason, bounds}
+            :error -> {:unsupported, reason}
+          end
+
+        _spec, ok ->
+          ok
+      end)
+
+    %{slices: relations, dynamic_probe: probe} = Compare.function(inputs, clauses, arity)
 
     slices =
       [spec_clauses, translated, relations]

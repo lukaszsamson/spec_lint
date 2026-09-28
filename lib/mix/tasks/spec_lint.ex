@@ -36,8 +36,10 @@ defmodule Mix.Tasks.SpecLint do
 
   Exit status: `0` accepted; `1` new gated findings or a coverage violation
   (with `--ci` or `--warnings-as-errors`); `2` invalid options or
-  configuration, compilation failure, unsupported compiler or backend in CI,
-  or an incomplete run.
+  configuration, compilation failure, a missing build directory for an
+  owned application, unsupported compiler or backend in CI, or an
+  incomplete run. An existing but empty build directory is a project with
+  zero specs: exit 0, and the report says "0 specs checked".
   """
 
   use Mix.Task
@@ -136,7 +138,10 @@ defmodule Mix.Tasks.SpecLint do
     blocking = Enum.count(run.issues, &SpecLint.Issue.blocking?/1)
     target = if output, do: " -> #{output}", else: ""
 
-    "spec_lint: #{length(run.issues)} finding(s), #{blocking} gating and new, " <>
+    specs = get_in(run.ledger, ["functions", "found"]) || 0
+
+    "spec_lint: #{specs} specs checked, #{length(run.issues)} finding(s), " <>
+      "#{blocking} gating and new, " <>
       "#{run.completion}, exit #{run.exit_code}#{target}"
   end
 

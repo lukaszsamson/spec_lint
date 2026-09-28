@@ -102,7 +102,8 @@ defmodule SpecLint.Report.Json do
       "expired" => Enum.count(run.issues, &(&1.baseline == :expired)),
       "new" => Enum.count(run.issues, &(&1.baseline == :new)),
       "stale_findings" => decisions.stale_findings,
-      "stale_inventory" => decisions.stale_inventory
+      "stale_inventory" => decisions.stale_inventory,
+      "pending_reconciliation" => decisions.pending_reconciliation
     }
   end
 

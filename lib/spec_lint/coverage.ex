@@ -25,6 +25,25 @@ defmodule SpecLint.Coverage do
 
   A compared inventory entry records that reason as `unknown_reason`, and
   its translation notes (`opaque_expanded`, `nominal_expanded`) as `notes`.
+
+  ## Lost analysis
+
+  A spec slice exists only while its `@spec` does, so removing a spec
+  would otherwise make its analysis disappear without a trace. Given the
+  baseline, `inventory/3` adds an entry with the status `unanalysed` for
+  every slice the baseline inventory lists as `compared` (or as an
+  acknowledged `unanalysed`) whose function is still exported by an
+  analysed module but has no spec in scope any more
+  (`lost_analysis/2`). The reason is `spec_removed`, or
+  `spec_out_of_scope:<reason>` when the spec is still there but now out
+  of scope (for example `generated`). A function that is no longer
+  exported (deleted, made private or turned into a macro), a module that
+  is gone, excluded or not part of a partial run, and a function that
+  still has specs in scope (with fewer clauses) produce no entry. These
+  entries are coverage findings (`SL008`) and, when the baseline listed
+  the slice as `compared`, regressions (`regressions/2`); regenerating
+  the baseline stores them as acknowledged `unanalysed` entries. The
+  ledger counts them apart from the slices found (`lost_analysis`).
   """
 
   alias SpecLint.{Analysis, Baseline, Bound, Evidence, Issue}
@@ -47,13 +66,83 @@ defmodule SpecLint.Coverage do
   @typedoc "Evidence per slice, keyed by `{mfa, slice index}`."
   @type evidence_map :: %{optional({mfa(), non_neg_integer()}) => Evidence.classification()}
 
-  @doc "The inventory of analysed modules, sorted."
-  @spec inventory([Analysis.result()], evidence_map()) :: [entry()]
-  def inventory(modules, evidence) do
+  @doc """
+  The inventory of analysed modules, sorted, with the `unanalysed` entries
+  of `lost_analysis/2` against `baseline` (none when it is `nil`).
+  """
+  @spec inventory([Analysis.result()], evidence_map(), Baseline.t() | nil) :: [entry()]
+  def inventory(modules, evidence, baseline \\ nil) do
     modules
     |> Enum.flat_map(&module_entries(&1, evidence))
+    |> Kernel.++(lost_analysis(modules, baseline))
     |> Enum.sort_by(&{&1.module, &1.mfa || "", &1.slice || -1})
   end
+
+  @doc """
+  The `unanalysed` inventory entries for slices of the baseline inventory
+  (`compared`, or already acknowledged as `unanalysed`) whose function is
+  still exported by an analysed module but has no spec in scope any more
+  (see "Lost analysis" in the moduledoc). A deleted function is not
+  listed.
+  """
+  @spec lost_analysis([Analysis.result()], Baseline.t() | nil) :: [entry()]
+  def lost_analysis(_modules, nil), do: []
+
+  def lost_analysis(modules, %Baseline{inventory: stored}) do
+    current = for %{status: :ok} = result <- modules, into: %{}, do: {module_name(result), result}
+
+    for %{"status" => status, "mfa" => mfa, "module" => module} = entry <- stored,
+        status in ["compared", "unanalysed"],
+        is_binary(mfa),
+        result = Map.get(current, module),
+        result != nil,
+        reason = lost_reason(result, mfa),
+        reason != nil,
+        uniq: true do
+      %{
+        module: module,
+        mfa: mfa,
+        slice: entry["slice"],
+        status: "unanalysed",
+        reason: reason,
+        translation: nil,
+        obligation: nil,
+        unknown_reason: nil,
+        notes: [],
+        class: nil
+      }
+    end
+  end
+
+  # nil when the function still has specs in scope or is no longer exported.
+  defp lost_reason(result, mfa) do
+    in_scope? = Enum.any?(result.functions, &(Issue.mfa_string(&1.mfa) == mfa))
+    exported? = Enum.any?(result.exports, &(Issue.mfa_string(export_mfa(result, &1)) == mfa))
+
+    cond do
+      in_scope? or not exported? ->
+        nil
+
+      out = Enum.find(result.out_of_scope, &(Issue.mfa_string(&1.mfa) == mfa)) ->
+        "spec_out_of_scope:#{out.reason}"
+
+      true ->
+        "spec_removed"
+    end
+  end
+
+  @doc """
+  The exported MFA of `result` that an inventory entry of status
+  `unanalysed` names (`lost_analysis/2`), or `nil`.
+  """
+  @spec exported_mfa(Analysis.result(), String.t()) :: mfa() | nil
+  def exported_mfa(result, mfa) do
+    result.exports
+    |> Enum.map(&export_mfa(result, &1))
+    |> Enum.find(&(Issue.mfa_string(&1) == mfa))
+  end
+
+  defp export_mfa(%{module: module}, {name, arity}), do: {module, name, arity}
 
   defp module_entries(%{status: {:unavailable, reason}} = result, _evidence) do
     [
@@ -154,7 +243,9 @@ defmodule SpecLint.Coverage do
   """
   @spec ledger([Analysis.result()], [Analysis.result()], [entry()]) :: map()
   def ledger(modules, excluded, inventory) do
-    slices = Enum.filter(inventory, & &1.slice)
+    {lost, slices} =
+      inventory |> Enum.filter(& &1.slice) |> Enum.split_with(&(&1.status == "unanalysed"))
+
     functions = modules |> Enum.flat_map(& &1.functions)
     compared = Enum.filter(slices, &(&1.status == "compared"))
 
@@ -198,6 +289,7 @@ defmodule SpecLint.Coverage do
         compared |> Enum.map(& &1.obligation) |> Enum.reject(&is_nil/1) |> Enum.frequencies(),
       "obligations_unknown_by_reason" =>
         compared |> Enum.map(& &1.unknown_reason) |> Enum.reject(&is_nil/1) |> Enum.frequencies(),
+      "lost_analysis" => lost |> Enum.map(& &1.reason) |> Enum.frequencies(),
       "entries" => Enum.map(inventory, &entry_json/1)
     }
   end
@@ -223,9 +315,12 @@ defmodule SpecLint.Coverage do
   @doc """
   The inventory keys (`{subject, slice}`, as `SpecLint.Baseline.inventory_key/1`)
   that regressed against the baseline inventory: a slice stored as
-  `compared` that is now `unsupported` or `unavailable`, and every module
-  now unavailable as a whole that had a compared slice. Slices or functions
-  that no longer exist are not regressions.
+  `compared` that is now `unsupported`, `unavailable` or `unanalysed` (its
+  function is still exported but its spec is gone, `lost_analysis/2`), and
+  every module now unavailable as a whole that had a compared slice.
+  Functions that are no longer exported (deleted) are not regressions.
+  `inventory` must come from `inventory/3` with the same baseline for spec
+  removals to be seen.
   """
   @spec regressions([entry()], Baseline.t() | nil) :: MapSet.t()
   def regressions(_inventory, nil), do: MapSet.new()
