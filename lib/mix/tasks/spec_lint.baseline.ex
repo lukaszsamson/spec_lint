@@ -16,9 +16,13 @@ defmodule Mix.Tasks.SpecLint.Baseline do
   Ordinary `mix spec_lint` runs never modify it.
 
   Options: `--output PATH` (default: the configured baseline), `--config`,
-  `--profile`, `--rules`, `--except`, `--require-static-return`. Filters
-  (`--module`, `--app`) are rejected: a baseline from a partial run would
-  drop entries. Exit status 2 on errors or an incomplete run.
+  `--profile`, `--require-static-return`. Filters (`--module`, `--app`)
+  and rule selection (`--rules`, `--except`) are rejected: a baseline from
+  a partial run or a narrower rule set would drop entries. Findings of
+  rules the configuration turns `:off` are kept from the previous baseline
+  unchanged. An existing output file that is not a valid baseline is an
+  error, never silently overwritten. Exit status 2 on errors or an
+  incomplete run.
   """
 
   use Mix.Task
@@ -34,11 +38,20 @@ defmodule Mix.Tasks.SpecLint.Baseline do
     if cli.modules != [] or cli.apps != [] or cli.explain,
       do: Mix.raise("mix spec_lint.baseline analyses the whole project", exit_status: 2)
 
+    if cli.only != nil or cli.except != [],
+      do:
+        Mix.raise(
+          "mix spec_lint.baseline runs the configured rules; --rules and --except would " <>
+            "drop the entries of the rules left out",
+          exit_status: 2
+        )
+
     Task.compile!()
     project = Project.current()
     config = Task.load_config!(project, cli)
     output = Path.expand(cli.output || config.baseline, project.root)
-    run = ok!(Run.execute(project, config, only: cli.only, except: cli.except))
+    previous = previous!(output)
+    run = ok!(Run.execute(project, config))
 
     cond do
       run.capabilities == nil ->
@@ -50,18 +63,26 @@ defmodule Mix.Tasks.SpecLint.Baseline do
         Mix.raise("incomplete run: #{Enum.join(run.completion_reasons, "; ")}", exit_status: 2)
 
       true ->
-        write(run, output)
+        write(run, output, previous)
     end
   end
 
-  defp write(run, output) do
-    previous =
-      case Baseline.load(output) do
-        {:ok, baseline} -> baseline
-        _ -> nil
-      end
+  defp previous!(output) do
+    case Baseline.load(output) do
+      {:ok, baseline} -> baseline
+      :missing -> nil
+      {:error, message} -> Mix.raise(message, exit_status: 2)
+    end
+  end
 
-    baseline = Baseline.build(run.issues, run.inventory, run.capabilities.adapter_id, previous)
+  defp write(run, output, previous) do
+    rules = Enum.map(run.rules, fn {rule, _severity} -> rule.id() end)
+
+    baseline =
+      Baseline.build(run.issues, run.inventory, run.capabilities.adapter_id, previous,
+        rules: rules
+      )
+
     :ok = written!(Baseline.write(output, baseline))
 
     acknowledged = Enum.count(baseline["inventory"], &Map.has_key?(&1, "acknowledged"))

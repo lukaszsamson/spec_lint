@@ -11,13 +11,23 @@ defmodule SpecLint.Integration.ConsumerTest do
   @moduletag timeout: 300_000
 
   @root Path.expand("../..", __DIR__)
-  @dir Path.join(@root, "tmp/integration/consumer")
 
+  # One directory per test run, removed afterwards, so concurrent runs in
+  # the same checkout do not share a fixture. The per-test helpers read it
+  # from the process dictionary set in setup.
   setup_all do
-    File.rm_rf!(@dir)
-    File.mkdir_p!(Path.join(@dir, "lib"))
+    dir =
+      Path.join([
+        @root,
+        "tmp/integration",
+        "consumer-#{System.os_time(:millisecond)}-#{System.unique_integer([:positive])}"
+      ])
 
-    File.write!(Path.join(@dir, "mix.exs"), """
+    on_exit(fn -> File.rm_rf!(dir) end)
+    File.mkdir_p!(Path.join(dir, "lib"))
+    Process.put(:consumer_dir, dir)
+
+    File.write!(Path.join(dir, "mix.exs"), """
     defmodule Consumer.MixProject do
       use Mix.Project
 
@@ -40,21 +50,28 @@ defmodule SpecLint.Integration.ConsumerTest do
 
     {output, status} = mix(["compile"])
     assert status == 0, output
+    %{dir: dir}
+  end
+
+  setup %{dir: dir} do
+    Process.put(:consumer_dir, dir)
     :ok
   end
 
-  defp write(path, contents), do: File.write!(Path.join(@dir, path), contents)
+  defp dir, do: Process.get(:consumer_dir)
+
+  defp write(path, contents), do: File.write!(Path.join(dir(), path), contents)
 
   defp mix(args) do
     System.cmd(System.find_executable("mix"), args,
-      cd: @dir,
+      cd: dir(),
       env: [{"MIX_ENV", "dev"}],
       stderr_to_stdout: true
     )
   end
 
   defp lint(extra \\ []) do
-    report = Path.join(@dir, "report.json")
+    report = Path.join(dir(), "report.json")
     File.rm(report)
     {output, status} = mix(["spec_lint", "--ci", "--format", "json", "--output", report] ++ extra)
     json = if File.exists?(report), do: report |> File.read!() |> JSON.decode!()
@@ -88,9 +105,9 @@ defmodule SpecLint.Integration.ConsumerTest do
              json["beams"]
 
     # Byte-identical output for an unchanged project.
-    first = File.read!(Path.join(@dir, "report.json"))
+    first = File.read!(Path.join(dir(), "report.json"))
     {0, _json, _} = lint()
-    assert File.read!(Path.join(@dir, "report.json")) == first
+    assert File.read!(Path.join(dir(), "report.json")) == first
 
     # An injected SL001: exit 1.
     write("lib/bad.ex", """
@@ -117,7 +134,7 @@ defmodule SpecLint.Integration.ConsumerTest do
     # The baseline acknowledges it: exit 0.
     {output, 0} = mix(["spec_lint.baseline"])
     assert output =~ "1 finding(s)"
-    baseline = @dir |> Path.join(".spec_lint_baseline.json") |> File.read!() |> JSON.decode!()
+    baseline = dir() |> Path.join(".spec_lint_baseline.json") |> File.read!() |> JSON.decode!()
     assert [%{"fingerprint" => fingerprint, "rule" => "SL001"}] = baseline["findings"]
     assert fingerprint == finding["fingerprint"]
 
@@ -188,6 +205,60 @@ defmodule SpecLint.Integration.ConsumerTest do
     {output, status} = mix(["spec_lint", "--rules", "SL007"])
     assert status == 2
     assert output =~ "body analysis backend"
+  end
+
+  test "--format json without --output: stdout is only the JSON report" do
+    # A real source change, so compilation prints progress.
+    write("lib/json_stdout.ex", """
+    defmodule Consumer.JsonStdout do
+      @spec id(atom()) :: atom()
+      def id(a), do: a
+    end
+    """)
+
+    # Standard error goes to a file, so the test output stays clean and the
+    # compiler progress can be checked there.
+    command = "#{System.find_executable("mix")} spec_lint --format json 2> err.txt"
+
+    {output, 0} =
+      System.cmd("sh", ["-c", command], cd: dir(), env: [{"MIX_ENV", "dev"}])
+
+    assert {:ok, %{"schema" => "spec_lint/report"}} = JSON.decode(output)
+    err = File.read!(Path.join(dir(), "err.txt"))
+    assert err =~ "Compiling 1 file (.ex)"
+    assert err =~ "spec_lint: "
+    File.rm!(Path.join(dir(), "lib/json_stdout.ex"))
+  end
+
+  test "mix spec_lint.baseline rejects rule selection and a malformed output file" do
+    for option <- [["--rules", "SL001"], ["--except", "SL001"]] do
+      {output, status} = mix(["spec_lint.baseline" | option])
+      assert status == 2
+      assert output =~ "--rules and --except would drop the entries"
+    end
+
+    other = Path.join(dir(), "other.json")
+
+    malformed =
+      ~s({"version":1,"findings":[{"fingerprint":"sha256:x","reason":"owner said ok",) <>
+        ~s("expires":"2027-01-01"}],"inventory":"oops"})
+
+    File.write!(other, malformed)
+    {output, status} = mix(["spec_lint.baseline", "--output", other])
+    assert status == 2
+    assert output =~ "invalid baseline"
+    assert File.read!(other) == malformed
+  end
+
+  test "--analysis bodies and a throwing configuration exit 2" do
+    {output, status} = mix(["spec_lint", "--analysis", "bodies"])
+    assert status == 2
+    assert output =~ "body analysis (analysis: :bodies) is not available"
+
+    File.write!(Path.join(dir(), "throw.exs"), "throw(:x)")
+    {output, status} = mix(["spec_lint", "--config", "throw.exs"])
+    assert status == 2
+    assert output =~ "cannot evaluate"
   end
 
   test "--explain and the console report" do

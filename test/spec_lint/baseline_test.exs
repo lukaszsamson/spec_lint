@@ -125,6 +125,48 @@ defmodule SpecLint.BaselineTest do
     end
   end
 
+  describe "fingerprint normalisation" do
+    @spelled """
+    defmodule FpSpelling do
+      @type r :: :ok | pos_integer()
+      @spec g(atom()) :: r()
+      def g(a) when is_atom(a), do: {:error, a}
+
+      @spec h(x) :: :none | :fine when x: atom()
+      def h(a) when is_atom(a), do: {:error, a}
+    end
+    """
+
+    # The same specs with the alias renamed, the unions reordered and the
+    # type variable renamed.
+    @respelled """
+    defmodule FpSpelling do
+      @type result :: pos_integer() | :ok
+      @spec g(atom()) :: result()
+      def g(a) when is_atom(a), do: {:error, a}
+
+      @spec h(y) :: :fine | :none when y: atom()
+      def h(a) when is_atom(a), do: {:error, a}
+    end
+    """
+
+    test "renaming a type alias or variable and reordering a union keep fingerprints",
+         %{tmp_dir: tmp_dir} do
+      spelled = fingerprints(Path.join(tmp_dir, "spelled"), @spelled)
+
+      assert Map.keys(spelled) |> Enum.sort() == [
+               {"SL001", :g, 0, nil},
+               {"SL001", :h, 0, nil}
+             ]
+
+      assert fingerprints(Path.join(tmp_dir, "respelled"), @respelled) == spelled
+
+      # A spec whose meaning changes still changes the fingerprint.
+      changed = String.replace(@spelled, ":none | :fine", ":none")
+      refute fingerprints(Path.join(tmp_dir, "changed"), changed) == spelled
+    end
+  end
+
   test "strip_annotations removes lines and columns only" do
     ast = {:type, 12, :tuple, [{:atom, {3, 4}, :ok}, {:var, [line: 7], :x}]}
     assert Baseline.strip_annotations(ast) == {:type, 0, :tuple, [{:atom, 0, :ok}, {:var, 0, :x}]}
@@ -181,6 +223,122 @@ defmodule SpecLint.BaselineTest do
       assert Enum.any?(issues, &Issue.blocking?/1)
     end
 
+    test "stale entries only for the rules that ran and the slices compared", ctx do
+      {:ok, baseline} = parsed(ctx.baseline)
+      [dropped | kept] = ctx.run.issues
+      opts = [adapter: ctx.adapter, complete?: true]
+
+      # The rule of the dropped finding did not run: not stale.
+      others = ctx.run.issues |> Enum.map(& &1.rule) |> Enum.uniq() |> List.delete(dropped.rule)
+      {_, decisions} = Baseline.decide(kept, baseline, opts ++ [rules: others])
+      assert decisions.stale_findings == []
+      assert decisions.stale_inventory == []
+
+      # Its slice is now unavailable: not stale.
+      entry = %{
+        module: "SpecLint.Fixtures.Compare",
+        mfa: Issue.subject(dropped),
+        slice: dropped.slice,
+        status: "unavailable",
+        reason: "no_signature"
+      }
+
+      {_, decisions} = Baseline.decide(kept, baseline, opts ++ [inventory: [entry]])
+      assert decisions.stale_findings == []
+
+      # Its whole module is unavailable: not stale.
+      module = %{entry | mfa: nil, slice: nil, reason: "missing_metadata"}
+      {_, decisions} = Baseline.decide(kept, baseline, opts ++ [inventory: [module]])
+      assert decisions.stale_findings == []
+
+      # A module whose name only prefixes the finding's does not hide it.
+      other = %{module | module: "SpecLint.Fixtures"}
+      {_, decisions} = Baseline.decide(kept, baseline, opts ++ [inventory: [other]])
+      assert [%{"fingerprint" => fingerprint}] = decisions.stale_findings
+      assert fingerprint == dropped.fingerprint
+    end
+
+    test "an SL008 for an unsupported checker chunk is never acknowledged", ctx do
+      issue = %Issue{
+        rule: "SL008",
+        name: :analysis_unavailable,
+        module: Compare,
+        mfa: {Compare, :disjoint, 1},
+        slice: 0,
+        evidence: :unavailable,
+        severity: :warning,
+        message: "",
+        gate: true,
+        data: %{status: "unavailable", reason: "unsupported_chunk:elixir_checker_v9"}
+      }
+
+      ack = %{
+        "mfa" => Issue.subject(issue),
+        "slice" => 0,
+        "status" => "unavailable",
+        "acknowledged" => "x"
+      }
+
+      {:ok, baseline} = parsed(%{ctx.baseline | "inventory" => [ack]})
+      {[decided], _} = Baseline.decide([issue], baseline, adapter: ctx.adapter)
+      assert decided.baseline == :new
+
+      ordinary = %{issue | data: %{status: "unavailable", reason: "no_signature"}}
+      {[decided], _} = Baseline.decide([ordinary], baseline, adapter: ctx.adapter)
+      assert decided.baseline == :baselined
+    end
+
+    test "regenerating keeps the entries of rules that did not run", ctx do
+      {:ok, previous} = parsed(ctx.baseline)
+      [first | _] = ctx.run.issues
+      rules = ctx.run.issues |> Enum.map(& &1.rule) |> Enum.uniq() |> List.delete(first.rule)
+      remaining = Enum.reject(ctx.run.issues, &(&1.rule == first.rule))
+
+      rebuilt = Baseline.build(remaining, ctx.run.inventory, ctx.adapter, previous, rules: rules)
+      assert Enum.any?(rebuilt["findings"], &(&1["fingerprint"] == first.fingerprint))
+      assert length(rebuilt["findings"]) == length(ctx.baseline["findings"])
+
+      dropped = Baseline.build(remaining, ctx.run.inventory, ctx.adapter, previous)
+      refute Enum.any?(dropped["findings"], &(&1["fingerprint"] == first.fingerprint))
+    end
+
+    test "an expires value that is not a date never suppresses a finding", ctx do
+      for bad <- ["2020-13-45", "31/12/2020", "tomorrow", "2020-01-01T00:00:00Z", 20_200_101] do
+        broken =
+          Map.update!(ctx.baseline, "findings", fn [first | rest] ->
+            [Map.put(first, "expires", bad) | rest]
+          end)
+
+        assert {:error, message} = parsed(broken)
+        assert message =~ "expected null or an ISO 8601 date"
+      end
+
+      # A baseline built in memory with a bad date: the entry counts as new.
+      {:ok, baseline} = parsed(ctx.baseline)
+      findings = Enum.map(baseline.findings, &Map.put(&1, "expires", "2020-13-45"))
+
+      {issues, _} =
+        Baseline.decide(ctx.run.issues, %{baseline | findings: findings},
+          adapter: ctx.adapter,
+          today: ~D[2026-09-28]
+        )
+
+      assert Enum.all?(issues, &(&1.baseline == :expired))
+
+      # A valid future date still acknowledges.
+      future =
+        Map.update!(ctx.baseline, "findings", fn findings ->
+          Enum.map(findings, &Map.put(&1, "expires", "2027-01-01"))
+        end)
+
+      {:ok, baseline} = parsed(future)
+
+      {issues, _} =
+        Baseline.decide(ctx.run.issues, baseline, adapter: ctx.adapter, today: ~D[2026-09-28])
+
+      assert Enum.all?(issues, &(&1.baseline == :baselined))
+    end
+
     test "a baseline from another adapter is not applied", ctx do
       {:ok, baseline} = parsed(%{ctx.baseline | "adapter" => "other"})
       {issues, decisions} = Baseline.decide(ctx.run.issues, baseline, adapter: ctx.adapter)
@@ -210,6 +368,14 @@ defmodule SpecLint.BaselineTest do
     assert {:error, _} =
              Baseline.parse(~s({"version": 1, "findings": [{"rule": "x"}], "inventory": []}))
 
+    # A version 1 file with a malformed findings or inventory field is not
+    # reported as an unsupported version.
+    malformed = ~s({"version": 1, "findings": [{"fingerprint": "sha256:x"}], "inventory": "oops"})
+    assert {:error, message} = Baseline.parse(malformed, "b.json")
+    assert message =~ "invalid baseline b.json"
+    assert message =~ ~s("findings" and "inventory" lists)
+    refute message =~ "unsupported"
+
     assert Baseline.load("tmp/definitely/missing.json") == :missing
   end
 
@@ -236,7 +402,9 @@ defmodule SpecLint.BaselineTest do
     assert [%{rule: "SL008", data: %{regression: true}} = sl008] = third.issues
     assert Issue.blocking?(sl008)
     assert third.exit_code == 1
-    assert length(third.baseline_decisions.stale_findings) == length(first.issues)
+    # The module was not analysed, so its acknowledged findings are not
+    # stale: they come back when debug info does.
+    assert third.baseline_decisions.stale_findings == []
 
     # With fail_on_regression: false a regression is reported, not gated.
     lenient = %Config{config | coverage: %{fail_on_regression: false, floor: 0}}

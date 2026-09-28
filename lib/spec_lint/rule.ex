@@ -76,7 +76,6 @@ defmodule SpecLint.Rule do
         mfa: function.mfa,
         slice: attrs[:slice],
         clause: attrs[:clause],
-        spec: slice && slice.spec,
         args: slice && slice.args,
         return: slice && slice.return,
         inferred: inferred,
@@ -120,19 +119,24 @@ defmodule SpecLint.Rule do
     do: for(index <- indexes, do: {index, Enum.at(function.inferred, index)})
 
   @doc """
-  SL001 prerequisites for a compared slice (DESIGN.md section 4): no
-  `unsupported` loss, no overlap tag (certain or unknown) and no arrow in
-  the spec return.
+  SL001 prerequisites for a compared slice (DESIGN.md sections 4 and 6): no
+  `unsupported` loss, no overlap tag (certain or unknown), no arrow in the
+  spec return, and no argument whose translation recorded an
+  `arrow_polarity` loss (an inexact arrow argument excludes the slice from
+  SL001 gating, section 6).
   """
   @spec sl001_prerequisites(Analysis.slice()) :: [Issue.prerequisite()]
   def sl001_prerequisites(%{args: args, return: return, relations: relations}) do
     unsupported? =
       Enum.any?([return | args], &(:unsupported_construct in Bound.loss_kinds(&1)))
 
+    arrow_argument? = Enum.any?(args, &(:arrow_polarity in Bound.loss_kinds(&1)))
+
     [
       {:no_unsupported_loss, state(not unsupported?)},
       {:no_overlap, state(not relations.overlap? and not relations.overlap_unknown?)},
-      {:no_arrow_in_return, state(not arrow_return?(return))}
+      {:no_arrow_in_return, state(not arrow_return?(return))},
+      {:no_arrow_polarity_argument, state(not arrow_argument?)}
     ]
   end
 
@@ -164,14 +168,44 @@ defmodule SpecLint.Rule do
       Enum.map_join(args, ", ", &Compiler.to_string/1) <> ") -> " <> Compiler.to_string(return)
   end
 
-  @doc "`exact` or `approximate (loss kinds)` for a slice's translation."
+  @doc """
+  `translation exact` or `translation approximate: loss kinds` for a
+  slice's translation, followed by the non-loss notes, such as
+  `(opaque expanded)` when `expand_opaque: true` expanded another module's
+  opaque type structurally (DESIGN.md section 6: the expansion is labelled
+  in output).
+  """
   @spec translation_string(Analysis.slice()) :: String.t()
   def translation_string(%{args: args, return: return}) do
-    case [return | args] |> Enum.flat_map(&Bound.loss_kinds/1) |> Enum.uniq() |> Enum.sort() do
-      [] -> "translation exact"
-      kinds -> "translation approximate: " <> Enum.join(kinds, ", ")
+    bounds = [return | args]
+
+    base =
+      case bounds |> Enum.flat_map(&Bound.loss_kinds/1) |> Enum.uniq() |> Enum.sort() do
+        [] -> "translation exact"
+        kinds -> "translation approximate: " <> Enum.join(kinds, ", ")
+      end
+
+    case note_labels(bounds) do
+      [] -> base
+      labels -> base <> " (" <> Enum.join(labels, ", ") <> ")"
     end
   end
+
+  @doc """
+  Labels of the non-loss notes of translated bounds, sorted:
+  `"opaque expanded"`, `"nominal expanded"`.
+  """
+  @spec note_labels([Bound.t()]) :: [String.t()]
+  def note_labels(bounds) do
+    bounds
+    |> Enum.flat_map(& &1.notes)
+    |> Enum.map(&note_label(&1.kind))
+    |> Enum.uniq()
+    |> Enum.sort()
+  end
+
+  defp note_label(:opaque_expanded), do: "opaque expanded"
+  defp note_label(:nominal_expanded), do: "nominal expanded"
 
   @doc "The spec's function name for a context."
   @spec function_name(function_context()) :: atom()

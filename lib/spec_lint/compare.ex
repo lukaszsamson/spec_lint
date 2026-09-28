@@ -43,13 +43,19 @@ defmodule SpecLint.Compare do
   """
   @type containment :: :contained | :domain_escape | :containment_unknown
 
-  @typedoc "An inferred clause that the application rule selected for a slice."
+  @typedoc """
+  An inferred clause that the application rule selected for a slice.
+  `shadowed?` means the clause may be unreachable: its domain tuple is
+  contained in the union of the domain tuples of the clauses before it
+  (see `shadowed/1`).
+  """
   @type contributing :: %{
           index: non_neg_integer(),
           args: [Compiler.descr()],
           return: Compiler.descr(),
           static_return?: boolean(),
-          containment: containment()
+          containment: containment(),
+          shadowed?: boolean()
         }
 
   @typedoc "Per-position relation of the spec argument to the inferred domain."
@@ -260,6 +266,7 @@ defmodule SpecLint.Compare do
   defp contributing(clauses, used, spec_domain, input_approximate?, d_lo) do
     used_set = MapSet.new(used)
     spec_domain_lo = Compiler.tuple(d_lo)
+    shadowed = MapSet.new(shadowed(clauses))
 
     for {{args, return}, index} <- Enum.with_index(clauses), MapSet.member?(used_set, index) do
       clause_domain = args |> Enum.map(&Compiler.upper_bound/1) |> Compiler.tuple()
@@ -277,9 +284,40 @@ defmodule SpecLint.Compare do
         args: args,
         return: return,
         static_return?: not Compiler.gradual?(return),
-        containment: containment
+        containment: containment,
+        shadowed?: MapSet.member?(shadowed, index)
       }
     end
+  end
+
+  @doc """
+  Indexes of the inferred clauses that may be unreachable (DESIGN.md 3.1
+  step 7, the prerequisite "the compiler did not already flag the clause
+  unreachable"): clause `k` is shadowed when the upper bound of its domain
+  tuple is a subtype of the union of the domain tuples of clauses `0..k-1`.
+
+  The checker chunk does not record reachability, and stored clause
+  domains over-approximate guarded clauses, so this over-reports: it never
+  misses a clause the compiler reports as redundant, and it may flag a
+  clause whose earlier clauses only match part of their stored domain
+  because of guards.
+  """
+  @spec shadowed([Compiler.clause()]) :: [non_neg_integer()]
+  def shadowed(clauses) do
+    {indexes, _seen} =
+      clauses
+      |> Enum.with_index()
+      |> Enum.reduce({[], nil}, fn {{args, _return}, index}, {acc, seen} ->
+        domain = args |> Enum.map(&Compiler.upper_bound/1) |> Compiler.tuple()
+
+        cond do
+          seen == nil -> {acc, domain}
+          Compiler.subtype?(domain, seen) -> {[index | acc], seen}
+          true -> {acc, Compiler.union(seen, domain)}
+        end
+      end)
+
+    Enum.reverse(indexes)
   end
 
   defp inferred_domain(clauses, arity) do

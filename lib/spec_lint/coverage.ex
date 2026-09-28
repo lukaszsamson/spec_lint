@@ -16,8 +16,15 @@ defmodule SpecLint.Coverage do
   dispatch, `behaviour_info/1`, generated definitions, non-exported
   functions, excluded modules); functions and slices found, compared,
   unsupported and unavailable by reason; exact versus approximate
-  translations by loss kind; signatures available and unavailable; body
-  analysis requested and completed; obligations by outcome.
+  translations by loss kind, and slices whose translation expanded another
+  module's opaque or nominal type (`expand_opaque: true`); signatures
+  available and unavailable; body analysis requested and completed;
+  obligations by outcome, and the `unknown` obligations by the reason the
+  evidence is unknown (DESIGN.md 3.1 steps 2 and 8): `top_only`,
+  `near_top`, `no_counted_component` or `other`.
+
+  A compared inventory entry records that reason as `unknown_reason`, and
+  its translation notes (`opaque_expanded`, `nominal_expanded`) as `notes`.
   """
 
   alias SpecLint.{Analysis, Baseline, Bound, Evidence, Issue}
@@ -32,6 +39,8 @@ defmodule SpecLint.Coverage do
           reason: String.t() | nil,
           translation: String.t() | nil,
           obligation: String.t() | nil,
+          unknown_reason: String.t() | nil,
+          notes: [String.t()],
           class: String.t() | nil
         }
 
@@ -56,6 +65,8 @@ defmodule SpecLint.Coverage do
         reason: AnalysisUnavailable.reason_key(reason),
         translation: nil,
         obligation: nil,
+        unknown_reason: nil,
+        notes: [],
         class: nil
       }
     ]
@@ -76,6 +87,8 @@ defmodule SpecLint.Coverage do
         {kind, reason} -> {Atom.to_string(kind), AnalysisUnavailable.reason_key(reason)}
       end
 
+    obligation = obligation(slice, classification)
+
     %{
       module: module_name(result),
       mfa: Issue.mfa_string(function.mfa),
@@ -83,10 +96,33 @@ defmodule SpecLint.Coverage do
       status: status,
       reason: reason,
       translation: translation(slice),
-      obligation: obligation(slice, classification),
+      obligation: obligation,
+      unknown_reason: unknown_reason(obligation, classification),
+      notes: notes(slice),
       class: classification && Atom.to_string(classification.class)
     }
   end
+
+  defp unknown_reason("unknown", nil), do: "unclassified"
+
+  defp unknown_reason("unknown", %{reasons: reasons}) do
+    case Enum.find([:top_only, :near_top, :no_counted_component], &(&1 in reasons)) do
+      nil -> "other"
+      reason -> Atom.to_string(reason)
+    end
+  end
+
+  defp unknown_reason(_obligation, _classification), do: nil
+
+  defp notes(%{status: :compared, args: args, return: return}) do
+    [return | args]
+    |> Enum.flat_map(& &1.notes)
+    |> Enum.map(&Atom.to_string(&1.kind))
+    |> Enum.uniq()
+    |> Enum.sort()
+  end
+
+  defp notes(_slice), do: []
 
   defp module_name(%{module: nil, path: path}),
     do: path |> Path.basename(".beam") |> String.to_atom() |> inspect()
@@ -150,7 +186,8 @@ defmodule SpecLint.Coverage do
         "approximate" => Enum.count(compared, &(&1.translation == "approximate")),
         "unsupported" => reasons(slices, "unsupported"),
         "unavailable" => reasons(slices, "unavailable"),
-        "loss_kinds" => loss_kinds(functions)
+        "loss_kinds" => loss_kinds(functions),
+        "expanded" => Enum.count(compared, &(&1.notes != []))
       },
       "signatures" => %{
         "available" => Enum.count(functions, &(&1.inferred != [])),
@@ -159,6 +196,8 @@ defmodule SpecLint.Coverage do
       "bodies" => %{"requested" => false, "completed" => 0},
       "obligations" =>
         compared |> Enum.map(& &1.obligation) |> Enum.reject(&is_nil/1) |> Enum.frequencies(),
+      "obligations_unknown_by_reason" =>
+        compared |> Enum.map(& &1.unknown_reason) |> Enum.reject(&is_nil/1) |> Enum.frequencies(),
       "entries" => Enum.map(inventory, &entry_json/1)
     }
   end

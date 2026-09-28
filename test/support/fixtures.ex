@@ -183,6 +183,26 @@ defmodule SpecLint.Fixtures.Compare do
   def two_slices(x), do: x
 end
 
+defmodule SpecLint.Fixtures.Review do
+  @moduledoc false
+
+  # An inexact arrow argument (pos_integer() erased inside the fun type):
+  # the translation records arrow_polarity, which excludes the slice from
+  # SL001 gating (DESIGN.md section 6).
+  @spec apply_it((pos_integer() -> atom()), integer()) :: :ok
+  def apply_it(f, x) when is_function(f, 1) and is_integer(x), do: {:error, x}
+
+  # The same conflict with an exact arrow argument gates.
+  @spec apply_exact((integer() -> atom()), integer()) :: :ok
+  def apply_exact(f, x) when is_function(f, 1) and is_integer(x), do: {:error, x}
+
+  # A no_return() spec whose inferred return is top-only (Map.fetch!/2 on
+  # an unknown map): not SL006 evidence; the ledger records the unknown
+  # obligation with the reason top_only.
+  @spec stop(map()) :: no_return()
+  def stop(m), do: Map.fetch!(m, :k)
+end
+
 defprotocol SpecLint.Fixtures.Proto do
   @moduledoc false
 
@@ -220,4 +240,19 @@ defmodule SpecLint.Fixtures.Generated do
 
   @spec __call__(atom()) :: atom()
   def __call__(atom), do: atom
+end
+
+defmodule SpecLint.Fixtures.Shadow do
+  @moduledoc false
+  # Defines a clause the type checker reports as redundant, marked
+  # generated so compiling the fixtures prints no warning (used by
+  # SpecLint.ExperimentFixtures.Cases.shadowed/1). Only this clause
+  # is generated: the definition (its first clause) stays in scope.
+
+  @doc false
+  defmacro redundant_clause(name) do
+    quote generated: true do
+      def unquote(name)(:x), do: :error
+    end
+  end
 end

@@ -9,6 +9,13 @@ defmodule SpecLint.Rules.AnalysisUnavailable do
 
   These are coverage findings: `SpecLint.Policy` gates them in CI unless
   the baseline inventory acknowledges the same slice with the same status.
+  `SpecLint.Run` evaluates them even when SL008 is not selected, so rule
+  selection never disables the coverage policy.
+
+  A checker chunk whose version differs from the running checker's
+  (DESIGN.md 5.1) has the reason `unsupported_chunk:<found version>`. It is
+  a preflight failure, not a coverage gap: the run is incomplete (exit 2 in
+  CI) and no inventory entry acknowledges it.
   """
 
   @behaviour SpecLint.Rule
@@ -37,7 +44,20 @@ defmodule SpecLint.Rules.AnalysisUnavailable do
 
   @doc "A short, stable text key for a status reason (for output and inventory)."
   @spec reason_key(term()) :: String.t()
+  def reason_key({:checker_chunk, {:checker_version_mismatch, found, _expected}}),
+    do: "unsupported_chunk:" <> key(found, 1)
+
   def reason_key(reason), do: key(reason, 3)
+
+  @doc """
+  Whether a status reason is an unsupported checker chunk version, a
+  preflight failure rather than a coverage gap (DESIGN.md 5.1).
+  """
+  @spec unsupported_chunk?(term()) :: boolean()
+  def unsupported_chunk?({:checker_chunk, {:checker_version_mismatch, _found, _expected}}),
+    do: true
+
+  def unsupported_chunk?(_reason), do: false
 
   defp key(reason, _depth) when is_atom(reason), do: Atom.to_string(reason)
 

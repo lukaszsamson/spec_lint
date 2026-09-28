@@ -12,13 +12,15 @@ defmodule SpecLint.Policy do
   | SL004, SL005 hints | report | report |
   | SL008 coverage | gate | gate |
 
-  An `:unchecked` prerequisite (clause reachability) does not block; a
-  `:blocked` one does. SL008 gates unless the baseline inventory
-  acknowledges it (`SpecLint.Baseline`); a coverage regression gates only
-  with `coverage: [fail_on_regression: true]` (the default).
-  `warnings_as_errors` gates every reported finding, overriding the
-  evidence prerequisites. Gating only fails a run in CI mode or with
-  `warnings_as_errors`.
+  An `:unchecked` prerequisite does not block; a `:blocked` one does. SL008
+  follows the coverage policy only: it gates unless the baseline inventory
+  acknowledges it (`SpecLint.Baseline`), and a coverage regression gates
+  only with `coverage: [fail_on_regression: true]` (the default).
+  `warnings_as_errors` gates every other reported finding, overriding the
+  evidence prerequisites; it never changes SL008, which is the coverage
+  ledger's row (DESIGN.md section 4). Coverage is evaluated even when SL008
+  is not selected (`SpecLint.Run`). Gating only fails a run in CI mode or
+  with `warnings_as_errors`.
   """
 
   alias SpecLint.{Config, Issue}
@@ -32,7 +34,7 @@ defmodule SpecLint.Policy do
   def apply_gates(issues, %Config{} = config, regressions) do
     Enum.map(issues, fn issue ->
       issue = mark_regression(issue, regressions)
-      %{issue | gate: config.warnings_as_errors or gate?(issue, config)}
+      %{issue | gate: warnings_as_errors?(issue, config) or gate?(issue, config)}
     end)
   end
 
@@ -43,6 +45,9 @@ defmodule SpecLint.Policy do
   end
 
   defp mark_regression(issue, _regressions), do: issue
+
+  defp warnings_as_errors?(%Issue{rule: "SL008"}, _config), do: false
+  defp warnings_as_errors?(_issue, %Config{warnings_as_errors: value}), do: value
 
   @doc "Whether an issue gates under the evidence policy (ignoring `warnings_as_errors`)."
   @spec gate?(Issue.t(), Config.t()) :: boolean()
@@ -66,7 +71,7 @@ defmodule SpecLint.Policy do
   @spec explain(Issue.t(), Config.t()) :: String.t()
   def explain(%Issue{} = issue, %Config{} = config) do
     cond do
-      config.warnings_as_errors ->
+      warnings_as_errors?(issue, config) ->
         "gates: --warnings-as-errors gates every reported finding"
 
       gate?(issue, config) ->

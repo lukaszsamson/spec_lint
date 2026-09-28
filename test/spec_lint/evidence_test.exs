@@ -227,6 +227,37 @@ defmodule SpecLint.EvidenceTest do
       assert %{tag_in_spec?: false, subtraction_payload?: false} = component
     end
 
+    test "a payload narrowed by the subtraction still counts when the code puts it outside" do
+      # Spec {:ok, pid(), :a}; the clause returns {:ok, term(), :a or :b}.
+      # {:ok, pid(), :b} has a pid() from the subtraction but a :b from the
+      # code: widened back to {:ok, term(), :b} it is still outside the spec.
+      spec = C.tuple([C.atom([:ok]), C.pid(), C.atom([:a])])
+      clause_return = C.tuple([C.atom([:ok]), C.term(), C.atom([:a, :b])])
+      rel = relations([], spec, [{[], clause_return}])
+      classification = Evidence.classify(rel)
+      assert classification.class == :structured_possible
+
+      assert %{true: [artefact], false: [counted]} =
+               Enum.group_by(classification.components, & &1.subtraction_payload?)
+
+      assert %{tag_in_spec?: true, present_in_contributing?: false} = artefact
+      assert %{tag_in_spec?: true, present_in_contributing?: true} = counted
+      assert counted.descr_string =~ ":b"
+      assert {:subtraction_payload, 1} in classification.reasons
+
+      # The same code-derived position one level down.
+      nested = &C.tuple([C.atom([:ok]), C.tuple([C.atom([:v]), &1, &2])])
+      spec = nested.(C.pid(), C.atom([:a]))
+      rel = relations([], spec, [{[], nested.(C.term(), C.atom([:a, :b]))}])
+      assert Evidence.classify(rel).class == :structured_possible
+
+      # A nested payload that only the subtraction narrowed stays an artefact.
+      rel = relations([], spec, [{[], nested.(C.term(), C.atom([:a]))}])
+
+      assert %{class: :unknown, components: [%{subtraction_payload?: true}]} =
+               Evidence.classify(rel)
+    end
+
     test "a structured extra split across several clauses is present" do
       clauses = [
         {[C.atom([:a])], C.tuple([C.atom([:error]), C.atom([:x])])},

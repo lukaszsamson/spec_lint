@@ -41,7 +41,9 @@ defmodule SpecLint.ConfigTest do
           {"[rules: [SL001: :loud]]", "invalid severity :loud"},
           {"[coverage: [floor: -1]]", "invalid coverage setting :floor"},
           {"%{}", "must be a keyword list"},
-          {"raise \"boom\"", "cannot evaluate"}
+          {"raise \"boom\"", "cannot evaluate"},
+          {"throw(:x)", "cannot evaluate"},
+          {"exit(:shutdown)", "cannot evaluate"}
         ] do
       File.write!(Path.join(tmp_dir, "bad.exs"), bad)
       assert {:error, error} = Config.load(tmp_dir, "bad.exs")
@@ -99,6 +101,17 @@ defmodule SpecLint.ConfigTest do
     assert message =~ "--format must be"
     assert {:error, message} = CLI.parse(~w(extra))
     assert message =~ "unexpected arguments"
+
+    # --analysis goes through the configuration, where bodies is a
+    # capability error of the run (exit 2), not a parse error.
+    assert {:ok, %{analysis: :bodies} = cli} = CLI.parse(~w(--analysis bodies --module Foo))
+
+    assert {:ok, %Config{analysis: :bodies}} =
+             Config.merge_cli(%Config{}, CLI.config_overrides(cli))
+
+    assert {:ok, %{analysis: :signatures}} = CLI.parse(~w(--analysis signatures))
+    assert {:error, message} = CLI.parse(~w(--analysis everything))
+    assert message =~ "--analysis must be signatures or bodies"
   end
 
   test "exclude globs" do

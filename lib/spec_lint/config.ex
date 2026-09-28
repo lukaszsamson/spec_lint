@@ -101,6 +101,9 @@ defmodule SpecLint.Config do
     end
   rescue
     error -> {:error, "cannot evaluate #{path}: #{Exception.message(error)}"}
+  catch
+    kind, reason ->
+      {:error, "cannot evaluate #{path}: #{Exception.format_banner(kind, reason)}"}
   end
 
   @doc "Builds a configuration from a keyword list, validating every key."
@@ -196,13 +199,20 @@ defmodule SpecLint.Config do
   end
 
   @doc """
-  Applies command-line overrides: `:profile`, `:baseline`,
+  Applies command-line overrides: `:profile`, `:analysis`, `:baseline`,
   `:warnings_as_errors`, `:require_static_return` and `:exclude`.
   """
   @spec merge_cli(t(), keyword()) :: {:ok, t()} | {:error, String.t()}
   def merge_cli(config, cli) do
     cli
-    |> Keyword.take([:profile, :baseline, :warnings_as_errors, :require_static_return, :exclude])
+    |> Keyword.take([
+      :profile,
+      :analysis,
+      :baseline,
+      :warnings_as_errors,
+      :require_static_return,
+      :exclude
+    ])
     |> Enum.reject(fn {_key, value} -> value == nil end)
     |> Enum.reduce_while({:ok, config}, fn {key, value}, {:ok, config} ->
       case put(config, key, value) do

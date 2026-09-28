@@ -161,6 +161,40 @@ defmodule SpecLint.CompareTest do
       assert [%{containment: :contained}] = rel.contributing
     end
 
+    test "clauses covered by the clauses before them are possibly shadowed" do
+      # The g/1 shape: def g(a) when is_atom(a); def g(:x). The compiler
+      # reports (:x) as redundant; the stored domains show it.
+      clauses = [
+        {[C.atom()], C.atom([:ok])},
+        {[C.atom([:x])], C.atom([:error])},
+        {[C.integer()], C.atom([:ok])},
+        {[C.union(C.atom([:y]), C.integer())], C.atom([:error])},
+        {[C.binary()], C.atom([:ok])}
+      ]
+
+      assert Compare.shadowed(clauses) == [1, 3]
+      assert Compare.shadowed([]) == []
+      assert Compare.shadowed([{[C.atom([:x])], C.atom([:ok])}]) == []
+
+      rel = Compare.slice(exact_slice([C.atom()], C.atom([:ok])), clauses)
+
+      assert Enum.map(rel.contributing, &{&1.index, &1.shadowed?}) == [
+               {0, false},
+               {1, true},
+               {3, true}
+             ]
+
+      # Covered only by the union of two earlier clauses, per tuple.
+      pairs = [
+        {[C.atom(), C.integer()], C.atom([:ok])},
+        {[C.integer(), C.integer()], C.atom([:ok])},
+        {[C.union(C.atom(), C.integer()), C.integer()], C.atom([:error])},
+        {[C.union(C.atom(), C.integer()), C.atom()], C.atom([:error])}
+      ]
+
+      assert Compare.shadowed(pairs) == [2]
+    end
+
     test "unsupported slices pass through" do
       result =
         Compare.function(

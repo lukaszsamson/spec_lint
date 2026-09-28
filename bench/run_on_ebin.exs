@@ -12,7 +12,9 @@
 # the project root: output paths are relative to it and .spec_lint.exs is
 # read from it. --code-path directories are prepended to the code path so
 # remote types resolve. The script exits with the same status mix spec_lint
-# would.
+# would (--explain exits 0 unless the run is incomplete, 2). --write-baseline
+# applies the checks of mix spec_lint.baseline: no --module, --app, --rules
+# or --except, a supported compiler and a complete run, or exit 2.
 
 defmodule SpecLint.RunOnEbin do
   @moduledoc false
@@ -57,11 +59,10 @@ defmodule SpecLint.RunOnEbin do
     cond do
       cli.explain ->
         IO.puts(ok!(Explain.render(run, cli.explain)))
+        System.halt(if run.exit_code == 2, do: 2, else: 0)
 
       own[:write_baseline] ->
-        baseline = Baseline.build(run.issues, run.inventory, run.capabilities.adapter_id, nil)
-        ok!(Baseline.write(own[:write_baseline], baseline))
-        IO.puts("baseline: #{length(baseline["findings"])} findings -> #{own[:write_baseline]}")
+        write_baseline(run, cli, own[:write_baseline])
 
       cli.format == :json ->
         json = Json.encode(Json.envelope(run))
@@ -74,6 +75,38 @@ defmodule SpecLint.RunOnEbin do
     end
 
     System.halt(run.exit_code)
+  end
+
+  # The guards of mix spec_lint.baseline (lib/mix/tasks/spec_lint.baseline.ex).
+  defp write_baseline(run, cli, path) do
+    cond do
+      cli.modules != [] or cli.apps != [] or cli.only != nil or cli.except != [] ->
+        fail("--write-baseline analyses the whole project with the configured rules")
+
+      run.capabilities == nil ->
+        fail("unsupported compiler: #{Enum.join(run.completion_reasons, "; ")}")
+
+      run.completion != :complete ->
+        fail("incomplete run: #{Enum.join(run.completion_reasons, "; ")}")
+
+      true ->
+        previous =
+          case Baseline.load(path) do
+            {:ok, baseline} -> baseline
+            :missing -> nil
+            {:error, message} -> fail(message)
+          end
+
+        rules = Enum.map(run.rules, fn {rule, _severity} -> rule.id() end)
+
+        baseline =
+          Baseline.build(run.issues, run.inventory, run.capabilities.adapter_id, previous,
+            rules: rules
+          )
+
+        ok!(Baseline.write(path, baseline))
+        IO.puts("baseline: #{length(baseline["findings"])} findings -> #{path}")
+    end
   end
 
   @own %{

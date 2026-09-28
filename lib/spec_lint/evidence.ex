@@ -44,9 +44,13 @@ defmodule SpecLint.Evidence do
        when every contributing return component with the same label that
        it overlaps has `term()` at a position (tuple element or struct
        field, looked up to three levels deep) where the component is
-       narrower. `{:ok, not pid()}` from a clause returning `{:ok, term()}`
+       narrower, and widening those positions back to `term()` makes the
+       component meet `S_hi` (so it is outside the spec only because of
+       them). `{:ok, not pid()}` from a clause returning `{:ok, term()}`
        under a spec `{:ok, pid()}` says nothing about the code beyond
-       `{:ok, _}`, which the spec already declares.
+       `{:ok, _}`, which the spec already declares; `{:ok, pid(), :b}` from
+       `{:ok, term(), :a or :b}` under `{:ok, pid(), :a}` still counts,
+       because `:b` comes from the code.
     6. Union-level classification, over counted components:
          * `:structured_possible` - at least one structured component, every
            contributing clause contained, slice not input-approximate;
@@ -82,8 +86,11 @@ defmodule SpecLint.Evidence do
        `:possible_input_approximate`, the same reading as the union level.
        The slice class is the worst of the union-level class and every
        per-clause class. Whether the compiler would flag a clause as
-       unreachable is not available from the checker chunk, so that
-       prerequisite of DESIGN 3.1 step 7 is left to rules.
+       unreachable is not available from the checker chunk. A clause whose
+       domain is covered by the clauses before it
+       (`SpecLint.Compare.shadowed/1`) gets the reason `:possibly_shadowed`
+       and keeps its class; the prerequisite of DESIGN 3.1 step 7 is
+       decided by the rule (`SpecLint.Rules.ReturnConflict`).
     8. Near-top (`SpecLint.Compare.near_top?/2`) is treated like top-only,
        at the union level (reason `:near_top`) and per clause.
     9. Gradual payloads. A counted structured component that no static
@@ -158,6 +165,7 @@ defmodule SpecLint.Evidence do
           | :whole_kind_only
           | :disjoint
           | :payload_gradual
+          | :possibly_shadowed
           | {:domain_escape, [non_neg_integer()]}
           | {:containment_unknown, [non_neg_integer()]}
           | {:not_in_contributing, non_neg_integer()}
@@ -366,9 +374,12 @@ defmodule SpecLint.Evidence do
           {class, components, component_reasons(components) ++ class_reasons}
       end
 
-    reasons = containment_reason(contributing) ++ reasons
+    reasons = containment_reason(contributing) ++ shadow_reason(contributing) ++ reasons
     Map.merge(base, %{class: class, components: components, reasons: reasons})
   end
+
+  defp shadow_reason(%{shadowed?: true}), do: [:possibly_shadowed]
+  defp shadow_reason(_contributing), do: []
 
   defp containment_reason(%{containment: :contained}), do: []
   defp containment_reason(%{containment: outcome, index: index}), do: [{outcome, [index]}]
@@ -422,7 +433,10 @@ defmodule SpecLint.Evidence do
     |> Enum.map(fn component ->
       label = label(component, depth)
       tag_in_spec? = label == :structured and tag_in_spec?(component.view, spec_return)
-      subtraction? = tag_in_spec? and subtraction_payload?(component, label, returns)
+
+      subtraction? =
+        tag_in_spec? and subtraction_payload?(component, label, returns, spec_return)
+
       present? = not subtraction? and present?(component.descr, label, returns)
 
       %{
@@ -526,16 +540,80 @@ defmodule SpecLint.Evidence do
   # DESIGN 3.1 step 5 for payloads: the component's structure beyond its tag
   # was created by subtracting the spec when every contributing return
   # component with the same label that it overlaps is `term()` somewhere the
-  # component is narrower. Only same-label components can witness presence
-  # (see present?/3), so only they are consulted.
-  defp subtraction_payload?(component, label, returns) do
+  # component is narrower, and the component is outside the spec only
+  # because of those positions: with each of them widened back to the
+  # witness's `term()`, every piece of the component meets `S_hi`. A piece
+  # that stays disjoint from the spec (`{:ok, pid(), :b}` from a clause
+  # returning `{:ok, term(), :a or :b}` under a spec `{:ok, pid(), :a}`)
+  # carries structure inference derived from the code, so the component
+  # still counts. Only same-label components can witness presence (see
+  # present?/3), so only they are consulted.
+  defp subtraction_payload?(component, label, returns, spec_return) do
     witnesses =
       for {^label, descr, view, _static?} <- returns,
           not Compiler.disjoint?(component.descr, descr),
           do: view
 
     witnesses != [] and
-      Enum.all?(witnesses, &narrowed_top?(component.view, &1, @subtraction_depth))
+      Enum.all?(witnesses, &narrowed_top?(component.view, &1, @subtraction_depth)) and
+      Enum.any?(witnesses, fn witness ->
+        component.descr
+        |> pieces(component.view, witness, @subtraction_depth)
+        |> Enum.all?(&(not Compiler.disjoint?(&1, spec_return)))
+      end)
+  end
+
+  # The component split into pieces along the tuple positions where the
+  # witness is not `term()` (one piece per combination of their components,
+  # to the same depth as narrowed_top?/3), with every position where the
+  # witness is `term()` widened to `term()`. Maps, and splits with more than
+  # @max_pieces pieces, are not split: their single piece is `term()`, which
+  # keeps the component a subtraction artefact (the reading before the
+  # widening check).
+  @max_pieces 64
+
+  defp pieces(_descr, {:tuple, :closed, elements}, {:tuple, :closed, returned}, depth)
+       when length(elements) == length(returned) do
+    options = Enum.zip_with(elements, returned, &element_pieces(&1, &2, depth))
+
+    if Enum.reduce(options, 1, &(length(&1) * &2)) > @max_pieces do
+      [Compiler.term()]
+    else
+      options |> product() |> Enum.map(&Compiler.tuple/1)
+    end
+  end
+
+  defp pieces(_descr, {:map, _tag, _fields, _domains}, _witness, _depth), do: [Compiler.term()]
+  defp pieces(descr, _view, _witness, _depth), do: [descr]
+
+  defp element_pieces(element, return, depth) do
+    cond do
+      top?(return) ->
+        [Compiler.term()]
+
+      depth == 0 ->
+        [element]
+
+      true ->
+        returned = Compiler.components(return)
+
+        Enum.flat_map(Compiler.components(element), fn component ->
+          case Enum.reject(returned, &Compiler.disjoint?(component.descr, &1.descr)) do
+            [] -> [component.descr]
+            overlapping -> Enum.flat_map(overlapping, &pieces_of(component, &1, depth))
+          end
+        end)
+    end
+  end
+
+  defp pieces_of(component, witness, depth),
+    do: pieces(component.descr, component.view, witness.view, depth - 1)
+
+  defp product([]), do: [[]]
+
+  defp product([options | rest]) do
+    tails = product(rest)
+    for option <- options, tail <- tails, do: [option | tail]
   end
 
   defp narrowed_top?({:tuple, :closed, elements}, {:tuple, :closed, returned}, depth)

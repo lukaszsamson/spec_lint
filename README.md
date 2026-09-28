@@ -43,17 +43,21 @@ mix spec_lint --ci                            fail on new gated findings (exit 1
 mix spec_lint --ci --profile soundness        SL001, SL003 and coverage only
 mix spec_lint --explain MyApp.Store.lookup/1  show the whole comparison for one function
 mix spec_lint --format json --output spec-lint.json
+mix spec_lint --format json > spec-lint.json  stdout carries only the JSON report
 mix spec_lint.baseline                        write .spec_lint_baseline.json
 ```
 
 `mix spec_lint` compiles the project first. Its options are parsed before
-compiling, so an invalid option fails without side effects.
+compiling, so an invalid option fails without side effects. With
+`--format json` and no `--output`, compiler progress and the summary line
+go to standard error, so standard output is only the JSON report.
 
 | Option | Meaning |
 | --- | --- |
 | `--ci` | Gate findings: exit 1 on new gated findings or coverage violations. |
 | `--profile soundness\|review` | Evidence policy (default `review`). |
-| `--warnings-as-errors` | Gate every reported finding, including report-only ones. Works locally too. |
+| `--analysis signatures\|bodies` | Analysis backend (default `signatures`). No supported build has the body backend, so `bodies` exits 2 with a capability message. |
+| `--warnings-as-errors` | Gate every reported finding, including report-only ones. Works locally too. `SL008` keeps following the coverage policy. |
 | `--format console\|json` | Report format (default `console`). |
 | `--output PATH` | Write the report to `PATH` (written atomically). |
 | `--baseline PATH` | Baseline file (default `.spec_lint_baseline.json`). |
@@ -62,7 +66,7 @@ compiling, so an invalid option fails without side effects.
 | `--app app` | Analyse only this umbrella child. Repeatable. Makes the run partial. |
 | `--explain Mod.fun/arity` | Explain one function. |
 | `--rules ID,...` | Run only these rules (IDs or names). Enables rules that are off by default. |
-| `--except ID,...` | Do not run these rules. |
+| `--except ID,...` | Do not run these rules. Coverage is still checked when `SL008` is left out. |
 | `--require-static-return` | Treat structured evidence supported only by gradual clause returns as `possible_gradual`. |
 
 ### Exit status
@@ -71,7 +75,7 @@ compiling, so an invalid option fails without side effects.
 | --- | --- |
 | 0 | Accepted. Without `--ci` or `--warnings-as-errors`, findings never fail the run. |
 | 1 | New gated findings, or a coverage violation. |
-| 2 | Invalid options or configuration, compilation failure, unsupported compiler (in CI) or backend, a filter that matches nothing, or an incomplete run (an internal failure while analysing a module). |
+| 2 | Invalid options or configuration (including a configuration file that raises, throws or exits, and an invalid baseline file), compilation failure, unsupported compiler or checker chunk (in CI) or backend, a filter that matches nothing, or an incomplete run (an internal failure while analysing a module). |
 
 ## Rules
 
@@ -90,7 +94,10 @@ A gated finding still has to meet its prerequisites to fail the build:
 
 - no untranslatable construct;
 - no overlapping spec clauses;
-- no function type in the return.
+- no function type in the return;
+- no function-type argument that translated inexactly (`arrow_polarity`);
+- for a per-clause conflict, the clause is not covered by the clauses
+  before it (a clause the compiler reports as redundant never gates).
 
 `--explain` prints which prerequisite blocked gating. A rule's severity
 only changes how a finding is printed, never whether it gates.
@@ -133,9 +140,14 @@ under `--warnings-as-errors`.
 - **`exclude`** globs match source paths relative to the project root.
   Excluded modules are counted in the ledger.
 - **`coverage: [floor: n]`** fails CI when fewer than `n` spec slices are
-  compared.
+  compared. A partial run (`--module`, `--app`) does not check the floor.
 - **`coverage: [fail_on_regression: false]`** reports coverage regressions
-  without failing on them.
+  without failing on them. A slice that was never compared still needs an
+  inventory acknowledgement.
+- **`expand_opaque: true`** expands other modules' opaque types
+  structurally. It is shown in the report header, in each finding's
+  translation (`translation exact (opaque expanded)`), in the ledger and
+  in the JSON `config`.
 - Command-line options override the file.
 
 ## Baseline
@@ -150,23 +162,35 @@ This writes `.spec_lint_baseline.json`. The file has two parts:
 - an inventory of every analysed spec slice.
 
 Review the file and commit it. You can add a `reason`, an `owner` and an
-`expires` date (`"2026-12-31"`) to each finding. When you regenerate the
-file, those values are kept for entries that still match.
+`expires` date (`"2026-12-31"`) to each finding. `expires` must be `null` or
+a `YYYY-MM-DD` date; any other value makes the baseline invalid (exit 2).
+When you regenerate the file, those values are kept for entries that still
+match, and the entries of rules turned `:off` in the configuration are kept
+unchanged. `mix spec_lint.baseline` rejects `--module`, `--app`, `--rules`
+and `--except`, and refuses to overwrite an output file that is not a valid
+baseline.
 
 - **Suppression.** A finding whose fingerprint is in the baseline does not
   fail CI. An entry past its `expires` date counts as new.
 - **What the fingerprint hashes.** It covers the rule, the MFA, the slice
-  and clause index, and the spec clause's structure with lines removed. It
-  also covers the translated types, the translation losses and the inferred
-  clauses the finding rests on. It survives line changes, reordering other
-  functions and recompilation. It changes when the spec, its clause order
-  or the inferred signature changes.
+  and clause index, the translated types of the spec slice (after named
+  types are expanded), the translation losses by kind and structural
+  position, and the inferred clauses the finding rests on. It survives line
+  changes, reordering other functions, recompilation, renaming a type alias
+  or a type variable, and reordering a union. It changes when what the spec
+  means, its clause order or the inferred signature changes.
 - **Coverage.** Every `unsupported` or `unavailable` slice, and every
   module without debug info, must be acknowledged in the inventory.
   Otherwise CI exits 1. A slice that the inventory lists as compared and
   that can no longer be analysed is a regression.
 - **Stale entries.** They are listed as warnings and never fail a run. A
-  partial run (`--module`, `--app`) never declares entries stale.
+  partial run (`--module`, `--app`) or an incomplete run never declares
+  entries stale. Neither does analysis that did not happen: a finding of a
+  rule that did not run, or of a slice or module that is now unsupported or
+  unavailable, is not stale.
+- **Checker chunk versions.** A module whose checker chunk was written by
+  another checker version is a preflight failure: the run is incomplete,
+  CI exits 2, and no inventory entry can acknowledge it. Recompile.
 - **Compiler changes.** A baseline written for another compiler adapter is
   not applied. In CI that is exit 2. Regenerate the file deliberately.
 
@@ -200,7 +224,8 @@ Every run reports what it did and did not analyse, with denominators:
   modules and excluded modules;
 - slices compared, exact or approximate, unsupported and unavailable;
 - obligations established, compatible after approximation, possible
-  mismatches and unknown.
+  mismatches and unknown, and the unknown ones by reason (`top_only`,
+  `near_top`, `no_counted_component`, `other`).
 
 A project with no eligible specs succeeds and says so.
 

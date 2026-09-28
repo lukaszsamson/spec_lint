@@ -122,6 +122,21 @@ defmodule SpecLint.ExperimentFixtures.Cases do
   @spec put_setting(atom(), term()) :: keyword()
   def put_setting(key, value) when is_atom(key), do: Process.put(key, value)
 
+  # A redundant clause (the compiler warns "the following clause is
+  # redundant"): (:x) is covered by the atom() clause before it, so no
+  # in-spec input reaches its :error return. Clause reachability blocks the
+  # clause conflict (DESIGN 3.1 step 7).
+  require SpecLint.Fixtures.Shadow
+  @spec shadowed(atom()) :: :ok
+  def shadowed(a) when is_atom(a), do: :ok
+  SpecLint.Fixtures.Shadow.redundant_clause(:shadowed)
+
+  # F1 refinement: the pid() of {:ok, pid(), :b} comes from subtracting the
+  # spec, but :b comes from the code, so the component still counts.
+  @spec narrowed_payload(atom(), term()) :: {:ok, pid(), :a}
+  def narrowed_payload(x, y) when is_atom(x),
+    do: if(x == :q, do: {:ok, y, :a}, else: {:ok, y, :b})
+
   # O3: the extra {:error, term()} is structured and present in the clause
   # return, but the clause return is gradual (Process.get/1 is dynamic()).
   @spec gradual_payload(atom()) :: {:ok, atom()}
@@ -296,6 +311,24 @@ defmodule SpecLint.ExperimentFixtures do
       note:
         "near-top inference (O1): Process.put/2 returns dynamic(not :undefined), which " <>
           "is treated like top-only (reason near_top), not as whole-kind evidence"
+    },
+    {Cases, :shadowed, 1} => %{
+      class: :clause_conflict,
+      omission?: false,
+      note:
+        "redundant clause: (:x) is covered by the atom() clause before it, so every " <>
+          "in-spec input returns :ok; the class is clause_conflict, and the reachability " <>
+          "prerequisite (clause possibly shadowed) blocks the SL001 gate"
+    },
+    {Cases, :narrowed_payload, 2} => %{
+      class: :structured_possible,
+      static_class: :possible_gradual,
+      omission?: true,
+      note:
+        "true omission of the :b tag under {:ok, pid(), :a}: the pid() payload of " <>
+          "{:ok, pid(), :b} comes from subtracting the spec, but widening it back to " <>
+          "term() still leaves the component outside the spec, so it is not a " <>
+          "subtraction artefact (F1 refinement)"
     },
     {Cases, :gradual_payload, 1} => %{
       class: :structured_possible,

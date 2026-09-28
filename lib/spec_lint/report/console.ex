@@ -1,16 +1,24 @@
 defmodule SpecLint.Report.Console do
   @moduledoc """
-  The console report (DESIGN.md section 4): one block per finding, then the
-  coverage ledger with denominators, baseline decisions and the result.
+  The console report (DESIGN.md section 4): a header, one block per
+  finding, then the coverage ledger with denominators, baseline decisions
+  and the result.
 
   ```
-  lib/store.ex:12: SL002 possible_missing_return Store.lookup/1
+  lib/store.ex:12: SL002 possible_missing_return Store.lookup/1 slice 0 [warning]
     spec:            lookup(:present | :missing) :: {:ok, integer()}
     inferred extra:  {:error, :missing}
     slice:           (:present | :missing)
     evidence:        structured_possible (signature backend, translation exact)
     Review whether the spec should include this alternative.
+    policy:          reported, not gated: SL002 is informational (...)
   ```
+
+  The header line names the rule, the subject, the spec slice, the inferred
+  clause for a per-clause finding (` clause #1`) and the severity. The
+  `policy:` line says whether the finding gates and why, and its baseline
+  state. The run header names the adapter, the profile, the mode, a
+  partial run and `expand_opaque` when it is on.
 
   Types are printed through the adapter; printed strings are presentation
   only.
@@ -92,6 +100,7 @@ defmodule SpecLint.Report.Console do
       "SpecLint #{Run.tool_version()} (adapter #{caps[:adapter_id] || "unavailable"}, ",
       "OTP #{System.otp_release()}), profile #{run.config.profile}, #{mode}",
       if(run.partial?, do: ", partial run", else: ""),
+      if(run.config.expand_opaque, do: ", expand_opaque (opaque types expanded)", else: ""),
       "\n\n"
     ]
   end
@@ -116,12 +125,22 @@ defmodule SpecLint.Report.Console do
       "#{count(slices["unsupported"])} unsupported#{reasons(slices["unsupported"])}, ",
       "#{count(slices["unavailable"])} unavailable#{reasons(slices["unavailable"])}\n",
       "  obligations: #{pairs(ledger["obligations"])}\n",
+      unknown_reasons(ledger["obligations_unknown_by_reason"]),
+      expanded(slices["expanded"]),
       "  specs out of scope: #{pairs(ledger["specs_out_of_scope"])}\n",
       "  body analysis: not requested (signature backend only)\n",
       if(slices["found"] == 0, do: "  no eligible specs found\n", else: []),
       "\n"
     ]
   end
+
+  defp unknown_reasons(map) when map_size(map) == 0, do: []
+  defp unknown_reasons(map), do: "  unknown obligations by reason: #{pairs(map)}\n"
+
+  defp expanded(0), do: []
+
+  defp expanded(count),
+    do: "  translations with opaque or nominal types expanded (expand_opaque): #{count}\n"
 
   defp count(map), do: map |> Map.values() |> Enum.sum()
 

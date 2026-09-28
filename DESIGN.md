@@ -187,9 +187,19 @@ applied return `U(D)`.
    subtracting the spec is not mistaken for structure inference derived from
    code. This includes payloads. A component whose tag the spec already
    declares does not count when every contributing `R_k` it overlaps has
-   `term()` at a position where the component is narrower. For example,
-   `{:ok, not pid()}` from a clause returning `{:ok, term()}` does not count
-   under a spec of `{:ok, pid()}`.
+   `term()` at a position where the component is narrower, and the
+   component is outside `S_hi` only because of those positions: with each
+   of them widened back to `term()`, every piece of the component meets
+   `S_hi`. For example, `{:ok, not pid()}` from a clause returning
+   `{:ok, term()}` does not count under a spec of `{:ok, pid()}`, but
+   `{:ok, pid(), :b}` from a clause returning `{:ok, term(), :a | :b}`
+   counts under `{:ok, pid(), :a}`, because the `:b` comes from the code.
+   **Decision (post-Phase 1 review):** the widening check was added
+   because the rule as first written hid real stale tags behind a
+   narrower sibling payload in the spec. On the stdlib it moves 2
+   functions (`DateTime.from_iso8601/2,3`, a `float()` offset from
+   arithmetic, the O3 shape) from `unknown` to report-only
+   `possible_domain_escape`, and changes no gating result.
 6. Classification:
    - `structured_possible`: at least one `structured` component, all
      contributing clauses contained, slice not `input_approximate`;
@@ -209,12 +219,19 @@ applied return `U(D)`.
    examined on its own with `R_k' = upper_bound(R_k)`:
    - `R_k'` top or near-top: clause is `unknown`;
    - `R_k'` non-empty and disjoint from `S_hi`: **`clause_conflict`**.
-     Evidence class `conflict`, reported under SL001 with the clause index
-     and domain: "the clause matching `(I_k)` returns `R_k`, entirely
-     outside the spec". Prerequisites: the SL001 prerequisites plus the
-     clause is contained and the compiler did not already flag it
-     unreachable. The stored clause return is used, not the wrapped
-     application result;
+     Evidence class `clause_conflict` (section 4), reported under SL001
+     with the clause index and domain: "the clause matching `(I_k)`
+     returns `R_k`, entirely outside the spec". Prerequisites: the SL001
+     prerequisites plus the clause is contained and the compiler did not
+     already flag it unreachable. The chunk does not record reachability,
+     so it is approximated from the stored clause domains: the clause is
+     *possibly shadowed*, and the prerequisite `clause_reachable` is
+     blocked, when the upper bound of its domain tuple is a subtype of the
+     union of the domain tuples of the clauses before it. Stored domains
+     over-approximate guarded clauses, so this over-blocks and never
+     misses a clause the compiler reports as redundant; otherwise the
+     prerequisite is `unchecked`. The stored clause return is used, not
+     the wrapped application result;
    - otherwise `extra_k = difference(R_k', S_hi)` is classified with step 5
      against `R_k` itself (structure must be present in `R_k`, never only
      in the subtraction), giving a per-clause class.
@@ -248,18 +265,32 @@ and `possible_input_approximate`; helper inference and other approximations
 can remain imprecise.
 ## 4. Rules
 
-Each finding has a rule ID, an evidence class (`conflict`,
-`structured_possible`, `possible_domain_escape`, `possible_input_approximate`, `whole_kind_possible`, `unknown`, `hint`), a severity, and the gating
+Each finding has a rule ID, an evidence class, a severity, and the gating
 prerequisites that were met.
+
+**Decision (post-Phase 1 review): the evidence classes are the ones the
+implementation emits**, recorded here because they are the JSON report's
+`evidence` field:
+
+- `conflict`: a whole slice is disjoint (SL001) or rejected (SL003);
+- `clause_conflict`: one contained inferred clause returns only values
+  outside the spec (SL001, section 3.1 step 7), kept apart from `conflict`
+  because its evidence and prerequisites differ;
+- `structured_possible`, `possible_gradual`, `possible_domain_escape`,
+  `possible_input_approximate`, `whole_kind_possible` (SL002, section 3.1);
+- `unexpected_return` (SL006);
+- `hint` (SL004, SL005);
+- `unsupported`, `unavailable` (SL008, the slice or module status);
+- `unknown` is never a finding: it is recorded in the ledger only.
 
 | Rule | Meaning | Gating prerequisites | Default |
 | --- | --- | --- | --- |
-| `SL001 return_conflict` | `U(D)` non-empty and disjoint from `S_hi` on a slice | translation of the slice has no `unsupported` loss, no `overlap` tag, no arrow in the return | warning, gated in both profiles |
+| `SL001 return_conflict` | `U(D)` non-empty and disjoint from `S_hi` on a slice | translation of the slice has no `unsupported` loss, no `overlap` tag, no arrow in the return, no argument with an `arrow_polarity` loss (section 6) | warning, gated in both profiles |
 | `SL002 possible_missing_return` | structured extra per section 3.1 | same as SL001 plus classification `structured_possible` | warning, informational: reported in both profiles, never gated by evidence policy (Phase 0 decision, section 11) |
 | `SL003 spec_domain_rejected` | the application rule matches no inferred clause on an inhabited spec slice, or a spec argument position is disjoint from every inferred domain | translation of the arguments exact or upper-bounded only, no `overlap` | warning, gated in both profiles |
 | `SL004 possible_missing_input` | inferred domain accepts shapes outside the spec domain | none | off, hint |
 | `SL005 return_can_be_narrower` | exact `S`, `U(D)` strictly inside | none | off, hint |
-| `SL006 possible_unexpected_return` | `no_return()` spec, `U(D)` non-empty | none | review, gated in `review` profile |
+| `SL006 possible_unexpected_return` | `no_return()` spec, `U(D)` non-empty and neither top-only nor near-top | none | review, gated in `review` profile |
 | `SL007 spec_domain_body_warning` | checker diagnostic under the spec assumption (body backend only) | body backend qualified | informational |
 | `SL008 analysis_unavailable` | missing debug info, missing chunk, unsupported chunk version, untranslatable construct, no inferred signature | none | coverage ledger, gated by coverage policy |
 
@@ -277,12 +308,22 @@ candidates, while on the fixtures `true` loses 2 of the 4 clause-conflict
 detections. **`clause_conflict` gates in both profiles**: 0 real-code
 candidates, so no gated noise, and 4 of 4 fixture detections with 0 false
 positives. Its unreachable-clause prerequisite cannot be read from the
-checker chunk and is reported as unchecked.
+checker chunk. Since the post-Phase 1 review it is approximated from the
+stored clause domains (section 3.1 step 7): a possibly shadowed clause is
+blocked, any other clause is reported as unchecked.
+
+**Decision (post-Phase 1 review): SL006 ignores top-only and near-top
+`U(D)`.** Steps 2 and 8 of section 3.1 treat such inference as "inference
+gave up", not as evidence, and the same reading applies to a `no_return()`
+spec: `Map.fetch!/2` on an unknown map gives `term()`, which says nothing
+about whether the function returns. Such a slice is ledger-only: its
+obligation is `unknown` with the reason `top_only` or `near_top`
+(`obligations_unknown_by_reason` in the ledger).
 
 | Finding | `soundness` profile | `review` profile |
 | --- | --- | --- |
 | Supported conflict (SL001, SL003 with prerequisites met) | gate | gate |
-| `clause_conflict` (SL001, per-clause, prerequisites met; reachability unchecked) | gate | gate |
+| `clause_conflict` (SL001, per-clause, prerequisites met; reachability approximated, section 3.1 step 7) | gate | gate |
 | `possible_gradual` (SL002, only with `require_static_return: true`, default `false`) | report | report |
 | `structured_possible` return (SL002) | report | report |
 | SL006 | report | gate |
@@ -293,24 +334,33 @@ checker chunk and is reported as unchecked.
 `--warnings-as-errors` gates every *reported* finding of every enabled rule,
 including the report-only rows. It is an explicit user policy choice and is
 documented as overriding the evidence prerequisites; it never promotes
-`unknown` or ledger entries. A rule's severity setting changes how a finding
-is printed, never whether it gates.
+`unknown` or ledger entries, and it never changes SL008, which always
+follows the coverage policy. A rule's severity setting changes how a finding
+is printed, never whether it gates. Rule selection (`--rules`, `--except`,
+`:off`) does not switch the coverage policy off either: coverage is
+evaluated from the inventory in every run, and when SL008 is not selected
+its blocking findings become coverage violations (exit 1 in CI).
 
 Wording rules: a disjoint result is reported as "any normal return would be
 outside the spec", never as "the function returns the wrong type". A
 rejected domain is "the checker would warn on every call in this slice",
 never "every call crashes".
 
-Message shape:
+Message shape (as implemented; the header also names the slice, the
+inferred clause of a per-clause finding and the severity, and a `policy:`
+line says whether the finding gates, why, and its baseline state):
 
 ```
-lib/store.ex:12: SL002 possible_missing_return Store.lookup/1
+lib/store.ex:12: SL002 possible_missing_return Store.lookup/1 slice 0 [warning]
   spec:            lookup(:present | :missing) :: {:ok, integer()}
   inferred extra:  {:error, :missing}
   slice:           (:present | :missing)
   evidence:        structured_possible (signature backend, translation exact)
   Review whether the spec should include this alternative.
+  policy:          reported, not gated: SL002 is informational (...)
 ```
+
+A per-clause finding reads `... Store.lookup/1 slice 0 clause #1 [warning]`.
 
 Types are printed with `Descr.to_quoted/2` and
 `skip_dynamic_for_indivisible: false`.
@@ -343,7 +393,11 @@ Per module:
 - `ExCk`: `binary_to_term` gives `{version, %{exports: [{{f, a}, %{sig: sig}}], mode: mode}}`.
   `version` must equal `:elixir_erl.checker_version/0` of the running
   compiler; otherwise the module is `SL008 unsupported_chunk` and, in CI,
-  the run fails preflight.
+  the run fails preflight. As implemented, every slice of the module is
+  reported with the reason `unsupported_chunk:<found version>`, the run is
+  `incomplete` (exit 2 in CI; locally it reports and does not declare
+  entries stale), and no inventory acknowledgement accepts it: it is a
+  stale build artifact or a compiler mismatch, not a coverage gap.
 - Specs and types via `Code.Typespec.fetch_specs/1` and `fetch_types/1` on
   the binary. `:error` is recorded as `SL008 missing_metadata`, never as
   "no specs".
@@ -457,6 +511,7 @@ mix spec_lint --ci --profile soundness
 mix spec_lint --explain MyApp.Store.lookup/1
 mix spec_lint --analysis bodies --module MyApp.Store
 mix spec_lint --format json --output spec-lint.json
+mix spec_lint --format json > spec-lint.json
 mix spec_lint.baseline --output .spec_lint_baseline.json
 ```
 
@@ -474,7 +529,14 @@ Behaviour:
 - Umbrella root analyses owned children once and aggregates. `MIX_ENV` and
   `MIX_TARGET` are recorded in output.
 - Filters (`--app`, `--module`, paths) mark the run partial. A filter matching
-  nothing is an error.
+  nothing is an error. A partial run does not check the coverage floor (a
+  whole-project property). **Deferred:** path filters are not in the first
+  release; `--app` and `--module` are.
+- `--analysis signatures|bodies` goes through the configuration, so
+  `bodies` fails with the capability message of section 9.1 (exit 2).
+- With `--format json` and no `--output`, standard output carries only the
+  JSON report: compilation runs under a Mix shell that writes to standard
+  error.
 - Default scope is exported Elixir functions with specs. Macros, protocol
   dispatch functions, private functions, generated definitions and Erlang
   modules are counted as out of scope in the ledger.
@@ -484,7 +546,9 @@ Behaviour:
   warning rule.
 - Exit codes: 0 accepted, 1 new gated findings or coverage violation, 2
   incomplete run, unsupported backend, configuration error or internal
-  failure. Compile failures surface compiler output and exit 2.
+  failure. Compile failures surface compiler output and exit 2. A
+  configuration file that raises, throws or exits is a configuration error
+  (exit 2), and so is an invalid baseline file.
 
 `.spec_lint.exs`:
 
@@ -560,10 +624,19 @@ Coverage rules:
 - A slice present in the inventory as `compared` that is now `unsupported`
   or `unavailable` while its definition still exists is a regression.
 - Incomplete or partial analysis never makes an acknowledgement stale.
+  Neither does analysis that did not happen in a complete run: a finding of
+  a rule that did not run (`--rules`, `--except`, `:off`), or a finding
+  whose slice or module is now `unsupported` or `unavailable`, is not
+  stale. Only a slice compared without the finding, or a deleted
+  definition, makes a finding stale.
 
 Stale entries are warnings locally and in CI. `mix spec_lint.baseline`
 writes a review artifact; ordinary runs never modify it. A partial run cannot
-declare unseen entries stale.
+declare unseen entries stale. `mix spec_lint.baseline` rejects filters and
+rule selection (`--rules`, `--except`), keeps the entries of rules the
+configuration turns off, and refuses to overwrite an output file that is
+not a valid baseline. `expires` must be `null` or a `YYYY-MM-DD` date; any
+other value makes the baseline invalid (exit 2).
 
 Coverage ledger, reported with denominators and never as a single
 percentage: modules discovered and inspected; metadata failures by reason;
@@ -587,13 +660,21 @@ identical across two runs on the same inputs.
 These notes record choices the text above left open.
 
 - **Fingerprints.** The spec slice "after named-type expansion" is hashed
-  in two parts. One is the annotation-stripped spec AST. The other is the
-  translated bounds (`lo`, `hi`) of every argument and of the return,
-  through the adapter's canonical `Descr` serialisation
-  (`SpecLint.Compiler.canonical/1`). The slice and clause indexes are part
-  of the hash, so reordering spec clauses changes the fingerprint.
-  Reordering other functions, changing lines and recompiling do not. Tests
-  cover each case, plus a fresh VM.
+  as its translated bounds (`lo`, `hi`) of every argument and of the
+  return, through the adapter's canonical `Descr` serialisation
+  (`SpecLint.Compiler.canonical/1`), plus the loss records normalised to
+  their kind and structural position (named types, union member indexes
+  and map association indexes dropped; sorted) and the sorted integer
+  intervals. **Decision (post-Phase 1 review):** the annotation-stripped
+  spec AST is no longer hashed. It kept type alias names, type variable
+  names and union member order, so a cosmetic spec edit turned an
+  acknowledged finding into a new gating one. The cost: refinements the
+  lattice erases inside a type (`pos_integer()` against
+  `non_neg_integer()` in a tuple) do not change the fingerprint. The slice
+  and clause indexes are part of the hash, so reordering spec clauses
+  changes the fingerprint. Reordering other functions, changing lines,
+  recompiling, renaming a type alias or variable and reordering a union do
+  not. Tests cover each case, plus a fresh VM.
 - **SL008 acknowledgement.** An `SL008` finding is acknowledged by an
   inventory entry with the same subject (MFA, or the module for a
   module-level failure), slice and status. It is not listed among the
@@ -603,8 +684,36 @@ These notes record choices the text above left open.
   local runs report it.
 - **SL007.** It is off by default. Requesting it, or `analysis: :bodies`,
   exits 2 with a capability message.
-- **Clause reachability.** The `clause_conflict` prerequisite is reported
-  as `unchecked`. It does not block gating.
+- **Clause reachability.** The `clause_conflict` prerequisite
+  `clause_reachable` is `blocked` for a possibly shadowed clause (section
+  3.1 step 7) and `unchecked` otherwise. `unchecked` does not block gating.
+- **Inexact arrow arguments.** Section 6 excludes a slice with an
+  `arrow_polarity` argument from SL001 gating; the prerequisite is
+  `no_arrow_polarity_argument` (SL001 slice and clause forms, recorded for
+  SL002).
+- **Coverage and rule selection.** SL008 is computed in every run. When it
+  is not selected, its blocking findings are coverage violations, and the
+  inventory acknowledgements are still checked for staleness.
+- **`fail_on_regression: false`.** **Decision (post-Phase 1 review):** it
+  exempts coverage *regressions* (a slice the inventory lists as compared
+  that is now unsupported or unavailable) from gating; they are reported
+  with `regression: true`. A slice that was never compared still needs an
+  inventory acknowledgement in CI. The asymmetry is deliberate: the option
+  exists so that a toolchain change that loses analysis (debug info off, a
+  compiler upgrade) does not break CI before the baseline is regenerated,
+  while a new coverage gap is reviewed on arrival. The alternative readings
+  (a regression needs an acknowledgement, or gates like any unacknowledged
+  slice) make the option a no-op, because a regressed slice is stored as
+  compared and can never be acknowledged. `--warnings-as-errors` does not
+  override it.
+- **`expand_opaque: true`** is labelled in the report header, in each
+  finding's translation (`translation exact (opaque expanded)`), in the
+  inventory entry (`notes`), in the ledger (`slices.expanded`) and in the
+  JSON `config`.
+- **Ledger reasons.** A compared inventory entry whose obligation is
+  `unknown` records why (`unknown_reason`: `top_only`, `near_top`,
+  `no_counted_component`, `other`), and the ledger counts them
+  (`obligations_unknown_by_reason`), as steps 2 and 8 of section 3.1 ask.
 - **SL002 on `no_return()` specs.** SL002 does not report a slice whose
   spec return is empty. That is `SL006`'s case.
 
@@ -736,8 +845,11 @@ after measurement.
   `structured_possible` detections. The option stays configurable.
 - **Clause reachability.** The `clause_conflict` prerequisite "the compiler
   did not flag the clause unreachable" is not in the checker chunk. It is
-  reported as unchecked. An upstream API or the body backend would close
-  it.
+  approximated from the stored clause domains (section 3.1 step 7), which
+  over-blocks guarded clauses: on the stdlib 23 contributing clauses (22
+  functions) are possibly shadowed, none of them a conflict. An upstream
+  API that exports the compiler's redundancy verdict, or the body backend,
+  would close it.
 - **Containment against typed struct fields.** A struct pattern leaves
   fields `term()`, so any function whose spec takes a struct with typed
   fields is `domain_escape`. That makes `structured_possible` unreachable

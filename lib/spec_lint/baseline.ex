@@ -17,27 +17,44 @@ defmodule SpecLint.Baseline do
   strings, source lines, function bodies or dependency digests:
 
     * the rule ID, the MFA, the slice index and the clause index;
-    * the spec slice AST with every annotation (line, column) removed;
     * the translated bounds of every argument and of the return, which is
-      the spec after named-type expansion, through the adapter's canonical
-      serialisation (`SpecLint.Compiler.canonical/1`), with their loss
-      records;
+      the spec slice after named-type expansion, through the adapter's
+      canonical serialisation (`SpecLint.Compiler.canonical/1`), with their
+      loss records normalised: loss kinds with paths that keep only
+      structural positions (argument, return, tuple element, list, map
+      value, fun argument), without named types, union member indexes or
+      map association indexes, sorted and deduplicated; integer intervals
+      are sorted;
     * the inferred clauses the finding rests on, canonically serialised;
     * a rule-specific extra term (for `SL008`, the status and reason).
 
-  So a line change or reordering other functions keeps the fingerprint,
-  while reordering the spec's clauses changes it (the slice index is part
-  of the evidence). The hash is SHA-256 over
-  `:erlang.term_to_binary(term, [:deterministic])`.
+  The raw spec AST is not hashed: it still carries type alias names,
+  type variable names and union member order, so renaming a type alias,
+  renaming a type variable or reordering a union keeps the fingerprint.
+  A line change or reordering other functions keeps it too, while
+  reordering the spec's clauses changes it (the slice index is part of the
+  evidence). Refinements the lattice erases (`pos_integer()` against
+  `non_neg_integer()` inside a tuple) are not distinguished; integer
+  intervals are kept at the top level of each argument and of the return.
+  The hash is SHA-256 over `:erlang.term_to_binary(term, [:deterministic])`.
 
   ## Decisions
 
   `decide/3` marks every issue `:baselined`, `:expired` or `:new`, and lists
   stale entries. Findings are matched by fingerprint; `SL008` issues by an
-  inventory entry with the same subject, slice and status. Stale entries
-  are warnings, and a partial or incomplete run never declares an entry
-  stale. A baseline written by another compiler adapter is not applied at
-  all: reconciling it is a deliberate step (`mix spec_lint.baseline`).
+  inventory entry with the same subject, slice and status. An `SL008` for
+  an unsupported checker chunk (`unsupported_chunk`) is a preflight
+  failure and is never acknowledged. Stale entries are warnings, and
+  analysis that did not happen never makes an entry stale: a partial or
+  incomplete run declares nothing stale, a finding of a rule that did not
+  run is not stale, and neither is a finding whose slice or module is now
+  unsupported or unavailable. A baseline written by another compiler
+  adapter is not applied at all: reconciling it is a deliberate step
+  (`mix spec_lint.baseline`).
+
+  `expires` must be `null` or an ISO 8601 date (`YYYY-MM-DD`); `parse/2`
+  rejects anything else, so a mistyped date cannot suppress a finding
+  forever.
   """
 
   alias SpecLint.{Bound, Compiler, Issue}
@@ -70,7 +87,6 @@ defmodule SpecLint.Baseline do
           optional(:module) => module() | nil,
           optional(:slice) => non_neg_integer() | nil,
           optional(:clause) => non_neg_integer() | nil,
-          optional(:spec) => tuple() | nil,
           optional(:args) => [Bound.t()] | nil,
           optional(:return) => Bound.t() | nil,
           optional(:inferred) => [{non_neg_integer(), Compiler.clause() | nil}],
@@ -99,7 +115,6 @@ defmodule SpecLint.Baseline do
       subject(input),
       Map.get(input, :slice),
       Map.get(input, :clause),
-      input |> Map.get(:spec) |> strip_annotations(),
       input |> Map.get(:args) |> bounds(),
       input |> Map.get(:return) |> bound(),
       input |> Map.get(:inferred, []) |> clauses(),
@@ -120,8 +135,27 @@ defmodule SpecLint.Baseline do
   defp bound(nil), do: nil
 
   defp bound(%Bound{} = bound) do
-    {Compiler.canonical(bound.lo), Compiler.canonical(bound.hi),
-     Enum.map(bound.losses, &{&1.kind, &1.path}), bound.integers}
+    losses =
+      bound.losses
+      |> Enum.map(&{&1.kind, structural_path(&1.path)})
+      |> Enum.uniq()
+      |> Enum.sort()
+
+    integers = bound.integers && Enum.sort(bound.integers)
+    {Compiler.canonical(bound.lo), Compiler.canonical(bound.hi), losses, integers}
+  end
+
+  # Keeps only the positions of a loss path that do not depend on how the
+  # spec is spelled: named types, union member indexes and map association
+  # indexes are dropped.
+  defp structural_path(path) do
+    Enum.flat_map(path, fn
+      {:type, _module, _name, _arity} -> []
+      {:union, _index} -> []
+      {:map_key, _index} -> [:map_key]
+      {:map_value, index} when is_integer(index) -> [:map_domain_value]
+      segment -> [segment]
+    end)
   end
 
   defp clauses(clauses) do
@@ -155,7 +189,9 @@ defmodule SpecLint.Baseline do
 
   @doc """
   Removes annotations (lines, columns) from an Erlang typespec AST, so the
-  AST depends only on the spec's structure.
+  AST depends only on the spec's structure. Fingerprints do not hash the
+  spec AST (see the moduledoc); this is kept for comparing spec ASTs in
+  tools and tests.
   """
   @spec strip_annotations(term()) :: term()
   def strip_annotations(tuple) when is_tuple(tuple) and tuple_size(tuple) >= 2 do
@@ -178,7 +214,7 @@ defmodule SpecLint.Baseline do
 
   @doc """
   Loads the baseline at `path`. `:missing` when the file does not exist,
-  `{:error, message}` when it cannot be read or is not a version
+  `{:error, message}` when it cannot be read or is not a valid version
   #{@version} baseline.
   """
   @spec load(Path.t()) :: {:ok, t()} | :missing | {:error, String.t()}
@@ -190,13 +226,17 @@ defmodule SpecLint.Baseline do
     end
   end
 
-  @doc "Parses baseline JSON contents."
+  @doc """
+  Parses baseline JSON contents. Every finding needs a `sha256:`
+  fingerprint and an `expires` that is `null` or an ISO 8601 date; every
+  inventory entry must be an object.
+  """
   @spec parse(String.t(), Path.t() | nil) :: {:ok, t()} | {:error, String.t()}
   def parse(contents, path \\ nil) do
     case JSON.decode(contents) do
       {:ok, %{"version" => @version, "findings" => findings, "inventory" => inventory} = map}
       when is_list(findings) and is_list(inventory) ->
-        if Enum.all?(findings, &valid_finding?/1) and Enum.all?(inventory, &is_map/1) do
+        with :ok <- validate_entries(findings, inventory, path) do
           {:ok,
            %__MODULE__{
              path: path,
@@ -204,9 +244,12 @@ defmodule SpecLint.Baseline do
              findings: findings,
              inventory: inventory
            }}
-        else
-          {:error, "invalid baseline #{path}: malformed finding or inventory entry"}
         end
+
+      {:ok, %{"version" => @version}} ->
+        {:error,
+         "invalid baseline #{path}: version #{@version} needs \"findings\" and " <>
+           "\"inventory\" lists"}
 
       {:ok, %{"version" => version}} ->
         {:error, "unsupported baseline version #{inspect(version)} in #{path}"}
@@ -219,8 +262,32 @@ defmodule SpecLint.Baseline do
     end
   end
 
+  defp validate_entries(findings, inventory, path) do
+    cond do
+      not Enum.all?(findings, &valid_finding?/1) or not Enum.all?(inventory, &is_map/1) ->
+        {:error, "invalid baseline #{path}: malformed finding or inventory entry"}
+
+      bad = Enum.find(findings, &(not valid_expires?(&1["expires"]))) ->
+        {:error,
+         "invalid baseline #{path}: finding #{bad["fingerprint"]} has expires " <>
+           "#{inspect(bad["expires"])}; expected null or an ISO 8601 date (YYYY-MM-DD)"}
+
+      true ->
+        :ok
+    end
+  end
+
   defp valid_finding?(%{"fingerprint" => "sha256:" <> _}), do: true
   defp valid_finding?(_finding), do: false
+
+  defp valid_expires?(nil), do: true
+  defp valid_expires?(expires) when is_binary(expires), do: match?({:ok, _}, parse_date(expires))
+  defp valid_expires?(_expires), do: false
+
+  # Only the calendar date form YYYY-MM-DD, not the other ISO 8601 forms
+  # Date.from_iso8601/1 accepts.
+  defp parse_date(<<_::binary-size(10)>> = expires), do: Date.from_iso8601(expires)
+  defp parse_date(_expires), do: {:error, :invalid_format}
 
   @doc """
   Builds the baseline written by `mix spec_lint.baseline` from the current
@@ -230,11 +297,18 @@ defmodule SpecLint.Baseline do
   `reason`, `owner` and `expires` of a previous entry with the same
   fingerprint (or inventory key and status) are kept; new inventory
   acknowledgements get `"initial baseline"`, to be reviewed.
+
+  Options: `:rules`, the IDs of the rules that ran (default: every rule).
+  Previous findings of rules that did not run (turned `:off` in the
+  configuration) are kept unchanged, so a narrower rule set never drops
+  acknowledged entries.
   """
-  @spec build([Issue.t()], [map()], String.t(), t() | nil) :: map()
-  def build(issues, inventory, adapter, previous) do
-    previous_findings =
-      Map.new((previous && previous.findings) || [], &{&1["fingerprint"], &1})
+  @spec build([Issue.t()], [map()], String.t(), t() | nil, keyword()) :: map()
+  def build(issues, inventory, adapter, previous, opts \\ []) do
+    rules = Keyword.get(opts, :rules)
+    previous_entries = (previous && previous.findings) || []
+    previous_findings = Map.new(previous_entries, &{&1["fingerprint"], &1})
+    kept = Enum.reject(previous_entries, &ran?(&1["rule"], rules))
 
     previous_acks =
       Map.new((previous && previous.inventory) || [], &{inventory_key(&1), &1})
@@ -257,6 +331,7 @@ defmodule SpecLint.Baseline do
           "expires" => Map.get(old, "expires")
         }
       end
+      |> Kernel.++(kept)
       |> Enum.uniq_by(& &1["fingerprint"])
       |> Enum.sort_by(&{&1["mfa"], &1["rule"], &1["slice"] || -1, &1["clause"] || -1})
 
@@ -299,7 +374,12 @@ defmodule SpecLint.Baseline do
 
   Options: `:adapter` (the current adapter ID; a baseline from another
   adapter is not applied), `:complete?` (stale entries are only listed for
-  a complete, unfiltered run), `:today` (a `Date`, for `expires`).
+  a complete, unfiltered run), `:today` (a `Date`, for `expires`),
+  `:rules` (IDs of the rules that ran; baseline findings of other rules
+  are never stale, and inventory acknowledgements are stale only when
+  `"SL008"` is listed; default: every rule), `:inventory` (the current
+  inventory, `SpecLint.Coverage.entry/0`: a finding whose slice or module
+  is not compared now is never stale).
   """
   @spec decide([Issue.t()], t() | nil, keyword()) :: {[Issue.t()], decisions()}
   def decide(issues, nil, _opts) do
@@ -330,7 +410,7 @@ defmodule SpecLint.Baseline do
     issues =
       Enum.map(issues, fn
         %Issue{rule: "SL008"} = issue ->
-          case Map.fetch(acks, {Issue.subject(issue), issue.slice}) do
+          case acknowledgement(acks, issue) do
             {:ok, entry} ->
               if entry["status"] == issue.data[:status],
                 do: %{issue | baseline: :baselined},
@@ -349,7 +429,7 @@ defmodule SpecLint.Baseline do
 
     {stale_findings, stale_inventory} =
       if Keyword.get(opts, :complete?, false) do
-        stale(issues, baseline)
+        stale(issues, baseline, opts)
       else
         {[], []}
       end
@@ -363,33 +443,92 @@ defmodule SpecLint.Baseline do
      }}
   end
 
-  defp expiry(%{"expires" => expires}, today) when is_binary(expires) do
-    case Date.from_iso8601(expires) do
-      {:ok, date} -> if Date.compare(today, date) == :gt, do: :expired, else: :baselined
-      {:error, _} -> :baselined
+  # An unsupported checker chunk is a preflight failure (DESIGN.md 5.1): no
+  # inventory entry acknowledges it.
+  defp acknowledgement(acks, %Issue{data: data} = issue) do
+    case data do
+      %{reason: "unsupported_chunk" <> _} -> :error
+      _ -> Map.fetch(acks, {Issue.subject(issue), issue.slice})
     end
   end
 
+  # An expires value that is not a date counts as expired: parse/2 rejects
+  # it, so this only guards baselines built in memory.
+  defp expiry(%{"expires" => expires}, today) when is_binary(expires) do
+    case parse_date(expires) do
+      {:ok, date} -> if Date.compare(today, date) == :gt, do: :expired, else: :baselined
+      {:error, _} -> :expired
+    end
+  end
+
+  defp expiry(%{"expires" => nil}, _today), do: :baselined
+  defp expiry(%{"expires" => _other}, _today), do: :expired
   defp expiry(_entry, _today), do: :baselined
 
-  defp stale(issues, baseline) do
+  defp stale(issues, baseline, opts) do
+    rules = Keyword.get(opts, :rules)
+    inventory = Keyword.get(opts, :inventory, [])
     fingerprints = MapSet.new(issues, & &1.fingerprint)
 
-    acknowledged =
-      for %Issue{rule: "SL008", baseline: :baselined} = issue <- issues,
+    not_compared =
+      for %{mfa: mfa, slice: slice, status: status} <- inventory,
+          mfa != nil and status != "compared",
           into: MapSet.new(),
-          do: {Issue.subject(issue), issue.slice}
+          do: {mfa, slice}
+
+    unavailable_modules =
+      for %{mfa: nil, module: module} <- inventory, into: MapSet.new(), do: module
 
     stale_findings =
-      Enum.reject(baseline.findings, &MapSet.member?(fingerprints, &1["fingerprint"]))
+      Enum.reject(baseline.findings, fn entry ->
+        MapSet.member?(fingerprints, entry["fingerprint"]) or not ran?(entry["rule"], rules) or
+          MapSet.member?(not_compared, {entry["mfa"], entry["slice"]}) or
+          in_modules?(entry["mfa"], unavailable_modules)
+      end)
 
-    stale_inventory =
+    {stale_findings, stale_inventory(issues, baseline, rules)}
+  end
+
+  defp stale_inventory(issues, baseline, rules) do
+    if ran?("SL008", rules) do
+      acknowledged =
+        for %Issue{rule: "SL008", baseline: :baselined} = issue <- issues,
+            into: MapSet.new(),
+            do: {Issue.subject(issue), issue.slice}
+
       for entry <- baseline.inventory,
           entry["status"] in ["unsupported", "unavailable"],
           not MapSet.member?(acknowledged, inventory_key(entry)),
           do: entry
+    else
+      []
+    end
+  end
 
-    {stale_findings, stale_inventory}
+  defp ran?(_rule, nil), do: true
+  defp ran?(rule, rules), do: rule in rules
+
+  # Whether a finding's subject (`Mod.fun/arity`, or a module) belongs to
+  # one of `modules` (inspected module names). The module of an MFA string
+  # is read from its Elixir alias segments; when the string has another
+  # shape, any module that prefixes it counts, which errs towards not stale.
+  defp in_modules?(subject, modules) when is_binary(subject) do
+    MapSet.member?(modules, subject) or
+      case module_of(subject) do
+        nil -> Enum.any?(modules, &String.starts_with?(subject, &1 <> "."))
+        module -> MapSet.member?(modules, module)
+      end
+  end
+
+  defp in_modules?(_subject, _modules), do: false
+
+  defp module_of(mfa) do
+    alias_then_function = ~r/^((?:[A-Z][A-Za-z0-9_]*\.)*[A-Z][A-Za-z0-9_]*)\.[^A-Z].*\/\d+$/
+
+    case Regex.run(alias_then_function, mfa) do
+      [_, module] -> module
+      nil -> nil
+    end
   end
 
   @doc "The key of an inventory entry: its subject (MFA or module) and slice."

@@ -112,8 +112,9 @@ defmodule SpecLint.CompilerTest do
       b = C.union(C.atom([:none, :error]), C.tuple([C.atom([:ok]), C.integer()]))
       bytes = &:erlang.term_to_binary(C.canonical(&1), [:deterministic])
 
-      assert bytes.(a) == bytes.(a)
-      assert bytes.(C.dynamic(a)) == bytes.(C.dynamic(a))
+      # The same union built in a different order serialises identically.
+      assert bytes.(a) == bytes.(b)
+      assert bytes.(C.dynamic(a)) == bytes.(C.dynamic(b))
       refute bytes.(a) == bytes.(C.tuple([C.atom([:ok]), C.binary()]))
       refute bytes.(a) == bytes.(C.dynamic(a))
       assert C.canonical(C.term()) == :term

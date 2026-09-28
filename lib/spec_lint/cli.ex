@@ -6,6 +6,8 @@ defmodule SpecLint.CLI do
 
       --ci                         gate findings (exit 1 on new gated findings)
       --profile soundness|review   evidence policy profile (default: review)
+      --analysis signatures|bodies analysis backend (default: signatures; bodies
+                                   is not available and exits 2)
       --warnings-as-errors         gate every reported finding
       --format console|json        report format (default: console)
       --output PATH                write the report (or baseline) to PATH
@@ -24,6 +26,7 @@ defmodule SpecLint.CLI do
   @switches [
     ci: :boolean,
     profile: :string,
+    analysis: :string,
     warnings_as_errors: :boolean,
     format: :string,
     output: :string,
@@ -40,6 +43,7 @@ defmodule SpecLint.CLI do
   @type t :: %{
           ci: boolean(),
           profile: :review | :soundness | nil,
+          analysis: :signatures | :bodies | nil,
           warnings_as_errors: boolean() | nil,
           format: :console | :json,
           output: String.t() | nil,
@@ -72,12 +76,14 @@ defmodule SpecLint.CLI do
 
   defp build(opts) do
     with {:ok, profile} <- profile(opts[:profile]),
+         {:ok, analysis} <- analysis(opts[:analysis]),
          {:ok, format} <- format(opts[:format]),
          {:ok, explain} <- explain(opts[:explain]) do
       {:ok,
        %{
          ci: Keyword.get(opts, :ci, false),
          profile: profile,
+         analysis: analysis,
          warnings_as_errors: opts[:warnings_as_errors],
          format: format,
          output: opts[:output],
@@ -98,6 +104,11 @@ defmodule SpecLint.CLI do
   defp profile("soundness"), do: {:ok, :soundness}
   defp profile(other), do: {:error, "--profile must be soundness or review, got: #{other}"}
 
+  defp analysis(nil), do: {:ok, nil}
+  defp analysis("signatures"), do: {:ok, :signatures}
+  defp analysis("bodies"), do: {:ok, :bodies}
+  defp analysis(other), do: {:error, "--analysis must be signatures or bodies, got: #{other}"}
+
   defp format(nil), do: {:ok, :console}
   defp format("console"), do: {:ok, :console}
   defp format("json"), do: {:ok, :json}
@@ -117,6 +128,7 @@ defmodule SpecLint.CLI do
   def config_overrides(cli) do
     [
       profile: cli.profile,
+      analysis: cli.analysis,
       baseline: cli.baseline,
       warnings_as_errors: cli.warnings_as_errors,
       require_static_return: cli.require_static_return

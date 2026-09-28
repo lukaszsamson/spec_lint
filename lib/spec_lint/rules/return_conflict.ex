@@ -12,10 +12,15 @@ defmodule SpecLint.Rules.ReturnConflict do
       return disjoint from `S_hi`. Reported once per such clause, and only
       when the slice-level form did not fire.
 
-  Prerequisites: no `unsupported` loss, no overlap tag, no arrow in the
-  return. For the clause form, containment is part of the evidence and
-  reachability of the clause is `:unchecked` (the checker chunk does not
-  record it). A `no_return()` spec is `SL006`'s case.
+  Prerequisites (`SpecLint.Rule.sl001_prerequisites/1`): no `unsupported`
+  loss, no overlap tag, no arrow in the return and no argument translated
+  with an `arrow_polarity` loss. For the clause form, containment is part of
+  the evidence, and `clause_reachable` approximates "the compiler did not
+  flag the clause unreachable", which the checker chunk does not record: it
+  is `:blocked` when the clause's domain is covered by the clauses before it
+  (`SpecLint.Compare.shadowed/1`, which over-approximates and so never
+  misses a clause the compiler reports as redundant) and `:unchecked`
+  otherwise. A `no_return()` spec is `SL006`'s case.
   """
 
   @behaviour SpecLint.Rule
@@ -108,10 +113,13 @@ defmodule SpecLint.Rules.ReturnConflict do
         ],
         prerequisites:
           Rule.sl001_prerequisites(slice) ++
-            [{:clause_contained, :met}, {:clause_reachable, :unchecked}]
+            [{:clause_contained, :met}, {:clause_reachable, reachable(contributing)}]
       )
     end
   end
 
   defp clause_text(%{args: args, return: return}), do: Rule.clause_string({args, return})
+
+  defp reachable(%{shadowed?: true}), do: :blocked
+  defp reachable(_contributing), do: :unchecked
 end

@@ -10,16 +10,21 @@ defmodule Mix.Tasks.SpecLint do
       mix spec_lint --ci --profile soundness
       mix spec_lint --explain MyApp.Store.lookup/1
       mix spec_lint --format json --output spec-lint.json
+      mix spec_lint --format json > spec-lint.json
 
   The task parses its options first, then compiles the project with
   `Mix.Task.run("compile")`. It never starts the application, and its
   analysis never invokes project functions (compilation runs macros).
+  With `--format json` and no `--output`, standard output carries only the
+  JSON report: compiler progress and the summary line go to standard error.
 
   ## Options
 
     * `--ci` - gate findings: exit 1 on new gated findings or coverage
       violations
     * `--profile soundness|review` - evidence policy (default `review`)
+    * `--analysis signatures|bodies` - analysis backend (default
+      `signatures`; `bodies` is not available in this build and exits 2)
     * `--warnings-as-errors` - gate every reported finding
     * `--format console|json`, `--output PATH` - report format and file
     * `--baseline PATH` - baseline file (default `.spec_lint_baseline.json`)
@@ -44,7 +49,11 @@ defmodule Mix.Tasks.SpecLint do
   @spec run([String.t()]) :: :ok
   def run(argv) do
     cli = ok!(CLI.parse(argv))
-    compile!()
+
+    if cli.format == :json and cli.output == nil and cli.explain == nil,
+      do: SpecLint.StderrShell.with_shell(&compile!/0),
+      else: compile!()
+
     project = Project.current()
     config = load_config!(project, cli)
 

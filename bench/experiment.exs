@@ -135,12 +135,15 @@ defmodule SpecLint.Experiment do
     loss_kinds = Enum.sort(Enum.uniq(arg_losses ++ return_losses))
     arrow_return? = Enum.any?(Compiler.components(slice.return.hi), &(&1.kind == :fun))
 
-    # SL001 prerequisites (DESIGN 4) for a per-clause conflict: no
+    # SL001 prerequisites (DESIGN 4 and 6) for a per-clause conflict: no
     # unsupported loss, no overlap tag (certain or unknown), no arrow in the
-    # return. Containment of the clause is part of the class itself.
+    # return, no argument with an arrow_polarity loss, and the clause not
+    # possibly shadowed by earlier clauses (DESIGN 3.1 step 7). Containment
+    # of the clause is part of the class itself.
     sl001_ok? =
       not rel.overlap? and not rel.overlap_unknown? and
-        :unsupported_construct not in loss_kinds and not arrow_return?
+        :unsupported_construct not in loss_kinds and not arrow_return? and
+        :arrow_polarity not in arg_losses
 
     sl002_ok? =
       not rel.overlap? and not rel.spec_return_empty? and
@@ -187,9 +190,15 @@ defmodule SpecLint.Experiment do
       # SL006's case, not SL002's.
       sl002_candidate: classification.class == :structured_possible and sl002_ok?,
       sl002_candidate_static: static.class == :structured_possible and sl002_ok?,
-      clause_conflict_candidate: classification.class == :clause_conflict and sl001_ok?,
-      clause_conflict_candidate_static: static.class == :clause_conflict and sl001_ok?
+      clause_conflict_candidate: reachable_conflict?(classification) and sl001_ok?,
+      clause_conflict_candidate_static: reachable_conflict?(static) and sl001_ok?
     }
+  end
+
+  defp reachable_conflict?(classification) do
+    Enum.any?(classification.clauses, fn clause ->
+      clause.class == :clause_conflict and :possibly_shadowed not in clause.reasons
+    end)
   end
 
   defp clause_entry(clause, static) do

@@ -67,11 +67,43 @@ defmodule SpecLint.ReportTest do
                "  inferred extra:  :timeout\n" <>
                "  slice:           (integer())\n" <>
                "  evidence:        structured_possible (signature backend, translation exact)\n" <>
-               "  Review whether the spec should include this alternative.\n"
+               "  Review whether the spec should include this alternative.\n" <>
+               "  policy:          reported, not gated: SL002 is informational"
 
     assert text =~ "Coverage:\n  modules: 1 discovered, 1 analysed"
+    assert text =~ "  unknown obligations by reason: "
     assert text =~ "Result: partial, exit 0"
     assert text =~ "(new; fails with --ci)"
+  end
+
+  test "expand_opaque is labelled in the header, the findings, the ledger and the JSON" do
+    alias SpecLint.Fixtures.Types
+    config = %SpecLint.Config{baseline: "tmp/none.json", expand_opaque: true}
+    run = run!([Types], [only: ["SL005"]], config)
+
+    text = run |> Console.render() |> IO.iodata_to_binary()
+    assert text =~ ", expand_opaque (opaque types expanded)"
+    assert text =~ "translations with opaque or nominal types expanded (expand_opaque): 1"
+
+    function = Enum.find(hd(run.modules).functions, &(&1.mfa == {Types, :opaque_remote, 1}))
+    [slice] = function.slices
+    assert SpecLint.Rule.translation_string(slice) =~ "(opaque expanded)"
+
+    envelope = Json.envelope(run)
+    assert envelope["config"]["expand_opaque"] == true
+    assert envelope["ledger"]["slices"]["expanded"] == 1
+
+    entry =
+      Enum.find(
+        envelope["ledger"]["entries"],
+        &(&1["mfa"] == "SpecLint.Fixtures.Types.opaque_remote/1")
+      )
+
+    assert entry["notes"] == ["opaque_expanded"]
+
+    plain = run!([Types], only: ["SL005"])
+    refute plain |> Console.render() |> IO.iodata_to_binary() =~ "expand_opaque"
+    assert Json.envelope(plain)["config"]["expand_opaque"] == false
   end
 
   test "--explain shows bounds, inferred clauses, containment and prerequisites" do

@@ -7,11 +7,19 @@ defmodule SpecLint.Run do
 
   Exit codes: `0` accepted; `1` new gated findings or a coverage violation
   (only in CI mode or with `warnings_as_errors`); `2` incomplete run
-  (internal failure analysing a module, unsupported compiler in CI),
-  unsupported backend, configuration error.
+  (internal failure analysing a module; unsupported compiler or checker
+  chunk in CI), unsupported backend, configuration error.
 
   Completion is `:complete`, `:partial` (a `--module` or `--app` filter
-  was given; stale entries are never declared) or `:incomplete`.
+  was given; stale entries are never declared and the coverage floor is
+  not checked) or `:incomplete` (an internal failure, or a checker chunk
+  written by another checker version, which fails preflight: exit 2 in CI).
+
+  Coverage (`SL008`) is always evaluated. When rule selection (`--rules`,
+  `--except`, `rules: [analysis_unavailable: :off]`) leaves SL008 out, its
+  findings are not reported, but the ones that would block become coverage
+  violations, so selecting rules never bypasses the coverage policy. Stale
+  baseline findings are declared only for the rules that ran.
   """
 
   alias SpecLint.{
@@ -26,6 +34,8 @@ defmodule SpecLint.Run do
     Project,
     TypeCache
   }
+
+  alias SpecLint.Rules.AnalysisUnavailable
 
   @type completion :: :complete | :partial | :incomplete
 
@@ -262,28 +272,33 @@ defmodule SpecLint.Run do
   end
 
   defp finish(run, failures, opts) do
-    issues = run_rules(run)
     inventory = Coverage.inventory(run.modules, run.evidence)
     regressions = Coverage.regressions(inventory, run.baseline)
-    issues = Policy.apply_gates(issues, run.config, regressions)
-    incomplete? = failures != []
+
+    issues =
+      (run_rules(run) ++ coverage_issues(run))
+      |> Policy.apply_gates(run.config, regressions)
+
+    chunk_reasons = unsupported_chunks(run.modules)
+    incomplete? = failures != [] or chunk_reasons != []
 
     {issues, decisions} =
       Baseline.decide(issues, run.baseline,
         adapter: run.capabilities.adapter_id,
         complete?: not run.partial? and not incomplete?,
-        today: Keyword.get_lazy(opts, :today, &Date.utc_today/0)
+        today: Keyword.get_lazy(opts, :today, &Date.utc_today/0),
+        rules: ran_rule_ids(run),
+        inventory: inventory
       )
 
+    {issues, coverage_only} =
+      if sl008_selected?(run),
+        do: {issues, []},
+        else: Enum.split_with(issues, &(&1.rule != "SL008"))
+
     ledger = Coverage.ledger(run.modules, run.excluded, inventory)
-    compared = ledger["slices"]["compared"]
-    floor = run.config.coverage.floor
-
-    violations =
-      if compared < floor,
-        do: ["#{compared} compared spec slices, below the configured floor of #{floor}"],
-        else: []
-
+    {floor_violations, floor_notes} = floor(run, ledger)
+    violations = floor_violations ++ Enum.flat_map(coverage_only, &coverage_violation/1)
     {adapter_reasons, adapter_error?} = adapter_mismatch(run, decisions)
 
     run = %{
@@ -307,7 +322,8 @@ defmodule SpecLint.Run do
 
     exit_code =
       cond do
-        incomplete? or adapter_error? -> 2
+        failures != [] or adapter_error? -> 2
+        chunk_reasons != [] and run.ci? -> 2
         gating? and blocking? -> 1
         true -> 0
       end
@@ -315,9 +331,73 @@ defmodule SpecLint.Run do
     %{
       run
       | completion: completion,
-        completion_reasons: failures ++ adapter_reasons,
+        completion_reasons: failures ++ chunk_reasons ++ adapter_reasons ++ floor_notes,
         exit_code: exit_code
     }
+  end
+
+  # The coverage floor is a whole-project property: a partial run does not
+  # check it.
+  defp floor(run, ledger) do
+    compared = ledger["slices"]["compared"]
+    floor = run.config.coverage.floor
+
+    cond do
+      compared >= floor ->
+        {[], []}
+
+      run.partial? ->
+        {[], ["coverage floor of #{floor} not checked: partial run"]}
+
+      true ->
+        {["#{compared} compared spec slices, below the configured floor of #{floor}"], []}
+    end
+  end
+
+  defp sl008_selected?(run), do: List.keymember?(run.rules, AnalysisUnavailable, 0)
+
+  # SL008 always runs (coverage), whatever the rule selection.
+  defp ran_rule_ids(run),
+    do: Enum.uniq(["SL008" | Enum.map(run.rules, fn {rule, _severity} -> rule.id() end)])
+
+  defp coverage_violation(%Issue{} = issue) do
+    if Issue.blocking?(issue) do
+      slice = if issue.slice, do: " slice #{issue.slice}", else: ""
+      regression = if issue.data[:regression], do: ", a coverage regression", else: ""
+
+      [
+        "#{Issue.subject(issue)}#{slice} is #{issue.data[:status]} (#{issue.data[:reason]})" <>
+          "#{regression}, not acknowledged in the baseline inventory (SL008 is not " <>
+          "selected; the coverage policy still applies)"
+      ]
+    else
+      []
+    end
+  end
+
+  # Modules whose checker chunk was written by another checker version
+  # (DESIGN.md 5.1): a preflight failure.
+  defp unsupported_chunks(modules) do
+    for module <- modules,
+        reason <- status_reasons(module),
+        AnalysisUnavailable.unsupported_chunk?(reason),
+        uniq: true do
+      {:checker_chunk, {:checker_version_mismatch, found, expected}} = reason
+
+      "unsupported checker chunk in #{inspect(module.module)}: version #{inspect(found)}, " <>
+        "the running checker writes #{inspect(expected)}; recompile the project with the " <>
+        "running compiler"
+    end
+  end
+
+  defp status_reasons(module) do
+    module_reason =
+      case module.status do
+        {:unavailable, reason} -> [reason]
+        _ -> []
+      end
+
+    module_reason ++ for(%{status: {:unavailable, reason}} <- module.functions, do: reason)
   end
 
   defp adapter_mismatch(run, %{reason: :adapter_mismatch}) do
@@ -331,23 +411,37 @@ defmodule SpecLint.Run do
 
   defp adapter_mismatch(_run, _decisions), do: {[], false}
 
-  defp run_rules(run) do
+  # Every selected rule except SL008, which coverage_issues/1 runs.
+  defp run_rules(run),
+    do: rule_issues(run, Enum.reject(run.rules, &match?({AnalysisUnavailable, _}, &1)))
+
+  defp coverage_issues(run) do
+    severity =
+      case List.keyfind(run.rules, AnalysisUnavailable, 0) do
+        {_rule, severity} -> severity
+        nil -> AnalysisUnavailable.default_severity()
+      end
+
+    rule_issues(run, [{AnalysisUnavailable, severity}])
+  end
+
+  defp rule_issues(run, rules) do
     Enum.flat_map(run.modules, fn module ->
       file = Project.relative(run.project, module.file)
-      module_issues(run, module, file) ++ function_issues(run, module, file)
+      module_issues(rules, module, file) ++ function_issues(run, rules, module, file)
     end)
   end
 
-  defp module_issues(run, module, file) do
-    for {rule, severity} <- run.rules,
+  defp module_issues(rules, module, file) do
+    for {rule, severity} <- rules,
         Code.ensure_loaded?(rule) and function_exported?(rule, :check_module, 1),
         issue <- rule.check_module(%{module: module, file: file, severity: severity}),
         do: issue
   end
 
-  defp function_issues(run, module, file) do
+  defp function_issues(run, rules, module, file) do
     for function <- module.functions,
-        {rule, severity} <- run.rules,
+        {rule, severity} <- rules,
         issue <- rule.check_function(function_context(run, module, file, function, severity)),
         do: issue
   end

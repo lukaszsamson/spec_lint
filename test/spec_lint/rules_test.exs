@@ -49,6 +49,30 @@ defmodule SpecLint.RulesTest do
     assert [%{clause: 0}, %{clause: 1}] = issues(run, {Cases, :stale, 1})
   end
 
+  test "SL001 clause level: a clause covered by earlier clauses is not gated" do
+    # The compiler reports (:x) as redundant: no in-spec input reaches it.
+    run = run!([Cases])
+    assert [issue] = issues(run, {Cases, :shadowed, 1})
+    assert %Issue{rule: "SL001", evidence: :clause_conflict, clause: 1} = issue
+    assert {:clause_reachable, :blocked} in issue.prerequisites
+    assert Issue.blocked(issue) == [:clause_reachable]
+    refute issue.gate
+    assert SpecLint.Policy.explain(issue, %Config{}) =~ "prerequisites blocked: clause_reachable"
+  end
+
+  test "SL001 with an inexact arrow argument is reported, never gated" do
+    alias SpecLint.Fixtures.Review
+    run = run!([Review], ci: true)
+    assert [issue] = issues(run, {Review, :apply_it, 2})
+    assert %Issue{rule: "SL001", evidence: :conflict} = issue
+    assert {:no_arrow_polarity_argument, :blocked} in issue.prerequisites
+    refute issue.gate
+
+    assert [exact] = issues(run, {Review, :apply_exact, 2})
+    assert {:no_arrow_polarity_argument, :met} in exact.prerequisites
+    assert exact.gate
+  end
+
   test "SL001 with an overlap tag is reported, never gated" do
     run = run!([Cases])
     assert [issue] = issues(run, {Cases, :pick, 1})
@@ -146,6 +170,11 @@ defmodule SpecLint.RulesTest do
     compare = Enum.filter(run.issues, &(&1.module == Compare))
     assert compare != []
     assert Enum.all?(compare, &(&1.rule == "SL008" and &1.evidence == :unavailable))
-    assert Enum.all?(compare, &(&1.data.reason =~ "checker_chunk"))
+    # A checker chunk from another checker version is unsupported_chunk
+    # (DESIGN.md 5.1), a preflight failure: the run is incomplete.
+    assert Enum.all?(compare, &(&1.data.reason == "unsupported_chunk:elixir_checker_v1"))
+    assert run.completion == :incomplete
+    assert [reason] = run.completion_reasons
+    assert reason =~ "unsupported checker chunk in SpecLint.Fixtures.Compare"
   end
 end

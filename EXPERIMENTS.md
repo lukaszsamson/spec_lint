@@ -655,3 +655,63 @@ The 9 real omissions confirmed in Phase 0:
 
 The two omissions suppressed under both settings are `secret/1` (opaque
 remote return) and `passthrough/1` (a negation component), as in Phase 0.
+
+# Post-Phase 1 review re-measurement
+
+Date 2026-09-28. The same pinned toolchain, re-run after the review fixes
+(clause reachability approximation, the F1 widening check, the
+`arrow_polarity` argument prerequisite, fingerprint normalisation and the
+CI and baseline fixes; DESIGN 3.1 steps 5 and 7, sections 4 and 9.1). Raw
+results: `scratchpad/rv_before/*.json` (at `9b7c4d0`) and
+`scratchpad/rv_after/*.json`.
+
+## Stdlib
+
+| Measure | Before | After |
+| --- | --- | --- |
+| Functions / slices compared | 1711 / 1777 | 1711 / 1777 |
+| Function classes | unknown 1035, none 659, possible_domain_escape 11, possible_input_approximate 4, structured_possible 2 | unknown 1033, none 659, possible_domain_escape 13, possible_input_approximate 4, structured_possible 2 |
+| Slice classes | unknown 1066, none 680, possible_domain_escape 25, possible_input_approximate 4, structured_possible 2 | unknown 1064, none 680, possible_domain_escape 27, possible_input_approximate 4, structured_possible 2 |
+| Clause classes | unknown 1155, none 88, possible_domain_escape 24, possible_input_approximate 3, whole_kind_possible 3, structured_possible 2 | unknown 1153, none 88, possible_domain_escape 26, possible_input_approximate 3, whole_kind_possible 3, structured_possible 2 |
+| SL001 clause-conflict candidates | 0 | 0 |
+| SL002 `structured_possible` candidates | 2 (`Calendar.ISO.parse_utc_datetime/1,2`) | 2 (the same) |
+| `mix spec_lint --ci` findings | 31 SL002, 0 gating, exit 0 | 33 SL002, 0 gating, exit 0 |
+
+The only class change is `DateTime.from_iso8601/2,3`, `unknown` to
+`possible_domain_escape`. The F1 widening check now counts the component
+`{:ok, %DateTime{...}, float()}`: the struct fields were narrowed by the
+subtraction, but the `float()` offset comes from the code, from arithmetic
+on unguarded values. That is the O3 shape of the refuted
+`Calendar.ISO.parse_utc_datetime/1,2` candidates, so it is a report-only
+false positive. The clause escapes the spec domain, so it cannot reach a
+gating class.
+
+Clause reachability: 23 contributing clauses in 22 stdlib functions are
+possibly shadowed (for example `Enum.take/2` clause 1, whose earlier
+clause's stored domain covers it because guards are not stored). None of
+them is a conflict (14 `unknown`, 9 `none`), so the over-approximation
+changes no stdlib result.
+
+The ledger now splits the 1064 `unknown` obligations by reason: top_only
+796, no_counted_component 239, near_top 29.
+
+## Fixtures
+
+25 of 25 fixture functions get their expected class under both settings.
+Two fixtures were added:
+
+- `shadowed/1`, the redundant-clause shape (`def g(a) when is_atom(a)`
+  then `def g(:x)`). Its class is `clause_conflict`, and the reachability
+  prerequisite blocks the gate: a true negative.
+- `narrowed_payload/2`, the F1 shape (spec `{:ok, pid(), :a}`, clause
+  returns `{:ok, term(), :a or :b}`). It is `structured_possible` and
+  detected; before the widening check it was `unknown`.
+
+| Setting | Detected | Suppressed | False positive | True negative |
+| --- | --- | --- | --- | --- |
+| `require_static_return: false` | 9 | 2 | 0 | 14 |
+| `require_static_return: true` | 3 | 8 | 0 | 14 |
+
+The four clause-conflict detections (`lookup/1`, `labels/1`, `size_of/1`,
+`stale/1`) are unchanged: none of their conflicting clauses is shadowed and
+none has an `arrow_polarity` argument.
