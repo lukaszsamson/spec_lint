@@ -52,13 +52,23 @@ defmodule SpecLint.EvidenceTest do
       assert classification.reasons == []
     end
 
-    test "a wider payload under a tag the spec declares is marked tag_in_spec",
+    test "a payload refined only by subtracting the spec does not count",
          %{functions: functions} do
       [slice] = functions[{Cases, :wrap_error, 1}].slices
       classification = Evidence.classify(slice.relations)
-      assert classification.class == :structured_possible
-      assert [%{tag_in_spec?: true, label: :structured}] = classification.components
+      assert classification.class == :unknown
+
+      assert [
+               %{
+                 tag_in_spec?: true,
+                 subtraction_payload?: true,
+                 label: :structured,
+                 present_in_contributing?: false
+               }
+             ] = classification.components
+
       assert {:tag_in_spec, 1} in classification.reasons
+      assert {:subtraction_payload, 1} in classification.reasons
 
       [slice] = functions[{Cases, :lookup, 1}].slices
       assert [%{tag_in_spec?: false}] = Evidence.classify(slice.relations).components
@@ -111,6 +121,63 @@ defmodule SpecLint.EvidenceTest do
 
       assert %{label: :structured, present_in_contributing?: false} = component
       assert {:not_in_contributing, 1} in reasons
+    end
+
+    test "a term() payload under a declared tag is a subtraction payload" do
+      # Phase 0 stdlib pattern: spec {:ok, pid()}, clause returns {:ok, term()}.
+      spec = C.tuple([C.atom([:ok]), C.pid()])
+      rel = relations([], spec, [{[], C.tuple([C.atom([:ok]), C.term()])}])
+
+      assert %{class: :unknown, components: [component], reasons: reasons} =
+               Evidence.classify(rel)
+
+      assert %{label: :structured, tag_in_spec?: true, subtraction_payload?: true} = component
+      refute component.present_in_contributing?
+      assert {:subtraction_payload, 1} in reasons
+    end
+
+    test "a nested term() payload under a declared tag is a subtraction payload" do
+      # JSON.decode/1: {:error, {:invalid_byte, integer(), not integer()}}.
+      reason = &C.tuple([C.atom([:invalid_byte]), C.integer(), &1])
+      spec = C.tuple([C.atom([:error]), reason.(C.integer())])
+      clause_return = C.tuple([C.atom([:error]), reason.(C.term())])
+      rel = relations([], spec, [{[], clause_return}])
+
+      assert %{class: :unknown, components: [%{subtraction_payload?: true}]} =
+               Evidence.classify(rel)
+    end
+
+    test "an inferred payload narrower than term() under a declared tag still counts" do
+      spec = C.tuple([C.atom([:ok]), C.binary()])
+      clause_return = C.tuple([C.atom([:ok]), C.union(C.binary(), C.integer())])
+      rel = relations([], spec, [{[], clause_return}])
+
+      assert %{class: :structured_possible, components: [component]} = Evidence.classify(rel)
+      assert %{tag_in_spec?: true, subtraction_payload?: false} = component
+      assert component.present_in_contributing?
+    end
+
+    test "one precise witness among term() payloads keeps the component" do
+      spec = C.tuple([C.atom([:ok]), C.pid()])
+
+      clauses = [
+        {[C.atom([:a])], C.tuple([C.atom([:ok]), C.term()])},
+        {[C.atom([:b])], C.tuple([C.atom([:ok]), C.atom([:x])])}
+      ]
+
+      rel = relations([C.atom([:a, :b])], spec, clauses)
+      classification = Evidence.classify(rel)
+      assert classification.class == :structured_possible
+      assert Enum.all?(classification.components, &(not &1.subtraction_payload?))
+    end
+
+    test "a new tag is never a subtraction payload" do
+      spec = C.tuple([C.atom([:ok]), C.pid()])
+      clause_return = C.union(spec, C.tuple([C.atom([:error]), C.term()]))
+      rel = relations([], spec, [{[], clause_return}])
+
+      assert %{class: :structured_possible, components: [component]} = Evidence.classify(rel)
+      assert %{tag_in_spec?: false, subtraction_payload?: false} = component
     end
 
     test "a structured extra split across several clauses is present" do

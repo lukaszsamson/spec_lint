@@ -113,6 +113,7 @@ defmodule SpecLint.Compare do
         ]) :: relations()
   def slice(%{args: args, return: return}, clauses, others \\ []) do
     d_hi = Enum.map(args, & &1.hi)
+    d_lo = Enum.map(args, & &1.lo)
     s_hi = return.hi
     input_approximate? = Enum.any?(args, &(not Bound.exact?(&1)))
 
@@ -145,7 +146,7 @@ defmodule SpecLint.Compare do
       badapply?: applied == :badapply and Enum.all?(d_hi, &(not Compiler.empty?(&1))),
       overlap?: overlaps_with != [],
       overlaps_with: overlaps_with,
-      contributing: contributing(clauses, used, spec_domain, input_approximate?),
+      contributing: contributing(clauses, used, spec_domain, input_approximate?, d_lo),
       input_approximate?: input_approximate?
     }
   end
@@ -193,10 +194,12 @@ defmodule SpecLint.Compare do
 
   # Contributing clauses, in clause order. Containment is decided on whole
   # argument tuples. Not contained in D_hi means not contained in D (D ⊆ D_hi),
-  # so an escape is certain even with losses; containment in D_hi only
-  # implies containment in D when no argument lost precision.
-  defp contributing(clauses, used, spec_domain, input_approximate?) do
+  # so an escape is certain even with losses. Containment in D_lo implies
+  # containment in D (D_lo ⊆ D); containment in D_hi alone implies it only
+  # when no argument lost precision (then D_lo = D = D_hi).
+  defp contributing(clauses, used, spec_domain, input_approximate?, d_lo) do
     used_set = MapSet.new(used)
+    spec_domain_lo = Compiler.tuple(d_lo)
 
     for {{args, return}, index} <- Enum.with_index(clauses), MapSet.member?(used_set, index) do
       clause_domain = args |> Enum.map(&Compiler.upper_bound/1) |> Compiler.tuple()
@@ -204,8 +207,9 @@ defmodule SpecLint.Compare do
       containment =
         cond do
           not Compiler.subtype?(clause_domain, spec_domain) -> :domain_escape
-          input_approximate? -> :containment_unknown
-          true -> :contained
+          not input_approximate? -> :contained
+          Compiler.subtype?(clause_domain, spec_domain_lo) -> :contained
+          true -> :containment_unknown
         end
 
       %{

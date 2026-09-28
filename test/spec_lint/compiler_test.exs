@@ -46,6 +46,15 @@ defmodule SpecLint.CompilerTest do
              )
   end
 
+  test "to_string prints an empty lazy difference as none()" do
+    wide = C.closed_map([], [{[:binary], C.list(C.binary())}])
+    narrow = C.closed_map([], [{[:binary], C.non_empty_list(C.binary(), C.empty_list())}])
+    empty = C.difference(narrow, wide)
+    assert C.empty?(empty)
+    assert C.to_string(empty) == "none()"
+    assert C.to_string(C.difference(wide, narrow)) != "none()"
+  end
+
   describe "checker chunk decoding" do
     test "a running compiler with an unqualified checker version is rejected" do
       running = :elixir_checker_v11

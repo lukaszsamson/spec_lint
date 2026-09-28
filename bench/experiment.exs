@@ -163,6 +163,7 @@ defmodule SpecLint.Experiment do
       label: component.label,
       present_in_contributing: component.present_in_contributing?,
       tag_in_spec: component.tag_in_spec?,
+      subtraction_payload: component.subtraction_payload?,
       detail: component.detail
     }
   end

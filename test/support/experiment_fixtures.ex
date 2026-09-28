@@ -231,11 +231,12 @@ defmodule SpecLint.ExperimentFixtures do
       note: "true omission, list whose elements are structured ([:two])"
     },
     {Cases, :wrap_error, 1} => %{
-      class: :structured_possible,
+      class: :unknown,
       omission?: false,
       note:
         "payload widening: the private helper's return {:error, term()} does not keep " <>
-          "the caller's atom(); the tag :error is already in the spec (tag_in_spec?)"
+          "the caller's atom(); the tag :error is already in the spec, and the payload " <>
+          "not atom() exists only because the spec was subtracted (subtraction_payload?)"
     },
     {Cases, :passthrough, 1} => %{
       class: :unknown,

@@ -35,7 +35,16 @@ defmodule SpecLint.Evidence do
        subset of the union of the contributing clause return components
        with the same label. Only present components count as evidence, so
        structure created by subtracting the spec is never mistaken for
-       structure inferred from code.
+       structure inferred from code. That includes a payload refined by
+       the subtraction: a structured component whose tag is already in
+       `S_hi` (`tag_in_spec?`) is `subtraction_payload?`, and not present,
+       when every contributing return component with the same label that
+       it overlaps has `term()`
+       at a position (tuple element or struct field, looked up to
+       three levels deep) where the component is narrower.
+       `{:ok, not pid()}` from a clause returning `{:ok, term()}` under a
+       spec `{:ok, pid()}` says nothing about the code beyond `{:ok, _}`,
+       which the spec already declares.
     6. Classification, over counted components:
          * `:structured_possible` - at least one structured component, every
            contributing clause contained, slice not input-approximate;
@@ -88,7 +97,8 @@ defmodule SpecLint.Evidence do
           label: label(),
           present_in_contributing?: boolean(),
           detail: atom() | nil,
-          tag_in_spec?: boolean()
+          tag_in_spec?: boolean(),
+          subtraction_payload?: boolean()
         }
 
   @typedoc "Why a slice got its class, plus context rules need."
@@ -107,6 +117,7 @@ defmodule SpecLint.Evidence do
           | {:not_in_contributing, non_neg_integer()}
           | {:unknown_components, non_neg_integer()}
           | {:tag_in_spec, non_neg_integer()}
+          | {:subtraction_payload, non_neg_integer()}
 
   @typedoc "Result of `classify/2`."
   @type classification :: %{class: class(), components: [component()], reasons: [reason()]}
@@ -122,6 +133,10 @@ defmodule SpecLint.Evidence do
   ]
 
   @default_depth 3
+
+  # How deep nested tuples and structs are compared when deciding whether a
+  # payload was refined only by subtracting the spec.
+  @subtraction_depth 3
 
   @doc "All classes, worst first."
   @spec classes() :: [class(), ...]
@@ -201,7 +216,7 @@ defmodule SpecLint.Evidence do
     returns =
       relations.contributing
       |> Enum.flat_map(&Compiler.components(Compiler.upper_bound(&1.return)))
-      |> Enum.map(&{label(&1, depth), &1.descr})
+      |> Enum.map(&{label(&1, depth), &1.descr, &1.view})
 
     # S_hi = missing ∪ (U(D) − extra), since missing = S_hi − U(D).
     spec_return =
@@ -215,14 +230,18 @@ defmodule SpecLint.Evidence do
       |> Compiler.components()
       |> Enum.map(fn component ->
         label = label(component, depth)
+        tag_in_spec? = label == :structured and tag_in_spec?(component.view, spec_return)
+        subtraction? = tag_in_spec? and subtraction_payload?(component, label, returns)
 
         %{
           descr_string: Compiler.to_string(component.descr),
           kind: component.kind,
           label: label,
-          present_in_contributing?: present?(component.descr, label, returns),
+          present_in_contributing?:
+            not subtraction? and present?(component.descr, label, returns),
           detail: detail(component.view),
-          tag_in_spec?: label == :structured and tag_in_spec?(component.view, spec_return)
+          tag_in_spec?: tag_in_spec?,
+          subtraction_payload?: subtraction?
         }
       end)
 
@@ -249,6 +268,7 @@ defmodule SpecLint.Evidence do
         uncounted(components),
         unknown_count(components),
         tag_in_spec_count(components),
+        subtraction_count(components),
         class == :unknown && :no_counted_component
       ]
       |> Enum.filter(& &1)
@@ -263,6 +283,13 @@ defmodule SpecLint.Evidence do
     case Enum.count(components, &(&1.label != :unknown and not &1.present_in_contributing?)) do
       0 -> false
       n -> {:not_in_contributing, n}
+    end
+  end
+
+  defp subtraction_count(components) do
+    case Enum.count(components, & &1.subtraction_payload?) do
+      0 -> false
+      n -> {:subtraction_payload, n}
     end
   end
 
@@ -310,9 +337,66 @@ defmodule SpecLint.Evidence do
   end
 
   defp present?(descr, label, returns) do
-    same = for {^label, return} <- returns, do: return
+    same = for {^label, return, _view} <- returns, do: return
     same != [] and Compiler.subtype?(descr, Compiler.union_all(same))
   end
+
+  # DESIGN 3.1 step 5 for payloads: the component's structure beyond its tag
+  # was created by subtracting the spec when every contributing return
+  # component with the same label that it overlaps is `term()` somewhere the
+  # component is narrower. Only same-label components can witness presence
+  # (see present?/3), so only they are consulted.
+  defp subtraction_payload?(component, label, returns) do
+    witnesses =
+      for {^label, descr, view} <- returns,
+          not Compiler.disjoint?(component.descr, descr),
+          do: view
+
+    witnesses != [] and
+      Enum.all?(witnesses, &narrowed_top?(component.view, &1, @subtraction_depth))
+  end
+
+  defp narrowed_top?({:tuple, :closed, elements}, {:tuple, :closed, returned}, depth)
+       when length(elements) == length(returned) do
+    elements
+    |> Enum.zip(returned)
+    |> Enum.any?(fn {element, return} -> narrowed_element?(element, return, depth) end)
+  end
+
+  defp narrowed_top?({:map, _tag, fields, _domains}, {:map, _rtag, returned, _rdomains}, depth) do
+    Enum.any?(fields, fn {key, value, _optional?} ->
+      case List.keyfind(returned, key, 0) do
+        {^key, return, _} -> narrowed_element?(value, return, depth)
+        nil -> false
+      end
+    end)
+  end
+
+  defp narrowed_top?(_view, _returned, _depth), do: false
+
+  defp narrowed_element?(element, return, depth) do
+    cond do
+      top?(return) ->
+        not top?(element)
+
+      depth == 0 ->
+        false
+
+      true ->
+        returned = Compiler.components(return)
+
+        element
+        |> Compiler.components()
+        |> Enum.any?(fn component ->
+          overlapping = Enum.reject(returned, &Compiler.disjoint?(component.descr, &1.descr))
+
+          overlapping != [] and
+            Enum.all?(overlapping, &narrowed_top?(component.view, &1.view, depth - 1))
+        end)
+    end
+  end
+
+  defp top?(descr), do: Compiler.subtype?(Compiler.term(), descr)
 
   defp detail({:unknown, _kind, reason}), do: reason
   defp detail({:whole, _kind}), do: nil

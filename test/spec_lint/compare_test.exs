@@ -85,6 +85,22 @@ defmodule SpecLint.CompareTest do
     assert [%{containment: :containment_unknown}] = rel.contributing
   end
 
+  test "a clause inside D_lo is contained even when the slice is approximate" do
+    loss = Bound.loss(:integer_refinement_erased, [])
+
+    slice = %{
+      args: [%Bound{lo: C.integer(), hi: C.term(), losses: [loss]}],
+      return: Bound.exact(C.atom([:ok]))
+    }
+
+    contained = Compare.slice(slice, [{[C.integer()], C.atom([:ok])}])
+    assert contained.input_approximate?
+    assert [%{containment: :contained}] = contained.contributing
+
+    unknown = Compare.slice(slice, [{[C.atom()], C.atom([:ok])}])
+    assert [%{containment: :containment_unknown}] = unknown.contributing
+  end
+
   test "overlapping overloads are tagged" do
     function = analysed(F, :overloaded, 1)
     assert [first, second] = function.slices

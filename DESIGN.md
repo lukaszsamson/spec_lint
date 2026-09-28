@@ -143,9 +143,10 @@ validated. The per-position union is never used for a gating result.
 
 ### 3.1 Structured extra-return evidence (the `SL002` classifier)
 
-This is the predicate behind the most important rule. It is a conservative
-recogniser with an explicit `unknown` result, not a complete definition, and
-it gates nothing until the Phase 0 experiment (section 11) has measured it.
+This is the predicate behind `SL002`. It is a conservative recogniser with
+an explicit `unknown` result, not a complete definition. The Phase 0
+experiment (section 11, `EXPERIMENTS.md`) measured it, and as a result it
+gates nothing.
 
 Inputs for one spec slice: translated argument bounds `D_lo`, `D_hi` with
 their loss records, translated return `S_hi`, the set of inferred clauses
@@ -184,7 +185,11 @@ applied return `U(D)`.
    A component counts as evidence only if the same structure is present in
    a contributing `R_k`, not only in the difference, so structure created by
    subtracting the spec is not mistaken for structure inference derived from
-   code.
+   code. This includes payloads. A component whose tag the spec already
+   declares does not count when every contributing `R_k` it overlaps has
+   `term()` at a position where the component is narrower. For example,
+   `{:ok, not pid()}` from a clause returning `{:ok, term()}` does not count
+   under a spec of `{:ok, pid()}`.
 6. Classification:
    - `structured_possible`: at least one `structured` component, all
      contributing clauses contained, slice not `input_approximate`;
@@ -212,7 +217,7 @@ prerequisites that were met.
 | Rule | Meaning | Gating prerequisites | Default |
 | --- | --- | --- | --- |
 | `SL001 return_conflict` | `U(D)` non-empty and disjoint from `S_hi` on a slice | translation of the slice has no `unsupported` loss, no `overlap` tag, no arrow in the return | warning, gated in both profiles |
-| `SL002 possible_missing_return` | structured extra per section 3.1 | same as SL001 plus classification `structured_possible` | warning; CI behaviour per the policy table below |
+| `SL002 possible_missing_return` | structured extra per section 3.1 | same as SL001 plus classification `structured_possible` | warning, informational: reported in both profiles, never gated by evidence policy (Phase 0 decision, section 11) |
 | `SL003 spec_domain_rejected` | the application rule matches no inferred clause on an inhabited spec slice, or a spec argument position is disjoint from every inferred domain | translation of the arguments exact or upper-bounded only, no `overlap` | warning, gated in both profiles |
 | `SL004 possible_missing_input` | inferred domain accepts shapes outside the spec domain | none | off, hint |
 | `SL005 return_can_be_narrower` | exact `S`, `U(D)` strictly inside | none | off, hint |
@@ -220,12 +225,17 @@ prerequisites that were met.
 | `SL007 spec_domain_body_warning` | checker diagnostic under the spec assumption (body backend only) | body backend qualified | informational |
 | `SL008 analysis_unavailable` | missing debug info, missing chunk, unsupported chunk version, untranslatable construct, no inferred signature | none | coverage ledger, gated by coverage policy |
 
-CI policy by evidence, independent of the rule's severity:
+CI policy by evidence, independent of the rule's severity. SL002 is report-only
+in both profiles. That follows the Phase 0 measurements (`EXPERIMENTS.md`):
+on real code SL002 had 0 true positives out of 9 candidates, and none of the 9
+confirmed real omissions reached `structured_possible`. The conditions for
+revisiting this are in section 12.
 
 | Finding | `soundness` profile | `review` profile |
 | --- | --- | --- |
 | Supported conflict (SL001, SL003 with prerequisites met) | gate | gate |
-| `structured_possible` return (SL002), SL006 | report | gate |
+| `structured_possible` return (SL002) | report | report |
+| SL006 | report | gate |
 | `possible_domain_escape`, `possible_input_approximate`, `whole_kind_possible` | report | report |
 | `unknown` | ledger only | ledger only |
 | Unsupported execution or capability (SL008) | execution and coverage policy | execution and coverage policy |
@@ -419,7 +429,8 @@ Behaviour:
   dispatch functions, private functions, generated definitions and Erlang
   modules are counted as out of scope in the ledger.
 - Profiles: `soundness` gates SL001, SL003 and coverage regressions;
-  `review` adds SL002 and SL006. `--warnings-as-errors` gates every enabled
+  `review` adds SL006. SL002 is reported in both profiles and gated in
+  neither (Phase 0 decision). `--warnings-as-errors` gates every enabled
   warning rule.
 - Exit codes: 0 accepted, 1 new gated findings or coverage violation, 2
   incomplete run, unsupported backend, configuration error or internal
@@ -548,6 +559,32 @@ identical across two runs on the same inputs.
 
 ## 11. Plan
 
+**Phase 0 outcome (2026-09-28, item 1; details in `EXPERIMENTS.md`).**
+The SL002 experiment covered the stdlib and six OSS libraries: jason,
+decimal, nimble_options, mime, plug and ecto. That is 2170 spec'd
+functions, with no unsupported or unavailable slice and under 1.5 s of
+analysis on the stdlib. 107 functions were triaged by hand, and each
+verdict was checked by two independent refutation passes.
+
+- **Precision.** All 9 `structured_possible` functions on real code were
+  false positives (0/9).
+- **Recall.** 9 real omissions were confirmed, and none was
+  `structured_possible`. 7 were hidden by top-only inference.
+- **Whole-kind filter.** It suppressed 42 functions. 14 were reviewed and
+  none was a real omission.
+- **Fixtures.** 20 of 20 classes were as expected.
+
+**Decision: SL002 is informational.** It is reported in both profiles and
+gated in neither (section 4).
+
+A classifier fix now keeps structure created by subtracting the spec out of
+the evidence, as section 3.1 step 5 requires. It reduced the real-code
+candidates to 2, both known false positives.
+
+The follow-ups that could change the decision are open questions in section
+12: near-top inference, and per-clause evidence under top-only unions. The
+second one found 4 stale ecto specs that are SL001-grade.
+
 ### Phase 0: investigations (before implementation expands)
 
 1. **Missing-return usefulness, the go/no-go experiment.** No canonical
@@ -598,9 +635,35 @@ after measurement.
 
 ## 12. Open questions
 
-- Whether `structured_possible` should additionally require the
-  contributing stored clause return to be static. The adapter can read
-  this from the stored clause (section 2.2).
+- **When SL002 may gate again.** SL002 is informational after Phase 0
+  (section 11, `EXPERIMENTS.md`). Re-run the experiment on the same pinned
+  corpora after the two items below are addressed. Promote SL002 to gating
+  in the `review` profile only if all three hold: at least 10 candidates
+  are reviewed, precision is at least 80%, and at least 3 real omissions
+  are confirmed. Otherwise it stays informational.
+- **Per-clause evidence under top-only unions.** A single `dynamic()` clause
+  makes `U(D)` top-only and hides precise clauses whose returns are
+  disjoint from `S_hi`. That hid 7 of the 9 real omissions found in Phase
+  0, including 4 stale ecto specs. The open questions:
+  - whether to classify the non-top contributing clauses one by one;
+  - whether a per-clause disjoint return can be an SL001 finding, and under
+    which prerequisites (the clause is contained, its return is static).
+- **Near-top inference.** Returns such as `dynamic(not :undefined)` or
+  `dynamic(not false and not nil)` evade the `top_only?` guard and become
+  `whole_kind_possible`, and once `structured_possible`. The open question
+  is which near-top test is principled: a finite literal set removed from
+  `term()`, or whole coverage of the opaque kinds.
+- **Static contributing returns for `structured_possible`.** The adapter can
+  read from the stored clause (section 2.2) whether a return is static.
+  Phase 0 data: every contributing clause of the 9 real-code candidates had
+  a gradual return, so the requirement would have removed all 9. It would
+  also drop 2 of the 5 fixture detections (struct-building clauses such as
+  `point/1` and `fetch/1` are gradual).
+- **Containment against typed struct fields.** A struct pattern leaves
+  fields `term()`, so any function whose spec takes a struct with typed
+  fields is `domain_escape`. That makes `structured_possible` unreachable
+  for typical struct APIs (decimal, plug, ecto). The open question is
+  whether containment should ignore struct fields the clause never reads.
 - Whether overlapping overloads follow Erlang's intersection reading or the
   Elixir checker's union-of-matching-clauses reading; the choice changes
   SL001 on those functions.

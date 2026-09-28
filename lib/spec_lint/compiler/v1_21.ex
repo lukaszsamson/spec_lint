@@ -470,7 +470,13 @@ defmodule SpecLint.Compiler.V121 do
 
   @impl true
   @spec to_string(SpecLint.Compiler.descr()) :: String.t()
-  def to_string(descr), do: Descr.to_quoted_string(descr, skip_dynamic_for_indivisible: false)
+  def to_string(descr) do
+    # A lazy difference that is empty (for example a map minus a wider map)
+    # would otherwise print as a non-empty looking "A and not B".
+    if Descr.empty?(descr),
+      do: "none()",
+      else: Descr.to_quoted_string(descr, skip_dynamic_for_indivisible: false)
+  end
 
   @impl true
   @spec atom_fetch(SpecLint.Compiler.descr()) ::
