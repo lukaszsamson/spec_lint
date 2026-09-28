@@ -174,6 +174,23 @@ Each decision is recorded in DESIGN; the section is given in parentheses.
 - **Deferred:** inline suppression, `--no-compile` and path filters
   (section 8).
 
+## Open findings from external review (2026-09-28)
+
+1. Removing a `@spec` while keeping the exported function produces no
+   inventory entry, so coverage regression detection misses it (high).
+2. Baseline regeneration with a rule disabled carries that rule's old
+   acknowledgements across an adapter change without rechecking (medium).
+3. An unsupported sibling overload is dropped from overlap analysis, so a
+   supported slice can be marked `no_overlap` while a sibling was never
+   interpreted (medium).
+4. Empty module discovery is not distinguished from a missing build
+   directory.
+5. Corpus results and the nine omission reproducers live only in the
+   session scratchpad, not in the repository.
+
+Wording: the analysis is conservative with tested gating prerequisites and
+documented limitations. "Sound" is not claimed.
+
 ## Known limitations
 
 - **Signature backend only.** There is no body analysis, so SL007 and

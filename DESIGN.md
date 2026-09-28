@@ -592,7 +592,14 @@ spec slice AST after named-type expansion, the loss records, and the
 inferred clauses as `Descr` terms serialised through the adapter's canonical
 form. It does not hash printed type strings, source lines, function bodies
 or dependency digests. Body and dependency hashes are provenance and cache
-inputs only. A compiler adapter change is recorded separately and triggers
+inputs only.
+
+**Cache keys (correction after external review).** `:beam_lib.md5/1` does
+not change when only a `@spec` changes (verified: `integer()` to `atom()`
+leaves the md5 identical), so a BEAM md5 is not a valid cache key. Any
+future cache is keyed by the content of the `Dbgi` and `ExCk` chunks, the
+resolved remote type definitions the slice depends on, the tool and adapter
+versions, and the configuration digest. Caching remains deferred. A compiler adapter change is recorded separately and triggers
 deliberate reconciliation rather than silent reuse.
 
 The baseline file also carries an **inventory** so coverage policy is
