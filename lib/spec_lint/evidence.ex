@@ -405,15 +405,20 @@ defmodule SpecLint.Evidence do
     whole? = Enum.any?(counted, &(&1.label == :whole_kind))
     static_structured? = Enum.any?(structured, &(not &1.payload_gradual?))
 
-    cond do
-      structured != [] and doubt != nil -> {doubt, []}
-      structured != [] and settings.static? and not static_structured? -> {:possible_gradual, []}
-      structured != [] -> {:structured_possible, []}
-      whole? and doubt != nil -> {doubt, [:whole_kind_only]}
-      whole? -> {:whole_kind_possible, []}
-      true -> {:unknown, [:no_counted_component]}
+    if structured != [] do
+      structured_class(doubt, settings.static? and not static_structured?)
+    else
+      whole_kind_class(whole?, doubt)
     end
   end
+
+  defp structured_class(doubt, _gradual?) when doubt != nil, do: {doubt, []}
+  defp structured_class(_doubt, true), do: {:possible_gradual, []}
+  defp structured_class(_doubt, false), do: {:structured_possible, []}
+
+  defp whole_kind_class(true, doubt) when doubt != nil, do: {doubt, [:whole_kind_only]}
+  defp whole_kind_class(true, _doubt), do: {:whole_kind_possible, []}
+  defp whole_kind_class(false, _doubt), do: {:unknown, [:no_counted_component]}
 
   # Return components of one contributing clause, labelled, with whether the
   # stored clause return is static.
@@ -596,13 +601,14 @@ defmodule SpecLint.Evidence do
 
       true ->
         returned = Compiler.components(return)
+        Enum.flat_map(Compiler.components(element), &component_pieces(&1, returned, depth))
+    end
+  end
 
-        Enum.flat_map(Compiler.components(element), fn component ->
-          case Enum.reject(returned, &Compiler.disjoint?(component.descr, &1.descr)) do
-            [] -> [component.descr]
-            overlapping -> Enum.flat_map(overlapping, &pieces_of(component, &1, depth))
-          end
-        end)
+  defp component_pieces(component, returned, depth) do
+    case Enum.reject(returned, &Compiler.disjoint?(component.descr, &1.descr)) do
+      [] -> [component.descr]
+      overlapping -> Enum.flat_map(overlapping, &pieces_of(component, &1, depth))
     end
   end
 
@@ -731,23 +737,16 @@ defmodule SpecLint.Evidence do
 
   defp clean?(descr, budget) do
     cond do
-      Compiler.subtype?(Compiler.term(), descr) ->
-        true
-
-      budget == 0 ->
-        false
-
-      true ->
-        descr
-        |> Compiler.components()
-        |> Enum.all?(fn %{view: view} ->
-          case view do
-            {:unknown, _kind, reason} when reason in [:negation, :intersection] -> false
-            view -> view |> children() |> Enum.all?(&clean?(&1, budget - 1))
-          end
-        end)
+      Compiler.subtype?(Compiler.term(), descr) -> true
+      budget == 0 -> false
+      true -> descr |> Compiler.components() |> Enum.all?(&clean_view?(&1.view, budget))
     end
   end
+
+  defp clean_view?({:unknown, _kind, reason}, _budget) when reason in [:negation, :intersection],
+    do: false
+
+  defp clean_view?(view, budget), do: view |> children() |> Enum.all?(&clean?(&1, budget - 1))
 
   defp children({:tuple, _tag, elements}), do: elements
 

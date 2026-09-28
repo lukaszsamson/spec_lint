@@ -233,24 +233,24 @@ defmodule SpecLint.Explain do
 
   defp findings_text(issues, run) do
     for issue <- issues do
-      where =
-        [issue.slice && "slice #{issue.slice}", issue.clause && "clause ##{issue.clause}"]
-        |> Enum.reject(&is_nil/1)
-        |> Enum.join(" ")
-
-      prerequisites =
-        case issue.prerequisites do
-          [] -> "none"
-          list -> Enum.map_join(list, ", ", fn {name, state} -> "#{name} #{state}" end)
-        end
-
       [
-        "  #{issue.rule} #{issue.name} #{where}: #{issue.evidence} (#{issue.severity})\n",
+        "  #{issue.rule} #{issue.name} #{finding_where(issue)}: #{issue.evidence} (#{issue.severity})\n",
         "    #{issue.message}\n",
-        "    prerequisites: #{prerequisites}\n",
+        "    prerequisites: #{prerequisites_text(issue.prerequisites)}\n",
         "    policy: #{Policy.explain(issue, run.config)}\n",
         "    baseline: #{issue.baseline}; fingerprint #{issue.fingerprint}\n"
       ]
     end
   end
+
+  defp finding_where(issue) do
+    [issue.slice && "slice #{issue.slice}", issue.clause && "clause ##{issue.clause}"]
+    |> Enum.reject(&is_nil/1)
+    |> Enum.join(" ")
+  end
+
+  defp prerequisites_text([]), do: "none"
+
+  defp prerequisites_text(list),
+    do: Enum.map_join(list, ", ", fn {name, state} -> "#{name} #{state}" end)
 end

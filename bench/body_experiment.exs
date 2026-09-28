@@ -77,6 +77,7 @@ defmodule SpecLint.BodyExperiment do
 
   @modes [:signature, :default, :body, :body_guarded]
 
+  @spec main([String.t()]) :: term()
   def main(argv) do
     argv = Enum.reject(argv, &(&1 == "--"))
 
@@ -233,28 +234,28 @@ defmodule SpecLint.BodyExperiment do
     case debug_info(analysis.path, analysis.module) do
       {:ok, info} ->
         {default_us, default} = timed_run(analysis.module, info, checker, fn _ -> :default end)
-
-        case default do
-          {:ok, warnings, sigs} ->
-            functions =
-              for function <- analysis.functions, compared_slice?(function) do
-                function_entry(analysis, function, info, checker, warnings, sigs)
-              end
-
-            Map.merge(base, %{
-              default_us: default_us,
-              default_warnings: length(warnings),
-              functions: functions
-            })
-
-          {:error, message} ->
-            Map.merge(base, %{default_us: default_us, default_warnings: 0, error: message})
-        end
+        default_entry(base, default_us, default, analysis, info, checker)
 
       {:error, reason} ->
         Map.merge(base, %{default_us: 0, default_warnings: 0, error: inspect(reason)})
     end
   end
+
+  defp default_entry(base, default_us, {:ok, warnings, sigs}, analysis, info, checker) do
+    functions =
+      for function <- analysis.functions, compared_slice?(function) do
+        function_entry(analysis, function, info, checker, warnings, sigs)
+      end
+
+    Map.merge(base, %{
+      default_us: default_us,
+      default_warnings: length(warnings),
+      functions: functions
+    })
+  end
+
+  defp default_entry(base, default_us, {:error, message}, _analysis, _info, _checker),
+    do: Map.merge(base, %{default_us: default_us, default_warnings: 0, error: message})
 
   defp debug_info(path, module) do
     with {:ok, binary} <- File.read(path),
@@ -290,50 +291,19 @@ defmodule SpecLint.BodyExperiment do
     default_keys = MapSet.new(default_warnings, &warning_key/1)
     default_clauses = local_clauses(default_sigs, fun_arity)
 
+    context = %{
+      analysis: analysis,
+      function: function,
+      info: info,
+      checker: checker,
+      fun_arity: fun_arity,
+      default_keys: default_keys,
+      default_clauses: default_clauses
+    }
+
     slices =
       for slice <- function.slices, slice.status == :compared do
-        others =
-          for other <- function.slices, other.index != slice.index do
-            case other.status do
-              :compared -> {other.index, %{args: other.args, return: other.return}}
-              _ -> {other.index, {:unsupported, nil}}
-            end
-          end
-
-        translated = %{args: slice.args, return: slice.return}
-        domain = {:dynamic, Enum.map(slice.args, &Compiler.dynamic(&1.hi))}
-        domains = fn fa -> if fa == fun_arity, do: domain, else: :default end
-        {us, result} = timed_run(analysis.module, info, checker, domains)
-
-        {body, extra_warnings, redundant, error} =
-          case result do
-            {:ok, warnings, sigs} ->
-              extra = Enum.reject(warnings, &MapSet.member?(default_keys, warning_key(&1)))
-
-              {local_clauses(sigs, fun_arity),
-               extra |> Enum.map(&format_warning/1) |> Enum.uniq() |> Enum.sort(),
-               Enum.count(extra, &redundant_in?(&1, function.mfa)), nil}
-
-            {:error, message} ->
-              {nil, [], 0, message}
-          end
-
-        body = classify(translated, body, others, slice)
-
-        %{
-          index: slice.index,
-          spec_args: Enum.map(slice.args, &Compiler.to_string(&1.hi)),
-          spec_return: Compiler.to_string(slice.return.hi),
-          loss_kinds: loss_kinds(slice),
-          body_us: us,
-          body_error: error,
-          extra_warnings: extra_warnings,
-          redundant_in_target: redundant,
-          signature: mode_entry(slice.relations, slice, function.inferred),
-          default: classify(translated, default_clauses, others, slice),
-          body: body,
-          body_guarded: guarded(body, redundant)
-        }
+        slice_entry(slice, context)
       end
 
     classes = Map.new(@modes, fn m -> {m, worst_of(slices, m)} end)
@@ -346,6 +316,60 @@ defmodule SpecLint.BodyExperiment do
       class: classes,
       warn: Map.new(@modes, fn m -> {m, Enum.any?(slices, &get_in(&1, [m, :warn]))} end),
       omission: omission_name(mfa)
+    }
+  end
+
+  defp sibling(%{status: :compared} = other),
+    do: {other.index, %{args: other.args, return: other.return}}
+
+  defp sibling(other), do: {other.index, {:unsupported, nil}}
+
+  defp slice_entry(slice, context) do
+    %{
+      analysis: analysis,
+      function: function,
+      info: info,
+      checker: checker,
+      fun_arity: fun_arity,
+      default_keys: default_keys,
+      default_clauses: default_clauses
+    } = context
+
+    others = for other <- function.slices, other.index != slice.index, do: sibling(other)
+
+    translated = %{args: slice.args, return: slice.return}
+    domain = {:dynamic, Enum.map(slice.args, &Compiler.dynamic(&1.hi))}
+    domains = fn fa -> if fa == fun_arity, do: domain, else: :default end
+    {us, result} = timed_run(analysis.module, info, checker, domains)
+
+    {body, extra_warnings, redundant, error} =
+      case result do
+        {:ok, warnings, sigs} ->
+          extra = Enum.reject(warnings, &MapSet.member?(default_keys, warning_key(&1)))
+
+          {local_clauses(sigs, fun_arity),
+           extra |> Enum.map(&format_warning/1) |> Enum.uniq() |> Enum.sort(),
+           Enum.count(extra, &redundant_in?(&1, function.mfa)), nil}
+
+        {:error, message} ->
+          {nil, [], 0, message}
+      end
+
+    body = classify(translated, body, others, slice)
+
+    %{
+      index: slice.index,
+      spec_args: Enum.map(slice.args, &Compiler.to_string(&1.hi)),
+      spec_return: Compiler.to_string(slice.return.hi),
+      loss_kinds: loss_kinds(slice),
+      body_us: us,
+      body_error: error,
+      extra_warnings: extra_warnings,
+      redundant_in_target: redundant,
+      signature: mode_entry(slice.relations, slice, function.inferred),
+      default: classify(translated, default_clauses, others, slice),
+      body: body,
+      body_guarded: guarded(body, redundant)
     }
   end
 
@@ -418,19 +442,13 @@ defmodule SpecLint.BodyExperiment do
 
     # The prerequisites of bench/experiment.exs: SL001 for a per-clause
     # conflict, SL002 for structured_possible.
-    sl001_ok? =
-      not relations.overlap? and not relations.overlap_unknown? and
-        :unsupported_construct not in loss_kinds and not arrow_return? and
-        :arrow_polarity not in arg_losses
+    plain? =
+      not relations.overlap? and :unsupported_construct not in loss_kinds and not arrow_return?
 
-    sl002_ok? =
-      not relations.overlap? and not relations.spec_return_empty? and
-        :unsupported_construct not in loss_kinds and not arrow_return?
+    sl001_ok? = plain? and not relations.overlap_unknown? and :arrow_polarity not in arg_losses
+    sl002_ok? = plain? and not relations.spec_return_empty?
 
-    conflict? =
-      Enum.any?(classification.clauses, fn c ->
-        c.class == :clause_conflict and :possibly_shadowed not in c.reasons
-      end) and sl001_ok?
+    conflict? = reachable_conflict?(classification) and sl001_ok?
 
     sl002? = classification.class == :structured_possible and sl002_ok?
 
@@ -464,6 +482,12 @@ defmodule SpecLint.BodyExperiment do
           }
         end)
     }
+  end
+
+  defp reachable_conflict?(classification) do
+    Enum.any?(classification.clauses, fn c ->
+      c.class == :clause_conflict and :possibly_shadowed not in c.reasons
+    end)
   end
 
   defp worst_of(slices, mode) do

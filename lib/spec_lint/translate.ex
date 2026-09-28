@@ -140,17 +140,7 @@ defmodule SpecLint.Translate do
         bounds =
           args
           |> Enum.with_index()
-          |> Enum.map(fn {arg, index} ->
-            path = [{:arg, index}]
-
-            case type(substitute_all(arg, subst), context, path) do
-              {:ok, bound} ->
-                bound
-
-              {:unsupported, _reason} ->
-                Bound.upper(Compiler.term(), :unsupported_construct, path)
-            end
-          end)
+          |> Enum.map(fn {arg, index} -> argument_bound(arg, subst, context, [{:arg, index}]) end)
 
         {:ok, bounds}
 
@@ -159,6 +149,13 @@ defmodule SpecLint.Translate do
     end
   catch
     {:unsupported, _reason} -> :error
+  end
+
+  defp argument_bound(arg, subst, context, path) do
+    case type(substitute_all(arg, subst), context, path) do
+      {:ok, bound} -> bound
+      {:unsupported, _reason} -> Bound.upper(Compiler.term(), :unsupported_construct, path)
+    end
   end
 
   @doc """
@@ -790,15 +787,13 @@ defmodule SpecLint.Translate do
     key = {mod, name, arity}
     type_path = path ++ [{:type, mod, name, arity}]
 
-    cond do
-      key in ctx.stack or ctx.depth == 0 ->
-        Bound.upper(Compiler.term(), :recursive_cutoff, type_path)
-
-      true ->
-        case TypeCache.fetch_type(ctx.cache, mod, name, arity) do
-          {:ok, definition} -> expand(definition, key, args, ctx, path, type_path)
-          {:error, _reason} -> Bound.upper(Compiler.term(), :unresolved_remote_type, type_path)
-        end
+    if key in ctx.stack or ctx.depth == 0 do
+      Bound.upper(Compiler.term(), :recursive_cutoff, type_path)
+    else
+      case TypeCache.fetch_type(ctx.cache, mod, name, arity) do
+        {:ok, definition} -> expand(definition, key, args, ctx, path, type_path)
+        {:error, _reason} -> Bound.upper(Compiler.term(), :unresolved_remote_type, type_path)
+      end
     end
   end
 

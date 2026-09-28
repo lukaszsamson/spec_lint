@@ -3,8 +3,8 @@ defmodule SpecLint.ReportTest do
 
   import SpecLint.TestHelpers
 
-  alias SpecLint.{Explain, Run}
   alias SpecLint.ExperimentFixtures.Cases
+  alias SpecLint.{Explain, Run}
   alias SpecLint.Fixtures.Compare
   alias SpecLint.Report.{Console, Json}
 

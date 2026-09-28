@@ -4,8 +4,8 @@ defmodule SpecLint.BaselineTest do
   import SpecLint.TestHelpers
 
   alias SpecLint.{Baseline, Config, Issue, Project, Run}
-  alias SpecLint.Report.Console
   alias SpecLint.Fixtures.Compare
+  alias SpecLint.Report.{Console, Json}
 
   @moduletag :tmp_dir
 
@@ -182,7 +182,7 @@ defmodule SpecLint.BaselineTest do
     end
 
     defp parsed(map),
-      do: map |> SpecLint.Report.Json.encode() |> IO.iodata_to_binary() |> Baseline.parse()
+      do: map |> Json.encode() |> IO.iodata_to_binary() |> Baseline.parse()
 
     test "a baseline acknowledges every finding it was built from", ctx do
       {:ok, baseline} = parsed(ctx.baseline)
@@ -505,7 +505,7 @@ defmodule SpecLint.BaselineTest do
     assert again.exit_code == 1
     assert again.baseline_decisions.pending_reconciliation != []
 
-    json = again |> SpecLint.Report.Json.envelope() |> SpecLint.Report.Json.encode()
+    json = again |> Json.envelope() |> Json.encode()
     pending = JSON.decode!(IO.iodata_to_binary(json))["baseline"]["pending_reconciliation"]
     assert [_ | _] = pending
     assert Enum.all?(pending, &(&1["rule"] == "SL001" and &1["pending_reconciliation"]))
@@ -602,7 +602,7 @@ defmodule SpecLint.BaselineTest do
       assert fingerprint == blocked.fingerprint
       assert run.exit_code == 1
 
-      json = run |> SpecLint.Report.Json.envelope() |> SpecLint.Report.Json.encode()
+      json = run |> Json.envelope() |> Json.encode()
       assert [_] = JSON.decode!(IO.iodata_to_binary(json))["baseline"]["gate_changed"]
       assert Console.render(run) |> IO.iodata_to_binary() =~ "gate changed"
 

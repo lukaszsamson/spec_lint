@@ -119,12 +119,7 @@ defmodule SpecLint.Config do
   @spec from_keyword(term()) :: {:ok, t()} | {:error, String.t()}
   def from_keyword(value) do
     if is_list(value) and Keyword.keyword?(value) do
-      Enum.reduce_while(value, {:ok, %__MODULE__{}}, fn {key, val}, {:ok, config} ->
-        case put(config, key, val) do
-          {:ok, config} -> {:cont, {:ok, config}}
-          {:error, message} -> {:halt, {:error, message}}
-        end
-      end)
+      reduce_ok(value, %__MODULE__{}, fn {key, val}, config -> put(config, key, val) end)
     else
       {:error, "configuration must be a keyword list, got: #{inspect(value)}"}
     end
@@ -158,16 +153,22 @@ defmodule SpecLint.Config do
   defp put(_config, key, _value),
     do: {:error, "unknown configuration key #{inspect(key)}; known keys: #{inspect(@keys)}"}
 
+  # Folds `fun` (returning `{:ok, config}` or an error tuple) over `enum`,
+  # stopping at the first error.
+  defp reduce_ok(enum, config, fun) do
+    Enum.reduce_while(enum, {:ok, config}, fn item, {:ok, config} ->
+      case fun.(item, config) do
+        {:ok, config} -> {:cont, {:ok, config}}
+        error -> {:halt, error}
+      end
+    end)
+  end
+
   defp invalid(key, value), do: {:error, "invalid value for #{inspect(key)}: #{inspect(value)}"}
 
   defp put_rules(config, value) do
     if is_list(value) and Keyword.keyword?(value) do
-      Enum.reduce_while(value, {:ok, config}, fn {key, severity}, {:ok, config} ->
-        case put_rule(config, key, severity) do
-          {:ok, config} -> {:cont, {:ok, config}}
-          error -> {:halt, error}
-        end
-      end)
+      reduce_ok(value, config, fn {key, severity}, config -> put_rule(config, key, severity) end)
     else
       invalid(:rules, value)
     end
@@ -225,12 +226,7 @@ defmodule SpecLint.Config do
       :exclude
     ])
     |> Enum.reject(fn {_key, value} -> value == nil end)
-    |> Enum.reduce_while({:ok, config}, fn {key, value}, {:ok, config} ->
-      case put(config, key, value) do
-        {:ok, config} -> {:cont, {:ok, config}}
-        error -> {:halt, error}
-      end
-    end)
+    |> reduce_ok(config, fn {key, value}, config -> put(config, key, value) end)
   end
 
   @doc """

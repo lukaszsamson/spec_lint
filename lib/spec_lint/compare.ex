@@ -160,6 +160,18 @@ defmodule SpecLint.Compare do
   defp sibling({{:unsupported, _reason}, index}), do: {index, {:unsupported, nil}}
   defp sibling({{:unsupported, _reason, bounds}, index}), do: {index, {:unsupported, bounds}}
 
+  defp apply_spec_domain(clauses, d_hi) do
+    case Compiler.apply_infer(clauses, d_hi) do
+      {used, type} -> {{:ok, Enum.sort(used)}, type, Enum.sort(used)}
+      :error -> {:badapply, Compiler.none(), []}
+    end
+  end
+
+  defp sibling_overlaps(args, others) do
+    overlaps = for {index, other} <- others, do: {index, sibling_overlap(args, other)}
+    {for({index, :yes} <- overlaps, do: index), for({index, :unknown} <- overlaps, do: index)}
+  end
+
   @doc """
   Relations for one translated slice against the inferred `clauses`.
   `others` are the function's other slices with their indexes, used for
@@ -173,18 +185,12 @@ defmodule SpecLint.Compare do
     s_hi = return.hi
     input_approximate? = Enum.any?(args, &(not Bound.exact?(&1)))
 
-    {applied, applied_return, used} =
-      case Compiler.apply_infer(clauses, d_hi) do
-        {used, type} -> {{:ok, Enum.sort(used)}, type, Enum.sort(used)}
-        :error -> {:badapply, Compiler.none(), []}
-      end
+    {applied, applied_return, used} = apply_spec_domain(clauses, d_hi)
 
     upper = Compiler.upper_bound(applied_return)
     inferred_domain = inferred_domain(clauses, length(args))
     spec_domain = Compiler.tuple(d_hi)
-    overlaps = for {index, other} <- others, do: {index, sibling_overlap(args, other)}
-    overlaps_with = for {index, :yes} <- overlaps, do: index
-    overlaps_unknown_with = for {index, :unknown} <- overlaps, do: index
+    {overlaps_with, overlaps_unknown_with} = sibling_overlaps(args, others)
     top_only? = applied != :badapply and Compiler.subtype?(Compiler.term(), upper)
 
     %{

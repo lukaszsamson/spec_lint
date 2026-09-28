@@ -346,10 +346,7 @@ defmodule SpecLint.Run do
         inventory: inventory
       )
 
-    {issues, coverage_only} =
-      if sl008_selected?(run),
-        do: {issues, []},
-        else: Enum.split_with(issues, &(&1.rule != "SL008"))
+    {issues, coverage_only} = split_coverage_only(run, issues)
 
     ledger = Coverage.ledger(run.modules, run.excluded, inventory)
     {floor_violations, floor_notes} = floor(run, ledger)
@@ -365,30 +362,32 @@ defmodule SpecLint.Run do
         coverage_violations: violations
     }
 
-    completion =
-      cond do
-        incomplete? -> :incomplete
-        run.partial? -> :partial
-        true -> :complete
-      end
-
-    gating? = run.ci? or run.config.warnings_as_errors
     blocking? = Enum.any?(run.issues, &Issue.blocking?/1) or violations != []
-
-    exit_code =
-      cond do
-        failures != [] or adapter_error? -> 2
-        chunk_reasons != [] and run.ci? -> 2
-        gating? and blocking? -> 1
-        true -> 0
-      end
+    errored? = failures != [] or adapter_error? or (chunk_reasons != [] and run.ci?)
 
     %{
       run
-      | completion: completion,
+      | completion: completion(run, incomplete?),
         completion_reasons: failures ++ chunk_reasons ++ adapter_reasons ++ floor_notes,
-        exit_code: exit_code
+        exit_code: exit_code(run, errored?, blocking?)
     }
+  end
+
+  defp split_coverage_only(run, issues) do
+    if sl008_selected?(run),
+      do: {issues, []},
+      else: Enum.split_with(issues, &(&1.rule != "SL008"))
+  end
+
+  defp completion(_run, true), do: :incomplete
+  defp completion(%{partial?: true}, false), do: :partial
+  defp completion(_run, false), do: :complete
+
+  defp exit_code(_run, true, _blocking?), do: 2
+
+  defp exit_code(run, false, blocking?) do
+    gating? = run.ci? or run.config.warnings_as_errors
+    if gating? and blocking?, do: 1, else: 0
   end
 
   # The coverage floor is a whole-project property: a partial run does not

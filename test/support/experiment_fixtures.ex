@@ -126,10 +126,11 @@ defmodule SpecLint.ExperimentFixtures.Cases do
   # redundant"): (:x) is covered by the atom() clause before it, so no
   # in-spec input reaches its :error return. Clause reachability blocks the
   # clause conflict (DESIGN 3.1 step 7).
-  require SpecLint.Fixtures.Shadow
+  alias SpecLint.Fixtures.Shadow
+  require Shadow
   @spec shadowed(atom()) :: :ok
   def shadowed(a) when is_atom(a), do: :ok
-  SpecLint.Fixtures.Shadow.redundant_clause(:shadowed)
+  Shadow.redundant_clause(:shadowed)
 
   # F1 refinement: the pid() of {:ok, pid(), :b} comes from subtracting the
   # spec, but :b comes from the code, so the component still counts.

@@ -414,22 +414,7 @@ defmodule SpecLint.Baseline do
     previous_acks = Map.new(previous_inventory, &{inventory_key(&1), &1})
 
     current =
-      for entry <- inventory do
-        stored = stored_entry(entry)
-
-        if stored["status"] == "compared" do
-          stored
-        else
-          old = Map.get(previous_acks, inventory_key(stored), %{})
-
-          ack =
-            if old["status"] == stored["status"],
-              do: old["acknowledged"] || "initial baseline",
-              else: "initial baseline"
-
-          Map.put(stored, "acknowledged", ack)
-        end
-      end
+      for entry <- inventory, do: carry_acknowledgement(stored_entry(entry), previous_acks)
 
     # The compared slices of a module that is now unavailable as a whole:
     # kept, so a spec removed while the module could not be read is still
@@ -444,6 +429,19 @@ defmodule SpecLint.Baseline do
           do: entry
 
     Enum.sort_by(current ++ carried, &inventory_sort_key/1)
+  end
+
+  defp carry_acknowledgement(%{"status" => "compared"} = stored, _previous_acks), do: stored
+
+  defp carry_acknowledgement(stored, previous_acks) do
+    old = Map.get(previous_acks, inventory_key(stored), %{})
+
+    ack =
+      if old["status"] == stored["status"],
+        do: old["acknowledged"] || "initial baseline",
+        else: "initial baseline"
+
+    Map.put(stored, "acknowledged", ack)
   end
 
   # A previous finding kept by build/5: rechecked only when it is its own

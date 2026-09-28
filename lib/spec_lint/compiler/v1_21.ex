@@ -180,7 +180,10 @@ defmodule SpecLint.Compiler.V121 do
 
   # The checker version is a property of the running compiler, not of the
   # Elixir build SpecLint was analysed against, so it is read dynamically.
-  defp running_checker_version, do: apply(:elixir_erl, :checker_version, [])
+  # An apply keeps Dialyzer from specialising the result on the checker
+  # version of the Elixir this was built with. `:erlang.apply/3` rather than
+  # `Kernel.apply/3`: the arguments are known but the value must stay open.
+  defp running_checker_version, do: :erlang.apply(:elixir_erl, :checker_version, [])
 
   # Semantic probes: function contravariance and the map field encoding, both
   # of which SpecLint relies on and which have changed in the past.
@@ -670,23 +673,21 @@ defmodule SpecLint.Compiler.V121 do
         list_components(nil, empty?)
 
       lines when empty? ->
-        Enum.map(lines, fn %{descr: line_descr, view: view} = component ->
-          view =
-            case view do
-              {:list, element, tail, false} -> {:list, element, tail, true}
-              other -> other
-            end
-
-          %{
-            component
-            | descr: Descr.opt_union(line_descr, %{bitmap: @bit_empty_list}),
-              view: view
-          }
-        end)
+        Enum.map(lines, &with_empty_list/1)
 
       lines ->
         lines
     end
+  end
+
+  defp with_empty_list(%{descr: descr, view: view} = component) do
+    view =
+      case view do
+        {:list, element, tail, false} -> {:list, element, tail, true}
+        other -> other
+      end
+
+    %{component | descr: Descr.opt_union(descr, %{bitmap: @bit_empty_list}), view: view}
   end
 
   defp bdd_components(_kind, nil), do: []

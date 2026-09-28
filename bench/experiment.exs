@@ -24,6 +24,7 @@ defmodule SpecLint.Experiment do
 
   @fixtures SpecLint.ExperimentFixtures
 
+  @spec main([String.t()]) :: term()
   def main(argv) do
     argv = Enum.reject(argv, &(&1 == "--"))
 
@@ -133,21 +134,14 @@ defmodule SpecLint.Experiment do
     arg_losses = slice.args |> Enum.flat_map(&Bound.loss_kinds/1) |> Enum.uniq() |> Enum.sort()
     return_losses = Bound.loss_kinds(slice.return)
     loss_kinds = Enum.sort(Enum.uniq(arg_losses ++ return_losses))
-    arrow_return? = Enum.any?(Compiler.components(slice.return.hi), &(&1.kind == :fun))
+    arrow_return? = arrow_return?(slice)
 
     # SL001 prerequisites (DESIGN 4 and 6) for a per-clause conflict: no
     # unsupported loss, no overlap tag (certain or unknown), no arrow in the
     # return, no argument with an arrow_polarity loss, and the clause not
     # possibly shadowed by earlier clauses (DESIGN 3.1 step 7). Containment
     # of the clause is part of the class itself.
-    sl001_ok? =
-      not rel.overlap? and not rel.overlap_unknown? and
-        :unsupported_construct not in loss_kinds and not arrow_return? and
-        :arrow_polarity not in arg_losses
-
-    sl002_ok? =
-      not rel.overlap? and not rel.spec_return_empty? and
-        :unsupported_construct not in loss_kinds and not arrow_return?
+    {sl001_ok?, sl002_ok?} = prerequisites(rel, loss_kinds, arg_losses, arrow_return?)
 
     static_by_index = Map.new(static.clauses, &{&1.index, &1})
 
@@ -194,6 +188,16 @@ defmodule SpecLint.Experiment do
       clause_conflict_candidate_static: reachable_conflict?(static) and sl001_ok?
     }
   end
+
+  defp prerequisites(rel, loss_kinds, arg_losses, arrow_return?) do
+    plain? = not rel.overlap? and :unsupported_construct not in loss_kinds and not arrow_return?
+
+    {plain? and not rel.overlap_unknown? and :arrow_polarity not in arg_losses,
+     plain? and not rel.spec_return_empty?}
+  end
+
+  defp arrow_return?(slice),
+    do: Enum.any?(Compiler.components(slice.return.hi), &(&1.kind == :fun))
 
   defp reachable_conflict?(classification) do
     Enum.any?(classification.clauses, fn clause ->
@@ -255,24 +259,25 @@ defmodule SpecLint.Experiment do
   defp reason_key(reason, _depth) when is_atom(reason), do: Atom.to_string(reason)
 
   defp reason_key(reason, depth) when is_tuple(reason) and tuple_size(reason) > 0 do
-    case {elem(reason, 0), tuple_size(reason)} do
-      {head, 2} when is_atom(head) and depth > 1 ->
-        inner = elem(reason, 1)
-
-        if is_atom(inner) or
-             (is_tuple(inner) and tuple_size(inner) > 0 and is_atom(elem(inner, 0))),
-           do: "#{head}:#{reason_key(inner, depth - 1)}",
-           else: Atom.to_string(head)
-
-      {head, _} when is_atom(head) ->
-        Atom.to_string(head)
-
-      _ ->
-        "other"
+    case elem(reason, 0) do
+      head when is_atom(head) -> tuple_reason_key(head, reason, depth)
+      _ -> "other"
     end
   end
 
   defp reason_key(_reason, _depth), do: "other"
+
+  defp tuple_reason_key(head, {_head, inner}, depth) when depth > 1 do
+    if keyed?(inner),
+      do: "#{head}:#{reason_key(inner, depth - 1)}",
+      else: Atom.to_string(head)
+  end
+
+  defp tuple_reason_key(head, _reason, _depth), do: Atom.to_string(head)
+
+  defp keyed?(inner) when is_atom(inner), do: true
+  defp keyed?(inner) when is_tuple(inner) and tuple_size(inner) > 0, do: is_atom(elem(inner, 0))
+  defp keyed?(_inner), do: false
 
   ## Totals
 

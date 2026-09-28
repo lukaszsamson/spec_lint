@@ -234,9 +234,10 @@ end
 
 defmodule SpecLint.Fixtures.Generated do
   @moduledoc false
-  require SpecLint.Fixtures.Generator
+  alias SpecLint.Fixtures.Generator
+  require Generator
 
-  SpecLint.Fixtures.Generator.define_generated()
+  Generator.define_generated()
 
   @spec __call__(atom()) :: atom()
   def __call__(atom), do: atom

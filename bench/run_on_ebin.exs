@@ -22,6 +22,7 @@ defmodule SpecLint.RunOnEbin do
   alias SpecLint.{Baseline, CLI, Config, Explain, Project, Run}
   alias SpecLint.Report.{Console, Json}
 
+  @spec main([String.t()]) :: no_return()
   def main(argv) do
     argv = Enum.reject(argv, &(&1 == "--"))
 
@@ -35,7 +36,13 @@ defmodule SpecLint.RunOnEbin do
     Enum.each(code_paths ++ ebins, &Code.prepend_path/1)
 
     cli = ok!(CLI.parse(rest))
+    run = execute(cli, own, ebins, root)
 
+    report(run, cli, own[:write_baseline])
+    System.halt(run.exit_code)
+  end
+
+  defp execute(cli, own, ebins, root) do
     project =
       ebins
       |> Enum.map(&{&1 |> Path.dirname() |> Path.basename() |> String.to_atom(), &1})
@@ -53,40 +60,59 @@ defmodule SpecLint.RunOnEbin do
 
     modules = if cli.explain, do: [elem(cli.explain, 0)], else: cli.modules
 
-    run =
-      ok!(
-        Run.execute(project, config,
-          ci: cli.ci,
-          modules: modules,
-          apps: cli.apps,
-          only: cli.only,
-          except: cli.except
-        )
+    ok!(
+      Run.execute(project, config,
+        ci: cli.ci,
+        modules: modules,
+        apps: cli.apps,
+        only: cli.only,
+        except: cli.except
       )
+    )
+  end
 
-    cond do
-      cli.explain ->
-        IO.puts(ok!(Explain.render(run, cli.explain)))
-        System.halt(if run.exit_code == 2, do: 2, else: 0)
+  defp report(run, %{explain: explain}, _write_baseline) when explain != nil do
+    IO.puts(ok!(Explain.render(run, explain)))
+    System.halt(if run.exit_code == 2, do: 2, else: 0)
+  end
 
-      own[:write_baseline] ->
-        write_baseline(run, cli, own[:write_baseline])
+  defp report(run, cli, write_baseline) when write_baseline != nil,
+    do: write_baseline(run, cli, write_baseline)
 
-      cli.format == :json ->
-        json = Json.encode(Json.envelope(run))
-        if cli.output, do: ok!(Json.write_atomic(cli.output, json)), else: IO.write(json)
+  defp report(run, %{format: :json} = cli, _write_baseline) do
+    json = Json.encode(Json.envelope(run))
+    if cli.output, do: ok!(Json.write_atomic(cli.output, json)), else: IO.write(json)
+  end
 
-      true ->
-        text = Console.render(run)
-        if cli.output, do: ok!(Json.write_atomic(cli.output, text))
-        IO.write(text)
-    end
-
-    System.halt(run.exit_code)
+  defp report(run, cli, _write_baseline) do
+    text = Console.render(run)
+    if cli.output, do: ok!(Json.write_atomic(cli.output, text))
+    IO.write(text)
   end
 
   # The guards of mix spec_lint.baseline (lib/mix/tasks/spec_lint.baseline.ex).
   defp write_baseline(run, cli, path) do
+    check_baseline_scope!(run, cli)
+
+    previous =
+      case Baseline.load(path) do
+        {:ok, baseline} -> baseline
+        :missing -> nil
+        {:error, message} -> fail(message)
+      end
+
+    rules = Enum.map(run.rules, fn {rule, _severity} -> rule.id() end)
+
+    baseline =
+      Baseline.build(run.issues, run.inventory, run.capabilities.adapter_id, previous,
+        rules: rules
+      )
+
+    ok!(Baseline.write(path, baseline))
+    IO.puts("baseline: #{length(baseline["findings"])} findings -> #{path}")
+  end
+
+  defp check_baseline_scope!(run, cli) do
     cond do
       cli.modules != [] or cli.apps != [] or cli.only != nil or cli.except != [] ->
         fail("--write-baseline analyses the whole project with the configured rules")
@@ -98,22 +124,7 @@ defmodule SpecLint.RunOnEbin do
         fail("incomplete run: #{Enum.join(run.completion_reasons, "; ")}")
 
       true ->
-        previous =
-          case Baseline.load(path) do
-            {:ok, baseline} -> baseline
-            :missing -> nil
-            {:error, message} -> fail(message)
-          end
-
-        rules = Enum.map(run.rules, fn {rule, _severity} -> rule.id() end)
-
-        baseline =
-          Baseline.build(run.issues, run.inventory, run.capabilities.adapter_id, previous,
-            rules: rules
-          )
-
-        ok!(Baseline.write(path, baseline))
-        IO.puts("baseline: #{length(baseline["findings"])} findings -> #{path}")
+        :ok
     end
   end
 

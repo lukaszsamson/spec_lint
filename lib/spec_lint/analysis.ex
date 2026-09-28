@@ -171,17 +171,19 @@ defmodule SpecLint.Analysis do
         {functions, out_of_scope} =
           specs
           |> Enum.sort()
-          |> Enum.reduce({[], []}, fn spec, {functions, out} ->
-            case classify(spec, beam) do
-              {:in_scope, fun_arity, clauses} ->
-                {[function(beam, fun_arity, clauses, context) | functions], out}
-
-              {:out_of_scope, mfa, reason} ->
-                {functions, [%{mfa: mfa, reason: reason} | out]}
-            end
-          end)
+          |> Enum.reduce({[], []}, &collect_spec(&1, &2, beam, context))
 
         %{base | functions: Enum.reverse(functions), out_of_scope: Enum.reverse(out_of_scope)}
+    end
+  end
+
+  defp collect_spec(spec, {functions, out}, beam, context) do
+    case classify(spec, beam) do
+      {:in_scope, fun_arity, clauses} ->
+        {[function(beam, fun_arity, clauses, context) | functions], out}
+
+      {:out_of_scope, mfa, reason} ->
+        {functions, [%{mfa: mfa, reason: reason} | out]}
     end
   end
 

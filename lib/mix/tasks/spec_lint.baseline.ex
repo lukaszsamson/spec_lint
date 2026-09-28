@@ -32,24 +32,14 @@ defmodule Mix.Tasks.SpecLint.Baseline do
 
   use Mix.Task
 
-  alias SpecLint.{Baseline, CLI, Project, Run}
   alias Mix.Tasks.SpecLint, as: Task
+  alias SpecLint.{Baseline, CLI, Project, Run}
 
   @impl true
   @spec run([String.t()]) :: :ok
   def run(argv) do
     cli = ok!(CLI.parse(argv))
-
-    if cli.modules != [] or cli.apps != [] or cli.explain,
-      do: Mix.raise("mix spec_lint.baseline analyses the whole project", exit_status: 2)
-
-    if cli.only != nil or cli.except != [],
-      do:
-        Mix.raise(
-          "mix spec_lint.baseline runs the configured rules; --rules and --except would " <>
-            "drop the entries of the rules left out",
-          exit_status: 2
-        )
+    check_scope!(cli)
 
     Task.compile!()
     project = Project.current()
@@ -60,19 +50,33 @@ defmodule Mix.Tasks.SpecLint.Baseline do
     config = %{config | baseline: output, baseline_explicit: false}
     run = ok!(Run.execute(project, config))
 
-    cond do
-      run.capabilities == nil ->
-        Mix.raise("unsupported compiler: #{Enum.join(run.completion_reasons, "; ")}",
+    complete!(run)
+    write(run, output, previous)
+  end
+
+  defp check_scope!(cli) do
+    if cli.modules != [] or cli.apps != [] or cli.explain,
+      do: Mix.raise("mix spec_lint.baseline analyses the whole project", exit_status: 2)
+
+    if cli.only != nil or cli.except != [],
+      do:
+        Mix.raise(
+          "mix spec_lint.baseline runs the configured rules; --rules and --except would " <>
+            "drop the entries of the rules left out",
           exit_status: 2
         )
-
-      run.completion != :complete ->
-        Mix.raise("incomplete run: #{Enum.join(run.completion_reasons, "; ")}", exit_status: 2)
-
-      true ->
-        write(run, output, previous)
-    end
   end
+
+  defp complete!(%{capabilities: nil} = run),
+    do:
+      Mix.raise("unsupported compiler: #{Enum.join(run.completion_reasons, "; ")}",
+        exit_status: 2
+      )
+
+  defp complete!(%{completion: :complete}), do: :ok
+
+  defp complete!(run),
+    do: Mix.raise("incomplete run: #{Enum.join(run.completion_reasons, "; ")}", exit_status: 2)
 
   defp previous!(output) do
     case Baseline.load(output) do

@@ -1,6 +1,7 @@
 defmodule SpecLint.CompilerTest do
   use ExUnit.Case, async: true
 
+  alias Module.Types.Apply
   alias SpecLint.Compiler, as: C
   alias SpecLint.Compiler.V121
 
@@ -270,7 +271,7 @@ defmodule SpecLint.CompilerTest do
     expr = {{:., [], [SpecLintDiff, :f]}, [line: 1], []}
     sig = {:infer, nil, clauses}
 
-    case Module.Types.Apply.remote_apply(sig, SpecLintDiff, :f, args, expr, stack, context) do
+    case Apply.remote_apply(sig, SpecLintDiff, :f, args, expr, stack, context) do
       {_type, %{failed: true}} -> :error
       {type, %{failed: false}} -> {:ok, type}
     end

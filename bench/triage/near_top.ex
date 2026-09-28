@@ -1,4 +1,6 @@
 defmodule SpecLintRepro.NearTop do
+  @moduledoc false
+
   # Reproductions for EXPERIMENTS.md, Phase 0 "Open" (near-top inference);
   # compiled and analysed by bench/triage/near_top.exs.
 
