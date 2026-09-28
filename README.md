@@ -60,7 +60,7 @@ go to standard error, so standard output is only the JSON report.
 | `--warnings-as-errors` | Gate every reported finding, including report-only ones. Works locally too. `SL008` keeps following the coverage policy. |
 | `--format console\|json` | Report format (default `console`). |
 | `--output PATH` | Write the report to `PATH` (written atomically). |
-| `--baseline PATH` | Baseline file (default `.spec_lint_baseline.json`). |
+| `--baseline PATH` | Baseline file (default `.spec_lint_baseline.json`, which may be missing). An explicit path, here or as `baseline:` in `.spec_lint.exs`, must exist: a missing one exits 2. |
 | `--config PATH` | Configuration file (default `.spec_lint.exs`). |
 | `--module Mod` | Analyse only this module. Repeatable. Makes the run partial. |
 | `--app app` | Analyse only this umbrella child. Repeatable. Makes the run partial. |
@@ -75,7 +75,7 @@ go to standard error, so standard output is only the JSON report.
 | --- | --- |
 | 0 | Accepted. Without `--ci` or `--warnings-as-errors`, findings never fail the run. |
 | 1 | New gated findings, or a coverage violation. |
-| 2 | Invalid options or configuration (including a configuration file that raises, throws or exits, and an invalid baseline file), compilation failure, a missing build directory (ebin) for an owned application, unsupported compiler or checker chunk (in CI) or backend, a filter that matches nothing, or an incomplete run (an internal failure while analysing a module). |
+| 2 | Invalid options or configuration (including a configuration file that raises, throws or exits, an invalid baseline file, and an explicitly given baseline path that does not exist), compilation failure, a missing build directory (ebin) for an owned application or one that lost BEAM files its build lists, unsupported compiler or checker chunk (in CI) or backend, a filter that matches nothing, or an incomplete run (an internal failure while analysing a module). |
 
 ## Rules
 
@@ -123,7 +123,7 @@ under `--warnings-as-errors`.
 [
   analysis: :signatures,
   profile: :review,
-  baseline: ".spec_lint_baseline.json",
+  # baseline: ".spec_lint_baseline.json",  # when set, the file must exist
   rules: [
     possible_missing_return: :warning,
     possible_missing_input: :off,
@@ -137,6 +137,10 @@ under `--warnings-as-errors`.
 ]
 ```
 
+- **`baseline`** is the baseline file. When it is set here (or with
+  `--baseline`) the file must exist, so a mistyped path cannot silently
+  turn regression detection off; leave it out to use the default path,
+  which may be missing until `mix spec_lint.baseline` creates it.
 - **`rules`** are keyed by name or ID (`SL002: :info`). A value is a
   severity (`:error`, `:warning`, `:info`, `:hint`) or `:off`.
 - **`exclude`** globs match source paths relative to the project root.
@@ -168,14 +172,27 @@ Review the file and commit it. You can add a `reason`, an `owner` and an
 a `YYYY-MM-DD` date; any other value makes the baseline invalid (exit 2).
 When you regenerate the file, those values are kept for entries that still
 match, and the entries of rules turned `:off` in the configuration are kept.
-A kept entry written by another compiler adapter is marked
+So are the findings of slices or modules that cannot be analysed right now
+(unsupported, unavailable, spec removed), and the compared slices of a
+module that is unavailable as a whole: regenerating while debug info is
+off, or after a compiler change that makes slices unavailable, does not
+drop acknowledgements that come back with the analysis. A kept entry
+written by another compiler adapter is marked
 `"pending_reconciliation": true` and keeps its adapter: it acknowledges
-nothing until the rule runs again and the file is regenerated. `mix spec_lint.baseline` rejects `--module`, `--app`, `--rules`
-and `--except`, and refuses to overwrite an output file that is not a valid
-baseline.
+nothing until the rule runs again and the file is regenerated (or until it
+is regenerated under its own adapter again). `mix spec_lint.baseline`
+rejects `--module`, `--app`, `--rules` and `--except`, and refuses to
+overwrite an output file that is not a valid baseline. With `--output
+PATH` it reads the previous baseline from `PATH`, and the run compares
+against that same file.
 
 - **Suppression.** A finding whose fingerprint is in the baseline does not
-  fail CI. An entry past its `expires` date counts as new.
+  fail CI. An entry past its `expires` date counts as new. Each entry
+  records which gating prerequisites were blocked when it was written
+  (`"blocked"`): an `SL001` or `SL003` finding acknowledged while it was
+  report-only (for example blocked by an overlapping overload) counts as
+  new once its prerequisites are met and it gates, and the report lists it
+  under `gate_changed`.
 - **What the fingerprint hashes.** It covers the rule, the MFA, the slice
   and clause index, the translated types of the spec slice (after named
   types are expanded), the translation losses by kind and structural
@@ -189,13 +206,26 @@ baseline.
   that can no longer be analysed is a regression. Removing a `@spec` while
   the function stays exported is one too: the slice is reported as
   `unanalysed` (`spec_removed`) until the baseline is regenerated, which
-  records the acknowledgement. Deleting the function, or making it private,
-  is not a regression.
+  records the acknowledgement. So is removing one overload of a
+  multi-clause spec, or merging overloads into fewer clauses
+  (`spec_clause_removed`, for the missing slice indexes; slices are
+  numbered by position, so these are the last ones). Deleting the
+  function, making it private, or deleting your override of a default
+  injected by `use` (`GenServer`'s `handle_info/2`, `child_spec/1`) is not
+  a regression.
+- **Missing BEAM files.** An ebin that lost BEAM files (deleted by hand, or
+  a partial `_build` cache restore) is not a smaller project: Mix does not
+  rebuild them because its manifest says the build is up to date. When the
+  compile manifest (or, without one, the `<app>.app` file) lists a module
+  with no BEAM file, the run exits 2; recompile with
+  `mix compile --force`.
 - **Stale entries.** They are listed as warnings and never fail a run. A
   partial run (`--module`, `--app`) or an incomplete run never declares
   entries stale. Neither does analysis that did not happen: a finding of a
   rule that did not run, or of a slice or module that is now unsupported or
-  unavailable, is not stale.
+  unavailable, is not stale. An inventory entry listed as compared whose
+  slice is gone altogether (the function or module was deleted or
+  excluded) is stale: regenerate the baseline.
 - **Checker chunk versions.** A module whose checker chunk was written by
   another checker version is a preflight failure: the run is incomplete,
   CI exits 2, and no inventory entry can acknowledge it. Recompile.
@@ -215,8 +245,9 @@ baseline.
 - scope and capabilities;
 - findings, with prerequisites, fingerprints and baseline decisions;
 - the coverage ledger, per function and slice;
-- baseline decisions, including stale entries and entries pending
-  reconciliation after an adapter change;
+- baseline decisions, including stale entries, entries pending
+  reconciliation after an adapter change, and entries that no longer
+  acknowledge a finding because it gates now (`gate_changed`);
 - completion status and exit code.
 
 Keys are sorted and paths are relative to the project root. Two runs on the
@@ -234,11 +265,15 @@ Every run reports what it did and did not analyse, with denominators:
 - slices compared, exact or approximate, unsupported and unavailable;
 - obligations established, compatible after approximation, possible
   mismatches and unknown, and the unknown ones by reason (`top_only`,
-  `near_top`, `no_counted_component`, `other`).
+  `near_top`, `no_counted_component`, `other`);
+- slices lost since the baseline (`lost_analysis`, by reason:
+  `spec_removed`, `spec_clause_removed`, `spec_out_of_scope:<reason>`),
+  counted apart from the slices found.
 
 A project with no eligible specs succeeds and says so ("0 specs checked").
 A missing build directory is different: it exits 2, because nothing was
-discovered at all.
+discovered at all. So is a build directory missing BEAM files its build
+lists.
 
 ## Running on a project you cannot modify
 

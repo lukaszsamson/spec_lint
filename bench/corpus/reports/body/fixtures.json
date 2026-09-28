@@ -1191,12 +1191,14 @@
               "(empty_list()) -> integer()",
               "(non_empty_list(term())) -> dynamic(float() or integer())"
             ],
+            "established": false,
             "extra": "float()",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "whole_kind_possible",
@@ -1233,18 +1235,20 @@
               "(empty_list()) -> integer()",
               "(non_empty_list(term())) -> dynamic(float() or integer())"
             ],
+            "established": false,
             "extra": "float()",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "whole_kind_possible",
             "warn": false
           },
-          "body_us": 562,
+          "body_us": 569,
           "default": {
             "applied": [
               0,
@@ -1278,6 +1282,7 @@
               "(empty_list()) -> integer()",
               "(non_empty_list(term(), term())) -> dynamic(float() or integer())"
             ],
+            "established": false,
             "extra": "float()",
             "guard_blocked": false,
             "near_top": false,
@@ -1286,6 +1291,7 @@
               "whole_kind_only",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "possible_domain_escape",
@@ -1330,6 +1336,7 @@
               "(empty_list()) -> integer()",
               "(non_empty_list(term(), term())) -> dynamic(float() or integer())"
             ],
+            "established": false,
             "extra": "float()",
             "guard_blocked": false,
             "near_top": false,
@@ -1338,6 +1345,7 @@
               "whole_kind_only",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "possible_domain_escape",
@@ -1390,12 +1398,14 @@
             "clauses": [
               "(atom()) -> dynamic(nil or binary())"
             ],
+            "established": false,
             "extra": "nil",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "payload_gradual=1"
             ],
+            "return_exact": true,
             "sl002_candidate": true,
             "top_only": false,
             "union_class": "structured_possible",
@@ -1423,18 +1433,20 @@
             "clauses": [
               "(atom()) -> dynamic(nil or binary())"
             ],
+            "established": false,
             "extra": "nil",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "payload_gradual=1"
             ],
+            "return_exact": true,
             "sl002_candidate": true,
             "top_only": false,
             "union_class": "structured_possible",
             "warn": true
           },
-          "body_us": 403,
+          "body_us": 368,
           "default": {
             "applied": [
               0
@@ -1457,6 +1469,7 @@
             "clauses": [
               "(term()) -> dynamic(nil or binary())"
             ],
+            "established": false,
             "extra": "nil",
             "guard_blocked": false,
             "near_top": false,
@@ -1464,6 +1477,7 @@
               "domain_escape=[0]",
               "payload_gradual=1"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "possible_domain_escape",
@@ -1495,6 +1509,7 @@
             "clauses": [
               "(term()) -> dynamic(nil or binary())"
             ],
+            "established": false,
             "extra": "nil",
             "guard_blocked": false,
             "near_top": false,
@@ -1502,6 +1517,7 @@
               "domain_escape=[0]",
               "payload_gradual=1"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "possible_domain_escape",
@@ -1554,12 +1570,14 @@
             "clauses": [
               "(integer()) -> dynamic(%SpecLint.ExperimentFixtures.Point{x: integer(), y: integer()} or {:ok, integer()})"
             ],
+            "established": false,
             "extra": "%SpecLint.ExperimentFixtures.Point{x: integer(), y: integer()}",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "payload_gradual=1"
             ],
+            "return_exact": true,
             "sl002_candidate": true,
             "top_only": false,
             "union_class": "structured_possible",
@@ -1587,18 +1605,20 @@
             "clauses": [
               "(integer()) -> dynamic(%SpecLint.ExperimentFixtures.Point{x: integer(), y: integer()} or {:ok, integer()})"
             ],
+            "established": false,
             "extra": "%SpecLint.ExperimentFixtures.Point{x: integer(), y: integer()}",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "payload_gradual=1"
             ],
+            "return_exact": true,
             "sl002_candidate": true,
             "top_only": false,
             "union_class": "structured_possible",
             "warn": true
           },
-          "body_us": 471,
+          "body_us": 429,
           "default": {
             "applied": [
               0
@@ -1620,12 +1640,14 @@
             "clauses": [
               "(integer()) -> dynamic(%SpecLint.ExperimentFixtures.Point{x: integer(), y: integer()} or {:ok, integer()})"
             ],
+            "established": false,
             "extra": "%SpecLint.ExperimentFixtures.Point{x: integer(), y: integer()}",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "payload_gradual=1"
             ],
+            "return_exact": true,
             "sl002_candidate": true,
             "top_only": false,
             "union_class": "structured_possible",
@@ -1656,12 +1678,14 @@
             "clauses": [
               "(integer()) -> dynamic(%SpecLint.ExperimentFixtures.Point{x: integer(), y: integer()} or {:ok, integer()})"
             ],
+            "established": false,
             "extra": "%SpecLint.ExperimentFixtures.Point{x: integer(), y: integer()}",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "payload_gradual=1"
             ],
+            "return_exact": true,
             "sl002_candidate": true,
             "top_only": false,
             "union_class": "structured_possible",
@@ -1714,12 +1738,14 @@
             "clauses": [
               "(atom()) -> dynamic({:error, term()} or {:ok, :ok})"
             ],
+            "established": false,
             "extra": "{:error, term()}",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "payload_gradual=1"
             ],
+            "return_exact": true,
             "sl002_candidate": true,
             "top_only": false,
             "union_class": "structured_possible",
@@ -1747,18 +1773,20 @@
             "clauses": [
               "(atom()) -> dynamic({:error, term()} or {:ok, :ok})"
             ],
+            "established": false,
             "extra": "{:error, term()}",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "payload_gradual=1"
             ],
+            "return_exact": true,
             "sl002_candidate": true,
             "top_only": false,
             "union_class": "structured_possible",
             "warn": true
           },
-          "body_us": 395,
+          "body_us": 376,
           "default": {
             "applied": [
               0
@@ -1780,12 +1808,14 @@
             "clauses": [
               "(atom()) -> dynamic({:error, term()} or {:ok, :ok})"
             ],
+            "established": false,
             "extra": "{:error, term()}",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "payload_gradual=1"
             ],
+            "return_exact": true,
             "sl002_candidate": true,
             "top_only": false,
             "union_class": "structured_possible",
@@ -1816,12 +1846,14 @@
             "clauses": [
               "(atom()) -> dynamic({:error, term()} or {:ok, :ok})"
             ],
+            "established": false,
             "extra": "{:error, term()}",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "payload_gradual=1"
             ],
+            "return_exact": true,
             "sl002_candidate": true,
             "top_only": false,
             "union_class": "structured_possible",
@@ -1864,12 +1896,14 @@
             "clauses": [
               "(atom()) -> dynamic(:atom)"
             ],
+            "established": true,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "no_extra"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "none",
@@ -1887,18 +1921,20 @@
             "clauses": [
               "(atom()) -> dynamic(:atom)"
             ],
+            "established": true,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "no_extra"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "none",
             "warn": false
           },
-          "body_us": 387,
+          "body_us": 373,
           "default": {
             "applied": [
               0
@@ -1921,6 +1957,7 @@
             "clauses": [
               "(atom() or integer()) -> dynamic(:atom or :integer)"
             ],
+            "established": false,
             "extra": ":integer",
             "guard_blocked": false,
             "near_top": false,
@@ -1928,6 +1965,7 @@
               "domain_escape=[0]",
               "payload_gradual=1"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "possible_domain_escape",
@@ -1961,6 +1999,7 @@
             "clauses": [
               "(atom() or integer()) -> dynamic(:atom or :integer)"
             ],
+            "established": false,
             "extra": ":integer",
             "guard_blocked": false,
             "near_top": false,
@@ -1968,6 +2007,7 @@
               "domain_escape=[0]",
               "payload_gradual=1"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "possible_domain_escape",
@@ -2031,10 +2071,12 @@
               "(:one) -> non_empty_list(binary())",
               "(:two) -> non_empty_list(:two)"
             ],
+            "established": false,
             "extra": "non_empty_list(:two)",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "structured_possible",
@@ -2073,16 +2115,18 @@
               "(:one) -> non_empty_list(binary())",
               "(:two) -> non_empty_list(:two)"
             ],
+            "established": false,
             "extra": "non_empty_list(:two)",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "structured_possible",
             "warn": true
           },
-          "body_us": 451,
+          "body_us": 383,
           "default": {
             "applied": [
               0,
@@ -2115,10 +2159,12 @@
               "(:one) -> non_empty_list(binary())",
               "(:two) -> non_empty_list(:two)"
             ],
+            "established": false,
             "extra": "non_empty_list(:two)",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "structured_possible",
@@ -2160,10 +2206,12 @@
               "(:one) -> non_empty_list(binary())",
               "(:two) -> non_empty_list(:two)"
             ],
+            "established": false,
             "extra": "non_empty_list(:two)",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "structured_possible",
@@ -2227,10 +2275,12 @@
               "(:present) -> {:ok, integer()}",
               "(:missing) -> {:error, :missing}"
             ],
+            "established": false,
             "extra": "{:error, :missing}",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "structured_possible",
@@ -2269,16 +2319,18 @@
               "(:present) -> {:ok, integer()}",
               "(:missing) -> {:error, :missing}"
             ],
+            "established": false,
             "extra": "{:error, :missing}",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "structured_possible",
             "warn": true
           },
-          "body_us": 993,
+          "body_us": 368,
           "default": {
             "applied": [
               0,
@@ -2311,10 +2363,12 @@
               "(:present) -> {:ok, integer()}",
               "(:missing) -> {:error, :missing}"
             ],
+            "established": false,
             "extra": "{:error, :missing}",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "structured_possible",
@@ -2356,10 +2410,12 @@
               "(:present) -> {:ok, integer()}",
               "(:missing) -> {:error, :missing}"
             ],
+            "established": false,
             "extra": "{:error, :missing}",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "structured_possible",
@@ -2412,12 +2468,14 @@
             "clauses": [
               "(atom()) -> dynamic(binary()) or nil"
             ],
+            "established": false,
             "extra": "nil",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "payload_gradual=1"
             ],
+            "return_exact": true,
             "sl002_candidate": true,
             "top_only": false,
             "union_class": "structured_possible",
@@ -2445,18 +2503,20 @@
             "clauses": [
               "(atom()) -> dynamic(binary()) or nil"
             ],
+            "established": false,
             "extra": "nil",
             "guard_blocked": true,
             "near_top": false,
             "reasons": [
               "payload_gradual=1"
             ],
+            "return_exact": true,
             "sl002_candidate": true,
             "top_only": false,
             "union_class": "structured_possible",
             "warn": false
           },
-          "body_us": 448,
+          "body_us": 358,
           "default": {
             "applied": [
               0
@@ -2469,12 +2529,14 @@
               "(atom()) -> dynamic(binary())",
               "(not atom()) -> nil"
             ],
+            "established": true,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "no_extra"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "none",
@@ -2498,12 +2560,14 @@
               "(atom()) -> dynamic(binary())",
               "(not atom()) -> nil"
             ],
+            "established": true,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "no_extra"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "none",
@@ -2559,6 +2623,7 @@
             "clauses": [
               "(atom(), term()) -> dynamic({:ok, term(), :a or :b})"
             ],
+            "established": false,
             "extra": "{:ok, term(), :a or :b} and not {:ok, pid(), :a}",
             "guard_blocked": false,
             "near_top": false,
@@ -2568,6 +2633,7 @@
               "subtraction_payload=1",
               "payload_gradual=1"
             ],
+            "return_exact": true,
             "sl002_candidate": true,
             "top_only": false,
             "union_class": "structured_possible",
@@ -2598,6 +2664,7 @@
             "clauses": [
               "(atom(), term()) -> dynamic({:ok, term(), :a or :b})"
             ],
+            "established": false,
             "extra": "{:ok, term(), :a or :b} and not {:ok, pid(), :a}",
             "guard_blocked": false,
             "near_top": false,
@@ -2607,12 +2674,13 @@
               "subtraction_payload=1",
               "payload_gradual=1"
             ],
+            "return_exact": true,
             "sl002_candidate": true,
             "top_only": false,
             "union_class": "structured_possible",
             "warn": true
           },
-          "body_us": 483,
+          "body_us": 332,
           "default": {
             "applied": [
               0
@@ -2637,6 +2705,7 @@
             "clauses": [
               "(atom(), term()) -> dynamic({:ok, term(), :a or :b})"
             ],
+            "established": false,
             "extra": "{:ok, term(), :a or :b} and not {:ok, pid(), :a}",
             "guard_blocked": false,
             "near_top": false,
@@ -2646,6 +2715,7 @@
               "subtraction_payload=1",
               "payload_gradual=1"
             ],
+            "return_exact": true,
             "sl002_candidate": true,
             "top_only": false,
             "union_class": "structured_possible",
@@ -2679,6 +2749,7 @@
             "clauses": [
               "(atom(), term()) -> dynamic({:ok, term(), :a or :b})"
             ],
+            "established": false,
             "extra": "{:ok, term(), :a or :b} and not {:ok, pid(), :a}",
             "guard_blocked": false,
             "near_top": false,
@@ -2688,6 +2759,7 @@
               "subtraction_payload=1",
               "payload_gradual=1"
             ],
+            "return_exact": true,
             "sl002_candidate": true,
             "top_only": false,
             "union_class": "structured_possible",
@@ -2752,12 +2824,14 @@
               "(:special) -> :special",
               "(atom() and not :special) -> :any_atom"
             ],
+            "established": false,
             "extra": ":special",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "overlap"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "structured_possible",
@@ -2796,18 +2870,20 @@
               "(:special) -> :special",
               "(atom() and not :special) -> :any_atom"
             ],
+            "established": false,
             "extra": ":special",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "overlap"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "structured_possible",
             "warn": false
           },
-          "body_us": 376,
+          "body_us": 343,
           "default": {
             "applied": [
               0,
@@ -2840,12 +2916,14 @@
               "(:special) -> :special",
               "(atom() and not :special) -> :any_atom"
             ],
+            "established": false,
             "extra": ":special",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "overlap"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "structured_possible",
@@ -2887,12 +2965,14 @@
               "(:special) -> :special",
               "(atom() and not :special) -> :any_atom"
             ],
+            "established": false,
             "extra": ":special",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "overlap"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "structured_possible",
@@ -2923,12 +3003,14 @@
             "clauses": [
               "(:special) -> :any_atom or :special"
             ],
+            "established": false,
             "extra": ":any_atom",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "overlap"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "structured_possible",
@@ -2954,18 +3036,20 @@
             "clauses": [
               "(:special) -> :any_atom or :special"
             ],
+            "established": false,
             "extra": ":any_atom",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "overlap"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "structured_possible",
             "warn": false
           },
-          "body_us": 372,
+          "body_us": 377,
           "default": {
             "applied": [
               0
@@ -2978,6 +3062,7 @@
               "(:special) -> :special",
               "(atom() and not :special) -> :any_atom"
             ],
+            "established": true,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
@@ -2985,6 +3070,7 @@
               "no_extra",
               "overlap"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "none",
@@ -3008,6 +3094,7 @@
               "(:special) -> :special",
               "(atom() and not :special) -> :any_atom"
             ],
+            "established": true,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
@@ -3015,6 +3102,7 @@
               "no_extra",
               "overlap"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "none",
@@ -3067,12 +3155,14 @@
             "clauses": [
               "(integer()) -> dynamic(%SpecLint.ExperimentFixtures.Point{x: integer(), y: integer()}) or :origin"
             ],
+            "established": false,
             "extra": ":origin",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "payload_gradual=1"
             ],
+            "return_exact": true,
             "sl002_candidate": true,
             "top_only": false,
             "union_class": "structured_possible",
@@ -3100,18 +3190,20 @@
             "clauses": [
               "(integer()) -> dynamic(%SpecLint.ExperimentFixtures.Point{x: integer(), y: integer()}) or :origin"
             ],
+            "established": false,
             "extra": ":origin",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "payload_gradual=1"
             ],
+            "return_exact": true,
             "sl002_candidate": true,
             "top_only": false,
             "union_class": "structured_possible",
             "warn": true
           },
-          "body_us": 356,
+          "body_us": 340,
           "default": {
             "applied": [
               0
@@ -3133,12 +3225,14 @@
             "clauses": [
               "(integer()) -> dynamic(%SpecLint.ExperimentFixtures.Point{x: integer(), y: integer()}) or :origin"
             ],
+            "established": false,
             "extra": ":origin",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "payload_gradual=1"
             ],
+            "return_exact": true,
             "sl002_candidate": true,
             "top_only": false,
             "union_class": "structured_possible",
@@ -3169,12 +3263,14 @@
             "clauses": [
               "(integer()) -> dynamic(%SpecLint.ExperimentFixtures.Point{x: integer(), y: integer()}) or :origin"
             ],
+            "established": false,
             "extra": ":origin",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "payload_gradual=1"
             ],
+            "return_exact": true,
             "sl002_candidate": true,
             "top_only": false,
             "union_class": "structured_possible",
@@ -3238,10 +3334,12 @@
               "(:big) -> integer()",
               "(atom() and not :big) -> dynamic(binary())"
             ],
+            "established": false,
             "extra": "binary()",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "whole_kind_possible",
@@ -3280,16 +3378,18 @@
               "(:big) -> integer()",
               "(atom() and not :big) -> dynamic(binary())"
             ],
+            "established": false,
             "extra": "binary()",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "whole_kind_possible",
             "warn": true
           },
-          "body_us": 427,
+          "body_us": 356,
           "default": {
             "applied": [
               0,
@@ -3322,10 +3422,12 @@
               "(:big) -> integer()",
               "(atom() and not :big) -> dynamic(binary())"
             ],
+            "established": false,
             "extra": "binary()",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "whole_kind_possible",
@@ -3367,10 +3469,12 @@
               "(:big) -> integer()",
               "(atom() and not :big) -> dynamic(binary())"
             ],
+            "established": false,
             "extra": "binary()",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "whole_kind_possible",
@@ -3445,12 +3549,14 @@
               "(binary()) -> dynamic({:_, {binary(), nil}, nil, nil, empty_list()})",
               "(not (atom() or binary())) -> dynamic()"
             ],
+            "established": false,
             "extra": "not {atom(), term(), term(), list(term())}",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "top_only"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -3500,18 +3606,20 @@
               "(binary()) -> dynamic({:_, {binary(), nil}, nil, nil, empty_list()})",
               "(not (atom() or binary())) -> dynamic()"
             ],
+            "established": false,
             "extra": "not {atom(), term(), term(), list(term())}",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "top_only"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
             "warn": true
           },
-          "body_us": 365,
+          "body_us": 345,
           "default": {
             "applied": [
               0,
@@ -3555,12 +3663,14 @@
               "(binary()) -> dynamic({:_, {binary(), nil}, nil, nil, empty_list()})",
               "(not (atom() or binary())) -> dynamic()"
             ],
+            "established": false,
             "extra": "not {atom(), term(), term(), list(term())}",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "top_only"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -3613,12 +3723,14 @@
               "(binary()) -> dynamic({:_, {binary(), nil}, nil, nil, empty_list()})",
               "(not (atom() or binary())) -> dynamic()"
             ],
+            "established": false,
             "extra": "not {atom(), term(), term(), list(term())}",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "top_only"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -3669,10 +3781,12 @@
             "clauses": [
               "(integer()) -> :error or :ok or :timeout"
             ],
+            "established": false,
             "extra": ":timeout",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [],
+            "return_exact": true,
             "sl002_candidate": true,
             "top_only": false,
             "union_class": "structured_possible",
@@ -3698,16 +3812,18 @@
             "clauses": [
               "(integer()) -> :error or :ok or :timeout"
             ],
+            "established": false,
             "extra": ":timeout",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [],
+            "return_exact": true,
             "sl002_candidate": true,
             "top_only": false,
             "union_class": "structured_possible",
             "warn": true
           },
-          "body_us": 367,
+          "body_us": 347,
           "default": {
             "applied": [
               0
@@ -3727,10 +3843,12 @@
             "clauses": [
               "(integer()) -> :error or :ok or :timeout"
             ],
+            "established": false,
             "extra": ":timeout",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [],
+            "return_exact": true,
             "sl002_candidate": true,
             "top_only": false,
             "union_class": "structured_possible",
@@ -3759,10 +3877,12 @@
             "clauses": [
               "(integer()) -> :error or :ok or :timeout"
             ],
+            "established": false,
             "extra": ":timeout",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [],
+            "return_exact": true,
             "sl002_candidate": true,
             "top_only": false,
             "union_class": "structured_possible",
@@ -3818,6 +3938,7 @@
             "clauses": [
               "(atom()) -> dynamic({:ok, term()})"
             ],
+            "established": false,
             "extra": "{:ok, term()} and not {:ok, binary()}",
             "guard_blocked": false,
             "near_top": false,
@@ -3827,6 +3948,7 @@
               "subtraction_payload=1",
               "no_counted_component"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "unknown",
@@ -3857,6 +3979,7 @@
             "clauses": [
               "(atom()) -> dynamic({:ok, term()})"
             ],
+            "established": false,
             "extra": "{:ok, term()} and not {:ok, binary()}",
             "guard_blocked": false,
             "near_top": false,
@@ -3866,12 +3989,13 @@
               "subtraction_payload=1",
               "no_counted_component"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "unknown",
             "warn": false
           },
-          "body_us": 338,
+          "body_us": 531,
           "default": {
             "applied": "badapply",
             "applied_return": "none()",
@@ -3881,12 +4005,14 @@
             "clauses": [
               "(binary()) -> dynamic({:ok, binary()})"
             ],
+            "established": false,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "badapply"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "none",
@@ -3907,12 +4033,14 @@
             "clauses": [
               "(binary()) -> dynamic({:ok, binary()})"
             ],
+            "established": false,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "badapply"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "none",
@@ -3955,12 +4083,14 @@
             "clauses": [
               "(integer()) -> dynamic({:secret, integer()})"
             ],
+            "established": true,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "no_extra"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "none",
@@ -3978,12 +4108,14 @@
             "clauses": [
               "(integer()) -> dynamic({:secret, integer()})"
             ],
+            "established": true,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "no_extra"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "none",
@@ -4015,6 +4147,7 @@
             "clauses": [
               "(term()) -> dynamic({:secret, term()})"
             ],
+            "established": false,
             "extra": "{:secret, term()} and not {:secret, integer()}",
             "guard_blocked": false,
             "near_top": false,
@@ -4025,6 +4158,7 @@
               "subtraction_payload=1",
               "no_counted_component"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "unknown",
@@ -4059,6 +4193,7 @@
             "clauses": [
               "(term()) -> dynamic({:secret, term()})"
             ],
+            "established": false,
             "extra": "{:secret, term()} and not {:secret, integer()}",
             "guard_blocked": false,
             "near_top": false,
@@ -4069,6 +4204,7 @@
               "subtraction_payload=1",
               "no_counted_component"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "unknown",
@@ -4124,6 +4260,7 @@
             "clauses": [
               "(%SpecLint.OmissionFixtures.Changeset{\n  valid?: boolean(),\n  data: nil or map(),\n  changes: %{atom() => term()},\n  action: atom()\n}, atom()) -> dynamic(\n  {:error,\n   %SpecLint.OmissionFixtures.Changeset{\n     valid?: false,\n     data: nil or map(),\n     changes: %{atom() => term()},\n     action: atom()\n   }} or {:ok, term()}\n)"
             ],
+            "established": false,
             "extra": "{:ok, term()} and not {:ok, map()}",
             "guard_blocked": false,
             "near_top": false,
@@ -4133,6 +4270,7 @@
               "subtraction_payload=1",
               "no_counted_component"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "unknown",
@@ -4163,6 +4301,7 @@
             "clauses": [
               "(%SpecLint.OmissionFixtures.Changeset{\n  valid?: boolean(),\n  data: nil or map(),\n  changes: %{atom() => term()},\n  action: atom()\n}, atom()) -> dynamic(\n  {:error,\n   %SpecLint.OmissionFixtures.Changeset{\n     valid?: false,\n     data: nil or map(),\n     changes: %{atom() => term()},\n     action: atom()\n   }} or {:ok, term()}\n)"
             ],
+            "established": false,
             "extra": "{:ok, term()} and not {:ok, map()}",
             "guard_blocked": false,
             "near_top": false,
@@ -4172,12 +4311,13 @@
               "subtraction_payload=1",
               "no_counted_component"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "unknown",
             "warn": false
           },
-          "body_us": 648,
+          "body_us": 663,
           "default": {
             "applied": [
               0
@@ -4204,6 +4344,7 @@
             "clauses": [
               "(%SpecLint.OmissionFixtures.Changeset{valid?: term()}, atom()) -> dynamic(\n  {:error, %SpecLint.OmissionFixtures.Changeset{valid?: false or nil, action: atom()}} or\n    {:ok, term()}\n)"
             ],
+            "established": false,
             "extra": "({:error, %SpecLint.OmissionFixtures.Changeset{valid?: false or nil, action: atom()}} and not {:error,\n %SpecLint.OmissionFixtures.Changeset{\n   valid?: boolean(),\n   data: nil or map(),\n   changes: %{atom() => term()},\n   action: atom()\n }}) or ({:ok, term()} and not {:ok, map()})",
             "guard_blocked": false,
             "near_top": false,
@@ -4215,6 +4356,7 @@
               "subtraction_payload=1",
               "no_counted_component"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "unknown",
@@ -4250,6 +4392,7 @@
             "clauses": [
               "(%SpecLint.OmissionFixtures.Changeset{valid?: term()}, atom()) -> dynamic(\n  {:error, %SpecLint.OmissionFixtures.Changeset{valid?: false or nil, action: atom()}} or\n    {:ok, term()}\n)"
             ],
+            "established": false,
             "extra": "({:error, %SpecLint.OmissionFixtures.Changeset{valid?: false or nil, action: atom()}} and not {:error,\n %SpecLint.OmissionFixtures.Changeset{\n   valid?: boolean(),\n   data: nil or map(),\n   changes: %{atom() => term()},\n   action: atom()\n }}) or ({:ok, term()} and not {:ok, map()})",
             "guard_blocked": false,
             "near_top": false,
@@ -4261,6 +4404,7 @@
               "subtraction_payload=1",
               "no_counted_component"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "unknown",
@@ -4337,12 +4481,14 @@
               "(non_empty_list(list(term())), empty_list(), {...}, (list(term()) -> list(term()))) -> dynamic()",
               "(non_empty_list(list(term())), non_empty_list(term()), {...}, (list(term()) -> list(term()))) -> dynamic(list(non_empty_list(term(), term())))"
             ],
+            "established": false,
             "extra": "not list(%{atom() => term(), __struct__: atom()})",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "top_only"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -4393,18 +4539,20 @@
               "(non_empty_list(list(term())), empty_list(), {...}, (list(term()) -> list(term()))) -> dynamic()",
               "(non_empty_list(list(term())), non_empty_list(term()), {...}, (list(term()) -> list(term()))) -> dynamic(list(non_empty_list(term(), term())))"
             ],
+            "established": false,
             "extra": "not list(%{atom() => term(), __struct__: atom()})",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "top_only"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
             "warn": false
           },
-          "body_us": 761,
+          "body_us": 796,
           "default": {
             "applied": [
               0,
@@ -4452,12 +4600,14 @@
               "(not empty_list(), empty_list(), term(), term()) -> dynamic()",
               "(not empty_list(), non_empty_list(term(), term()), term(), term()) -> dynamic(list(non_empty_list(term(), term())))"
             ],
+            "established": false,
             "extra": "not list(%{atom() => term(), __struct__: atom()})",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "top_only"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -4514,12 +4664,14 @@
               "(not empty_list(), empty_list(), term(), term()) -> dynamic()",
               "(not empty_list(), non_empty_list(term(), term()), term(), term()) -> dynamic(list(non_empty_list(term(), term())))"
             ],
+            "established": false,
             "extra": "not list(%{atom() => term(), __struct__: atom()})",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "top_only"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -4576,12 +4728,14 @@
             "clauses": [
               "(%SpecLint.OmissionFixtures.Num{sign: integer(), coef: :NaN or :inf or integer(), exp: integer()}, %SpecLint.OmissionFixtures.Num{sign: integer(), coef: :NaN or :inf or integer(), exp: integer()}) -> dynamic()"
             ],
+            "established": false,
             "extra": "not (:eq or :gt or :lt)",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "top_only"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -4610,18 +4764,20 @@
             "clauses": [
               "(%SpecLint.OmissionFixtures.Num{sign: integer(), coef: :NaN or :inf or integer(), exp: integer()}, %SpecLint.OmissionFixtures.Num{sign: integer(), coef: :NaN or :inf or integer(), exp: integer()}) -> dynamic()"
             ],
+            "established": false,
             "extra": "not (:eq or :gt or :lt)",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "top_only"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
             "warn": false
           },
-          "body_us": 674,
+          "body_us": 661,
           "default": {
             "applied": [
               0
@@ -4644,12 +4800,14 @@
             "clauses": [
               "(term(), term()) -> dynamic()"
             ],
+            "established": false,
             "extra": "not (:eq or :gt or :lt)",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "top_only"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -4683,12 +4841,14 @@
             "clauses": [
               "(term(), term()) -> dynamic()"
             ],
+            "established": false,
             "extra": "not (:eq or :gt or :lt)",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "top_only"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -4803,12 +4963,14 @@
               "(%SpecLint.OmissionFixtures.Num{coef: integer()}, %SpecLint.OmissionFixtures.Num{coef: integer()}) -> :eq",
               "(%SpecLint.OmissionFixtures.Num{sign: integer()}, %SpecLint.OmissionFixtures.Num{sign: integer()}) -> :gt or :lt"
             ],
+            "established": false,
             "extra": "not (:eq or :gt or :lt)",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "top_only"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -4897,18 +5059,20 @@
               "(%SpecLint.OmissionFixtures.Num{coef: integer()}, %SpecLint.OmissionFixtures.Num{coef: integer()}) -> :eq",
               "(%SpecLint.OmissionFixtures.Num{sign: integer()}, %SpecLint.OmissionFixtures.Num{sign: integer()}) -> :gt or :lt"
             ],
+            "established": false,
             "extra": "not (:eq or :gt or :lt)",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "top_only"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
             "warn": false
           },
-          "body_us": 677,
+          "body_us": 676,
           "default": {
             "applied": [
               0,
@@ -4991,12 +5155,14 @@
               "(%SpecLint.OmissionFixtures.Num{coef: integer()}, %SpecLint.OmissionFixtures.Num{coef: integer()}) -> :eq",
               "(%SpecLint.OmissionFixtures.Num{sign: integer()}, %SpecLint.OmissionFixtures.Num{sign: integer()}) -> :gt or :lt"
             ],
+            "established": false,
             "extra": "not (:eq or :gt or :lt)",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "top_only"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -5090,12 +5256,14 @@
               "(%SpecLint.OmissionFixtures.Num{coef: integer()}, %SpecLint.OmissionFixtures.Num{coef: integer()}) -> :eq",
               "(%SpecLint.OmissionFixtures.Num{sign: integer()}, %SpecLint.OmissionFixtures.Num{sign: integer()}) -> :gt or :lt"
             ],
+            "established": false,
             "extra": "not (:eq or :gt or :lt)",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "top_only"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -5149,12 +5317,14 @@
             "clauses": [
               "(binary(), list({atom(), term()})) -> dynamic()"
             ],
+            "established": false,
             "extra": "not %{binary() => term()}",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "top_only"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -5182,18 +5352,20 @@
             "clauses": [
               "(binary(), list({atom(), term()})) -> dynamic()"
             ],
+            "established": false,
             "extra": "not %{binary() => term()}",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "top_only"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
             "warn": false
           },
-          "body_us": 606,
+          "body_us": 645,
           "default": {
             "applied": [
               0
@@ -5216,12 +5388,14 @@
             "clauses": [
               "(binary(), term()) -> dynamic()"
             ],
+            "established": false,
             "extra": "not %{binary() => term()}",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "top_only"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -5253,12 +5427,14 @@
             "clauses": [
               "(binary(), term()) -> dynamic()"
             ],
+            "established": false,
             "extra": "not %{binary() => term()}",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "top_only"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -5373,6 +5549,7 @@
               "(atom(), list({atom(), term()}), %Macro.Env{\n  aliases: list({atom(), atom()}),\n  context: :guard or :match or nil,\n  context_modules: list(atom()),\n  file: binary(),\n  function: nil or {atom(), integer()},\n  functions: list({atom(), list({atom(), integer()})}),\n  lexical_tracker: nil or pid(),\n  line: integer(),\n  macro_aliases: list({atom(), {term(), atom()}}),\n  macros: list({atom(), list({atom(), integer()})}),\n  module: atom(),\n  requires: list(atom()),\n  tracers: list(atom()),\n  versioned_vars: %{tuple() => integer()}\n}) -> dynamic({:_, {nil, atom()}, nil, nil, empty_list()})",
               "(atom() or binary() or float() or integer() or list(term()) or {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()}, list({atom(), term()}), %Macro.Env{\n  aliases: list({atom(), atom()}),\n  context: :guard or :match or nil,\n  context_modules: list(atom()),\n  file: binary(),\n  function: nil or {atom(), integer()},\n  functions: list({atom(), list({atom(), integer()})}),\n  lexical_tracker: nil or pid(),\n  line: integer(),\n  macro_aliases: list({atom(), {term(), atom()}}),\n  macros: list({atom(), list({atom(), integer()})}),\n  module: atom(),\n  requires: list(atom()),\n  tracers: list(atom()),\n  versioned_vars: %{tuple() => integer()}\n}) -> dynamic()"
             ],
+            "established": false,
             "extra": "not ({atom(),\n atom() or binary() or float() or integer() or list(term()) or\n   {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()},\n atom() or binary() or float() or integer() or list(term()) or\n   {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()}, list(term())})",
             "guard_blocked": false,
             "near_top": false,
@@ -5380,6 +5557,7 @@
               "top_only",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -5468,6 +5646,7 @@
               "(atom(), list({atom(), term()}), %Macro.Env{\n  aliases: list({atom(), atom()}),\n  context: :guard or :match or nil,\n  context_modules: list(atom()),\n  file: binary(),\n  function: nil or {atom(), integer()},\n  functions: list({atom(), list({atom(), integer()})}),\n  lexical_tracker: nil or pid(),\n  line: integer(),\n  macro_aliases: list({atom(), {term(), atom()}}),\n  macros: list({atom(), list({atom(), integer()})}),\n  module: atom(),\n  requires: list(atom()),\n  tracers: list(atom()),\n  versioned_vars: %{tuple() => integer()}\n}) -> dynamic({:_, {nil, atom()}, nil, nil, empty_list()})",
               "(atom() or binary() or float() or integer() or list(term()) or {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()}, list({atom(), term()}), %Macro.Env{\n  aliases: list({atom(), atom()}),\n  context: :guard or :match or nil,\n  context_modules: list(atom()),\n  file: binary(),\n  function: nil or {atom(), integer()},\n  functions: list({atom(), list({atom(), integer()})}),\n  lexical_tracker: nil or pid(),\n  line: integer(),\n  macro_aliases: list({atom(), {term(), atom()}}),\n  macros: list({atom(), list({atom(), integer()})}),\n  module: atom(),\n  requires: list(atom()),\n  tracers: list(atom()),\n  versioned_vars: %{tuple() => integer()}\n}) -> dynamic()"
             ],
+            "established": false,
             "extra": "not ({atom(),\n atom() or binary() or float() or integer() or list(term()) or\n   {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()},\n atom() or binary() or float() or integer() or list(term()) or\n   {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()}, list(term())})",
             "guard_blocked": false,
             "near_top": false,
@@ -5475,12 +5654,13 @@
               "top_only",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
             "warn": false
           },
-          "body_us": 633,
+          "body_us": 683,
           "default": {
             "applied": [
               0,
@@ -5563,6 +5743,7 @@
               "(atom(), term(), term()) -> dynamic({:_, {nil, atom()}, nil, nil, empty_list()})",
               "(term(), term(), term()) -> dynamic()"
             ],
+            "established": false,
             "extra": "not ({atom(),\n atom() or binary() or float() or integer() or list(term()) or\n   {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()},\n atom() or binary() or float() or integer() or list(term()) or\n   {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()}, list(term())})",
             "guard_blocked": false,
             "near_top": false,
@@ -5570,6 +5751,7 @@
               "top_only",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -5665,6 +5847,7 @@
               "(atom(), term(), term()) -> dynamic({:_, {nil, atom()}, nil, nil, empty_list()})",
               "(term(), term(), term()) -> dynamic()"
             ],
+            "established": false,
             "extra": "not ({atom(),\n atom() or binary() or float() or integer() or list(term()) or\n   {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()},\n atom() or binary() or float() or integer() or list(term()) or\n   {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()}, list(term())})",
             "guard_blocked": false,
             "near_top": false,
@@ -5672,6 +5855,7 @@
               "top_only",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -5728,6 +5912,7 @@
             "clauses": [
               "(%SpecLint.OmissionFixtures.Conn{private: %{atom() => term()}, status: nil or integer()}, term()) -> dynamic(%SpecLint.OmissionFixtures.Conn{status: nil or integer()})"
             ],
+            "established": false,
             "extra": "%SpecLint.OmissionFixtures.Conn{private: not %{atom() => term()}, status: nil or integer()}",
             "guard_blocked": false,
             "near_top": false,
@@ -5738,6 +5923,7 @@
               "no_counted_component",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "unknown",
@@ -5767,6 +5953,7 @@
             "clauses": [
               "(%SpecLint.OmissionFixtures.Conn{private: %{atom() => term()}, status: nil or integer()}, term()) -> dynamic(%SpecLint.OmissionFixtures.Conn{status: nil or integer()})"
             ],
+            "established": false,
             "extra": "%SpecLint.OmissionFixtures.Conn{private: not %{atom() => term()}, status: nil or integer()}",
             "guard_blocked": false,
             "near_top": false,
@@ -5777,12 +5964,13 @@
               "no_counted_component",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "unknown",
             "warn": false
           },
-          "body_us": 1263,
+          "body_us": 566,
           "default": {
             "applied": [
               0
@@ -5806,6 +5994,7 @@
             "clauses": [
               "(%SpecLint.OmissionFixtures.Conn{}, term()) -> dynamic(%SpecLint.OmissionFixtures.Conn{})"
             ],
+            "established": false,
             "extra": "%SpecLint.OmissionFixtures.Conn{} and not %SpecLint.OmissionFixtures.Conn{private: %{atom() => term()}, status: nil or integer()}",
             "guard_blocked": false,
             "near_top": false,
@@ -5816,6 +6005,7 @@
               "no_counted_component",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "unknown",
@@ -5850,6 +6040,7 @@
             "clauses": [
               "(%SpecLint.OmissionFixtures.Conn{}, term()) -> dynamic(%SpecLint.OmissionFixtures.Conn{})"
             ],
+            "established": false,
             "extra": "%SpecLint.OmissionFixtures.Conn{} and not %SpecLint.OmissionFixtures.Conn{private: %{atom() => term()}, status: nil or integer()}",
             "guard_blocked": false,
             "near_top": false,
@@ -5860,6 +6051,7 @@
               "no_counted_component",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "unknown",
@@ -5936,12 +6128,14 @@
               "(non_empty_list(list(term())), term(), empty_list(), term(), list(term()), fun(), {map(), list({atom(), term()})}) -> dynamic()",
               "(non_empty_list(list(term())), term(), non_empty_list(term()), term(), list(term()), fun(), {map(), list({atom(), term()})}) -> dynamic(non_empty_list(term(), term()))"
             ],
+            "established": false,
             "extra": "not list(list(term()))",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "top_only"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -5992,18 +6186,20 @@
               "(non_empty_list(list(term())), term(), empty_list(), term(), list(term()), fun(), {map(), list({atom(), term()})}) -> dynamic()",
               "(non_empty_list(list(term())), term(), non_empty_list(term()), term(), list(term()), fun(), {map(), list({atom(), term()})}) -> dynamic(non_empty_list(term(), term()))"
             ],
+            "established": false,
             "extra": "not list(list(term()))",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "top_only"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
             "warn": false
           },
-          "body_us": 622,
+          "body_us": 566,
           "default": {
             "applied": [
               0,
@@ -6051,12 +6247,14 @@
               "(not empty_list(), term(), empty_list(), term(), term(), term(), term()) -> dynamic()",
               "(non_empty_list(term(), term()), term(), not empty_list(), term(), term(), term(), term()) -> dynamic(non_empty_list(term(), term()))"
             ],
+            "established": false,
             "extra": "not list(list(term()))",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "top_only"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -6113,12 +6311,14 @@
               "(not empty_list(), term(), empty_list(), term(), term(), term(), term()) -> dynamic()",
               "(non_empty_list(term(), term()), term(), not empty_list(), term(), term(), term(), term()) -> dynamic(non_empty_list(term(), term()))"
             ],
+            "established": false,
             "extra": "not list(list(term()))",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "top_only"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -6294,6 +6494,7 @@
               "({:{}, list({atom(), term()}), atom() or list(term())}, list({atom(), term()})) -> dynamic({:tuple, term()})",
               "(atom() or binary() or float() or integer() or list(term()) or ({term(), list({atom(), term()}), atom() or list(term())} and not ({:{}, list({atom(), term()}), atom() or list(term())} or {:<<>>, list({atom(), term()}), atom() or list(term())})) or {term(), term()}, list({atom(), term()})) -> :any"
             ],
+            "established": false,
             "extra": ":any or :atom or ({term(), atom()} and not ({integer(),\n atom() or binary() or float() or integer() or list(term()) or\n   {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()}} or {:array, term()})) or ({:array or :tuple or {:{}, empty_list(), non_empty_list(:as or :parent_as or list(term()))},\n term()} and not {:array, term()})",
             "guard_blocked": false,
             "near_top": false,
@@ -6303,6 +6504,7 @@
               "unknown_components=2",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "possible_input_approximate",
@@ -6447,6 +6649,7 @@
               "({:{}, list({atom(), term()}), atom() or list(term())}, list({atom(), term()})) -> dynamic({:tuple, term()})",
               "(atom() or binary() or float() or integer() or list(term()) or ({term(), list({atom(), term()}), atom() or list(term())} and not ({:{}, list({atom(), term()}), atom() or list(term())} or {:<<>>, list({atom(), term()}), atom() or list(term())})) or {term(), term()}, list({atom(), term()})) -> :any"
             ],
+            "established": false,
             "extra": ":any or :atom or ({term(), atom()} and not ({integer(),\n atom() or binary() or float() or integer() or list(term()) or\n   {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()}} or {:array, term()})) or ({:array or :tuple or {:{}, empty_list(), non_empty_list(:as or :parent_as or list(term()))},\n term()} and not {:array, term()})",
             "guard_blocked": false,
             "near_top": false,
@@ -6456,12 +6659,13 @@
               "unknown_components=2",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "possible_input_approximate",
             "warn": true
           },
-          "body_us": 632,
+          "body_us": 589,
           "default": {
             "applied": [
               0,
@@ -6605,6 +6809,7 @@
               "({:{}, term(), term()}, term()) -> dynamic({:tuple, term()})",
               "(not ({:{}, term(), term()} or {:<<>>, term(), term()}), term()) -> :any"
             ],
+            "established": false,
             "extra": ":any or :atom or ({term(), atom()} and not ({integer(),\n atom() or binary() or float() or integer() or list(term()) or\n   {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()}} or {:array, term()})) or ({:array or :tuple or {:{}, empty_list(), non_empty_list(:as or :parent_as or list(term()))},\n term()} and not {:array, term()})",
             "guard_blocked": false,
             "near_top": false,
@@ -6614,6 +6819,7 @@
               "unknown_components=2",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "possible_domain_escape",
@@ -6769,6 +6975,7 @@
               "({:{}, term(), term()}, term()) -> dynamic({:tuple, term()})",
               "(not ({:{}, term(), term()} or {:<<>>, term(), term()}), term()) -> :any"
             ],
+            "established": false,
             "extra": ":any or :atom or ({term(), atom()} and not ({integer(),\n atom() or binary() or float() or integer() or list(term()) or\n   {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()}} or {:array, term()})) or ({:array or :tuple or {:{}, empty_list(), non_empty_list(:as or :parent_as or list(term()))},\n term()} and not {:array, term()})",
             "guard_blocked": false,
             "near_top": false,
@@ -6778,6 +6985,7 @@
               "unknown_components=2",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "possible_domain_escape",
@@ -6801,56 +7009,56 @@
   "label": "fixtures",
   "modules": [
     {
-      "default_run_us": 90,
+      "default_run_us": 106,
       "default_warnings": 0,
       "error": null,
       "module": "SpecLint.ExperimentFixtures",
       "sampled": false
     },
     {
-      "default_run_us": 2741,
+      "default_run_us": 3167,
       "default_warnings": 0,
       "error": null,
       "module": "SpecLint.ExperimentFixtures.Cases",
       "sampled": false
     },
     {
-      "default_run_us": 423,
+      "default_run_us": 395,
       "default_warnings": 0,
       "error": null,
       "module": "SpecLint.ExperimentFixtures.Point",
       "sampled": false
     },
     {
-      "default_run_us": 4,
+      "default_run_us": 2,
       "default_warnings": 0,
       "error": null,
       "module": "SpecLint.ExperimentFixtures.Secret",
       "sampled": false
     },
     {
-      "default_run_us": 4171,
+      "default_run_us": 4364,
       "default_warnings": 0,
       "error": null,
       "module": "SpecLint.OmissionFixtures.Cases",
       "sampled": false
     },
     {
-      "default_run_us": 19,
+      "default_run_us": 97,
       "default_warnings": 0,
       "error": null,
       "module": "SpecLint.OmissionFixtures.Changeset",
       "sampled": false
     },
     {
-      "default_run_us": 13,
+      "default_run_us": 15,
       "default_warnings": 0,
       "error": null,
       "module": "SpecLint.OmissionFixtures.Conn",
       "sampled": false
     },
     {
-      "default_run_us": 21,
+      "default_run_us": 11,
       "default_warnings": 0,
       "error": null,
       "module": "SpecLint.OmissionFixtures.Num",
@@ -7160,12 +7368,12 @@
     "body_unavailable": 0,
     "cost": {
       "body_calls": 37,
-      "body_max_us": 1263,
-      "body_median_us": 451,
-      "body_p90_us": 677,
-      "body_total_ms": 18,
+      "body_max_us": 796,
+      "body_median_us": 376,
+      "body_p90_us": 663,
+      "body_total_ms": 15,
       "default_calls": 8,
-      "default_total_ms": 7
+      "default_total_ms": 8
     },
     "extra_warning_slices": 4,
     "extra_warnings": 4,

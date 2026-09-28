@@ -10,24 +10,16 @@ defmodule SpecLint.Integration.ConsumerTest do
   @moduletag :integration
   @moduletag timeout: 300_000
 
-  @root Path.expand("../..", __DIR__)
+  alias SpecLint.ProjectFixture, as: Fixture
 
-  # One directory per test run, removed afterwards, so concurrent runs in
-  # the same checkout do not share a fixture. The per-test helpers read it
-  # from the process dictionary set in setup.
+  # One directory per test run under the system temporary directory,
+  # removed afterwards, so concurrent runs do not share a fixture. The
+  # per-test helpers read it from the process dictionary set in setup.
   setup_all do
-    dir =
-      Path.join([
-        @root,
-        "tmp/integration",
-        "consumer-#{System.os_time(:millisecond)}-#{System.unique_integer([:positive])}"
-      ])
-
+    dir = Fixture.tmp_dir!("consumer")
     on_exit(fn -> File.rm_rf!(dir) end)
-    File.mkdir_p!(Path.join(dir, "lib"))
-    Process.put(:consumer_dir, dir)
 
-    File.write!(Path.join(dir, "mix.exs"), """
+    Fixture.write!(dir, "mix.exs", """
     defmodule Consumer.MixProject do
       use Mix.Project
 
@@ -35,20 +27,20 @@ defmodule SpecLint.Integration.ConsumerTest do
         [
           app: :consumer,
           version: "0.1.0",
-          deps: [{:spec_lint, path: #{inspect(@root)}, only: [:dev, :test], runtime: false}]
+          deps: [{:spec_lint, path: #{inspect(Fixture.root())}, only: [:dev, :test], runtime: false}]
         ]
       end
     end
     """)
 
-    write("lib/consumer.ex", """
+    Fixture.write!(dir, "lib/consumer.ex", """
     defmodule Consumer do
       @spec greet(atom()) :: String.t()
       def greet(name) when is_atom(name), do: "hello " <> Atom.to_string(name)
     end
     """)
 
-    {output, status} = mix(["compile"])
+    {output, status} = Fixture.mix(dir, ["compile"])
     assert status == 0, output
     %{dir: dir}
   end
@@ -60,23 +52,11 @@ defmodule SpecLint.Integration.ConsumerTest do
 
   defp dir, do: Process.get(:consumer_dir)
 
-  defp write(path, contents), do: File.write!(Path.join(dir(), path), contents)
+  defp write(path, contents), do: Fixture.write!(dir(), path, contents)
 
-  defp mix(args) do
-    System.cmd(System.find_executable("mix"), args,
-      cd: dir(),
-      env: [{"MIX_ENV", "dev"}],
-      stderr_to_stdout: true
-    )
-  end
+  defp mix(args), do: Fixture.mix(dir(), args)
 
-  defp lint(extra \\ []) do
-    report = Path.join(dir(), "report.json")
-    File.rm(report)
-    {output, status} = mix(["spec_lint", "--ci", "--format", "json", "--output", report] ++ extra)
-    json = if File.exists?(report), do: report |> File.read!() |> JSON.decode!()
-    {status, json, output}
-  end
+  defp lint(extra \\ []), do: Fixture.lint(dir(), extra)
 
   test "exit codes and JSON across a project's life" do
     # A clean project.

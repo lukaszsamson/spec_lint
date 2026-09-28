@@ -13,9 +13,10 @@ defmodule SpecLint.Rules.AnalysisUnavailable do
   selection never disables the coverage policy.
 
   A slice the baseline inventory lists whose function is still exported
-  but no longer has a spec in scope (`SpecLint.Coverage.lost_analysis/2`)
-  is reported by `check_lost/2` with the status `unanalysed`: removing a
-  `@spec` must not make analysis disappear silently.
+  but no longer has a spec in scope, or has fewer spec clauses than the
+  slice index needs (`SpecLint.Coverage.lost_analysis/2`), is reported by
+  `check_lost/2` with the status `unanalysed`: removing a `@spec`, or one
+  overload of it, must not make analysis disappear silently.
 
   A checker chunk whose version differs from the running checker's
   (DESIGN.md 5.1) has the reason `unsupported_chunk:<found version>`. It is

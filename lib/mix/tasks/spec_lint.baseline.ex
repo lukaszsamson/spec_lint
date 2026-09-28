@@ -15,6 +15,11 @@ defmodule Mix.Tasks.SpecLint.Baseline do
   entries that still match are kept when the baseline is regenerated.
   Ordinary `mix spec_lint` runs never modify it.
 
+  The run reads the previous baseline from the output file, so lost
+  analysis (a removed spec), coverage regressions and the entries kept from
+  the previous file all come from the file being written; the output file
+  may not exist yet.
+
   Options: `--output PATH` (default: the configured baseline), `--config`,
   `--profile`, `--require-static-return`. Filters (`--module`, `--app`)
   and rule selection (`--rules`, `--except`) are rejected: a baseline from
@@ -51,6 +56,8 @@ defmodule Mix.Tasks.SpecLint.Baseline do
     config = Task.load_config!(project, cli)
     output = Path.expand(cli.output || config.baseline, project.root)
     previous = previous!(output)
+    # One file for the run and for what is kept: the one being written.
+    config = %{config | baseline: output, baseline_explicit: false}
     run = ok!(Run.execute(project, config))
 
     cond do

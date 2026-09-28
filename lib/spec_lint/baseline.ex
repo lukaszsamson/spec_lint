@@ -52,9 +52,40 @@ defmodule SpecLint.Baseline do
   adapter is not applied at all: reconciling it is a deliberate step
   (`mix spec_lint.baseline`).
 
+  A `compared` inventory entry whose slice is no longer in the inventory
+  at all (its function or module was deleted, excluded, or its BEAM file
+  vanished) is listed with the stale inventory entries in a complete run,
+  unless its module is unavailable: the baseline no longer describes the
+  project, so regenerate it.
+
   `expires` must be `null` or an ISO 8601 date (`YYYY-MM-DD`); `parse/2`
   rejects anything else, so a mistyped date cannot suppress a finding
   forever.
+
+  ## Gate state
+
+  Every finding records the gating prerequisites that were blocked when it
+  was written (`"blocked"`, a list of names, empty when none was). A
+  finding of a rule that gates by its prerequisites (`SL001` `conflict`
+  and `clause_conflict`, `SL003`; `SpecLint.Policy`) that was written
+  blocked, so reported but not gated, does not acknowledge the same issue
+  once its prerequisites are met and it gates: the fingerprint hashes only
+  the slice's own evidence, not its siblings, so removing an overlapping
+  overload (or translating an unsupported sibling) turns the same
+  fingerprint from report-only into gating. Such an issue counts as new,
+  and `decide/3` lists its entry under `gate_changed`. An entry without
+  `"blocked"` (written by an earlier version) acknowledges as before.
+
+  ## Regeneration
+
+  `build/5` keeps what analysis that did not happen cannot confirm, by the
+  same rule `decide/3` uses for staleness: the previous findings of rules
+  that did not run, and of slices or modules that are now `unsupported`,
+  `unavailable` or `unanalysed`, and the previous `compared` inventory
+  entries of modules that are now unavailable as a whole. Regenerating
+  while debug info is off, or while an adapter change makes slices
+  unavailable, therefore does not drop acknowledgements that come back
+  when the analysis does.
 
   ## Adapter compatibility per entry
 
@@ -71,7 +102,7 @@ defmodule SpecLint.Baseline do
   afresh) or drops them.
   """
 
-  alias SpecLint.{Bound, Compiler, Issue}
+  alias SpecLint.{Bound, Compiler, Issue, Policy}
   alias SpecLint.Report.Json
 
   @version 1
@@ -118,7 +149,8 @@ defmodule SpecLint.Baseline do
           reason: nil | :missing | :adapter_mismatch,
           stale_findings: [finding()],
           stale_inventory: [inventory_entry()],
-          pending_reconciliation: [finding()]
+          pending_reconciliation: [finding()],
+          gate_changed: [finding()]
         }
 
   @doc "The baseline file format version."
@@ -318,31 +350,33 @@ defmodule SpecLint.Baseline do
   fingerprint (or inventory key and status) are kept; new inventory
   acknowledgements get `"initial baseline"`, to be reviewed.
 
+  Each finding records its blocked prerequisites (`"blocked"`, see "Gate
+  state").
+
   Options: `:rules`, the IDs of the rules that ran (default: every rule).
   Previous findings of rules that did not run (turned `:off` in the
   configuration) are kept, so a narrower rule set never drops acknowledged
-  entries. A kept entry written by another adapter (its own `"adapter"`,
-  or the previous file's when it has none) is kept with its adapter and
-  `"pending_reconciliation": true`: the running adapter never rechecked
-  it, so it acknowledges nothing (see "Adapter compatibility per entry").
+  entries. So are previous findings whose slice or module is not compared
+  in `inventory` (now `unsupported`, `unavailable` or `unanalysed`), and
+  previous `compared` inventory entries of modules that are now
+  unavailable (see "Regeneration"). A kept entry written by another
+  adapter (its own `"adapter"`, or the previous file's when it has none)
+  is kept with its adapter and `"pending_reconciliation": true`: the
+  running adapter never rechecked it, so it acknowledges nothing (see
+  "Adapter compatibility per entry"). A kept entry whose own adapter is the
+  running one loses a `"pending_reconciliation"` flag it had.
   """
   @spec build([Issue.t()], [map()], String.t(), t() | nil, keyword()) :: map()
   def build(issues, inventory, adapter, previous, opts \\ []) do
     rules = Keyword.get(opts, :rules)
     previous_entries = (previous && previous.findings) || []
     previous_findings = Map.new(previous_entries, &{&1["fingerprint"], &1})
+    not_analysed = not_analysed(inventory)
 
     kept =
-      for entry <- previous_entries, not ran?(entry["rule"], rules) do
-        entry_adapter = entry_adapter(entry, previous)
-
-        if entry_adapter == adapter and not pending?(entry),
-          do: entry,
-          else: Map.merge(entry, %{"adapter" => entry_adapter, "pending_reconciliation" => true})
-      end
-
-    previous_acks =
-      Map.new((previous && previous.inventory) || [], &{inventory_key(&1), &1})
+      for entry <- previous_entries,
+          not ran?(entry["rule"], rules) or not_analysed?(entry, not_analysed),
+          do: keep(entry, previous, adapter)
 
     findings =
       for %Issue{rule: rule} = issue <- issues, rule != "SL008" do
@@ -357,6 +391,7 @@ defmodule SpecLint.Baseline do
           "evidence" => Atom.to_string(issue.evidence),
           "fingerprint" => issue.fingerprint,
           "adapter" => adapter,
+          "blocked" => issue |> Issue.blocked() |> Enum.map(&Atom.to_string/1) |> Enum.sort(),
           "reason" => Map.get(old, "reason"),
           "owner" => Map.get(old, "owner"),
           "expires" => Map.get(old, "expires")
@@ -366,7 +401,19 @@ defmodule SpecLint.Baseline do
       |> Enum.uniq_by(& &1["fingerprint"])
       |> Enum.sort_by(&{&1["mfa"], &1["rule"], &1["slice"] || -1, &1["clause"] || -1})
 
-    inventory =
+    %{
+      "version" => @version,
+      "adapter" => adapter,
+      "findings" => findings,
+      "inventory" => build_inventory(inventory, previous, not_analysed)
+    }
+  end
+
+  defp build_inventory(inventory, previous, {_not_compared, unavailable_modules}) do
+    previous_inventory = (previous && previous.inventory) || []
+    previous_acks = Map.new(previous_inventory, &{inventory_key(&1), &1})
+
+    current =
       for entry <- inventory do
         stored = stored_entry(entry)
 
@@ -383,14 +430,51 @@ defmodule SpecLint.Baseline do
           Map.put(stored, "acknowledged", ack)
         end
       end
-      |> Enum.sort_by(&inventory_sort_key/1)
 
-    %{
-      "version" => @version,
-      "adapter" => adapter,
-      "findings" => findings,
-      "inventory" => inventory
-    }
+    # The compared slices of a module that is now unavailable as a whole:
+    # kept, so a spec removed while the module could not be read is still
+    # seen once it can.
+    keys = MapSet.new(current, &inventory_key/1)
+
+    carried =
+      for %{"status" => "compared", "mfa" => mfa} = entry <- previous_inventory,
+          is_binary(mfa),
+          MapSet.member?(unavailable_modules, entry["module"]),
+          not MapSet.member?(keys, inventory_key(entry)),
+          do: entry
+
+    Enum.sort_by(current ++ carried, &inventory_sort_key/1)
+  end
+
+  # A previous finding kept by build/5: rechecked only when it is its own
+  # adapter's (then any pending flag goes), pending otherwise.
+  defp keep(entry, previous, adapter) do
+    entry_adapter = entry_adapter(entry, previous)
+
+    if entry_adapter == adapter,
+      do: Map.delete(entry, "pending_reconciliation"),
+      else: Map.merge(entry, %{"adapter" => entry_adapter, "pending_reconciliation" => true})
+  end
+
+  # The slices ({mfa, slice}) and modules a run did not compare, from the
+  # current inventory (SpecLint.Coverage.entry/0): the analysis of their
+  # findings did not happen.
+  defp not_analysed(inventory) do
+    not_compared =
+      for %{mfa: mfa, slice: slice, status: status} <- inventory,
+          mfa != nil and status != "compared",
+          into: MapSet.new(),
+          do: {mfa, slice}
+
+    unavailable_modules =
+      for %{mfa: nil, module: module} <- inventory, into: MapSet.new(), do: module
+
+    {not_compared, unavailable_modules}
+  end
+
+  defp not_analysed?(entry, {not_compared, unavailable_modules}) do
+    MapSet.member?(not_compared, {entry["mfa"], entry["slice"]}) or
+      in_modules?(entry["mfa"], unavailable_modules)
   end
 
   # The adapter an entry was written by: its own, or the file's.
@@ -423,7 +507,10 @@ defmodule SpecLint.Baseline do
 
   A finding entry from another adapter, or marked
   `"pending_reconciliation"`, never acknowledges an issue and is never
-  stale; it is listed in `pending_reconciliation`.
+  stale; it is listed in `pending_reconciliation`. An entry written with
+  blocked prerequisites does not acknowledge the issue once it gates by
+  its prerequisites; the issue stays new and the entry is listed in
+  `gate_changed` (see "Gate state").
   """
   @spec decide([Issue.t()], t() | nil, keyword()) :: {[Issue.t()], decisions()}
   def decide(issues, nil, _opts), do: {issues, not_applied(:missing)}
@@ -446,7 +533,8 @@ defmodule SpecLint.Baseline do
       reason: reason,
       stale_findings: [],
       stale_inventory: [],
-      pending_reconciliation: []
+      pending_reconciliation: [],
+      gate_changed: []
     }
   end
 
@@ -466,24 +554,12 @@ defmodule SpecLint.Baseline do
           into: %{},
           do: {inventory_key(entry), entry}
 
-    issues =
-      Enum.map(issues, fn
-        %Issue{rule: "SL008"} = issue ->
-          case acknowledgement(acks, issue) do
-            {:ok, entry} ->
-              if entry["status"] == issue.data[:status],
-                do: %{issue | baseline: :baselined},
-                else: issue
-
-            :error ->
-              issue
-          end
-
-        %Issue{} = issue ->
-          case Map.fetch(findings, issue.fingerprint) do
-            {:ok, entry} -> %{issue | baseline: expiry(entry, today)}
-            :error -> issue
-          end
+    {issues, gate_changed} =
+      Enum.map_reduce(issues, [], fn issue, changed ->
+        case decide_issue(issue, acks, findings, today) do
+          {:gate_changed, entry} -> {issue, [entry | changed]}
+          decided -> {decided, changed}
+        end
       end)
 
     {stale_findings, stale_inventory} =
@@ -499,9 +575,44 @@ defmodule SpecLint.Baseline do
        reason: nil,
        stale_findings: stale_findings,
        stale_inventory: stale_inventory,
-       pending_reconciliation: pending
+       pending_reconciliation: pending,
+       gate_changed: gate_changed |> Enum.uniq() |> Enum.sort_by(& &1["fingerprint"])
      }}
   end
+
+  # The issue with its baseline decision, or {:gate_changed, entry} when
+  # the matching entry was written report-only and the issue gates now.
+  defp decide_issue(%Issue{rule: "SL008"} = issue, acks, _findings, _today) do
+    case acknowledgement(acks, issue) do
+      {:ok, entry} ->
+        if entry["status"] == issue.data[:status],
+          do: %{issue | baseline: :baselined},
+          else: issue
+
+      :error ->
+        issue
+    end
+  end
+
+  defp decide_issue(%Issue{} = issue, _acks, findings, today) do
+    case Map.fetch(findings, issue.fingerprint) do
+      {:ok, entry} ->
+        if gate_changed?(entry, issue),
+          do: {:gate_changed, entry},
+          else: %{issue | baseline: expiry(entry, today)}
+
+      :error ->
+        issue
+    end
+  end
+
+  # An entry written while a gating prerequisite was blocked (report-only)
+  # does not acknowledge the issue once its prerequisites are met and it
+  # gates. Entries without "blocked" predate the field.
+  defp gate_changed?(%{"blocked" => [_ | _]}, issue),
+    do: Policy.gated_by_prerequisites?(issue) and Issue.prerequisites_met?(issue)
+
+  defp gate_changed?(_entry, _issue), do: false
 
   # An unsupported checker chunk is a preflight failure (DESIGN.md 5.1): no
   # inventory entry acknowledges it.
@@ -527,26 +638,21 @@ defmodule SpecLint.Baseline do
 
   defp stale(issues, baseline, opts) do
     rules = Keyword.get(opts, :rules)
-    inventory = Keyword.get(opts, :inventory, [])
+    inventory = Keyword.get(opts, :inventory)
     fingerprints = MapSet.new(issues, & &1.fingerprint)
-
-    not_compared =
-      for %{mfa: mfa, slice: slice, status: status} <- inventory,
-          mfa != nil and status != "compared",
-          into: MapSet.new(),
-          do: {mfa, slice}
-
-    unavailable_modules =
-      for %{mfa: nil, module: module} <- inventory, into: MapSet.new(), do: module
+    not_analysed = not_analysed(inventory || [])
 
     stale_findings =
       Enum.reject(baseline.findings, fn entry ->
         MapSet.member?(fingerprints, entry["fingerprint"]) or not ran?(entry["rule"], rules) or
-          MapSet.member?(not_compared, {entry["mfa"], entry["slice"]}) or
-          in_modules?(entry["mfa"], unavailable_modules)
+          not_analysed?(entry, not_analysed)
       end)
 
-    {stale_findings, stale_inventory(issues, baseline, rules)}
+    stale_inventory =
+      stale_inventory(issues, baseline, rules) ++
+        stale_compared(baseline, inventory, rules, not_analysed)
+
+    {stale_findings, stale_inventory}
   end
 
   defp stale_inventory(issues, baseline, rules) do
@@ -559,6 +665,25 @@ defmodule SpecLint.Baseline do
       for entry <- baseline.inventory,
           entry["status"] in @acknowledged_statuses,
           not MapSet.member?(acknowledged, inventory_key(entry)),
+          do: entry
+    else
+      []
+    end
+  end
+
+  # Compared entries whose slice is in no current inventory entry, outside
+  # the modules that are unavailable: the definition, its module or its
+  # BEAM file is gone. Only with the current inventory.
+  defp stale_compared(_baseline, nil, _rules, _not_analysed), do: []
+
+  defp stale_compared(baseline, inventory, rules, {_not_compared, unavailable_modules}) do
+    if ran?("SL008", rules) do
+      present = MapSet.new(inventory, &{&1.mfa || &1.module, &1.slice})
+
+      for %{"status" => "compared", "mfa" => mfa} = entry <- baseline.inventory,
+          is_binary(mfa),
+          not MapSet.member?(present, inventory_key(entry)),
+          not MapSet.member?(unavailable_modules, entry["module"]),
           do: entry
     else
       []

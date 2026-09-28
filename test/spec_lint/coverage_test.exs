@@ -138,6 +138,156 @@ defmodule SpecLint.CoverageTest do
     assert Coverage.lost_analysis([module], nil) == []
   end
 
+  describe "overloads and injected defaults" do
+    @overloads """
+    defmodule OverFx do
+      @spec pick(atom()) :: :a
+      @spec pick(integer()) :: :b
+      def pick(x) when is_atom(x), do: :a
+      def pick(x) when is_integer(x), do: :b
+    end
+    """
+
+    @one_overload """
+    defmodule OverFx do
+      @spec pick(integer()) :: :b
+      def pick(x) when is_atom(x), do: :a
+      def pick(x) when is_integer(x), do: :b
+    end
+    """
+
+    @merged """
+    defmodule OverFx do
+      @spec pick(term()) :: term()
+      def pick(x) when is_atom(x), do: :a
+      def pick(x) when is_integer(x), do: :b
+    end
+    """
+
+    defp baselined(tmp_dir, source) do
+      ebin = elixirc!(tmp_dir, source)
+      project = Project.from_ebins([{:fx, ebin}], tmp_dir)
+      config = %Config{baseline: "baseline.json"}
+      {:ok, first} = Run.execute(project, config, ci: true)
+      assert first.exit_code == 0, inspect(first.issues)
+      write_baseline(tmp_dir, first)
+      {project, config}
+    end
+
+    test "removing one overload while another stays analysed is a regression",
+         %{tmp_dir: tmp_dir} do
+      {project, config} = baselined(tmp_dir, @overloads)
+
+      for source <- [@one_overload, @merged] do
+        File.rm_rf!(Path.join(tmp_dir, "ebin"))
+        elixirc!(tmp_dir, source)
+        {:ok, run} = Run.execute(project, config, ci: true)
+        assert run.exit_code == 1
+
+        # Slices are positional: the missing index is the last one.
+        assert [%Issue{rule: "SL008", mfa: {OverFx, :pick, 1}, slice: 1} = issue] = run.issues
+
+        assert issue.data == %{
+                 status: "unanalysed",
+                 reason: "spec_clause_removed",
+                 regression: true
+               }
+
+        assert run.ledger["lost_analysis"] == %{"spec_clause_removed" => 1}
+      end
+
+      # Regenerating acknowledges it; restoring both overloads makes the
+      # acknowledgement stale.
+      {:ok, run} = Run.execute(project, config, ci: true)
+      rebuilt = write_baseline(tmp_dir, run)
+
+      assert [%{"slice" => 1, "status" => "unanalysed", "reason" => "spec_clause_removed"}] =
+               Enum.filter(rebuilt["inventory"], &(&1["status"] != "compared"))
+
+      {:ok, acknowledged} = Run.execute(project, config, ci: true)
+      assert acknowledged.exit_code == 0
+      assert [%{baseline: :baselined}] = acknowledged.issues
+
+      File.rm_rf!(Path.join(tmp_dir, "ebin"))
+      elixirc!(tmp_dir, @overloads)
+      {:ok, restored} = Run.execute(project, config, ci: true)
+      assert restored.issues == []
+
+      assert [%{"mfa" => "OverFx.pick/1", "slice" => 1}] =
+               restored.baseline_decisions.stale_inventory
+    end
+
+    @worker """
+    defmodule WorkerFx do
+      use GenServer
+
+      @spec init(term()) :: {:ok, term()}
+      def init(state), do: {:ok, state}
+
+      @spec handle_info(term(), term()) :: {:noreply, term()}
+      def handle_info(_msg, state), do: {:noreply, state}
+
+      @spec child_spec(term()) :: map()
+      def child_spec(arg), do: %{id: __MODULE__, start: {__MODULE__, :start_link, [arg]}}
+    end
+    """
+
+    # handle_info/2 and child_spec/1 deleted: the exports that remain are
+    # GenServer's defoverridable defaults.
+    @worker_defaults """
+    defmodule WorkerFx do
+      use GenServer
+
+      @spec init(term()) :: {:ok, term()}
+      def init(state), do: {:ok, state}
+    end
+    """
+
+    # handle_info/2 keeps the user's definition but loses its spec.
+    @worker_unspecced """
+    defmodule WorkerFx do
+      use GenServer
+
+      @spec init(term()) :: {:ok, term()}
+      def init(state), do: {:ok, state}
+
+      def handle_info(_msg, state), do: {:noreply, state}
+    end
+    """
+
+    test "deleting an override of a use-injected default is not a regression",
+         %{tmp_dir: tmp_dir} do
+      {project, config} = baselined(tmp_dir, @worker)
+
+      File.rm_rf!(Path.join(tmp_dir, "ebin"))
+      elixirc!(tmp_dir, @worker_defaults)
+      {:ok, run} = Run.execute(project, config, ci: true)
+      [module] = run.modules
+      assert {:handle_info, 2} in module.exports
+      assert {:handle_info, 2} in module.overridable_defaults
+      assert {:child_spec, 1} in module.overridable_defaults
+      refute {:init, 1} in module.overridable_defaults
+
+      assert run.issues == []
+      assert run.exit_code == 0
+
+      # The baseline's compared entries of the deleted definitions are
+      # stale, so the baseline is regenerated.
+      assert ["WorkerFx.child_spec/1", "WorkerFx.handle_info/2"] =
+               run.baseline_decisions.stale_inventory |> Enum.map(& &1["mfa"]) |> Enum.sort()
+
+      # A user definition that only loses its spec is still spec_removed.
+      File.rm_rf!(Path.join(tmp_dir, "ebin"))
+      elixirc!(tmp_dir, @worker_unspecced)
+      {:ok, run} = Run.execute(project, config, ci: true)
+
+      assert [%Issue{mfa: {WorkerFx, :handle_info, 2}, data: %{reason: "spec_removed"}}] =
+               run.issues
+
+      assert run.exit_code == 1
+    end
+  end
+
   describe "build directories" do
     test "a missing ebin is an error, an empty one is zero specs", %{tmp_dir: tmp_dir} do
       missing = Path.join(tmp_dir, "_build/dev/lib/fx/ebin")
@@ -155,6 +305,40 @@ defmodule SpecLint.CoverageTest do
       assert run.completion == :complete
       assert run.ledger["functions"]["found"] == 0
       assert Console.render(run) |> IO.iodata_to_binary() =~ "0 specs checked"
+    end
+
+    test "an ebin missing BEAM files its .app lists is an error, not a smaller project",
+         %{tmp_dir: tmp_dir} do
+      {project, config} = setup_project(tmp_dir)
+      ebin = Path.join(tmp_dir, "ebin")
+
+      File.write!(
+        Path.join(ebin, "fx.app"),
+        ~s({application,fx,[{modules,['Elixir.LostFx']},{vsn,"0.1.0"}]}.\n)
+      )
+
+      assert Project.check_build_paths(project) == :ok
+      File.rm!(Path.join(ebin, "Elixir.LostFx.beam"))
+      assert Project.check_build_paths(project) == {:error, :missing_beams}
+      assert [%{app: :fx, modules: [LostFx]}] = Project.missing_modules(project)
+
+      assert {:error, message} = Run.execute(project, config, ci: true)
+      assert message =~ "incomplete build"
+      assert message =~ "fx (ebin): LostFx"
+
+      # Without a module list (no .app file, no manifest) the run goes on,
+      # and the baseline's compared entries of the vanished module are
+      # reported as stale rather than silently dropped.
+      File.rm!(Path.join(ebin, "fx.app"))
+      {:ok, run} = Run.execute(project, config, ci: true)
+      assert run.exit_code == 0
+      assert run.ledger["functions"]["found"] == 0
+
+      assert ["LostFx.deleted/1", "LostFx.gone/1", "LostFx.kept/1", "LostFx.privatised/1"] =
+               run.baseline_decisions.stale_inventory |> Enum.map(& &1["mfa"]) |> Enum.sort()
+
+      assert Console.render(run) |> IO.iodata_to_binary() =~
+               "stale inventory entry: LostFx.gone/1 slice 0 (compared in the baseline"
     end
 
     test "only the selected applications are checked", %{tmp_dir: tmp_dir} do

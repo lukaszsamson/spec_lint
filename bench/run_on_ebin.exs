@@ -43,6 +43,14 @@ defmodule SpecLint.RunOnEbin do
 
     config = ok!(Config.load(project.root, cli.config))
     config = ok!(Config.merge_cli(config, CLI.config_overrides(cli)))
+
+    # --write-baseline reads the previous baseline from the file it writes,
+    # as mix spec_lint.baseline does; that file may not exist yet.
+    config =
+      if own[:write_baseline],
+        do: %{config | baseline: Path.expand(own[:write_baseline]), baseline_explicit: false},
+        else: config
+
     modules = if cli.explain, do: [elem(cli.explain, 0)], else: cli.modules
 
     run =

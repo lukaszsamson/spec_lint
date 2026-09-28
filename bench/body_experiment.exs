@@ -444,6 +444,11 @@ defmodule SpecLint.BodyExperiment do
       guard_blocked: false,
       top_only: relations.top_only?,
       near_top: relations.near_top?,
+      # `none` only says the extra over S_hi is empty; the obligation is
+      # established (DESIGN.md section 3) only when U(D) is within S_lo,
+      # which needs an exact return.
+      established: relations.established?,
+      return_exact: Bound.exact?(slice.return),
       applied: applied(relations.applied),
       applied_return: Compiler.to_string(relations.applied_upper),
       extra: Compiler.to_string(relations.extra),

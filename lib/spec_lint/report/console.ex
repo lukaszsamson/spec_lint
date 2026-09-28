@@ -184,10 +184,13 @@ defmodule SpecLint.Report.Console do
           "(#{entry["fingerprint"]})\n"
       end
 
-    stale_inventory =
-      for entry <- decisions.stale_inventory do
-        "  stale acknowledgement: #{entry["mfa"] || entry["module"]} slice #{entry["slice"]} " <>
-          "(#{entry["status"]})\n"
+    stale_inventory = Enum.map(decisions.stale_inventory, &stale_inventory_line/1)
+
+    gate_changed =
+      for entry <- decisions.gate_changed do
+        "  gate changed (written report-only, blocked by " <>
+          "#{Enum.join(entry["blocked"], ", ")}; gates now, counted as new): " <>
+          "#{entry["rule"]} #{entry["mfa"]} slice #{entry["slice"]} (#{entry["fingerprint"]})\n"
       end
 
     pending =
@@ -196,7 +199,17 @@ defmodule SpecLint.Report.Console do
           "#{entry["rule"]} #{entry["mfa"]} slice #{entry["slice"]} (#{entry["fingerprint"]})\n"
       end
 
-    [head, stale, stale_inventory, pending, "\n"]
+    [head, stale, stale_inventory, pending, gate_changed, "\n"]
+  end
+
+  defp stale_inventory_line(%{"status" => "compared"} = entry) do
+    "  stale inventory entry: #{entry["mfa"]} slice #{entry["slice"]} " <>
+      "(compared in the baseline, no longer found)\n"
+  end
+
+  defp stale_inventory_line(entry) do
+    "  stale acknowledgement: #{entry["mfa"] || entry["module"]} slice #{entry["slice"]} " <>
+      "(#{entry["status"]})\n"
   end
 
   defp result(run) do

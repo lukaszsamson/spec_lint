@@ -35,6 +35,37 @@ defmodule SpecLint.RunTest do
     assert run.exit_code == 1
   end
 
+  test "an explicit baseline path that does not exist is a configuration error",
+       %{tmp_dir: tmp_dir} do
+    ebin = Path.join(tmp_dir, "ebin")
+    File.mkdir_p!(ebin)
+    File.cp!(beam_path(Compare), Path.join(ebin, "#{Compare}.beam"))
+    project = Project.from_ebins([{:fx, ebin}], tmp_dir)
+
+    # The default path may be missing: no baseline yet.
+    assert {:ok, %Run{baseline: nil}} = Run.execute(project, %Config{}, ci: true)
+
+    # A mistyped --baseline, or baseline: in the configuration file.
+    {:ok, cli} = SpecLint.CLI.parse(~w(--ci --baseline .spec_lint_basline.json))
+    {:ok, from_cli} = Config.merge_cli(%Config{}, SpecLint.CLI.config_overrides(cli))
+    {:ok, from_file} = Config.from_keyword(baseline: ".spec_lint_basline.json")
+
+    for config <- [from_cli, from_file] do
+      assert config.baseline_explicit
+      assert {:error, message} = Run.execute(project, config, ci: true)
+      assert message =~ "baseline file not found: .spec_lint_basline.json"
+    end
+
+    # Whether the path was explicit does not change the report's digest.
+    assert Config.digest(from_file) == Config.digest(%{from_file | baseline_explicit: false})
+
+    # An explicit path that exists is applied as usual.
+    {:ok, first} = Run.execute(project, %Config{}, ci: true)
+    baseline = Baseline.build(first.issues, first.inventory, first.capabilities.adapter_id, nil)
+    :ok = Baseline.write(Path.join(tmp_dir, ".spec_lint_basline.json"), baseline)
+    assert {:ok, %Run{exit_code: 0}} = Run.execute(project, from_cli, ci: true)
+  end
+
   test "filters: an unknown module or app is a configuration error" do
     assert {:error, message} = Run.execute(project(), @config, modules: [Nope.Missing])
     assert message =~ "Nope.Missing"

@@ -813,28 +813,28 @@
   "label": "decimal_full",
   "modules": [
     {
-      "default_run_us": 17625,
+      "default_run_us": 19752,
       "default_warnings": 0,
       "error": null,
       "module": "Decimal",
       "sampled": false
     },
     {
-      "default_run_us": 327,
+      "default_run_us": 351,
       "default_warnings": 0,
       "error": null,
       "module": "Decimal.Context",
       "sampled": false
     },
     {
-      "default_run_us": 34,
+      "default_run_us": 46,
       "default_warnings": 0,
       "error": null,
       "module": "Decimal.Error",
       "sampled": false
     },
     {
-      "default_run_us": 383,
+      "default_run_us": 411,
       "default_warnings": 0,
       "error": null,
       "module": "Decimal.Macros",
@@ -848,14 +848,14 @@
       "sampled": false
     },
     {
-      "default_run_us": 1047,
+      "default_run_us": 975,
       "default_warnings": 0,
       "error": null,
       "module": "JSON.Encoder.Decimal",
       "sampled": false
     },
     {
-      "default_run_us": 12,
+      "default_run_us": 10,
       "default_warnings": 0,
       "error": null,
       "module": "String.Chars.Decimal",
@@ -937,12 +937,12 @@
     "body_unavailable": 0,
     "cost": {
       "body_calls": 46,
-      "body_max_us": 11560,
-      "body_median_us": 7925,
-      "body_p90_us": 8663,
-      "body_total_ms": 345,
+      "body_max_us": 12330,
+      "body_median_us": 8425,
+      "body_p90_us": 8822,
+      "body_total_ms": 359,
       "default_calls": 7,
-      "default_total_ms": 19
+      "default_total_ms": 21
     },
     "extra_warning_slices": 0,
     "extra_warnings": 0,

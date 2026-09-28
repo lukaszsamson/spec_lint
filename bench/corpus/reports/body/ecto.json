@@ -2539,12 +2539,14 @@
             "clauses": [
               "(%{atom() => term(), __meta__: term()}, list(\n  {:source, binary()} or {:state, :built or :deleted or :loaded} or {:context or :prefix, term()}\n)) -> dynamic(%{atom() => term(), __meta__: not :noop} or %{atom() => term(), __meta__: term()})"
             ],
+            "established": true,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "no_extra"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "none",
@@ -2562,18 +2564,20 @@
             "clauses": [
               "(%{atom() => term(), __meta__: term()}, list(\n  {:source, binary()} or {:state, :built or :deleted or :loaded} or {:context or :prefix, term()}\n)) -> dynamic(%{atom() => term(), __meta__: not :noop} or %{atom() => term(), __meta__: term()})"
             ],
+            "established": true,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "no_extra"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "none",
             "warn": false
           },
-          "body_us": 359,
+          "body_us": 474,
           "default": {
             "applied": [
               0
@@ -2597,6 +2601,7 @@
             "clauses": [
               "(%{..., __meta__: term()}, empty_list() or non_empty_list(term(), term())) -> dynamic(%{..., __meta__: term()})"
             ],
+            "established": false,
             "extra": "%{..., __meta__: term()} and not %{atom() => term()}",
             "guard_blocked": false,
             "near_top": false,
@@ -2605,6 +2610,7 @@
               "unknown_components=1",
               "no_counted_component"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "unknown",
@@ -2637,6 +2643,7 @@
             "clauses": [
               "(%{..., __meta__: term()}, empty_list() or non_empty_list(term(), term())) -> dynamic(%{..., __meta__: term()})"
             ],
+            "established": false,
             "extra": "%{..., __meta__: term()} and not %{atom() => term()}",
             "guard_blocked": false,
             "near_top": false,
@@ -2645,6 +2652,7 @@
               "unknown_components=1",
               "no_counted_component"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "unknown",
@@ -2688,6 +2696,7 @@
             "clauses": [
               "(%Ecto.Changeset{\n  valid?: boolean(),\n  data: nil or map(),\n  params: %{binary() => term()} or nil,\n  changes: %{atom() => term()},\n  errors: list({atom(), {binary(), list({atom(), term()})}}),\n  validations: list({atom(), term()}),\n  required: list(atom()),\n  prepare: list((none() -> term())),\n  constraints:\n    list(%{\n      constraint: %Regex{source: binary(), opts: list(term())} or binary(),\n      error_message: binary(),\n      error_type: atom(),\n      field: atom(),\n      match: :exact or :prefix or :suffix,\n      type: :check or :exclusion or :foreign_key or :unique\n    }),\n  filters: %{atom() => term()},\n  action: atom(),\n  types: %{\n    atom() =>\n      atom() or {:parameterized, {atom(), term()}} or {:supertype, :datetime} or\n        {:array or :assoc or :embed or :in or :map or :try, term()}\n  },\n  repo: atom(),\n  repo_opts: list({atom(), term()})\n}, atom(), binary(), list({atom(), term()})) -> dynamic(%Ecto.Changeset{\n  valid?: false,\n  data: nil or map(),\n  params: %{binary() => term()} or nil,\n  changes: %{atom() => term()},\n  errors: non_empty_list({atom(), {binary(), list({atom(), term()})}}),\n  validations: list({atom(), term()}),\n  required: list(atom()),\n  prepare: list((none() -> term())),\n  constraints:\n    list(%{\n      constraint: %Regex{source: binary(), opts: list(term())} or binary(),\n      error_message: binary(),\n      error_type: atom(),\n      field: atom(),\n      match: :exact or :prefix or :suffix,\n      type: :check or :exclusion or :foreign_key or :unique\n    }),\n  filters: %{atom() => term()},\n  action: atom(),\n  types: %{\n    atom() =>\n      atom() or {:parameterized, {atom(), term()}} or {:supertype, :datetime} or\n        {:array or :assoc or :embed or :in or :map or :try, term()}\n  },\n  repo: atom(),\n  repo_opts: list({atom(), term()})\n})"
             ],
+            "established": false,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
@@ -2695,6 +2704,7 @@
               "no_extra",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "none",
@@ -2712,6 +2722,7 @@
             "clauses": [
               "(%Ecto.Changeset{\n  valid?: boolean(),\n  data: nil or map(),\n  params: %{binary() => term()} or nil,\n  changes: %{atom() => term()},\n  errors: list({atom(), {binary(), list({atom(), term()})}}),\n  validations: list({atom(), term()}),\n  required: list(atom()),\n  prepare: list((none() -> term())),\n  constraints:\n    list(%{\n      constraint: %Regex{source: binary(), opts: list(term())} or binary(),\n      error_message: binary(),\n      error_type: atom(),\n      field: atom(),\n      match: :exact or :prefix or :suffix,\n      type: :check or :exclusion or :foreign_key or :unique\n    }),\n  filters: %{atom() => term()},\n  action: atom(),\n  types: %{\n    atom() =>\n      atom() or {:parameterized, {atom(), term()}} or {:supertype, :datetime} or\n        {:array or :assoc or :embed or :in or :map or :try, term()}\n  },\n  repo: atom(),\n  repo_opts: list({atom(), term()})\n}, atom(), binary(), list({atom(), term()})) -> dynamic(%Ecto.Changeset{\n  valid?: false,\n  data: nil or map(),\n  params: %{binary() => term()} or nil,\n  changes: %{atom() => term()},\n  errors: non_empty_list({atom(), {binary(), list({atom(), term()})}}),\n  validations: list({atom(), term()}),\n  required: list(atom()),\n  prepare: list((none() -> term())),\n  constraints:\n    list(%{\n      constraint: %Regex{source: binary(), opts: list(term())} or binary(),\n      error_message: binary(),\n      error_type: atom(),\n      field: atom(),\n      match: :exact or :prefix or :suffix,\n      type: :check or :exclusion or :foreign_key or :unique\n    }),\n  filters: %{atom() => term()},\n  action: atom(),\n  types: %{\n    atom() =>\n      atom() or {:parameterized, {atom(), term()}} or {:supertype, :datetime} or\n        {:array or :assoc or :embed or :in or :map or :try, term()}\n  },\n  repo: atom(),\n  repo_opts: list({atom(), term()})\n})"
             ],
+            "established": false,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
@@ -2719,12 +2730,13 @@
               "no_extra",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "none",
             "warn": false
           },
-          "body_us": 7881,
+          "body_us": 8049,
           "default": {
             "applied": [
               0
@@ -2748,6 +2760,7 @@
             "clauses": [
               "(%Ecto.Changeset{}, term(), binary(), term()) -> dynamic(%Ecto.Changeset{valid?: false, errors: non_empty_list(term(), term())})"
             ],
+            "established": false,
             "extra": "%Ecto.Changeset{valid?: false, errors: non_empty_list(term(), term())} and not %Ecto.Changeset{\n  valid?: boolean(),\n  data: nil or map(),\n  params: %{binary() => term()} or nil,\n  changes: %{atom() => term()},\n  errors: list({atom(), {binary(), list({atom(), term()})}}),\n  validations: list({atom(), term()}),\n  required: list(atom()),\n  prepare: list((none() -> term())),\n  constraints:\n    list(%{\n      constraint: %Regex{source: binary(), opts: list(term())} or binary(),\n      error_message: binary(),\n      error_type: atom(),\n      field: atom(),\n      match: :exact or :prefix or :suffix,\n      type: :check or :exclusion or :foreign_key or :unique\n    }),\n  filters: %{atom() => term()},\n  action: atom(),\n  types: %{\n    atom() =>\n      atom() or {:parameterized, {atom(), term()}} or {:supertype, :datetime} or\n        {:array or :assoc or :embed or :in or :map or :try, term()}\n  },\n  repo: atom(),\n  repo_opts: list({atom(), term()})\n}",
             "guard_blocked": false,
             "near_top": false,
@@ -2758,6 +2771,7 @@
               "no_counted_component",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "unknown",
@@ -2794,6 +2808,7 @@
             "clauses": [
               "(%Ecto.Changeset{}, term(), binary(), term()) -> dynamic(%Ecto.Changeset{valid?: false, errors: non_empty_list(term(), term())})"
             ],
+            "established": false,
             "extra": "%Ecto.Changeset{valid?: false, errors: non_empty_list(term(), term())} and not %Ecto.Changeset{\n  valid?: boolean(),\n  data: nil or map(),\n  params: %{binary() => term()} or nil,\n  changes: %{atom() => term()},\n  errors: list({atom(), {binary(), list({atom(), term()})}}),\n  validations: list({atom(), term()}),\n  required: list(atom()),\n  prepare: list((none() -> term())),\n  constraints:\n    list(%{\n      constraint: %Regex{source: binary(), opts: list(term())} or binary(),\n      error_message: binary(),\n      error_type: atom(),\n      field: atom(),\n      match: :exact or :prefix or :suffix,\n      type: :check or :exclusion or :foreign_key or :unique\n    }),\n  filters: %{atom() => term()},\n  action: atom(),\n  types: %{\n    atom() =>\n      atom() or {:parameterized, {atom(), term()}} or {:supertype, :datetime} or\n        {:array or :assoc or :embed or :in or :map or :try, term()}\n  },\n  repo: atom(),\n  repo_opts: list({atom(), term()})\n}",
             "guard_blocked": false,
             "near_top": false,
@@ -2804,6 +2819,7 @@
               "no_counted_component",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "unknown",
@@ -2863,6 +2879,7 @@
             "clauses": [
               "(%Ecto.Changeset{\n  valid?: boolean(),\n  data: nil or map(),\n  params: %{binary() => term()} or nil,\n  changes: %{atom() => term()},\n  errors: list({atom(), {binary(), list({atom(), term()})}}),\n  validations: list({atom(), term()}),\n  required: list(atom()),\n  prepare: list((none() -> term())),\n  constraints:\n    list(%{\n      constraint: %Regex{source: binary(), opts: list(term())} or binary(),\n      error_message: binary(),\n      error_type: atom(),\n      field: atom(),\n      match: :exact or :prefix or :suffix,\n      type: :check or :exclusion or :foreign_key or :unique\n    }),\n  filters: %{atom() => term()},\n  action: atom(),\n  types: %{\n    atom() =>\n      atom() or {:parameterized, {atom(), term()}} or {:supertype, :datetime} or\n        {:array or :assoc or :embed or :in or :map or :try, term()}\n  },\n  repo: atom(),\n  repo_opts: list({atom(), term()})\n}, atom()) -> dynamic(\n  {:error,\n   %Ecto.Changeset{\n     valid?: false,\n     data: nil or map(),\n     params: %{binary() => term()} or nil,\n     changes: %{atom() => term()},\n     errors: list({atom(), {binary(), list({atom(), term()})}}),\n     validations: list({atom(), term()}),\n     required: list(atom()),\n     prepare: list((none() -> term())),\n     constraints:\n       list(%{\n         constraint: %Regex{source: binary(), opts: list(term())} or binary(),\n         error_message: binary(),\n         error_type: atom(),\n         field: atom(),\n         match: :exact or :prefix or :suffix,\n         type: :check or :exclusion or :foreign_key or :unique\n       }),\n     filters: %{atom() => term()},\n     action: atom(),\n     types: %{\n       atom() =>\n         atom() or {:parameterized, {atom(), term()}} or {:supertype, :datetime} or\n           {:array or :assoc or :embed or :in or :map or :try, term()}\n     },\n     repo: atom(),\n     repo_opts: list({atom(), term()})\n   }} or {:ok, term()}\n)"
             ],
+            "established": false,
             "extra": "{:ok, term()} and not {:ok, map()}",
             "guard_blocked": false,
             "near_top": false,
@@ -2875,6 +2892,7 @@
               "no_counted_component",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "unknown",
@@ -2906,6 +2924,7 @@
             "clauses": [
               "(%Ecto.Changeset{\n  valid?: boolean(),\n  data: nil or map(),\n  params: %{binary() => term()} or nil,\n  changes: %{atom() => term()},\n  errors: list({atom(), {binary(), list({atom(), term()})}}),\n  validations: list({atom(), term()}),\n  required: list(atom()),\n  prepare: list((none() -> term())),\n  constraints:\n    list(%{\n      constraint: %Regex{source: binary(), opts: list(term())} or binary(),\n      error_message: binary(),\n      error_type: atom(),\n      field: atom(),\n      match: :exact or :prefix or :suffix,\n      type: :check or :exclusion or :foreign_key or :unique\n    }),\n  filters: %{atom() => term()},\n  action: atom(),\n  types: %{\n    atom() =>\n      atom() or {:parameterized, {atom(), term()}} or {:supertype, :datetime} or\n        {:array or :assoc or :embed or :in or :map or :try, term()}\n  },\n  repo: atom(),\n  repo_opts: list({atom(), term()})\n}, atom()) -> dynamic(\n  {:error,\n   %Ecto.Changeset{\n     valid?: false,\n     data: nil or map(),\n     params: %{binary() => term()} or nil,\n     changes: %{atom() => term()},\n     errors: list({atom(), {binary(), list({atom(), term()})}}),\n     validations: list({atom(), term()}),\n     required: list(atom()),\n     prepare: list((none() -> term())),\n     constraints:\n       list(%{\n         constraint: %Regex{source: binary(), opts: list(term())} or binary(),\n         error_message: binary(),\n         error_type: atom(),\n         field: atom(),\n         match: :exact or :prefix or :suffix,\n         type: :check or :exclusion or :foreign_key or :unique\n       }),\n     filters: %{atom() => term()},\n     action: atom(),\n     types: %{\n       atom() =>\n         atom() or {:parameterized, {atom(), term()}} or {:supertype, :datetime} or\n           {:array or :assoc or :embed or :in or :map or :try, term()}\n     },\n     repo: atom(),\n     repo_opts: list({atom(), term()})\n   }} or {:ok, term()}\n)"
             ],
+            "established": false,
             "extra": "{:ok, term()} and not {:ok, map()}",
             "guard_blocked": false,
             "near_top": false,
@@ -2918,12 +2937,13 @@
               "no_counted_component",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "unknown",
             "warn": false
           },
-          "body_us": 5541,
+          "body_us": 5988,
           "default": {
             "applied": [
               0
@@ -2950,6 +2970,7 @@
             "clauses": [
               "(%Ecto.Changeset{valid?: term()}, atom()) -> dynamic({:error, %Ecto.Changeset{valid?: false or nil, action: atom()}} or {:ok, term()})"
             ],
+            "established": false,
             "extra": "({:error, %Ecto.Changeset{valid?: false or nil, action: atom()}} and not {:error,\n %Ecto.Changeset{\n   valid?: boolean(),\n   data: nil or map(),\n   params: %{binary() => term()} or nil,\n   changes: %{atom() => term()},\n   errors: list({atom(), {binary(), list({atom(), term()})}}),\n   validations: list({atom(), term()}),\n   required: list(atom()),\n   prepare: list((none() -> term())),\n   constraints:\n     list(%{\n       constraint: %Regex{source: binary(), opts: list(term())} or binary(),\n       error_message: binary(),\n       error_type: atom(),\n       field: atom(),\n       match: :exact or :prefix or :suffix,\n       type: :check or :exclusion or :foreign_key or :unique\n     }),\n   filters: %{atom() => term()},\n   action: atom(),\n   types: %{\n     atom() =>\n       atom() or {:parameterized, {atom(), term()}} or {:supertype, :datetime} or\n         {:array or :assoc or :embed or :in or :map or :try, term()}\n   },\n   repo: atom(),\n   repo_opts: list({atom(), term()})\n }}) or ({:ok, term()} and not {:ok, map()})",
             "guard_blocked": false,
             "near_top": false,
@@ -2963,6 +2984,7 @@
               "no_counted_component",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "unknown",
@@ -3002,6 +3024,7 @@
             "clauses": [
               "(%Ecto.Changeset{valid?: term()}, atom()) -> dynamic({:error, %Ecto.Changeset{valid?: false or nil, action: atom()}} or {:ok, term()})"
             ],
+            "established": false,
             "extra": "({:error, %Ecto.Changeset{valid?: false or nil, action: atom()}} and not {:error,\n %Ecto.Changeset{\n   valid?: boolean(),\n   data: nil or map(),\n   params: %{binary() => term()} or nil,\n   changes: %{atom() => term()},\n   errors: list({atom(), {binary(), list({atom(), term()})}}),\n   validations: list({atom(), term()}),\n   required: list(atom()),\n   prepare: list((none() -> term())),\n   constraints:\n     list(%{\n       constraint: %Regex{source: binary(), opts: list(term())} or binary(),\n       error_message: binary(),\n       error_type: atom(),\n       field: atom(),\n       match: :exact or :prefix or :suffix,\n       type: :check or :exclusion or :foreign_key or :unique\n     }),\n   filters: %{atom() => term()},\n   action: atom(),\n   types: %{\n     atom() =>\n       atom() or {:parameterized, {atom(), term()}} or {:supertype, :datetime} or\n         {:array or :assoc or :embed or :in or :map or :try, term()}\n   },\n   repo: atom(),\n   repo_opts: list({atom(), term()})\n }}) or ({:ok, term()} and not {:ok, map()})",
             "guard_blocked": false,
             "near_top": false,
@@ -3015,6 +3038,7 @@
               "no_counted_component",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "unknown",
@@ -3081,12 +3105,14 @@
               "(%Ecto.Changeset{data: nil or map(), changes: empty_map()}) -> dynamic(nil or map())",
               "(%Ecto.Changeset{\n  data: nil or map(),\n  changes: %{atom() => term()} and not empty_map(),\n  types: %{\n    atom() =>\n      atom() or {:parameterized, {atom(), term()}} or {:supertype, :datetime} or\n        {:array or :assoc or :embed or :in or :map or :try, term()}\n  }\n}) -> dynamic()"
             ],
+            "established": false,
             "extra": "not map()",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "top_only"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -3127,18 +3153,20 @@
               "(%Ecto.Changeset{data: nil or map(), changes: empty_map()}) -> dynamic(nil or map())",
               "(%Ecto.Changeset{\n  data: nil or map(),\n  changes: %{atom() => term()} and not empty_map(),\n  types: %{\n    atom() =>\n      atom() or {:parameterized, {atom(), term()}} or {:supertype, :datetime} or\n        {:array or :assoc or :embed or :in or :map or :try, term()}\n  }\n}) -> dynamic()"
             ],
+            "established": false,
             "extra": "not map()",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "top_only"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
             "warn": false
           },
-          "body_us": 5251,
+          "body_us": 5659,
           "default": {
             "applied": [
               0
@@ -3161,12 +3189,14 @@
             "clauses": [
               "(%Ecto.Changeset{changes: term()}) -> dynamic()"
             ],
+            "established": false,
             "extra": "not map()",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "top_only"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -3202,12 +3232,14 @@
             "clauses": [
               "(%Ecto.Changeset{changes: term()}) -> dynamic()"
             ],
+            "established": false,
             "extra": "not map()",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "top_only"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -3250,12 +3282,14 @@
             "clauses": [
               "(%Ecto.Changeset{\n  constraints:\n    list(%{\n      constraint: %Regex{source: binary(), opts: list(term())} or binary(),\n      error_message: binary(),\n      error_type: atom(),\n      field: atom(),\n      match: :exact or :prefix or :suffix,\n      type: :check or :exclusion or :foreign_key or :unique\n    })\n}) -> dynamic(\n  list(%{\n    constraint: %Regex{source: binary(), opts: list(term())} or binary(),\n    error_message: binary(),\n    error_type: atom(),\n    field: atom(),\n    match: :exact or :prefix or :suffix,\n    type: :check or :exclusion or :foreign_key or :unique\n  })\n)"
             ],
+            "established": true,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "no_extra"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "none",
@@ -3273,18 +3307,20 @@
             "clauses": [
               "(%Ecto.Changeset{\n  constraints:\n    list(%{\n      constraint: %Regex{source: binary(), opts: list(term())} or binary(),\n      error_message: binary(),\n      error_type: atom(),\n      field: atom(),\n      match: :exact or :prefix or :suffix,\n      type: :check or :exclusion or :foreign_key or :unique\n    })\n}) -> dynamic(\n  list(%{\n    constraint: %Regex{source: binary(), opts: list(term())} or binary(),\n    error_message: binary(),\n    error_type: atom(),\n    field: atom(),\n    match: :exact or :prefix or :suffix,\n    type: :check or :exclusion or :foreign_key or :unique\n  })\n)"
             ],
+            "established": true,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "no_extra"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "none",
             "warn": false
           },
-          "body_us": 5111,
+          "body_us": 5830,
           "default": {
             "applied": [
               0
@@ -3307,12 +3343,14 @@
             "clauses": [
               "(%Ecto.Changeset{}) -> dynamic()"
             ],
+            "established": false,
             "extra": "not (list(%{\n  constraint: %Regex{source: binary(), opts: list(term())} or binary(),\n  error_message: binary(),\n  error_type: atom(),\n  field: atom(),\n  match: :exact or :prefix or :suffix,\n  type: :check or :exclusion or :foreign_key or :unique\n}))",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "top_only"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -3348,12 +3386,14 @@
             "clauses": [
               "(%Ecto.Changeset{}) -> dynamic()"
             ],
+            "established": false,
             "extra": "not (list(%{\n  constraint: %Regex{source: binary(), opts: list(term())} or binary(),\n  error_message: binary(),\n  error_type: atom(),\n  field: atom(),\n  match: :exact or :prefix or :suffix,\n  type: :check or :exclusion or :foreign_key or :unique\n}))",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "top_only"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -3407,6 +3447,7 @@
             "clauses": [
               "(%Ecto.Changeset{\n  valid?: boolean(),\n  data: nil or map(),\n  params: %{binary() => term()} or nil,\n  changes: %{atom() => term()},\n  errors: list({atom(), {binary(), list({atom(), term()})}}),\n  validations: list({atom(), term()}),\n  required: list(atom()),\n  prepare: list((none() -> term())),\n  constraints:\n    list(%{\n      constraint: %Regex{source: binary(), opts: list(term())} or binary(),\n      error_message: binary(),\n      error_type: atom(),\n      field: atom(),\n      match: :exact or :prefix or :suffix,\n      type: :check or :exclusion or :foreign_key or :unique\n    }),\n  filters: %{atom() => term()},\n  action: atom(),\n  types: %{\n    atom() =>\n      atom() or {:parameterized, {atom(), term()}} or {:supertype, :datetime} or\n        {:array or :assoc or :embed or :in or :map or :try, term()}\n  },\n  repo: atom(),\n  repo_opts: list({atom(), term()})\n}, atom() and not nil) -> dynamic(nil or boolean())"
             ],
+            "established": false,
             "extra": "nil",
             "guard_blocked": false,
             "near_top": false,
@@ -3415,6 +3456,7 @@
               "containment_unknown=[0]",
               "payload_gradual=1"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "possible_input_approximate",
@@ -3443,6 +3485,7 @@
             "clauses": [
               "(%Ecto.Changeset{\n  valid?: boolean(),\n  data: nil or map(),\n  params: %{binary() => term()} or nil,\n  changes: %{atom() => term()},\n  errors: list({atom(), {binary(), list({atom(), term()})}}),\n  validations: list({atom(), term()}),\n  required: list(atom()),\n  prepare: list((none() -> term())),\n  constraints:\n    list(%{\n      constraint: %Regex{source: binary(), opts: list(term())} or binary(),\n      error_message: binary(),\n      error_type: atom(),\n      field: atom(),\n      match: :exact or :prefix or :suffix,\n      type: :check or :exclusion or :foreign_key or :unique\n    }),\n  filters: %{atom() => term()},\n  action: atom(),\n  types: %{\n    atom() =>\n      atom() or {:parameterized, {atom(), term()}} or {:supertype, :datetime} or\n        {:array or :assoc or :embed or :in or :map or :try, term()}\n  },\n  repo: atom(),\n  repo_opts: list({atom(), term()})\n}, atom() and not nil) -> dynamic(nil or boolean())"
             ],
+            "established": false,
             "extra": "nil",
             "guard_blocked": false,
             "near_top": false,
@@ -3451,12 +3494,13 @@
               "containment_unknown=[0]",
               "payload_gradual=1"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "possible_input_approximate",
             "warn": false
           },
-          "body_us": 5660,
+          "body_us": 5930,
           "default": {
             "applied": [
               0
@@ -3479,6 +3523,7 @@
             "clauses": [
               "(%Ecto.Changeset{}, not nil) -> dynamic(nil or boolean())"
             ],
+            "established": false,
             "extra": "nil",
             "guard_blocked": false,
             "near_top": false,
@@ -3487,6 +3532,7 @@
               "domain_escape=[0]",
               "payload_gradual=1"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "possible_domain_escape",
@@ -3522,6 +3568,7 @@
             "clauses": [
               "(%Ecto.Changeset{}, not nil) -> dynamic(nil or boolean())"
             ],
+            "established": false,
             "extra": "nil",
             "guard_blocked": false,
             "near_top": false,
@@ -3530,6 +3577,7 @@
               "domain_escape=[0]",
               "payload_gradual=1"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "possible_domain_escape",
@@ -3573,6 +3621,7 @@
             "clauses": [
               "(%Ecto.Changeset{\n  valid?: boolean(),\n  data: nil or map(),\n  params: %{binary() => term()} or nil,\n  changes: %{atom() => term()},\n  errors: list({atom(), {binary(), list({atom(), term()})}}),\n  validations: list({atom(), term()}),\n  required: list(atom()),\n  prepare: list((none() -> term())),\n  constraints:\n    list(%{\n      constraint: %Regex{source: binary(), opts: list(term())} or binary(),\n      error_message: binary(),\n      error_type: atom(),\n      field: atom(),\n      match: :exact or :prefix or :suffix,\n      type: :check or :exclusion or :foreign_key or :unique\n    }),\n  filters: %{atom() => term()},\n  action: atom(),\n  types: %{\n    atom() =>\n      atom() or {:parameterized, {atom(), term()}} or {:supertype, :datetime} or\n        {:array or :assoc or :embed or :in or :map or :try, term()}\n  },\n  repo: atom(),\n  repo_opts: list({atom(), term()})\n}, (none() -> term())) -> dynamic(%Ecto.Changeset{\n  valid?: boolean(),\n  data: nil or map(),\n  params: %{binary() => term()} or nil,\n  changes: %{atom() => term()},\n  errors: list({atom(), {binary(), list({atom(), term()})}}),\n  validations: list({atom(), term()}),\n  required: list(atom()),\n  prepare: non_empty_list((none() -> term())),\n  constraints:\n    list(%{\n      constraint: %Regex{source: binary(), opts: list(term())} or binary(),\n      error_message: binary(),\n      error_type: atom(),\n      field: atom(),\n      match: :exact or :prefix or :suffix,\n      type: :check or :exclusion or :foreign_key or :unique\n    }),\n  filters: %{atom() => term()},\n  action: atom(),\n  types: %{\n    atom() =>\n      atom() or {:parameterized, {atom(), term()}} or {:supertype, :datetime} or\n        {:array or :assoc or :embed or :in or :map or :try, term()}\n  },\n  repo: atom(),\n  repo_opts: list({atom(), term()})\n})"
             ],
+            "established": false,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
@@ -3580,6 +3629,7 @@
               "no_extra",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "none",
@@ -3597,6 +3647,7 @@
             "clauses": [
               "(%Ecto.Changeset{\n  valid?: boolean(),\n  data: nil or map(),\n  params: %{binary() => term()} or nil,\n  changes: %{atom() => term()},\n  errors: list({atom(), {binary(), list({atom(), term()})}}),\n  validations: list({atom(), term()}),\n  required: list(atom()),\n  prepare: list((none() -> term())),\n  constraints:\n    list(%{\n      constraint: %Regex{source: binary(), opts: list(term())} or binary(),\n      error_message: binary(),\n      error_type: atom(),\n      field: atom(),\n      match: :exact or :prefix or :suffix,\n      type: :check or :exclusion or :foreign_key or :unique\n    }),\n  filters: %{atom() => term()},\n  action: atom(),\n  types: %{\n    atom() =>\n      atom() or {:parameterized, {atom(), term()}} or {:supertype, :datetime} or\n        {:array or :assoc or :embed or :in or :map or :try, term()}\n  },\n  repo: atom(),\n  repo_opts: list({atom(), term()})\n}, (none() -> term())) -> dynamic(%Ecto.Changeset{\n  valid?: boolean(),\n  data: nil or map(),\n  params: %{binary() => term()} or nil,\n  changes: %{atom() => term()},\n  errors: list({atom(), {binary(), list({atom(), term()})}}),\n  validations: list({atom(), term()}),\n  required: list(atom()),\n  prepare: non_empty_list((none() -> term())),\n  constraints:\n    list(%{\n      constraint: %Regex{source: binary(), opts: list(term())} or binary(),\n      error_message: binary(),\n      error_type: atom(),\n      field: atom(),\n      match: :exact or :prefix or :suffix,\n      type: :check or :exclusion or :foreign_key or :unique\n    }),\n  filters: %{atom() => term()},\n  action: atom(),\n  types: %{\n    atom() =>\n      atom() or {:parameterized, {atom(), term()}} or {:supertype, :datetime} or\n        {:array or :assoc or :embed or :in or :map or :try, term()}\n  },\n  repo: atom(),\n  repo_opts: list({atom(), term()})\n})"
             ],
+            "established": false,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
@@ -3604,12 +3655,13 @@
               "no_extra",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "none",
             "warn": false
           },
-          "body_us": 5332,
+          "body_us": 6380,
           "default": {
             "applied": [
               0
@@ -3633,6 +3685,7 @@
             "clauses": [
               "(%Ecto.Changeset{}, (none() -> term())) -> dynamic(%Ecto.Changeset{prepare: non_empty_list(term(), term())})"
             ],
+            "established": false,
             "extra": "%Ecto.Changeset{prepare: non_empty_list(term(), term())} and not %Ecto.Changeset{\n  valid?: boolean(),\n  data: nil or map(),\n  params: %{binary() => term()} or nil,\n  changes: %{atom() => term()},\n  errors: list({atom(), {binary(), list({atom(), term()})}}),\n  validations: list({atom(), term()}),\n  required: list(atom()),\n  prepare: list((none() -> term())),\n  constraints:\n    list(%{\n      constraint: %Regex{source: binary(), opts: list(term())} or binary(),\n      error_message: binary(),\n      error_type: atom(),\n      field: atom(),\n      match: :exact or :prefix or :suffix,\n      type: :check or :exclusion or :foreign_key or :unique\n    }),\n  filters: %{atom() => term()},\n  action: atom(),\n  types: %{\n    atom() =>\n      atom() or {:parameterized, {atom(), term()}} or {:supertype, :datetime} or\n        {:array or :assoc or :embed or :in or :map or :try, term()}\n  },\n  repo: atom(),\n  repo_opts: list({atom(), term()})\n}",
             "guard_blocked": false,
             "near_top": false,
@@ -3643,6 +3696,7 @@
               "no_counted_component",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "unknown",
@@ -3679,6 +3733,7 @@
             "clauses": [
               "(%Ecto.Changeset{}, (none() -> term())) -> dynamic(%Ecto.Changeset{prepare: non_empty_list(term(), term())})"
             ],
+            "established": false,
             "extra": "%Ecto.Changeset{prepare: non_empty_list(term(), term())} and not %Ecto.Changeset{\n  valid?: boolean(),\n  data: nil or map(),\n  params: %{binary() => term()} or nil,\n  changes: %{atom() => term()},\n  errors: list({atom(), {binary(), list({atom(), term()})}}),\n  validations: list({atom(), term()}),\n  required: list(atom()),\n  prepare: list((none() -> term())),\n  constraints:\n    list(%{\n      constraint: %Regex{source: binary(), opts: list(term())} or binary(),\n      error_message: binary(),\n      error_type: atom(),\n      field: atom(),\n      match: :exact or :prefix or :suffix,\n      type: :check or :exclusion or :foreign_key or :unique\n    }),\n  filters: %{atom() => term()},\n  action: atom(),\n  types: %{\n    atom() =>\n      atom() or {:parameterized, {atom(), term()}} or {:supertype, :datetime} or\n        {:array or :assoc or :embed or :in or :map or :try, term()}\n  },\n  repo: atom(),\n  repo_opts: list({atom(), term()})\n}",
             "guard_blocked": false,
             "near_top": false,
@@ -3689,6 +3744,7 @@
               "no_counted_component",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "unknown",
@@ -3732,12 +3788,14 @@
             "clauses": [
               "(%Ecto.Changeset{validations: list({atom(), term()})}) -> dynamic(list({atom(), term()}))"
             ],
+            "established": true,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "no_extra"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "none",
@@ -3755,18 +3813,20 @@
             "clauses": [
               "(%Ecto.Changeset{validations: list({atom(), term()})}) -> dynamic(list({atom(), term()}))"
             ],
+            "established": true,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "no_extra"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "none",
             "warn": false
           },
-          "body_us": 18412,
+          "body_us": 18522,
           "default": {
             "applied": [
               0
@@ -3789,12 +3849,14 @@
             "clauses": [
               "(%Ecto.Changeset{}) -> dynamic()"
             ],
+            "established": false,
             "extra": "not list({atom(), term()})",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "top_only"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -3830,12 +3892,14 @@
             "clauses": [
               "(%Ecto.Changeset{}) -> dynamic()"
             ],
+            "established": false,
             "extra": "not list({atom(), term()})",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "top_only"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -4194,6 +4258,7 @@
               "({:{}, term(), term()}, {:tuple, term()}, term(), term(), term()) -> dynamic()",
               "({atom() and not(:-, :=, :<<>>, :{}), list({atom(), term()}), atom()}, :any or :binary or :binary_id or :bitstring or :boolean or :date or :decimal or :duration or\n  :float or :id or :integer or :map or :naive_datetime or :naive_datetime_usec or :string or :time or\n  :time_usec or :utc_datetime or :utc_datetime_usec or {:in,\n :any or :binary or :binary_id or :bitstring or :boolean or :date or :decimal or :duration or\n   :float or :id or :integer or :map or :naive_datetime or :naive_datetime_usec or :string or\n   :time or :time_usec or :utc_datetime or :utc_datetime_usec or {:supertype, :datetime} or\n   {integer(),\n    atom() or binary() or float() or integer() or list(term()) or\n      {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()}} or\n   {:array or :in or :map or :try, term()}} or {:supertype, :datetime} or {:in or :try, term()} or {:splice,\n :any or :binary or :binary_id or :bitstring or :boolean or :date or :decimal or :duration or\n   :float or :id or :integer or :map or :naive_datetime or :naive_datetime_usec or :string or\n   :time or :time_usec or :utc_datetime or :utc_datetime_usec or {:supertype, :datetime} or\n   {integer(),\n    atom() or binary() or float() or integer() or list(term()) or\n      {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()}} or\n   {:array or :in or :map or :try, term()}} or {:array or :map, term()} or {integer(),\n atom() or binary() or float() or integer() or list(term()) or\n   {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()}} or {:out,\n :any or :binary or :binary_id or :bitstring or :boolean or :date or :decimal or :duration or\n   :float or :id or :integer or :map or :naive_datetime or :naive_datetime_usec or :string or\n   :time or :time_usec or :utc_datetime or :utc_datetime_usec or {:supertype, :datetime} or\n   {integer(),\n    atom() or binary() or float() or integer() or list(term()) or\n      {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()}} or\n   {:array or :in or :map or :try, term()}}, {list(term()),\n %{\n   atom() => term(),\n   bitstring() => term(),\n   float() => term(),\n   fun() => term(),\n   integer() => term(),\n   list() => term(),\n   map() => term(),\n   pid() => term(),\n   port() => term(),\n   reference() => term(),\n   tuple() => term(),\n   subqueries:\n     if_set(\n       list(\n         atom() or binary() or float() or integer() or list(term()) or\n           {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()}\n       )\n     ),\n   take:\n     if_set(%{\n       integer() =>\n         atom() or binary() or float() or integer() or list(term()) or\n           {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()}\n     })\n }}, list({atom(), term()}), {%Macro.Env{\n   aliases: list({atom(), atom()}),\n   context: :guard or :match or nil,\n   context_modules: list(atom()),\n   file: binary(),\n   function: nil or {atom(), integer()},\n   functions: list({atom(), list({atom(), integer()})}),\n   lexical_tracker: nil or pid(),\n   line: integer(),\n   macro_aliases: list({atom(), {term(), atom()}}),\n   macros: list({atom(), list({atom(), integer()})}),\n   module: atom(),\n   requires: list(atom()),\n   tracers: list(atom()),\n   versioned_vars: %{tuple() => integer()}\n }, fun()} or %Macro.Env{\n  aliases: list({atom(), atom()}),\n  context: :guard or :match or nil,\n  context_modules: list(atom()),\n  file: binary(),\n  function: nil or {atom(), integer()},\n  functions: list({atom(), list({atom(), integer()})}),\n  lexical_tracker: nil or pid(),\n  line: integer(),\n  macro_aliases: list({atom(), {term(), atom()}}),\n  macros: list({atom(), list({atom(), integer()})}),\n  module: atom(),\n  requires: list(atom()),\n  tracers: list(atom()),\n  versioned_vars: %{tuple() => integer()}\n}) -> dynamic(\n  {{:{}, empty_list(), non_empty_list(:& or list(not false and not nil))},\n   {list(term()),\n    %{\n      atom() => term(),\n      bitstring() => term(),\n      float() => term(),\n      fun() => term(),\n      integer() => term(),\n      list() => term(),\n      map() => term(),\n      pid() => term(),\n      port() => term(),\n      reference() => term(),\n      tuple() => term(),\n      subqueries:\n        if_set(\n          list(\n            atom() or binary() or float() or integer() or list(term()) or\n              {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()}\n          )\n        ),\n      take:\n        if_set(%{\n          integer() =>\n            atom() or binary() or float() or integer() or list(term()) or\n              {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()}\n        })\n    }}}\n)"
             ],
+            "established": false,
             "extra": "not ({atom() or binary() or float() or integer() or list(term()) or\n   {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()},\n {list(term()),\n  %{\n    atom() => term(),\n    bitstring() => term(),\n    float() => term(),\n    fun() => term(),\n    integer() => term(),\n    list() => term(),\n    map() => term(),\n    pid() => term(),\n    port() => term(),\n    reference() => term(),\n    tuple() => term(),\n    subqueries:\n      if_set(\n        list(\n          atom() or binary() or float() or integer() or list(term()) or\n            {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()}\n        )\n      ),\n    take:\n      if_set(%{\n        integer() =>\n          atom() or binary() or float() or integer() or list(term()) or\n            {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()}\n      })\n  }}})",
             "guard_blocked": false,
             "near_top": false,
@@ -4202,6 +4267,7 @@
               "return_inexact",
               "cutoff"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -4535,6 +4601,7 @@
               "({:{}, term(), term()}, {:tuple, term()}, term(), term(), term()) -> dynamic()",
               "({atom() and not(:-, :=, :<<>>, :{}), list({atom(), term()}), atom()}, :any or :binary or :binary_id or :bitstring or :boolean or :date or :decimal or :duration or\n  :float or :id or :integer or :map or :naive_datetime or :naive_datetime_usec or :string or :time or\n  :time_usec or :utc_datetime or :utc_datetime_usec or {:in,\n :any or :binary or :binary_id or :bitstring or :boolean or :date or :decimal or :duration or\n   :float or :id or :integer or :map or :naive_datetime or :naive_datetime_usec or :string or\n   :time or :time_usec or :utc_datetime or :utc_datetime_usec or {:supertype, :datetime} or\n   {integer(),\n    atom() or binary() or float() or integer() or list(term()) or\n      {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()}} or\n   {:array or :in or :map or :try, term()}} or {:supertype, :datetime} or {:in or :try, term()} or {:splice,\n :any or :binary or :binary_id or :bitstring or :boolean or :date or :decimal or :duration or\n   :float or :id or :integer or :map or :naive_datetime or :naive_datetime_usec or :string or\n   :time or :time_usec or :utc_datetime or :utc_datetime_usec or {:supertype, :datetime} or\n   {integer(),\n    atom() or binary() or float() or integer() or list(term()) or\n      {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()}} or\n   {:array or :in or :map or :try, term()}} or {:array or :map, term()} or {integer(),\n atom() or binary() or float() or integer() or list(term()) or\n   {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()}} or {:out,\n :any or :binary or :binary_id or :bitstring or :boolean or :date or :decimal or :duration or\n   :float or :id or :integer or :map or :naive_datetime or :naive_datetime_usec or :string or\n   :time or :time_usec or :utc_datetime or :utc_datetime_usec or {:supertype, :datetime} or\n   {integer(),\n    atom() or binary() or float() or integer() or list(term()) or\n      {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()}} or\n   {:array or :in or :map or :try, term()}}, {list(term()),\n %{\n   atom() => term(),\n   bitstring() => term(),\n   float() => term(),\n   fun() => term(),\n   integer() => term(),\n   list() => term(),\n   map() => term(),\n   pid() => term(),\n   port() => term(),\n   reference() => term(),\n   tuple() => term(),\n   subqueries:\n     if_set(\n       list(\n         atom() or binary() or float() or integer() or list(term()) or\n           {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()}\n       )\n     ),\n   take:\n     if_set(%{\n       integer() =>\n         atom() or binary() or float() or integer() or list(term()) or\n           {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()}\n     })\n }}, list({atom(), term()}), {%Macro.Env{\n   aliases: list({atom(), atom()}),\n   context: :guard or :match or nil,\n   context_modules: list(atom()),\n   file: binary(),\n   function: nil or {atom(), integer()},\n   functions: list({atom(), list({atom(), integer()})}),\n   lexical_tracker: nil or pid(),\n   line: integer(),\n   macro_aliases: list({atom(), {term(), atom()}}),\n   macros: list({atom(), list({atom(), integer()})}),\n   module: atom(),\n   requires: list(atom()),\n   tracers: list(atom()),\n   versioned_vars: %{tuple() => integer()}\n }, fun()} or %Macro.Env{\n  aliases: list({atom(), atom()}),\n  context: :guard or :match or nil,\n  context_modules: list(atom()),\n  file: binary(),\n  function: nil or {atom(), integer()},\n  functions: list({atom(), list({atom(), integer()})}),\n  lexical_tracker: nil or pid(),\n  line: integer(),\n  macro_aliases: list({atom(), {term(), atom()}}),\n  macros: list({atom(), list({atom(), integer()})}),\n  module: atom(),\n  requires: list(atom()),\n  tracers: list(atom()),\n  versioned_vars: %{tuple() => integer()}\n}) -> dynamic(\n  {{:{}, empty_list(), non_empty_list(:& or list(not false and not nil))},\n   {list(term()),\n    %{\n      atom() => term(),\n      bitstring() => term(),\n      float() => term(),\n      fun() => term(),\n      integer() => term(),\n      list() => term(),\n      map() => term(),\n      pid() => term(),\n      port() => term(),\n      reference() => term(),\n      tuple() => term(),\n      subqueries:\n        if_set(\n          list(\n            atom() or binary() or float() or integer() or list(term()) or\n              {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()}\n          )\n        ),\n      take:\n        if_set(%{\n          integer() =>\n            atom() or binary() or float() or integer() or list(term()) or\n              {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()}\n        })\n    }}}\n)"
             ],
+            "established": false,
             "extra": "not ({atom() or binary() or float() or integer() or list(term()) or\n   {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()},\n {list(term()),\n  %{\n    atom() => term(),\n    bitstring() => term(),\n    float() => term(),\n    fun() => term(),\n    integer() => term(),\n    list() => term(),\n    map() => term(),\n    pid() => term(),\n    port() => term(),\n    reference() => term(),\n    tuple() => term(),\n    subqueries:\n      if_set(\n        list(\n          atom() or binary() or float() or integer() or list(term()) or\n            {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()}\n        )\n      ),\n    take:\n      if_set(%{\n        integer() =>\n          atom() or binary() or float() or integer() or list(term()) or\n            {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()}\n      })\n  }}})",
             "guard_blocked": false,
             "near_top": false,
@@ -4543,12 +4610,13 @@
               "return_inexact",
               "cutoff"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
             "warn": false
           },
-          "body_us": 13407,
+          "body_us": 7339,
           "default": {
             "applied": [
               0,
@@ -4883,6 +4951,7 @@
               "({:{}, term(), term()}, {:tuple, term()}, term(), term(), term()) -> dynamic()",
               "({atom() and not(:-, :=, :<<>>, :{}), term(), atom()}, term(), term(), nil or empty_list() or non_empty_list(term(), term()) or %{..., __struct__: atom()} or map(), term()) -> dynamic({{:{}, empty_list(), non_empty_list(:& or list(not false and not nil))}, term()})"
             ],
+            "established": false,
             "extra": "not ({atom() or binary() or float() or integer() or list(term()) or\n   {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()},\n {list(term()),\n  %{\n    atom() => term(),\n    bitstring() => term(),\n    float() => term(),\n    fun() => term(),\n    integer() => term(),\n    list() => term(),\n    map() => term(),\n    pid() => term(),\n    port() => term(),\n    reference() => term(),\n    tuple() => term(),\n    subqueries:\n      if_set(\n        list(\n          atom() or binary() or float() or integer() or list(term()) or\n            {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()}\n        )\n      ),\n    take:\n      if_set(%{\n        integer() =>\n          atom() or binary() or float() or integer() or list(term()) or\n            {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()}\n      })\n  }}})",
             "guard_blocked": false,
             "near_top": false,
@@ -4891,6 +4960,7 @@
               "return_inexact",
               "cutoff"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -5252,6 +5322,7 @@
               "({atom() and not(:-, :=, :<<>>, :{}), term(), atom()}, term(), term(), nil or empty_list() or non_empty_list(term(), term()) or %{..., __struct__: atom()} or map(), term()) -> dynamic({{:{}, empty_list(), non_empty_list(:& or list(not false and not nil))}, term()})",
               "({{:., term(), non_empty_list(term())}, term(), term()}, term(), term(), term(), {term(), term()} or %Macro.Env{}) -> dynamic()"
             ],
+            "established": false,
             "extra": "not ({atom() or binary() or float() or integer() or list(term()) or\n   {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()},\n {list(term()),\n  %{\n    atom() => term(),\n    bitstring() => term(),\n    float() => term(),\n    fun() => term(),\n    integer() => term(),\n    list() => term(),\n    map() => term(),\n    pid() => term(),\n    port() => term(),\n    reference() => term(),\n    tuple() => term(),\n    subqueries:\n      if_set(\n        list(\n          atom() or binary() or float() or integer() or list(term()) or\n            {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()}\n        )\n      ),\n    take:\n      if_set(%{\n        integer() =>\n          atom() or binary() or float() or integer() or list(term()) or\n            {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()}\n      })\n  }}})",
             "guard_blocked": false,
             "near_top": false,
@@ -5260,6 +5331,7 @@
               "return_inexact",
               "cutoff"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -5523,6 +5595,7 @@
               "({:{}, list({atom(), term()}), atom() or list(term())}, list({atom(), term()})) -> dynamic({:tuple, term()})",
               "(atom() or binary() or float() or integer() or list(term()) or ({term(), list({atom(), term()}), atom() or list(term())} and not ({:{}, list({atom(), term()}), atom() or list(term())} or {:<<>>, list({atom(), term()}), atom() or list(term())})), list({atom(), term()})) -> :any"
             ],
+            "established": false,
             "extra": "not (:any or :binary or :binary_id or :bitstring or :boolean or :date or :decimal or :duration or\n  :float or :id or :integer or :map or :naive_datetime or :naive_datetime_usec or :string or :time or\n  :time_usec or :utc_datetime or :utc_datetime_usec or {integer(),\n atom() or binary() or float() or integer() or list(term()) or\n   {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()}} or {:array or :map, term()} or {:in or :try, term()} or {:supertype, :datetime})",
             "guard_blocked": false,
             "near_top": false,
@@ -5531,6 +5604,7 @@
               "return_inexact",
               "cutoff"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -5765,6 +5839,7 @@
               "({:{}, list({atom(), term()}), atom() or list(term())}, list({atom(), term()})) -> dynamic({:tuple, term()})",
               "(atom() or binary() or float() or integer() or list(term()) or ({term(), list({atom(), term()}), atom() or list(term())} and not ({:{}, list({atom(), term()}), atom() or list(term())} or {:<<>>, list({atom(), term()}), atom() or list(term())})), list({atom(), term()})) -> :any"
             ],
+            "established": false,
             "extra": "not (:any or :binary or :binary_id or :bitstring or :boolean or :date or :decimal or :duration or\n  :float or :id or :integer or :map or :naive_datetime or :naive_datetime_usec or :string or :time or\n  :time_usec or :utc_datetime or :utc_datetime_usec or {integer(),\n atom() or binary() or float() or integer() or list(term()) or\n   {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()}} or {:array or :map, term()} or {:in or :try, term()} or {:supertype, :datetime})",
             "guard_blocked": false,
             "near_top": false,
@@ -5773,12 +5848,13 @@
               "return_inexact",
               "cutoff"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
             "warn": true
           },
-          "body_us": 7427,
+          "body_us": 13713,
           "default": {
             "applied": [
               0,
@@ -6009,6 +6085,7 @@
               "({:{}, term(), term()}, term()) -> dynamic({:tuple, term()})",
               "(not ({term(), term()} or {:{}, term(), term()} or {:<<>>, term(), term()}), term()) -> :any"
             ],
+            "established": false,
             "extra": "not (:any or :binary or :binary_id or :bitstring or :boolean or :date or :decimal or :duration or\n  :float or :id or :integer or :map or :naive_datetime or :naive_datetime_usec or :string or :time or\n  :time_usec or :utc_datetime or :utc_datetime_usec or {integer(),\n atom() or binary() or float() or integer() or list(term()) or\n   {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()}} or {:array or :map, term()} or {:in or :try, term()} or {:supertype, :datetime})",
             "guard_blocked": false,
             "near_top": false,
@@ -6017,6 +6094,7 @@
               "return_inexact",
               "cutoff"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -6259,6 +6337,7 @@
               "({:{}, term(), term()}, term()) -> dynamic({:tuple, term()})",
               "((nil or (bitstring() and not binary()) or fun() or pid() or port() or reference()) or ({...} and not ({:<<>>, term(), term()} or {:{}, term(), term()} or {term(), term()})) or map(), term()) -> :any"
             ],
+            "established": false,
             "extra": "not (:any or :binary or :binary_id or :bitstring or :boolean or :date or :decimal or :duration or\n  :float or :id or :integer or :map or :naive_datetime or :naive_datetime_usec or :string or :time or\n  :time_usec or :utc_datetime or :utc_datetime_usec or {integer(),\n atom() or binary() or float() or integer() or list(term()) or\n   {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()}} or {:array or :map, term()} or {:in or :try, term()} or {:supertype, :datetime})",
             "guard_blocked": false,
             "near_top": false,
@@ -6267,6 +6346,7 @@
               "return_inexact",
               "cutoff"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -6367,12 +6447,14 @@
               "(%Ecto.Query{}, bitstring(), not (%{..., __struct__: atom()} and map()), nil or boolean(), :all or :delete_all or :update_all) -> dynamic(%Ecto.Query{})",
               "(not %Ecto.Query{}, bitstring(), term(), nil or boolean(), :all or :delete_all or :update_all) -> dynamic()"
             ],
+            "established": false,
             "extra": "not %Ecto.Query{}",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "top_only"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -6447,18 +6529,20 @@
               "(%Ecto.Query{}, bitstring(), not (%{..., __struct__: atom()} and map()), nil or boolean(), :all or :delete_all or :update_all) -> dynamic(%Ecto.Query{})",
               "(not %Ecto.Query{}, bitstring(), term(), nil or boolean(), :all or :delete_all or :update_all) -> dynamic()"
             ],
+            "established": false,
             "extra": "not %Ecto.Query{}",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "top_only"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
             "warn": false
           },
-          "body_us": 1295,
+          "body_us": 1287,
           "default": {
             "applied": [
               0,
@@ -6517,12 +6601,14 @@
               "(%Ecto.Query{}, term(), not (%{..., __struct__: atom()} and map()), term(), :all or :delete_all or :update_all) -> dynamic(%Ecto.Query{})",
               "(not %Ecto.Query{}, term(), term(), term(), :all or :delete_all or :update_all) -> dynamic()"
             ],
+            "established": false,
             "extra": "not %Ecto.Query{}",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "top_only"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -6592,12 +6678,14 @@
               "(%Ecto.Query{}, term(), not (%{..., __struct__: atom()} and map()), term(), :all or :delete_all or :update_all) -> dynamic(%Ecto.Query{})",
               "(not %Ecto.Query{}, term(), term(), term(), :all or :delete_all or :update_all) -> dynamic()"
             ],
+            "established": false,
             "extra": "not %Ecto.Query{}",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "top_only"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -6667,6 +6755,7 @@
               "(binary(), %Macro.Env{\n  aliases: list({atom(), atom()}),\n  context: :guard or :match or nil,\n  context_modules: list(atom()),\n  file: binary(),\n  function: nil or {atom(), integer()},\n  functions: list({atom(), list({atom(), integer()})}),\n  lexical_tracker: nil or pid(),\n  line: integer(),\n  macro_aliases: list({atom(), {term(), atom()}}),\n  macros: list({atom(), list({atom(), integer()})}),\n  module: atom(),\n  requires: list(atom()),\n  tracers: list(atom()),\n  versioned_vars: %{tuple() => integer()}\n}) -> dynamic(binary())",
               "(atom() or float() or integer() or list(term()) or {term(), list({atom(), term()}), atom() or list(term())} or {:^, list({atom(), term()}), non_empty_list(term())} or {term(), term()}, %Macro.Env{\n  aliases: list({atom(), atom()}),\n  context: :guard or :match or nil,\n  context_modules: list(atom()),\n  file: binary(),\n  function: nil or {atom(), integer()},\n  functions: list({atom(), list({atom(), integer()})}),\n  lexical_tracker: nil or pid(),\n  line: integer(),\n  macro_aliases: list({atom(), {term(), atom()}}),\n  macros: list({atom(), list({atom(), integer()})}),\n  module: atom(),\n  requires: list(atom()),\n  tracers: list(atom()),\n  versioned_vars: %{tuple() => integer()}\n}) -> dynamic()"
             ],
+            "established": false,
             "extra": "not (atom() or binary() or float() or integer() or list(term()) or {term(), term()} or {term(), list({atom(), term()}), atom() or list(term())})",
             "guard_blocked": false,
             "near_top": false,
@@ -6674,6 +6763,7 @@
               "top_only",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -6714,6 +6804,7 @@
               "(binary(), %Macro.Env{\n  aliases: list({atom(), atom()}),\n  context: :guard or :match or nil,\n  context_modules: list(atom()),\n  file: binary(),\n  function: nil or {atom(), integer()},\n  functions: list({atom(), list({atom(), integer()})}),\n  lexical_tracker: nil or pid(),\n  line: integer(),\n  macro_aliases: list({atom(), {term(), atom()}}),\n  macros: list({atom(), list({atom(), integer()})}),\n  module: atom(),\n  requires: list(atom()),\n  tracers: list(atom()),\n  versioned_vars: %{tuple() => integer()}\n}) -> dynamic(binary())",
               "(atom() or float() or integer() or list(term()) or {term(), list({atom(), term()}), atom() or list(term())} or {:^, list({atom(), term()}), non_empty_list(term())} or {term(), term()}, %Macro.Env{\n  aliases: list({atom(), atom()}),\n  context: :guard or :match or nil,\n  context_modules: list(atom()),\n  file: binary(),\n  function: nil or {atom(), integer()},\n  functions: list({atom(), list({atom(), integer()})}),\n  lexical_tracker: nil or pid(),\n  line: integer(),\n  macro_aliases: list({atom(), {term(), atom()}}),\n  macros: list({atom(), list({atom(), integer()})}),\n  module: atom(),\n  requires: list(atom()),\n  tracers: list(atom()),\n  versioned_vars: %{tuple() => integer()}\n}) -> dynamic()"
             ],
+            "established": false,
             "extra": "not (atom() or binary() or float() or integer() or list(term()) or {term(), term()} or {term(), list({atom(), term()}), atom() or list(term())})",
             "guard_blocked": false,
             "near_top": false,
@@ -6721,12 +6812,13 @@
               "top_only",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
             "warn": false
           },
-          "body_us": 1882,
+          "body_us": 1396,
           "default": {
             "applied": [
               0,
@@ -6761,6 +6853,7 @@
               "(bitstring(), term()) -> dynamic(bitstring())",
               "(not bitstring(), term()) -> dynamic()"
             ],
+            "established": false,
             "extra": "not (atom() or binary() or float() or integer() or list(term()) or {term(), term()} or {term(), list({atom(), term()}), atom() or list(term())})",
             "guard_blocked": false,
             "near_top": false,
@@ -6768,6 +6861,7 @@
               "top_only",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -6815,6 +6909,7 @@
               "(bitstring(), term()) -> dynamic(bitstring())",
               "(not bitstring(), term()) -> dynamic()"
             ],
+            "established": false,
             "extra": "not (atom() or binary() or float() or integer() or list(term()) or {term(), term()} or {term(), list({atom(), term()}), atom() or list(term())})",
             "guard_blocked": false,
             "near_top": false,
@@ -6822,6 +6917,7 @@
               "top_only",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -6877,6 +6973,7 @@
             "clauses": [
               "(atom() or binary() or float() or integer() or list(term()) or {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()}, %Macro.Env{\n  aliases: list({atom(), atom()}),\n  context: :guard or :match or nil,\n  context_modules: list(atom()),\n  file: binary(),\n  function: nil or {atom(), integer()},\n  functions: list({atom(), list({atom(), integer()})}),\n  lexical_tracker: nil or pid(),\n  line: integer(),\n  macro_aliases: list({atom(), {term(), atom()}}),\n  macros: list({atom(), list({atom(), integer()})}),\n  module: atom(),\n  requires: list(atom()),\n  tracers: list(atom()),\n  versioned_vars: %{tuple() => integer()}\n}, atom(), nil or {:ok, nil or binary() or {:^, term(), non_empty_list(term())}}, list(\n  atom() or binary() or float() or integer() or list(term()) or\n    {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()}\n)) -> dynamic(\n  {{:%, empty_list(),\n    non_empty_list(\n      Ecto.Query or\n        {:%{}, empty_list(),\n         non_empty_list(\n           {:aliases, {:%{}, empty_list(), list({not false and not nil, integer()})}} or\n             {:from,\n              {:%, empty_list(),\n               non_empty_list(\n                 Ecto.Query.FromExpr or\n                   {:%{}, empty_list(),\n                    non_empty_list(\n                      {:as, term()} or\n                        {:file or :hints or :line or :params or :prefix or :source, term()}\n                    )}\n               )}}\n         )}\n    )}, list(term()), integer()}\n)"
             ],
+            "established": false,
             "extra": "{{:%, empty_list(),\n  non_empty_list(\n    Ecto.Query or\n      {:%{}, empty_list(),\n       non_empty_list(\n         {:aliases, {:%{}, empty_list(), list({not false and not nil, integer()})}} or\n           {:from,\n            {:%, empty_list(),\n             non_empty_list(\n               Ecto.Query.FromExpr or\n                 {:%{}, empty_list(),\n                  non_empty_list(\n                    {:as, term()} or\n                      {:file or :hints or :line or :params or :prefix or :source, term()}\n                  )}\n             )}}\n       )}\n  )}, list(term()), integer()} and not {atom() or binary() or float() or integer() or list(term()) or\n   {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()},\n list({atom(), term()}), nil or integer()}",
             "guard_blocked": false,
             "near_top": false,
@@ -6887,6 +6984,7 @@
               "no_counted_component",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "unknown",
@@ -6916,6 +7014,7 @@
             "clauses": [
               "(atom() or binary() or float() or integer() or list(term()) or {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()}, %Macro.Env{\n  aliases: list({atom(), atom()}),\n  context: :guard or :match or nil,\n  context_modules: list(atom()),\n  file: binary(),\n  function: nil or {atom(), integer()},\n  functions: list({atom(), list({atom(), integer()})}),\n  lexical_tracker: nil or pid(),\n  line: integer(),\n  macro_aliases: list({atom(), {term(), atom()}}),\n  macros: list({atom(), list({atom(), integer()})}),\n  module: atom(),\n  requires: list(atom()),\n  tracers: list(atom()),\n  versioned_vars: %{tuple() => integer()}\n}, atom(), nil or {:ok, nil or binary() or {:^, term(), non_empty_list(term())}}, list(\n  atom() or binary() or float() or integer() or list(term()) or\n    {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()}\n)) -> dynamic(\n  {{:%, empty_list(),\n    non_empty_list(\n      Ecto.Query or\n        {:%{}, empty_list(),\n         non_empty_list(\n           {:aliases, {:%{}, empty_list(), list({not false and not nil, integer()})}} or\n             {:from,\n              {:%, empty_list(),\n               non_empty_list(\n                 Ecto.Query.FromExpr or\n                   {:%{}, empty_list(),\n                    non_empty_list(\n                      {:as, term()} or\n                        {:file or :hints or :line or :params or :prefix or :source, term()}\n                    )}\n               )}}\n         )}\n    )}, list(term()), integer()}\n)"
             ],
+            "established": false,
             "extra": "{{:%, empty_list(),\n  non_empty_list(\n    Ecto.Query or\n      {:%{}, empty_list(),\n       non_empty_list(\n         {:aliases, {:%{}, empty_list(), list({not false and not nil, integer()})}} or\n           {:from,\n            {:%, empty_list(),\n             non_empty_list(\n               Ecto.Query.FromExpr or\n                 {:%{}, empty_list(),\n                  non_empty_list(\n                    {:as, term()} or\n                      {:file or :hints or :line or :params or :prefix or :source, term()}\n                  )}\n             )}}\n       )}\n  )}, list(term()), integer()} and not {atom() or binary() or float() or integer() or list(term()) or\n   {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()},\n list({atom(), term()}), nil or integer()}",
             "guard_blocked": false,
             "near_top": false,
@@ -6926,12 +7025,13 @@
               "no_counted_component",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "unknown",
             "warn": false
           },
-          "body_us": 3580,
+          "body_us": 3689,
           "default": {
             "applied": [
               0
@@ -6955,6 +7055,7 @@
             "clauses": [
               "(term(), term(), atom() or {:^, term(), non_empty_list(term())}, nil or {:ok, nil or binary() or {:^, term(), non_empty_list(term())}}, term()) -> dynamic({term(), list(term()), nil} or {term(), list(term()), integer()})"
             ],
+            "established": false,
             "extra": "({term(), list(term()), integer()} and not {atom() or binary() or float() or integer() or list(term()) or\n   {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()},\n list({atom(), term()}), nil or integer()}) or ({term(), list(term()), nil} and not {atom() or binary() or float() or integer() or list(term()) or\n   {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()},\n list({atom(), term()}), nil or integer()})",
             "guard_blocked": false,
             "near_top": false,
@@ -6965,6 +7066,7 @@
               "no_counted_component",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "unknown",
@@ -7004,6 +7106,7 @@
             "clauses": [
               "(term(), term(), term(), nil or {:ok, term()}, term()) -> dynamic({term(), list(term()), nil} or {term(), term(), integer()})"
             ],
+            "established": false,
             "extra": "({term(), list(term()), nil} and not {atom() or binary() or float() or integer() or list(term()) or\n   {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()},\n list({atom(), term()}), nil or integer()}) or ({term(), term(), integer()} and not {atom() or binary() or float() or integer() or list(term()) or\n   {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()},\n list({atom(), term()}), nil or integer()})",
             "guard_blocked": false,
             "near_top": false,
@@ -7014,6 +7117,7 @@
               "no_counted_component",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "unknown",
@@ -7072,6 +7176,7 @@
             "clauses": [
               "(atom() or binary() or float() or integer() or list(term()) or {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()}, atom(), list(\n  atom() or binary() or float() or integer() or list(term()) or\n    {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()}\n), atom() or binary() or float() or integer() or list(term()) or {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()}, ((atom() and not nil) or binary() or float() or integer() or list(term())) or {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()}, atom() or binary() or float() or integer() or list(term()) or {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()}, atom(), nil or {:ok, term()}, nil or binary() or list(binary()), %Macro.Env{\n  aliases: list({atom(), atom()}),\n  context: :guard or :match or nil,\n  context_modules: list(atom()),\n  file: binary(),\n  function: nil or {atom(), integer()},\n  functions: list({atom(), list({atom(), integer()})}),\n  lexical_tracker: nil or pid(),\n  line: integer(),\n  macro_aliases: list({atom(), {term(), atom()}}),\n  macros: list({atom(), list({atom(), integer()})}),\n  module: atom(),\n  requires: list(atom()),\n  tracers: list(atom()),\n  versioned_vars: %{tuple() => integer()}\n}) -> dynamic({term(), non_empty_list(term()), term()})"
             ],
+            "established": false,
             "extra": "{term(), non_empty_list(term()), term()} and not {atom() or binary() or float() or integer() or list(term()) or\n   {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()},\n list({atom(), term()}), nil or integer()}",
             "guard_blocked": false,
             "near_top": false,
@@ -7082,6 +7187,7 @@
               "no_counted_component",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "unknown",
@@ -7111,6 +7217,7 @@
             "clauses": [
               "(atom() or binary() or float() or integer() or list(term()) or {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()}, atom(), list(\n  atom() or binary() or float() or integer() or list(term()) or\n    {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()}\n), atom() or binary() or float() or integer() or list(term()) or {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()}, ((atom() and not nil) or binary() or float() or integer() or list(term())) or {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()}, atom() or binary() or float() or integer() or list(term()) or {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()}, atom(), nil or {:ok, term()}, nil or binary() or list(binary()), %Macro.Env{\n  aliases: list({atom(), atom()}),\n  context: :guard or :match or nil,\n  context_modules: list(atom()),\n  file: binary(),\n  function: nil or {atom(), integer()},\n  functions: list({atom(), list({atom(), integer()})}),\n  lexical_tracker: nil or pid(),\n  line: integer(),\n  macro_aliases: list({atom(), {term(), atom()}}),\n  macros: list({atom(), list({atom(), integer()})}),\n  module: atom(),\n  requires: list(atom()),\n  tracers: list(atom()),\n  versioned_vars: %{tuple() => integer()}\n}) -> dynamic({term(), non_empty_list(term()), term()})"
             ],
+            "established": false,
             "extra": "{term(), non_empty_list(term()), term()} and not {atom() or binary() or float() or integer() or list(term()) or\n   {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()},\n list({atom(), term()}), nil or integer()}",
             "guard_blocked": false,
             "near_top": false,
@@ -7121,12 +7228,13 @@
               "no_counted_component",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "unknown",
             "warn": false
           },
-          "body_us": 2974,
+          "body_us": 4283,
           "default": {
             "applied": [
               0
@@ -7150,6 +7258,7 @@
             "clauses": [
               "(term(), term(), empty_list() or non_empty_list(term(), term()), term(), term(), term(), atom() or {:^, term(), non_empty_list(term())}, false or nil or {:ok, term()}, term(), %{..., file: term(), line: term()}) -> dynamic({term(), non_empty_list(term()), term()})"
             ],
+            "established": false,
             "extra": "{term(), non_empty_list(term()), term()} and not {atom() or binary() or float() or integer() or list(term()) or\n   {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()},\n list({atom(), term()}), nil or integer()}",
             "guard_blocked": false,
             "near_top": false,
@@ -7160,6 +7269,7 @@
               "no_counted_component",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "unknown",
@@ -7200,6 +7310,7 @@
             "clauses": [
               "(term(), term(), term(), term(), term(), term(), term(), false or nil or {:ok, term()}, term(), %{..., file: term(), line: term()}) -> dynamic({term(), non_empty_list(term()), term()})"
             ],
+            "established": false,
             "extra": "{term(), non_empty_list(term()), term()} and not {atom() or binary() or float() or integer() or list(term()) or\n   {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()},\n list({atom(), term()}), nil or integer()}",
             "guard_blocked": false,
             "near_top": false,
@@ -7210,6 +7321,7 @@
               "no_counted_component",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "unknown",
@@ -7380,6 +7492,7 @@
               "(atom(), list({atom(), term()}), %Macro.Env{\n  aliases: list({atom(), atom()}),\n  context: :guard or :match or nil,\n  context_modules: list(atom()),\n  file: binary(),\n  function: nil or {atom(), integer()},\n  functions: list({atom(), list({atom(), integer()})}),\n  lexical_tracker: nil or pid(),\n  line: integer(),\n  macro_aliases: list({atom(), {term(), atom()}}),\n  macros: list({atom(), list({atom(), integer()})}),\n  module: atom(),\n  requires: list(atom()),\n  tracers: list(atom()),\n  versioned_vars: %{tuple() => integer()}\n}) -> dynamic({:_, {nil, atom()}, nil, nil, empty_list()})",
               "(float() or integer() or list(term()) or ({term(), term()} and not ({binary(), term()} or {{:fragment, term(), term()}, term()})) or ({term(), list({atom(), term()}), atom() or list(term())} and not {:fragment, term(), non_empty_list(term(), term())}), list({atom(), term()}), %Macro.Env{\n  aliases: list({atom(), atom()}),\n  context: :guard or :match or nil,\n  context_modules: list(atom()),\n  file: binary(),\n  function: nil or {atom(), integer()},\n  functions: list({atom(), list({atom(), integer()})}),\n  lexical_tracker: nil or pid(),\n  line: integer(),\n  macro_aliases: list({atom(), {term(), atom()}}),\n  macros: list({atom(), list({atom(), integer()})}),\n  module: atom(),\n  requires: list(atom()),\n  tracers: list(atom()),\n  versioned_vars: %{tuple() => integer()}\n}) -> dynamic()"
             ],
+            "established": false,
             "extra": "not ({atom(),\n atom() or binary() or float() or integer() or list(term()) or\n   {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()},\n atom() or binary() or float() or integer() or list(term()) or\n   {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()}, list(term())})",
             "guard_blocked": false,
             "near_top": false,
@@ -7387,6 +7500,7 @@
               "top_only",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -7523,6 +7637,7 @@
               "(atom(), list({atom(), term()}), %Macro.Env{\n  aliases: list({atom(), atom()}),\n  context: :guard or :match or nil,\n  context_modules: list(atom()),\n  file: binary(),\n  function: nil or {atom(), integer()},\n  functions: list({atom(), list({atom(), integer()})}),\n  lexical_tracker: nil or pid(),\n  line: integer(),\n  macro_aliases: list({atom(), {term(), atom()}}),\n  macros: list({atom(), list({atom(), integer()})}),\n  module: atom(),\n  requires: list(atom()),\n  tracers: list(atom()),\n  versioned_vars: %{tuple() => integer()}\n}) -> dynamic({:_, {nil, atom()}, nil, nil, empty_list()})",
               "(float() or integer() or list(term()) or ({term(), term()} and not ({binary(), term()} or {{:fragment, term(), term()}, term()})) or ({term(), list({atom(), term()}), atom() or list(term())} and not {:fragment, term(), non_empty_list(term(), term())}), list({atom(), term()}), %Macro.Env{\n  aliases: list({atom(), atom()}),\n  context: :guard or :match or nil,\n  context_modules: list(atom()),\n  file: binary(),\n  function: nil or {atom(), integer()},\n  functions: list({atom(), list({atom(), integer()})}),\n  lexical_tracker: nil or pid(),\n  line: integer(),\n  macro_aliases: list({atom(), {term(), atom()}}),\n  macros: list({atom(), list({atom(), integer()})}),\n  module: atom(),\n  requires: list(atom()),\n  tracers: list(atom()),\n  versioned_vars: %{tuple() => integer()}\n}) -> dynamic()"
             ],
+            "established": false,
             "extra": "not ({atom(),\n atom() or binary() or float() or integer() or list(term()) or\n   {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()},\n atom() or binary() or float() or integer() or list(term()) or\n   {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()}, list(term())})",
             "guard_blocked": false,
             "near_top": false,
@@ -7530,12 +7645,13 @@
               "top_only",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
             "warn": false
           },
-          "body_us": 3171,
+          "body_us": 4270,
           "default": {
             "applied": [
               0,
@@ -7666,6 +7782,7 @@
               "(atom(), term(), term()) -> dynamic({:_, {nil, atom()}, nil, nil, empty_list()})",
               "(not (atom() or binary() or {:fragment, term(), non_empty_list(term(), term())} or {{:fragment, term(), term()}, term()} or {binary(), term()}), term(), term()) -> dynamic()"
             ],
+            "established": false,
             "extra": "not ({atom(),\n atom() or binary() or float() or integer() or list(term()) or\n   {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()},\n atom() or binary() or float() or integer() or list(term()) or\n   {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()}, list(term())})",
             "guard_blocked": false,
             "near_top": false,
@@ -7673,6 +7790,7 @@
               "top_only",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -7793,6 +7911,7 @@
               "(binary(), term(), term()) -> dynamic({:_, {binary(), nil}, nil, nil, empty_list()})",
               "(atom(), term(), term()) -> dynamic({:_, {nil, atom()}, nil, nil, empty_list()})"
             ],
+            "established": false,
             "extra": "not ({atom(),\n atom() or binary() or float() or integer() or list(term()) or\n   {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()},\n atom() or binary() or float() or integer() or list(term()) or\n   {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()}, list(term())})",
             "guard_blocked": false,
             "near_top": false,
@@ -7800,6 +7919,7 @@
               "top_only",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -7855,6 +7975,7 @@
             "clauses": [
               "(atom() or binary() or float() or integer() or list(term()) or {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()}, list(\n  atom() or binary() or float() or integer() or list(term()) or\n    {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()}\n), list({atom(), term()}), %Macro.Env{\n  aliases: list({atom(), atom()}),\n  context: :guard or :match or nil,\n  context_modules: list(atom()),\n  file: binary(),\n  function: nil or {atom(), integer()},\n  functions: list({atom(), list({atom(), integer()})}),\n  lexical_tracker: nil or pid(),\n  line: integer(),\n  macro_aliases: list({atom(), {term(), atom()}}),\n  macros: list({atom(), list({atom(), integer()})}),\n  module: atom(),\n  requires: list(atom()),\n  tracers: list(atom()),\n  versioned_vars: %{tuple() => integer()}\n}) -> dynamic()"
             ],
+            "established": false,
             "extra": "not (atom() or binary() or float() or integer() or list(term()) or {term(), term()} or {term(), list({atom(), term()}), atom() or list(term())})",
             "guard_blocked": false,
             "near_top": false,
@@ -7862,6 +7983,7 @@
               "top_only",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -7890,6 +8012,7 @@
             "clauses": [
               "(atom() or binary() or float() or integer() or list(term()) or {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()}, list(\n  atom() or binary() or float() or integer() or list(term()) or\n    {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()}\n), list({atom(), term()}), %Macro.Env{\n  aliases: list({atom(), atom()}),\n  context: :guard or :match or nil,\n  context_modules: list(atom()),\n  file: binary(),\n  function: nil or {atom(), integer()},\n  functions: list({atom(), list({atom(), integer()})}),\n  lexical_tracker: nil or pid(),\n  line: integer(),\n  macro_aliases: list({atom(), {term(), atom()}}),\n  macros: list({atom(), list({atom(), integer()})}),\n  module: atom(),\n  requires: list(atom()),\n  tracers: list(atom()),\n  versioned_vars: %{tuple() => integer()}\n}) -> dynamic()"
             ],
+            "established": false,
             "extra": "not (atom() or binary() or float() or integer() or list(term()) or {term(), term()} or {term(), list({atom(), term()}), atom() or list(term())})",
             "guard_blocked": false,
             "near_top": false,
@@ -7897,12 +8020,13 @@
               "top_only",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
             "warn": false
           },
-          "body_us": 2887,
+          "body_us": 2359,
           "default": {
             "applied": [
               0
@@ -7925,6 +8049,7 @@
             "clauses": [
               "(term(), empty_list() or non_empty_list(term(), term()), empty_list() or non_empty_list(term(), term()), term()) -> dynamic()"
             ],
+            "established": false,
             "extra": "not (atom() or binary() or float() or integer() or list(term()) or {term(), term()} or {term(), list({atom(), term()}), atom() or list(term())})",
             "guard_blocked": false,
             "near_top": false,
@@ -7932,6 +8057,7 @@
               "top_only",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -7969,6 +8095,7 @@
             "clauses": [
               "(term(), term(), term(), term()) -> dynamic()"
             ],
+            "established": false,
             "extra": "not (atom() or binary() or float() or integer() or list(term()) or {term(), term()} or {term(), list({atom(), term()}), atom() or list(term())})",
             "guard_blocked": false,
             "near_top": false,
@@ -7976,6 +8103,7 @@
               "top_only",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -8054,12 +8182,14 @@
               "(non_empty_list(list(term())), empty_list(), {...}, (list(term()) -> list(term()))) -> dynamic()",
               "(non_empty_list(list(term())), non_empty_list(term()), {term(), ...}, (list(term()) -> list(term()))) -> dynamic(list(non_empty_list(term(), term())))"
             ],
+            "established": false,
             "extra": "not list(%{atom() => term()})",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "top_only"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -8110,18 +8240,20 @@
               "(non_empty_list(list(term())), empty_list(), {...}, (list(term()) -> list(term()))) -> dynamic()",
               "(non_empty_list(list(term())), non_empty_list(term()), {term(), ...}, (list(term()) -> list(term()))) -> dynamic(list(non_empty_list(term(), term())))"
             ],
+            "established": false,
             "extra": "not list(%{atom() => term()})",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "top_only"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
             "warn": false
           },
-          "body_us": 333,
+          "body_us": 340,
           "default": {
             "applied": [
               0,
@@ -8169,12 +8301,14 @@
               "(not empty_list(), empty_list(), term(), term()) -> dynamic()",
               "(not empty_list(), not empty_list(), {term(), ...}, term()) -> dynamic(list(non_empty_list(term(), term())))"
             ],
+            "established": false,
             "extra": "not list(%{atom() => term()})",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "top_only"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -8231,12 +8365,14 @@
               "(not empty_list(), empty_list(), term(), term()) -> dynamic()",
               "(not empty_list(), not empty_list(), {term(), ...}, term()) -> dynamic(list(non_empty_list(term(), term())))"
             ],
+            "established": false,
             "extra": "not list(%{atom() => term()})",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "top_only"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -8315,12 +8451,14 @@
               "(non_empty_list(list(term())), atom(), empty_list(), term(), list(term()), fun(), {map(), list({atom(), term()})}) -> dynamic()",
               "(non_empty_list(list(term())), atom(), non_empty_list(term()), term(), list(term()), fun(), {map(), list({atom(), term()})}) -> dynamic(non_empty_list(term(), term()))"
             ],
+            "established": false,
             "extra": "not list(list(term()))",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "top_only"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -8371,18 +8509,20 @@
               "(non_empty_list(list(term())), atom(), empty_list(), term(), list(term()), fun(), {map(), list({atom(), term()})}) -> dynamic()",
               "(non_empty_list(list(term())), atom(), non_empty_list(term()), term(), list(term()), fun(), {map(), list({atom(), term()})}) -> dynamic(non_empty_list(term(), term()))"
             ],
+            "established": false,
             "extra": "not list(list(term()))",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "top_only"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
             "warn": false
           },
-          "body_us": 1650,
+          "body_us": 1762,
           "default": {
             "applied": [
               0,
@@ -8430,12 +8570,14 @@
               "(not empty_list(), term(), empty_list(), term(), term(), term(), term()) -> dynamic()",
               "(non_empty_list(term(), term()), term(), not empty_list(), term(), empty_list() or non_empty_list(term(), term()), term(), {term(), term()}) -> dynamic(non_empty_list(term(), term()))"
             ],
+            "established": false,
             "extra": "not list(list(term()))",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "top_only"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -8492,12 +8634,14 @@
               "(not empty_list(), term(), empty_list(), term(), term(), term(), term()) -> dynamic()",
               "(non_empty_list(term(), term()), term(), not empty_list(), term(), empty_list() or non_empty_list(term(), term()), term(), {term(), term()}) -> dynamic(non_empty_list(term(), term()))"
             ],
+            "established": false,
             "extra": "not list(list(term()))",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "top_only"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -8526,161 +8670,161 @@
   "label": "ecto",
   "modules": [
     {
-      "default_run_us": 6833,
+      "default_run_us": 7691,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto",
       "sampled": true
     },
     {
-      "default_run_us": 35966,
+      "default_run_us": 40560,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Changeset",
       "sampled": false
     },
     {
-      "default_run_us": 3119,
+      "default_run_us": 2705,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Enum",
       "sampled": true
     },
     {
-      "default_run_us": 4486,
+      "default_run_us": 6610,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Multi",
       "sampled": true
     },
     {
-      "default_run_us": 11848,
+      "default_run_us": 9485,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Query.Builder",
       "sampled": false
     },
     {
-      "default_run_us": 2341,
+      "default_run_us": 2745,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Query.Builder.CTE",
       "sampled": true
     },
     {
-      "default_run_us": 72,
+      "default_run_us": 106,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Query.Builder.Combination",
       "sampled": true
     },
     {
-      "default_run_us": 1308,
+      "default_run_us": 1726,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Query.Builder.Distinct",
       "sampled": true
     },
     {
-      "default_run_us": 1344,
+      "default_run_us": 1347,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Query.Builder.Dynamic",
       "sampled": true
     },
     {
-      "default_run_us": 3350,
+      "default_run_us": 3557,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Query.Builder.Filter",
       "sampled": true
     },
     {
-      "default_run_us": 2193,
+      "default_run_us": 2161,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Query.Builder.From",
       "sampled": true
     },
     {
-      "default_run_us": 2497,
+      "default_run_us": 5140,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Query.Builder.Join",
       "sampled": false
     },
     {
-      "default_run_us": 280,
+      "default_run_us": 234,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Query.Builder.Lock",
       "sampled": true
     },
     {
-      "default_run_us": 3210,
+      "default_run_us": 2714,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Query.Builder.OrderBy",
       "sampled": true
     },
     {
-      "default_run_us": 1208,
+      "default_run_us": 1266,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Query.Builder.Preload",
       "sampled": true
     },
     {
-      "default_run_us": 6884,
+      "default_run_us": 7254,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Query.Builder.Select",
       "sampled": true
     },
     {
-      "default_run_us": 1653,
+      "default_run_us": 2201,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Query.Builder.Windows",
       "sampled": true
     },
     {
-      "default_run_us": 29378,
+      "default_run_us": 32573,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Query.Planner",
       "sampled": true
     },
     {
-      "default_run_us": 11174,
+      "default_run_us": 11452,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Repo",
       "sampled": true
     },
     {
-      "default_run_us": 970,
+      "default_run_us": 1228,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Repo.Assoc",
       "sampled": false
     },
     {
-      "default_run_us": 3100,
+      "default_run_us": 3623,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Repo.Preloader",
       "sampled": false
     },
     {
-      "default_run_us": 2749,
+      "default_run_us": 2946,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.UUID",
       "sampled": true
     },
     {
-      "default_run_us": 2115,
+      "default_run_us": 3076,
       "default_warnings": 0,
       "error": null,
       "module": "Mix.Ecto",
@@ -8883,12 +9027,12 @@
     "body_unavailable": 0,
     "cost": {
       "body_calls": 142,
-      "body_max_us": 19413,
-      "body_median_us": 2821,
-      "body_p90_us": 10568,
-      "body_total_ms": 616,
+      "body_max_us": 21087,
+      "body_median_us": 3165,
+      "body_p90_us": 12291,
+      "body_total_ms": 686,
       "default_calls": 23,
-      "default_total_ms": 138
+      "default_total_ms": 152
     },
     "extra_warning_slices": 5,
     "extra_warnings": 8,

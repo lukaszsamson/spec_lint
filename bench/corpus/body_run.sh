@@ -6,11 +6,16 @@
 #       [SPEC_LINT_OSS_BODY=/path/to/oss-body] bench/corpus/body_run.sh
 #
 # ELIXIR_BODY is a build of the pinned revision c24c235 with only the
-# Module.Types.warnings/7 hook applied (see the README in this directory):
+# Module.Types.warnings/7 hook applied (see the README in this directory).
+# c24c235 is on the branch ls-mixed-into of the fork
+# https://github.com/lukaszsamson/elixir (not upstream); the hook is the
+# lib/elixir/lib/module/types.ex hunk of b88a257a3 (branch
+# ls-typespec-tightening of the same fork), committed here as
+# bench/corpus/warnings7.patch:
 #
-#     git -C ~/elixir worktree add --detach "$ELIXIR_BODY" c24c235
-#     git -C ~/elixir show b88a257a3 -- lib/elixir/lib/module/types.ex |
-#       git -C "$ELIXIR_BODY" apply
+#     git clone https://github.com/lukaszsamson/elixir.git "$ELIXIR_BODY"
+#     git -C "$ELIXIR_BODY" checkout --detach c24c235
+#     git -C "$ELIXIR_BODY" apply "$PWD/bench/corpus/warnings7.patch"
 #     make -C "$ELIXIR_BODY" compile
 #
 # SPEC_LINT_OSS holds the decimal, plug and ecto checkouts (bench/corpus/README.md).
@@ -21,6 +26,9 @@
 # Reports are normalised (paths replaced by $ELIXIR_BODY, $OSS, $OSS_BODY,
 # $SPEC_LINT and $TMP, keys sorted). They keep the wall-clock cost fields
 # (`body_us`, `default_run_us`, `totals.cost`), so two runs differ there.
+#
+# Runs under bash 3.2 (the macOS system bash) and later: no associative
+# arrays.
 set -euo pipefail
 
 root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
@@ -93,12 +101,13 @@ for lib in decimal plug ecto; do
   fi
 done
 
-declare -A sample=([decimal]=1 [plug]=11 [ecto]=18)
-
-for lib in decimal plug ecto; do
+# LIB:SAMPLE pairs: the number of random modules drawn from each library.
+for pair in decimal:1 plug:11 ecto:18; do
+  lib="${pair%%:*}"
+  sample="${pair##*:}"
   cp_args=()
   for d in "$oss_body/$lib"/lib/*/ebin; do cp_args+=(--code-path "$d"); done
   ebin="$oss_body/$lib/lib/$lib/ebin"
-  run "$lib" --ebin "$ebin" "${cp_args[@]}" --sample "${sample[$lib]}" --seed 20260928
+  run "$lib" --ebin "$ebin" "${cp_args[@]}" --sample "$sample" --seed 20260928
   run "${lib}_full" --ebin "$ebin" "${cp_args[@]}"
 done

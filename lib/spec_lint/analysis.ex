@@ -9,7 +9,11 @@ defmodule SpecLint.Analysis do
   they are never silently dropped. Nothing in the analysed module is
   loaded or invoked. The module's exports are kept (`exports`), so
   coverage can tell a function whose spec was removed from a deleted
-  function (`SpecLint.Coverage.lost_analysis/2`).
+  function (`SpecLint.Coverage.lost_analysis/2`), and so are the exports
+  that are overridable defaults injected by `use` and not overridden
+  (`overridable_defaults`, see `SpecLint.Beam`): deleting a user override
+  of such a default leaves the export in place, but the user's definition
+  is gone.
 
   A definition is generated (DESIGN.md section 8) when its debug info
   metadata says `generated: true`, or when it is one of the definitions
@@ -71,7 +75,8 @@ defmodule SpecLint.Analysis do
           debug_info: :ok | {:error, term()},
           functions: [function_result()],
           out_of_scope: [%{mfa: mfa(), reason: out_of_scope_reason()}],
-          exports: [{atom(), arity()}]
+          exports: [{atom(), arity()}],
+          overridable_defaults: [{atom(), arity()}]
         }
 
   @doc """
@@ -106,7 +111,8 @@ defmodule SpecLint.Analysis do
       debug_info: debug_info,
       functions: [],
       out_of_scope: [],
-      exports: []
+      exports: [],
+      overridable_defaults: []
     }
   end
 
@@ -145,7 +151,8 @@ defmodule SpecLint.Analysis do
       debug_info: debug_info_status(beam),
       functions: [],
       out_of_scope: [],
-      exports: beam.exports
+      exports: beam.exports,
+      overridable_defaults: overridable_defaults(beam)
     }
 
     cond do
@@ -215,6 +222,11 @@ defmodule SpecLint.Analysis do
 
   defp generated?(beam, fun_arity),
     do: fun_arity in @compiler_emitted or fun_arity in generated_definitions(beam)
+
+  defp overridable_defaults(%Beam{debug_info: {:ok, %{overridable_defaults: defaults}}}),
+    do: defaults
+
+  defp overridable_defaults(%Beam{}), do: []
 
   defp generated_definitions(%Beam{debug_info: {:ok, %{generated: generated}}}), do: generated
   defp generated_definitions(%Beam{}), do: []

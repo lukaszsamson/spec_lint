@@ -43,6 +43,24 @@ where it is the recorded reason (`compare/2`, `cmp/2`, `decode/2`,
 `no_counted_component`, `subtraction_payload` and `domain_escape`
 respectively.
 
+**Same class and detection, not always the same reasons.** In the body
+backend experiment (`reports/body/`), in the signature mode and the body
+mode alike, every fixture gets the class and the detection of its
+original, but two differ in the reasons behind the class, and those
+reasons decide what a future improvement would gate (body mode shown; the
+signature mode differs the same way):
+
+| Fixture | Original, body mode | Fixture, body mode | Consequence |
+| --- | --- | --- | --- |
+| `apply_action/2` | `input_approximate, containment_unknown=[0], ..., subtraction_payload=1, no_counted_component, return_inexact` | `not_in_contributing=1, tag_in_spec=1, subtraction_payload=1, no_counted_component` | The stand-in `Changeset` struct translates exactly, while `Ecto.Changeset.t()` has `arrow_polarity`, `map_key_widened` and `recursive_cutoff` losses. With helper-sensitive inference the fixture could gate, while the original would stay capped at `possible_input_approximate`. |
+| `quoted_type/2` | `top_only, return_inexact, cutoff` | `input_approximate, containment_unknown=[0, 1, 2, 8, 9, 10], unknown_components=2, return_inexact` | Both become a gated `clause_conflict` in body mode, through different clauses' evidence. |
+
+The other seven have the same reasons as their originals in both modes
+(`merge_private/2`'s stand-in `Conn` lacks the original's
+`recursive_cutoff` loss, which changes no reason).
+So "the reproducers give identical results" holds for class and detection
+only.
+
 Gating recall on these nine is 0 of 9 (`clause_conflict` is the only
 gating class); reported recall is 2 of 9 (`join_escape/3` and
 `quoted_type/2`, class `possible_domain_escape`, reported as SL002).

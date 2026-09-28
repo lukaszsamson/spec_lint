@@ -18,10 +18,41 @@ defmodule SpecLint.Project do
   compiled there, or the path is wrong), which `SpecLint.Run` turns into a
   configuration error (exit 2). An ebin that exists but holds no BEAM file
   is a project with zero specs: the run succeeds and says so.
+
+  An ebin that exists but lost some of its BEAM files (deleted by hand, or
+  a partial `_build` cache restore) is not a smaller project either. Mix
+  does not rebuild them: its compile manifest still says the build is up
+  to date. `check_build_paths/1` reports `{:error, :missing_beams}` when a
+  module the build lists has no `.beam` file in the ebin
+  (`missing_modules/1`). The build's module list comes from:
+
+    * for a project from `current/0`, the Elixir compiler's manifest
+      (`.mix/compile.elixir` next to the ebin), which Mix updates whenever
+      it removes a module. It is read with
+      `Mix.Compilers.Elixir.read_manifest/1`, an internal Mix function of
+      the pinned toolchain;
+    * otherwise (no manifest, or that function is missing), the `modules`
+      key of the application resource file `<app>.app` in the ebin, which
+      every Mix application has. It is not used when the manifest can be
+      read: Mix rewrites it only when the ebin's modification time is
+      newer than its own (one-second resolution), so right after a module
+      is deleted it can still list it.
   """
 
-  @typedoc "One owned application and its ebin directory."
-  @type app :: %{app: atom(), ebin: String.t()}
+  alias Mix.Compilers.Elixir, as: ElixirCompiler
+
+  @typedoc """
+  One owned application: its ebin directory and, for a Mix project, the
+  path of its Elixir compile manifest.
+  """
+  @type app :: %{
+          required(:app) => atom(),
+          required(:ebin) => String.t(),
+          optional(:manifest) => String.t()
+        }
+
+  @typedoc "The modules of one application's build that have no BEAM file."
+  @type missing :: %{app: atom(), ebin: String.t(), modules: [module()]}
 
   @type t :: %__MODULE__{
           root: String.t(),
@@ -47,10 +78,22 @@ defmodule SpecLint.Project do
         build = Mix.Project.build_path()
 
         for {app, _path} <- Enum.sort(Mix.Project.apps_paths() || %{}) do
-          %{app: app, ebin: Path.join([build, "lib", Atom.to_string(app), "ebin"])}
+          dir = Path.join([build, "lib", Atom.to_string(app)])
+
+          %{
+            app: app,
+            ebin: Path.join(dir, "ebin"),
+            manifest: Path.join([dir, ".mix", "compile.elixir"])
+          }
         end
       else
-        [%{app: Mix.Project.config()[:app], ebin: Mix.Project.compile_path()}]
+        [
+          %{
+            app: Mix.Project.config()[:app],
+            ebin: Mix.Project.compile_path(),
+            manifest: Path.join(Mix.Project.manifest_path(), "compile.elixir")
+          }
+        ]
       end
 
     %__MODULE__{
@@ -96,22 +139,85 @@ defmodule SpecLint.Project do
   end
 
   @doc """
-  `:ok` when the ebin directory of every application in `project` exists,
-  `{:error, :missing_build_path}` otherwise (`missing_build_paths/1` lists
-  the applications). An existing ebin without BEAM files is `:ok`: that
-  is a project with zero specs, not a missing build.
+  `:ok` when the ebin directory of every application in `project` exists
+  and holds a BEAM file for every module its build lists;
+  `{:error, :missing_build_path}` when an ebin does not exist
+  (`missing_build_paths/1` lists the applications), and
+  `{:error, :missing_beams}` when a listed module has no BEAM file
+  (`missing_modules/1`). An existing ebin without BEAM files whose build
+  lists no module is `:ok`: that is a project with zero specs, not a
+  missing build.
   """
-  @spec check_build_paths(t()) :: :ok | {:error, :missing_build_path}
+  @spec check_build_paths(t()) :: :ok | {:error, :missing_build_path | :missing_beams}
   def check_build_paths(project) do
-    case missing_build_paths(project) do
-      [] -> :ok
-      _missing -> {:error, :missing_build_path}
+    cond do
+      missing_build_paths(project) != [] -> {:error, :missing_build_path}
+      missing_modules(project) != [] -> {:error, :missing_beams}
+      true -> :ok
     end
   end
 
   @doc "The applications of `project` whose ebin directory does not exist."
   @spec missing_build_paths(t()) :: [app()]
   def missing_build_paths(project), do: Enum.reject(project.apps, &File.dir?(&1.ebin))
+
+  @doc """
+  Per application whose ebin exists, the modules its build lists (its
+  Elixir compile manifest, or else its `<app>.app` file; see the
+  moduledoc) that have no BEAM file in the ebin. Applications with no
+  missing module are left out.
+  """
+  @spec missing_modules(t()) :: [missing()]
+  def missing_modules(project) do
+    for app <- project.apps,
+        File.dir?(app.ebin),
+        missing = missing_in(app),
+        missing != [],
+        do: %{app: app.app, ebin: app.ebin, modules: missing}
+  end
+
+  defp missing_in(app) do
+    case manifest_modules(app) do
+      {:ok, modules} -> modules
+      :error -> app_file_modules(app)
+    end
+    |> Enum.uniq()
+    |> Enum.reject(&File.regular?(Path.join(app.ebin, Atom.to_string(&1) <> ".beam")))
+    |> Enum.sort()
+  end
+
+  defp app_file_modules(%{app: name, ebin: ebin}) when is_atom(name) and name != nil do
+    path = Path.join(ebin, Atom.to_string(name) <> ".app")
+
+    case :file.consult(String.to_charlist(path)) do
+      {:ok, [{:application, ^name, properties}]} when is_list(properties) ->
+        properties |> Keyword.get(:modules, []) |> Enum.filter(&is_atom/1)
+
+      _ ->
+        []
+    end
+  end
+
+  defp app_file_modules(_app), do: []
+
+  defp manifest_modules(%{manifest: path}) when is_binary(path) do
+    if File.regular?(path) and Code.ensure_loaded?(ElixirCompiler) and
+         function_exported?(ElixirCompiler, :read_manifest, 1) do
+      {:ok, path |> ElixirCompiler.read_manifest() |> manifest_entries()}
+    else
+      :error
+    end
+  end
+
+  defp manifest_modules(_app), do: :error
+
+  defp manifest_entries({modules, _sources}) when is_map(modules),
+    do: modules |> Map.keys() |> Enum.filter(&is_atom/1)
+
+  defp manifest_entries({modules, _sources}) when is_list(modules),
+    do: for({module, _} <- modules, is_atom(module), do: module)
+
+  defp manifest_entries(_other), do: []
 
   @doc """
   The BEAM files of the project, sorted, as `{app, path}`. When `modules`

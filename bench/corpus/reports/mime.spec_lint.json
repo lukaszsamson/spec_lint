@@ -4,6 +4,7 @@
     "applied": false,
     "baselined": 0,
     "expired": 0,
+    "gate_changed": [],
     "new": 0,
     "path": ".spec_lint_baseline.json",
     "pending_reconciliation": [],

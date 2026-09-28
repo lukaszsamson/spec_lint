@@ -1,9 +1,11 @@
 # SpecLint status
 
 Date 2026-09-28. This covers Phase 0, Phase 1, the post-Phase 1 review
-fixes (commit `1b0fe93`) and the fixes for four of the five external
-review findings (the commit after `6754fe3`). `DESIGN.md` is the authoritative design,
-`EXPERIMENTS.md` holds the measurements, and `README.md` is the user guide.
+fixes (commit `1b0fe93`), the first external review (all five findings
+closed: four fixes in `c4a8e18`, the corpus bundle in `3adadd4`), the
+body-backend experiment (`ac3a75b`) and the second external review (this
+phase, below). `DESIGN.md` is the authoritative design, `EXPERIMENTS.md`
+holds the measurements, and `README.md` is the user guide.
 
 ## What exists
 
@@ -12,23 +14,23 @@ Elixir compiler infers. It reads compiled BEAM files. It runs no Dialyzer,
 needs no PLT, never starts the application, and never calls project
 functions.
 
-It has about 8,000 lines in `lib` and 4,000 in `test`:
+It has about 8,800 lines in `lib` and 5,800 in `test`:
 
 | Component | Module | State |
 | --- | --- | --- |
 | Compiler adapter | `SpecLint.Compiler`, `SpecLint.Compiler.V121` | Pinned to Elixir 1.21.0-dev `c24c235`, checker chunk `elixir_checker_v10`. Preflight, chunk decoder, every `Descr` call, a copy of `apply_infer/2` with its 16-clause cutoff, a canonical `Descr` serialisation and a printer. |
-| BEAM reader | `SpecLint.Beam`, `SpecLint.Project` | Reads `ExCk`, `Dbgi` specs, types and debug info. Handles owned ebins, umbrella children and exclude globs. |
+| BEAM reader | `SpecLint.Beam`, `SpecLint.Project` | Reads `ExCk`, `Dbgi` specs, types and debug info (including `use`-injected overridable defaults). Handles owned ebins, umbrella children and exclude globs, and checks every module the build lists has its BEAM file (compile manifest, or `<app>.app`). |
 | Translator | `SpecLint.Translate`, `SpecLint.Bound`, `SpecLint.TypeCache` | Turns spec AST into `{lo, hi}` bounds with loss records (the section 6 kinds plus `map_key_widened`) and integer intervals. `expand_opaque` is optional. |
 | Comparison | `SpecLint.Compare` | Raw per-slice relations: application, extra and missing, containment per clause, overlap (certain or unknown), top-only, near-top, clause shadowing, and the dynamic probe. |
 | Evidence | `SpecLint.Evidence` | The DESIGN 3.1 classifier, steps 1 to 9: union level plus per-clause evidence, the F1 subtraction check with widening, near-top handling, and gradual payloads. |
 | Rules | `SpecLint.Rules.*` | SL001 (slice and clause conflict), SL002 (informational), SL003, SL004 and SL005 (hints, off by default), SL006, SL007 (a stub, since no backend exists), SL008. |
 | Policy | `SpecLint.Policy` | Gating by evidence for the `review` and `soundness` profiles, `--warnings-as-errors` (which never touches SL008), and the coverage policy. |
-| Coverage | `SpecLint.Coverage` | Per-slice inventory and a ledger with denominators. Unknown obligations are counted by reason, and regressions are checked against the baseline inventory, including specs removed from functions that are still exported (`unanalysed`). |
-| Baseline | `SpecLint.Baseline` | Structural fingerprints, acknowledgements with reason, owner and expiry, inventory acknowledgements, stale detection (only for analysis that happened), and adapter reconciliation per file and per entry (`pending_reconciliation`). |
+| Coverage | `SpecLint.Coverage` | Per-slice inventory and a ledger with denominators. Unknown obligations are counted by reason, and regressions are checked against the baseline inventory, including specs removed from functions that are still exported and overloads removed from multi-clause specs (`unanalysed`), but not user overrides deleted in favour of a `use`-injected default. |
+| Baseline | `SpecLint.Baseline` | Structural fingerprints, acknowledgements with reason, owner and expiry, the gate state each finding was written with (`blocked`, `gate_changed`), inventory acknowledgements, stale detection (only for analysis that happened, plus compared entries whose slice vanished), regeneration that keeps what was not analysed, and adapter reconciliation per file and per entry (`pending_reconciliation`). |
 | Run | `SpecLint.Run` | One run with exit code 0, 1 or 2. Completion is complete, partial or incomplete. Coverage is checked whatever rules are selected. |
 | Reports | `SpecLint.Report.Console`, `SpecLint.Report.Json`, `SpecLint.Explain` | Console output, a versioned deterministic JSON envelope written atomically, and `--explain`. |
 | Mix tasks | `mix spec_lint`, `mix spec_lint.baseline` | Options are parsed before compile. Compile failure exits 2. With `--format json` to stdout, compiler output goes to stderr. |
-| Bench | `bench/experiment.exs`, `bench/run_on_ebin.exs`, `bench/body_experiment.exs` | The SL002 experiment runner, the product pipeline run over explicit ebins (OSS corpora), and the body-backend experiment (runs only under a compiler carrying the `warnings/7` hook; `bench/corpus/body_run.sh`). |
+| Bench | `bench/experiment.exs`, `bench/run_on_ebin.exs`, `bench/body_experiment.exs`, `bench/triage/` | The SL002 experiment runner, the product pipeline run over explicit ebins (OSS corpora), the body-backend experiment (runs only under a compiler carrying the `warnings/7` hook, `bench/corpus/warnings7.patch`; `bench/corpus/body_run.sh`), and the Phase 0 triage probes (`per_clause.exs`, `near_top.ex`). `run.sh` and `body_run.sh` run under bash 3.2 or later. |
 
 The tests cover the following. Some are unit tests, some are fixture
 corpora (`test/support`), and one is a consumer integration project built
@@ -70,12 +72,12 @@ MIX_ENV=test mix run bench/run_on_ebin.exs -- --ebin DIR [--code-path DIR ...] \
 MIX_ENV=test mix run bench/experiment.exs -- --ebin DIR ... --label NAME --out FILE.json
 ```
 
-Quality gates, all green after the external review fixes:
+Quality gates, all green after the second external review fixes:
 
 ```
 mix format --check-formatted
 mix credo --strict            # no issues
-mix test                      # 232 tests, 0 failures (includes test/integration)
+mix test                      # 255 tests, 0 failures (includes test/integration)
 mix dialyzer                  # 0 errors (PLT in priv/plts)
 ```
 
@@ -108,18 +110,35 @@ check blocks the redundant-clause fixture `shadowed/1`.
 `possible_domain_escape`). The remaining 7 are `unknown`, mostly because
 inference is top-only.
 
-**Body backend experiment** (EXPERIMENTS.md "Body backend experiment"). The
-body is type-checked under each spec slice's domain through the
-`warnings/7` hook, on a patched `c24c235` build.
+**Body backend experiment** (EXPERIMENTS.md "Body backend experiment",
+reports in `bench/corpus/reports/body/`). The body is type-checked under
+each spec slice's domain through the `warnings/7` hook, on a patched
+`c24c235` build (`bench/corpus/warnings7.patch`).
 - Gating recall on the 9 known omissions goes from 0 to 1
   (`Ecto.Query.Builder.quoted_type/2`). Reported recall stays 2 of 9.
 - It found one new real omission, `Ecto.Changeset.apply_changes/1`
   (report-only).
-- It added 2 fixture false positives, 1 after the redundancy guard.
-- It added no false positive on 297 real-code slices.
-- Each slice costs about one module re-check: 1.7 s over decimal, plug and
-  ecto.
-- Decision: not adopted.
+- It added 2 fixture false positives, 1 after the redundancy guard
+  (`display/1`).
+- It added no false positive on 297 real-code slices (decimal, plug, ecto).
+- 18 obligations move from `unknown` to `none`, but only 5 are
+  established (`U(D)` within `S_lo`: `Plug.Conn.get_cookies/1`,
+  `get_resp_cookies/1`, `Ecto.put_meta/2`, `Ecto.Changeset.constraints/1`,
+  `validations/1`); the other 13 (11 `Plug.Conn` struct updates,
+  `add_error/4`, `prepare_changes/2`) have inexact spec returns and are
+  compatible at available precision only. The reports now record
+  `established` and `return_exact` per mode.
+- Each slice costs about one module re-check: 1.7 s of body calls over
+  decimal, plug and ecto, against 1.2 s for the whole signature analysis.
+- The 8 misses: 5 are top-only returns (through helpers analysed under
+  default domains: `Decimal.compare/2`, `cmp/2`; through generic
+  `Enum`/`Map` calls: `Plug.Conn.Query.decode/4`, `Ecto.Repo.Assoc.query/4`,
+  `Ecto.Repo.Preloader.query/7`); 2 are not top-only but leave only an
+  uncounted component (`Ecto.Changeset.apply_action/2`, a subtraction
+  payload through `apply_changes/1`; `Plug.Conn.merge_private/2`, a
+  negated struct field through `Enum.into/2`), with input approximation on
+  top; 1 is input approximation (`Ecto.Query.Builder.Join.escape/3`).
+- Decision: **not adopted** (DESIGN sections 7 and 11).
 
 **Stdlib before and after the review fixes.** Function classes are
 unchanged except for `DateTime.from_iso8601/2,3`, which moved from
@@ -190,9 +209,80 @@ Each decision is recorded in DESIGN; the section is given in parentheses.
 
 ## Open findings from external review (2026-09-28)
 
-None.
+None. Both reviews are closed; the second one is listed under "Delivered
+in this phase". One item is left to the maintainer: two earlier commits
+(`c4a8e18`, `ac3a75b`) carry a different `Co-Authored-By` trailer than the
+review expected, and correcting them would rewrite published history.
 
-## Fixed findings from external review
+## Delivered in this phase (second external review)
+
+Every finding has a regression test; DESIGN 9.1 records the decisions.
+
+1. **An ebin that lost its BEAM files passed CI as "0 specs" (high).**
+   `SpecLint.Project.check_build_paths/1` returns
+   `{:error, :missing_beams}` when a module the build lists has no BEAM
+   file: the Elixir compile manifest of a Mix project (Mix does not rebuild
+   the BEAM files, its manifest says the build is up to date), or else
+   `<app>.app`. The run is a configuration error (exit 2). As a second
+   line, a `compared` baseline entry whose slice is absent from the whole
+   inventory is a stale inventory entry. Tests: `SpecLint.CoverageTest`
+   "an ebin missing BEAM files its .app lists ...",
+   `SpecLint.Integration.BuildAndCoverageTest` (BEAM files deleted with
+   and without the `.app` file: exit 2).
+2. **A report-only SL001 in the baseline suppressed it once it gated
+   (medium).** Each baseline finding records its blocked prerequisites
+   (`"blocked"`); an entry written blocked does not acknowledge an SL001 or
+   SL003 issue whose prerequisites are now met. The issue is new and the
+   entry is listed under `gate_changed` (console and JSON). Test:
+   `SpecLint.BaselineTest` "a report-only finding in the baseline does not
+   acknowledge it once it gates".
+3. **Regeneration while a module or slice was unavailable dropped its
+   acknowledgements (medium).** `Baseline.build/5` keeps the previous
+   findings of slices and modules that are now unsupported, unavailable or
+   unanalysed (the rule stale detection uses), and the compared inventory
+   entries of modules unavailable as a whole. Test: `SpecLint.BaselineTest`
+   "regenerating while a module is unavailable keeps its
+   acknowledgements".
+4. **Deleting an override of a `use`-injected default was a false
+   `spec_removed` (medium).** An export whose debug-info definition carries
+   `from_super: false` (the compiler's marker for an overridable default
+   that was not overridden) is a deleted user definition, not a regression.
+   Test: `SpecLint.CoverageTest` "deleting an override of a use-injected
+   default is not a regression" (a `use GenServer` module).
+5. **Losing one overload passed CI although DESIGN 9 says it is a
+   violation (medium, and the low finding on the same point).**
+   Implemented as section 9 says: a function with fewer in-scope spec
+   clauses than a slice the baseline lists as compared gets an `unanalysed`
+   entry (`spec_clause_removed`), a regression. The first fix's exemption
+   is removed from DESIGN 9.1, the Coverage moduledoc and the README. Test:
+   `SpecLint.CoverageTest` "removing one overload while another stays
+   analysed is a regression" (one overload removed, and overloads merged).
+6. **Overclaims in the body-experiment write-up (two medium findings).**
+   "18 obligations established" is restated as 5 established and 13
+   compatible at available precision, from the new `established` and
+   `return_exact` fields (reports regenerated; no other field changed).
+   "7 of the 8 misses are top-only" is restated as 5 top-only and 2 not
+   top-only; "together they cover 7 of the 8" is restated as removing one
+   blocker in 7, with at most 4 (realistically 3) gateable.
+7. **Low findings.** An explicit `--baseline` or `baseline:` path that does
+   not exist is a configuration error (exit 2; `SpecLint.RunTest` and the
+   build integration test). `mix spec_lint.baseline --output PATH` runs
+   against `PATH` (integration test). `pending_reconciliation` is cleared
+   when a kept entry's own adapter is the running one (`SpecLint.BaselineTest`
+   "a pending entry regenerated under its own adapter acknowledges again").
+   The omission fixtures' claim is qualified to class and detection, with
+   the reason differences of `apply_action/2` and `quoted_type/2` recorded
+   in `bench/corpus/omissions/README.md`. `run.sh` and `body_run.sh` no
+   longer need bash 4 (both regenerated the reports under `/bin/bash`
+   3.2.57). The fork and branches holding `c24c235` and `b88a257a3` are
+   documented, and the hook is committed as `bench/corpus/warnings7.patch`.
+   The Phase 0 triage probes are committed under `bench/triage/`, and every
+   scratchpad path in EXPERIMENTS.md is marked non-durable. The
+   integration tests use `SpecLint.ProjectFixture` (system temporary
+   directory). README documents `lost_analysis` in the ledger. This file's
+   counts are corrected.
+
+## Fixed findings from the first external review
 
 Each fix has end-to-end regression tests; DESIGN section 9.1 records the
 decisions.
@@ -251,10 +341,26 @@ documented limitations. "Sound" is not claimed.
 - **Signature backend only.** There is no body analysis, so SL007 and
   `analysis: :bodies` exit 2. The body-backend experiment measured what
   body analysis would add (1 of 9 known omissions gated) and it was not
-  adopted (EXPERIMENTS.md "Body backend experiment"). Containment is the
-  binding constraint: unguarded parameters and struct patterns infer
-  `term()` fields, so most real clauses escape the spec domain. Gating
-  recall on known real omissions is 0 of 9.
+  adopted (EXPERIMENTS.md "Body backend experiment"). The binding
+  constraints are compiler inference (helpers under default domains,
+  generic `Enum`/`Map` signatures) and translation input approximation.
+  Gating recall on known real omissions is 0 of 9.
+- **Spec slices are positional.** Removing any one overload of a
+  multi-clause spec is reported against the last slice index
+  (`spec_clause_removed`), and reordering spec clauses changes the
+  fingerprints of the findings on them.
+- **Missing BEAM detection relies on a Mix internal.** The compile
+  manifest is read with `Mix.Compilers.Elixir.read_manifest/1` of the
+  pinned toolchain. Without it only `<app>.app` is checked, which Mix
+  rewrites from the BEAM files present, so deleting both the BEAM files
+  and the `.app` file is then caught only as stale inventory entries
+  (a warning), not as exit 2. `bench/run_on_ebin.exs` checks `<app>.app`
+  only.
+- **Gate state covers prerequisites, not profiles.** A baseline entry
+  records the prerequisites that blocked it, not the profile it was
+  written under: an SL006 acknowledged under `soundness` (report-only)
+  still acknowledges it under `review` (gated). Entries written before
+  this phase have no `blocked` field and acknowledge as before.
 - **Top-only inference hides most evidence.** On the stdlib, 913 of 1,777
   slices are top-only.
 - **One pinned compiler revision.** Every internal used (`Descr`, the
@@ -281,43 +387,59 @@ documented limitations. "Sound" is not claimed.
 
 ## Next steps
 
-1. **Body analysis backend: measured, not adopted** (EXPERIMENTS.md "Body
-   backend experiment", DESIGN section 7).
-   - Gated recall on the 9 known omissions goes from 0 to 1, and reported
-     recall stays at 2.
-   - 7 of the 8 misses are top-only returns from helpers analysed under
-     default domains, or from generic `Enum`/`Map` calls.
-   - The patched build is a detached worktree of `~/elixir` at `c24c235`
-     plus hunk `b88a257a3`, kept in the session scratchpad
-     (`elixir-body`); the recipe is in `bench/corpus/body_run.sh`.
-   - Revisit only with the upstream API below, plus call-site-sensitive
-     helper inference or parametric `Enum`/`Map` signatures.
-   - Recursion, mutual recursion and widening fixtures (DESIGN 7 item 5)
-     were not built, because the backend was not adopted.
-2. **Upstream API request.** Use the proposal in EXPERIMENTS.md "Minimal
-   compiler API":
-   - `Module.Types.infer_under_domains/7`, which checks only the targets
-     and what they reach;
-   - signatures in stored (compacted) form;
-   - reachability per source clause, which also replaces the shadowing
-     approximation;
-   - diagnostics;
-   - a `Module.Types.capabilities/0` version.
+**Next investment (per the external review): compiler inference, not a
+body backend.** Body analysis did not improve recall materially (gated
+0 to 1 of 9, reported 2 to 2), so it is not implemented or qualified. What
+blocks the 8 misses is inference in the compiler; in the order of the
+misses each would unblock (DESIGN section 11 has the same list):
 
-   Also ask for a stable, documented reader for the `ExCk` chunk.
-3. **SARIF output** next to the console and JSON reporters. Map rule IDs,
+1. **Parametric signatures for `Enum.map/2`, `Enum.reduce/3`,
+   `Enum.into/2` and `Map.new/1`**: `Plug.Conn.Query.decode/4`,
+   `Ecto.Repo.Assoc.query/4`, `Ecto.Repo.Preloader.query/7` (top-only
+   today) and `Plug.Conn.merge_private/2`.
+2. **Call-site-sensitive inference of local helpers and same-module
+   callees**: `Decimal.compare/2` (the `error/4` macro and the private
+   `handle_error/4`), `Decimal.cmp/2` (delegates to `compare/2`) and
+   `Ecto.Changeset.apply_action/2` (through `apply_changes/1`).
+3. **Recursive definitions inferred to a fixed point** instead of
+   `dynamic()` at the self-call: `Ecto.Query.Builder.Join.escape/3`,
+   `quoted_type/2`, and `unextract/3` under `Preloader.query/7`.
+4. **Clause reachability per source clause in the checker chunk**: the
+   23 over-blocked guarded stdlib clauses, and the body run's `name/1`
+   fixture false positive.
+
+Even with items 1 and 2, at most 4 of the 8 become gateable (realistically
+3: `decode/4`, `Assoc.query/4`, `Preloader.query/7`), because input
+approximation caps `Decimal.compare/2`, `merge_private/2` and
+`apply_action/2` (and probably `cmp/2`). The SpecLint-side lever is a
+translator that keeps `D_lo` for struct and recursive types
+(`Decimal.t()`, `Plug.Conn.t()`, `Ecto.Changeset.t()`, `Macro.t()`,
+`Macro.Env.t()`), plus counted components for negated struct fields and
+list-of-lists extras. Re-measure recall on the nine reproducers after
+each (`test/spec_lint/omissions_test.exs` pins the current classes).
+
+Then, in order:
+
+1. **Upstream API request.** Use the proposal in EXPERIMENTS.md "Minimal
+   compiler API": `Module.Types.infer_under_domains/7` (only the targets
+   and what they reach), signatures in stored form, reachability per
+   source clause, diagnostics, and a `Module.Types.capabilities/0`
+   version. Also ask for a stable, documented reader for the `ExCk`
+   chunk and for the compile manifest's module list.
+2. **SARIF output** next to the console and JSON reporters. Map rule IDs,
    evidence and fingerprints (as `partialFingerprints`) and the baseline
    state (as `baselineState`).
-4. **Caching under `_build`.** Key per-module results on the BEAM md5, the
-   adapter ID and the config digest. Reuse remote type expansion across
-   runs, and keep invalidation deterministic so JSON stays byte
-   identical.
-5. **Additional adapters.** Add one module per qualified compiler revision
-   (the next 1.21 development tips, then 1.21.0). Each needs the
-   differential tests for `apply_infer/2` and a published support matrix.
-   Run the stdlib regression per revision.
-6. Stdlib dogfooding: migrate the prototype's 68-entry exclusion list to a
+3. **Caching under `_build`**, keyed as DESIGN 9 "Cache keys" says (chunk
+   contents, resolved remote types, tool and adapter versions, config
+   digest; not the BEAM md5). Keep JSON byte identical.
+4. **Additional adapters.** One module per qualified compiler revision
+   (the next 1.21 development tips, then 1.21.0), each with the
+   differential tests for `apply_infer/2`, a published support matrix and
+   the stdlib regression.
+5. Stdlib dogfooding: migrate the prototype's 68-entry exclusion list to a
    fingerprinted baseline.
-7. Re-run the SL002 experiment whenever the classifier or containment
-   changes (DESIGN section 12). The struct-field containment question is
-   the most promising lever for recall.
+6. Re-run the SL002 experiment whenever the classifier or containment
+   changes (DESIGN section 12).
+7. Recursion, mutual recursion and widening fixtures (DESIGN 7 item 5)
+   were not built, because the body backend was not adopted; build them
+   if it is revisited.

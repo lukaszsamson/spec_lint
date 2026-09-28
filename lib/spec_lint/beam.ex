@@ -12,7 +12,17 @@ defmodule SpecLint.Beam do
       `fetch_types/1` on the binary;
     * `debug_info` - the `:elixir_v1` debug info: definitions, the first line
       of each definition, the definitions whose metadata marks them
-      `generated: true`, and the source file.
+      `generated: true`, the overridable defaults the module did not
+      override, and the source file.
+
+  An overridable default that was not overridden (a `defoverridable`
+  definition injected by `use`, such as `GenServer`'s `handle_info/2` or
+  `child_spec/1`, with no user definition of the same name and arity) is
+  stored by the compiler with `from_super: false` in its definition
+  metadata (`elixir_overridable:store_not_overridden/1`). A user-written
+  override has no `from_super` key, and a default reached through `super`
+  is stored under a hidden private name. `overridable_defaults` lists the
+  first kind.
   """
 
   alias SpecLint.Compiler
@@ -22,6 +32,7 @@ defmodule SpecLint.Beam do
           definitions: [tuple()],
           lines: %{optional({atom(), arity()}) => pos_integer()},
           generated: [{atom(), arity()}],
+          overridable_defaults: [{atom(), arity()}],
           file: String.t() | nil
         }
 
@@ -121,6 +132,7 @@ defmodule SpecLint.Beam do
            definitions: definitions,
            lines: definition_lines(definitions),
            generated: generated_definitions(definitions),
+           overridable_defaults: overridable_defaults(definitions),
            file: Map.get(map, :file)
          }}
 
@@ -135,6 +147,12 @@ defmodule SpecLint.Beam do
         is_integer(line),
         into: %{},
         do: {fun_arity, line}
+  end
+
+  defp overridable_defaults(definitions) do
+    for {fun_arity, _kind, meta, _clauses} <- definitions,
+        Keyword.get(meta, :from_super) == false,
+        do: fun_arity
   end
 
   defp generated_definitions(definitions) do

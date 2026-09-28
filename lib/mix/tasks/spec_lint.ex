@@ -27,7 +27,9 @@ defmodule Mix.Tasks.SpecLint do
       `signatures`; `bodies` is not available in this build and exits 2)
     * `--warnings-as-errors` - gate every reported finding
     * `--format console|json`, `--output PATH` - report format and file
-    * `--baseline PATH` - baseline file (default `.spec_lint_baseline.json`)
+    * `--baseline PATH` - baseline file (default `.spec_lint_baseline.json`,
+      which may be missing; an explicit path, here or as `baseline:` in the
+      configuration, must exist)
     * `--config PATH` - configuration file (default `.spec_lint.exs`)
     * `--module Mod`, `--app app` - partial run (repeatable)
     * `--explain Mod.fun/arity` - explain one function
@@ -36,10 +38,12 @@ defmodule Mix.Tasks.SpecLint do
 
   Exit status: `0` accepted; `1` new gated findings or a coverage violation
   (with `--ci` or `--warnings-as-errors`); `2` invalid options or
-  configuration, compilation failure, a missing build directory for an
-  owned application, unsupported compiler or backend in CI, or an
-  incomplete run. An existing but empty build directory is a project with
-  zero specs: exit 0, and the report says "0 specs checked".
+  configuration (including an explicit baseline path that does not exist),
+  compilation failure, a missing build directory for an owned application
+  or one missing BEAM files its build lists, unsupported compiler or
+  backend in CI, or an incomplete run. An existing but empty build
+  directory is a project with zero specs: exit 0, and the report says "0
+  specs checked".
   """
 
   use Mix.Task

@@ -1626,6 +1626,7 @@
             "clauses": [
               "(%Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n}, list(binary()), atom(), not ((bitstring() and not binary()) or fun() or non_empty_list(term(), not empty_list()) or pid() or\n  port() or reference())) -> dynamic(%{..., path_info: list(binary()), script_name: list(binary())})"
             ],
+            "established": false,
             "extra": "%{..., path_info: list(binary()), script_name: list(binary())} and not %Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n}",
             "guard_blocked": false,
             "near_top": false,
@@ -1636,6 +1637,7 @@
               "no_counted_component",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "unknown",
@@ -1665,6 +1667,7 @@
             "clauses": [
               "(%Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n}, list(binary()), atom(), not ((bitstring() and not binary()) or fun() or non_empty_list(term(), not empty_list()) or pid() or\n  port() or reference())) -> dynamic(%{..., path_info: list(binary()), script_name: list(binary())})"
             ],
+            "established": false,
             "extra": "%{..., path_info: list(binary()), script_name: list(binary())} and not %Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n}",
             "guard_blocked": false,
             "near_top": false,
@@ -1675,12 +1678,13 @@
               "no_counted_component",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "unknown",
             "warn": false
           },
-          "body_us": 472,
+          "body_us": 482,
           "default": {
             "applied": [
               0
@@ -1704,6 +1708,7 @@
             "clauses": [
               "(%Plug.Conn{path_info: list(term()), script_name: list(term())}, list(term()), atom() or {atom(), atom()}, term()) -> dynamic(%{..., path_info: list(term()), script_name: list(term())})"
             ],
+            "established": false,
             "extra": "%{..., path_info: list(term()), script_name: list(term())} and not %Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n}",
             "guard_blocked": false,
             "near_top": false,
@@ -1714,6 +1719,7 @@
               "no_counted_component",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "unknown",
@@ -1752,6 +1758,7 @@
             "clauses": [
               "(%Plug.Conn{path_info: list(term()), script_name: list(term())}, list(term()), atom() or {atom(), atom()}, term()) -> dynamic(%{..., path_info: list(term()), script_name: list(term())})"
             ],
+            "established": false,
             "extra": "%{..., path_info: list(term()), script_name: list(term())} and not %Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n}",
             "guard_blocked": false,
             "near_top": false,
@@ -1762,6 +1769,7 @@
               "no_counted_component",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "unknown",
@@ -1807,6 +1815,7 @@
             "clauses": [
               "(%Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n}, atom(), term()) -> dynamic(%Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n})"
             ],
+            "established": false,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
@@ -1814,6 +1823,7 @@
               "no_extra",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "none",
@@ -1831,6 +1841,7 @@
             "clauses": [
               "(%Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n}, atom(), term()) -> dynamic(%Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n})"
             ],
+            "established": false,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
@@ -1838,12 +1849,13 @@
               "no_extra",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "none",
             "warn": false
           },
-          "body_us": 4879,
+          "body_us": 7830,
           "default": {
             "applied": [
               0
@@ -1867,6 +1879,7 @@
             "clauses": [
               "(%Plug.Conn{assigns: map()}, atom(), term()) -> dynamic(%Plug.Conn{assigns: map()})"
             ],
+            "established": false,
             "extra": "%Plug.Conn{assigns: map()} and not %Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n}",
             "guard_blocked": false,
             "near_top": false,
@@ -1877,6 +1890,7 @@
               "no_counted_component",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "unknown",
@@ -1912,6 +1926,7 @@
             "clauses": [
               "(%Plug.Conn{assigns: map()}, atom(), term()) -> dynamic(%Plug.Conn{assigns: map()})"
             ],
+            "established": false,
             "extra": "%Plug.Conn{assigns: map()} and not %Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n}",
             "guard_blocked": false,
             "near_top": false,
@@ -1922,6 +1937,7 @@
               "no_counted_component",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "unknown",
@@ -1966,12 +1982,14 @@
             "clauses": [
               "(%Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n}) -> dynamic(%{binary() => term()})"
             ],
+            "established": true,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "no_extra"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "none",
@@ -1989,18 +2007,20 @@
             "clauses": [
               "(%Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n}) -> dynamic(%{binary() => term()})"
             ],
+            "established": true,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "no_extra"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "none",
             "warn": false
           },
-          "body_us": 6189,
+          "body_us": 8235,
           "default": {
             "applied": [
               0
@@ -2024,6 +2044,7 @@
             "clauses": [
               "(%{..., cookies: map() and not %Plug.Conn.Unfetched{}}) -> dynamic(map() and not %Plug.Conn.Unfetched{})"
             ],
+            "established": false,
             "extra": "map() and not (%{binary() => term()} or %Plug.Conn.Unfetched{})",
             "guard_blocked": false,
             "near_top": false,
@@ -2033,6 +2054,7 @@
               "unknown_components=1",
               "no_counted_component"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "unknown",
@@ -2068,6 +2090,7 @@
             "clauses": [
               "(%{..., cookies: map() and not %Plug.Conn.Unfetched{}}) -> dynamic(map() and not %Plug.Conn.Unfetched{})"
             ],
+            "established": false,
             "extra": "map() and not (%{binary() => term()} or %Plug.Conn.Unfetched{})",
             "guard_blocked": false,
             "near_top": false,
@@ -2077,6 +2100,7 @@
               "unknown_components=1",
               "no_counted_component"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "unknown",
@@ -2119,12 +2143,14 @@
             "clauses": [
               "(%Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n}) -> dynamic(%{binary() => map()})"
             ],
+            "established": true,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "no_extra"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "none",
@@ -2142,18 +2168,20 @@
             "clauses": [
               "(%Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n}) -> dynamic(%{binary() => map()})"
             ],
+            "established": true,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "no_extra"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "none",
             "warn": false
           },
-          "body_us": 4893,
+          "body_us": 5292,
           "default": {
             "applied": [
               0
@@ -2176,12 +2204,14 @@
             "clauses": [
               "(%{..., resp_cookies: term()}) -> dynamic()"
             ],
+            "established": false,
             "extra": "not (%{binary() => map()} and map())",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "top_only"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -2216,12 +2246,14 @@
             "clauses": [
               "(%{..., resp_cookies: term()}) -> dynamic()"
             ],
+            "established": false,
             "extra": "not (%{binary() => map()} and map())",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "top_only"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -2264,6 +2296,7 @@
             "clauses": [
               "(%Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n}) -> dynamic(%Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: true,\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n})"
             ],
+            "established": false,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
@@ -2271,6 +2304,7 @@
               "no_extra",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "none",
@@ -2288,6 +2322,7 @@
             "clauses": [
               "(%Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n}) -> dynamic(%Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: true,\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n})"
             ],
+            "established": false,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
@@ -2295,12 +2330,13 @@
               "no_extra",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "none",
             "warn": false
           },
-          "body_us": 10177,
+          "body_us": 11363,
           "default": {
             "applied": [
               0
@@ -2324,6 +2360,7 @@
             "clauses": [
               "(%Plug.Conn{}) -> dynamic(%Plug.Conn{halted: true})"
             ],
+            "established": false,
             "extra": "%Plug.Conn{halted: true} and not %Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n}",
             "guard_blocked": false,
             "near_top": false,
@@ -2334,6 +2371,7 @@
               "no_counted_component",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "unknown",
@@ -2369,6 +2407,7 @@
             "clauses": [
               "(%Plug.Conn{}) -> dynamic(%Plug.Conn{halted: true})"
             ],
+            "established": false,
             "extra": "%Plug.Conn{halted: true} and not %Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n}",
             "guard_blocked": false,
             "near_top": false,
@@ -2379,6 +2418,7 @@
               "no_counted_component",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "unknown",
@@ -2421,6 +2461,7 @@
             "clauses": [
               "(%Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n}, :accepted or :already_reported or :bad_gateway or :bad_request or :conflict or :content_too_large or\n  :continue or :created or :early_hints or :expectation_failed or :failed_dependency or :forbidden or\n  :found or :gateway_timeout or :gone or :http_version_not_supported or :im_a_teapot or :im_used or\n  :insufficient_storage or :internal_server_error or :length_required or :locked or :loop_detected or\n  :method_not_allowed or :misdirected_request or :moved_permanently or :multi_status or\n  :multiple_choices or :network_authentication_required or :no_content or\n  :non_authoritative_information or :not_acceptable or :not_an_rfc_status_code or :not_extended or\n  :not_found or :not_implemented or :not_modified or :ok or :partial_content or :payment_required or\n  :permanent_redirect or :precondition_failed or :precondition_required or :processing or\n  :proxy_authentication_required or :range_not_satisfiable or :request_entity_too_large or\n  :request_header_fields_too_large or :request_timeout or :request_uri_too_long or\n  :requested_range_not_satisfiable or :reset_content or :see_other or :service_unavailable or\n  :switch_proxy or :switching_protocols or :temporary_redirect or :too_early or :too_many_requests or\n  :totally_not_a_teapot or :unauthorized or :unavailable_for_legal_reasons or\n  :unprocessable_content or :unprocessable_entity or :unsupported_media_type or :upgrade_required or\n  :uri_too_long or :use_proxy or :variant_also_negotiates or integer(), list({atom() or binary(), binary()})) -> dynamic(%Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n})"
             ],
+            "established": false,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
@@ -2428,6 +2469,7 @@
               "no_extra",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "none",
@@ -2445,6 +2487,7 @@
             "clauses": [
               "(%Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n}, :accepted or :already_reported or :bad_gateway or :bad_request or :conflict or :content_too_large or\n  :continue or :created or :early_hints or :expectation_failed or :failed_dependency or :forbidden or\n  :found or :gateway_timeout or :gone or :http_version_not_supported or :im_a_teapot or :im_used or\n  :insufficient_storage or :internal_server_error or :length_required or :locked or :loop_detected or\n  :method_not_allowed or :misdirected_request or :moved_permanently or :multi_status or\n  :multiple_choices or :network_authentication_required or :no_content or\n  :non_authoritative_information or :not_acceptable or :not_an_rfc_status_code or :not_extended or\n  :not_found or :not_implemented or :not_modified or :ok or :partial_content or :payment_required or\n  :permanent_redirect or :precondition_failed or :precondition_required or :processing or\n  :proxy_authentication_required or :range_not_satisfiable or :request_entity_too_large or\n  :request_header_fields_too_large or :request_timeout or :request_uri_too_long or\n  :requested_range_not_satisfiable or :reset_content or :see_other or :service_unavailable or\n  :switch_proxy or :switching_protocols or :temporary_redirect or :too_early or :too_many_requests or\n  :totally_not_a_teapot or :unauthorized or :unavailable_for_legal_reasons or\n  :unprocessable_content or :unprocessable_entity or :unsupported_media_type or :upgrade_required or\n  :uri_too_long or :use_proxy or :variant_also_negotiates or integer(), list({atom() or binary(), binary()})) -> dynamic(%Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n})"
             ],
+            "established": false,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
@@ -2452,12 +2495,13 @@
               "no_extra",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "none",
             "warn": false
           },
-          "body_us": 11395,
+          "body_us": 11044,
           "default": {
             "applied": [
               0
@@ -2481,6 +2525,7 @@
             "clauses": [
               "(%Plug.Conn{adapter: {atom(), term()}}, :accepted or :already_reported or :bad_gateway or :bad_request or :conflict or :content_too_large or\n  :continue or :created or :early_hints or :expectation_failed or :failed_dependency or :forbidden or\n  :found or :gateway_timeout or :gone or :http_version_not_supported or :im_a_teapot or :im_used or\n  :insufficient_storage or :internal_server_error or :length_required or :locked or :loop_detected or\n  :method_not_allowed or :misdirected_request or :moved_permanently or :multi_status or\n  :multiple_choices or :network_authentication_required or :no_content or\n  :non_authoritative_information or :not_acceptable or :not_an_rfc_status_code or :not_extended or\n  :not_found or :not_implemented or :not_modified or :ok or :partial_content or :payment_required or\n  :permanent_redirect or :precondition_failed or :precondition_required or :processing or\n  :proxy_authentication_required or :range_not_satisfiable or :request_entity_too_large or\n  :request_header_fields_too_large or :request_timeout or :request_uri_too_long or\n  :requested_range_not_satisfiable or :reset_content or :see_other or :service_unavailable or\n  :switch_proxy or :switching_protocols or :temporary_redirect or :too_early or :too_many_requests or\n  :totally_not_a_teapot or :unauthorized or :unavailable_for_legal_reasons or\n  :unprocessable_content or :unprocessable_entity or :unsupported_media_type or :upgrade_required or\n  :uri_too_long or :use_proxy or :variant_also_negotiates or integer(), term()) -> dynamic(%Plug.Conn{adapter: {term(), term()}})"
             ],
+            "established": false,
             "extra": "%Plug.Conn{adapter: {term(), term()}} and not %Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n}",
             "guard_blocked": false,
             "near_top": false,
@@ -2491,6 +2536,7 @@
               "no_counted_component",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "unknown",
@@ -2526,6 +2572,7 @@
             "clauses": [
               "(%Plug.Conn{adapter: {atom(), term()}}, term(), term()) -> dynamic(%Plug.Conn{adapter: {term(), term()}})"
             ],
+            "established": false,
             "extra": "%Plug.Conn{adapter: {term(), term()}} and not %Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n}",
             "guard_blocked": false,
             "near_top": false,
@@ -2536,6 +2583,7 @@
               "no_counted_component",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "unknown",
@@ -2580,6 +2628,7 @@
             "clauses": [
               "(%Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n}, :accepted or :already_reported or :bad_gateway or :bad_request or :conflict or :content_too_large or\n  :continue or :created or :early_hints or :expectation_failed or :failed_dependency or :forbidden or\n  :found or :gateway_timeout or :gone or :http_version_not_supported or :im_a_teapot or :im_used or\n  :insufficient_storage or :internal_server_error or :length_required or :locked or :loop_detected or\n  :method_not_allowed or :misdirected_request or :moved_permanently or :multi_status or\n  :multiple_choices or :network_authentication_required or :no_content or\n  :non_authoritative_information or :not_acceptable or :not_an_rfc_status_code or :not_extended or\n  :not_found or :not_implemented or :not_modified or :ok or :partial_content or :payment_required or\n  :permanent_redirect or :precondition_failed or :precondition_required or :processing or\n  :proxy_authentication_required or :range_not_satisfiable or :request_entity_too_large or\n  :request_header_fields_too_large or :request_timeout or :request_uri_too_long or\n  :requested_range_not_satisfiable or :reset_content or :see_other or :service_unavailable or\n  :switch_proxy or :switching_protocols or :temporary_redirect or :too_early or :too_many_requests or\n  :totally_not_a_teapot or :unauthorized or :unavailable_for_legal_reasons or\n  :unprocessable_content or :unprocessable_entity or :unsupported_media_type or :upgrade_required or\n  :uri_too_long or :use_proxy or :variant_also_negotiates or integer(), list({atom() or binary(), binary()})) -> dynamic(%Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n})"
             ],
+            "established": false,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
@@ -2587,6 +2636,7 @@
               "no_extra",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "none",
@@ -2604,6 +2654,7 @@
             "clauses": [
               "(%Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n}, :accepted or :already_reported or :bad_gateway or :bad_request or :conflict or :content_too_large or\n  :continue or :created or :early_hints or :expectation_failed or :failed_dependency or :forbidden or\n  :found or :gateway_timeout or :gone or :http_version_not_supported or :im_a_teapot or :im_used or\n  :insufficient_storage or :internal_server_error or :length_required or :locked or :loop_detected or\n  :method_not_allowed or :misdirected_request or :moved_permanently or :multi_status or\n  :multiple_choices or :network_authentication_required or :no_content or\n  :non_authoritative_information or :not_acceptable or :not_an_rfc_status_code or :not_extended or\n  :not_found or :not_implemented or :not_modified or :ok or :partial_content or :payment_required or\n  :permanent_redirect or :precondition_failed or :precondition_required or :processing or\n  :proxy_authentication_required or :range_not_satisfiable or :request_entity_too_large or\n  :request_header_fields_too_large or :request_timeout or :request_uri_too_long or\n  :requested_range_not_satisfiable or :reset_content or :see_other or :service_unavailable or\n  :switch_proxy or :switching_protocols or :temporary_redirect or :too_early or :too_many_requests or\n  :totally_not_a_teapot or :unauthorized or :unavailable_for_legal_reasons or\n  :unprocessable_content or :unprocessable_entity or :unsupported_media_type or :upgrade_required or\n  :uri_too_long or :use_proxy or :variant_also_negotiates or integer(), list({atom() or binary(), binary()})) -> dynamic(%Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n})"
             ],
+            "established": false,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
@@ -2611,12 +2662,13 @@
               "no_extra",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "none",
             "warn": false
           },
-          "body_us": 10146,
+          "body_us": 12482,
           "default": {
             "applied": [
               0
@@ -2640,6 +2692,7 @@
             "clauses": [
               "(%Plug.Conn{adapter: {atom(), term()}}, :accepted or :already_reported or :bad_gateway or :bad_request or :conflict or :content_too_large or\n  :continue or :created or :early_hints or :expectation_failed or :failed_dependency or :forbidden or\n  :found or :gateway_timeout or :gone or :http_version_not_supported or :im_a_teapot or :im_used or\n  :insufficient_storage or :internal_server_error or :length_required or :locked or :loop_detected or\n  :method_not_allowed or :misdirected_request or :moved_permanently or :multi_status or\n  :multiple_choices or :network_authentication_required or :no_content or\n  :non_authoritative_information or :not_acceptable or :not_an_rfc_status_code or :not_extended or\n  :not_found or :not_implemented or :not_modified or :ok or :partial_content or :payment_required or\n  :permanent_redirect or :precondition_failed or :precondition_required or :processing or\n  :proxy_authentication_required or :range_not_satisfiable or :request_entity_too_large or\n  :request_header_fields_too_large or :request_timeout or :request_uri_too_long or\n  :requested_range_not_satisfiable or :reset_content or :see_other or :service_unavailable or\n  :switch_proxy or :switching_protocols or :temporary_redirect or :too_early or :too_many_requests or\n  :totally_not_a_teapot or :unauthorized or :unavailable_for_legal_reasons or\n  :unprocessable_content or :unprocessable_entity or :unsupported_media_type or :upgrade_required or\n  :uri_too_long or :use_proxy or :variant_also_negotiates or integer(), term()) -> dynamic(%Plug.Conn{adapter: {term(), term()}})"
             ],
+            "established": false,
             "extra": "%Plug.Conn{adapter: {term(), term()}} and not %Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n}",
             "guard_blocked": false,
             "near_top": false,
@@ -2650,6 +2703,7 @@
               "no_counted_component",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "unknown",
@@ -2685,6 +2739,7 @@
             "clauses": [
               "(%Plug.Conn{adapter: {atom(), term()}}, term(), term()) -> dynamic(%Plug.Conn{adapter: {term(), term()}})"
             ],
+            "established": false,
             "extra": "%Plug.Conn{adapter: {term(), term()}} and not %Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n}",
             "guard_blocked": false,
             "near_top": false,
@@ -2695,6 +2750,7 @@
               "no_counted_component",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "unknown",
@@ -2751,6 +2807,7 @@
             "clauses": [
               "(%Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n}, term()) -> dynamic(%Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n})"
             ],
+            "established": false,
             "extra": "%Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: not %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n}",
             "guard_blocked": false,
             "near_top": false,
@@ -2761,6 +2818,7 @@
               "no_counted_component",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "unknown",
@@ -2790,6 +2848,7 @@
             "clauses": [
               "(%Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n}, term()) -> dynamic(%Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n})"
             ],
+            "established": false,
             "extra": "%Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: not %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n}",
             "guard_blocked": false,
             "near_top": false,
@@ -2800,12 +2859,13 @@
               "no_counted_component",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "unknown",
             "warn": false
           },
-          "body_us": 9930,
+          "body_us": 11214,
           "default": {
             "applied": [
               0
@@ -2829,6 +2889,7 @@
             "clauses": [
               "(%Plug.Conn{}, term()) -> dynamic(%Plug.Conn{})"
             ],
+            "established": false,
             "extra": "%Plug.Conn{} and not %Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n}",
             "guard_blocked": false,
             "near_top": false,
@@ -2839,6 +2900,7 @@
               "no_counted_component",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "unknown",
@@ -2874,6 +2936,7 @@
             "clauses": [
               "(%Plug.Conn{}, term()) -> dynamic(%Plug.Conn{})"
             ],
+            "established": false,
             "extra": "%Plug.Conn{} and not %Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n}",
             "guard_blocked": false,
             "near_top": false,
@@ -2884,6 +2947,7 @@
               "no_counted_component",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "unknown",
@@ -2927,6 +2991,7 @@
             "clauses": [
               "(%{..., req_headers: term()} and %Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n} and %Plug.Conn{adapter: {atom(), term()}, req_headers: list({binary(), binary()})} and not %Plug.Conn{state: :chunked or :file or :sent or :upgraded}, list({binary(), binary()})) -> dynamic(\n  %Plug.Conn{\n    adapter: {atom(), term()},\n    assigns: %{atom() => term()},\n    body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n    cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n    halted: boolean(),\n    host: binary(),\n    method: binary(),\n    owner: nil or pid(),\n    params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n    path_info: list(binary()),\n    path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n    port: integer(),\n    private: %{atom() => term()},\n    query_params:\n      %Plug.Conn.Unfetched{aspect: atom()} or\n        %{binary() => %{binary() => term()} or binary() or list(term())},\n    query_string: binary(),\n    remote_ip:\n      {integer(), integer(), integer(), integer()} or\n        {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n    req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n    req_headers: list({binary(), binary()}),\n    request_path: binary(),\n    resp_body:\n      nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n    resp_cookies: %{binary() => map()},\n    resp_headers: list({binary(), binary()}),\n    scheme: :http or :https,\n    script_name: list(binary()),\n    secret_key_base: nil or binary(),\n    state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n    status: nil or integer()\n  } and\n    not %Plug.Conn{\n      req_headers: list({binary(), binary()}),\n      state: :chunked or :file or :sent or :upgraded\n    }\n)"
             ],
+            "established": false,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
@@ -2934,6 +2999,7 @@
               "no_extra",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "none",
@@ -2951,6 +3017,7 @@
             "clauses": [
               "(%{..., req_headers: term()} and %Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n} and %Plug.Conn{adapter: {atom(), term()}, req_headers: list({binary(), binary()})} and not %Plug.Conn{state: :chunked or :file or :sent or :upgraded}, list({binary(), binary()})) -> dynamic(\n  %Plug.Conn{\n    adapter: {atom(), term()},\n    assigns: %{atom() => term()},\n    body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n    cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n    halted: boolean(),\n    host: binary(),\n    method: binary(),\n    owner: nil or pid(),\n    params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n    path_info: list(binary()),\n    path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n    port: integer(),\n    private: %{atom() => term()},\n    query_params:\n      %Plug.Conn.Unfetched{aspect: atom()} or\n        %{binary() => %{binary() => term()} or binary() or list(term())},\n    query_string: binary(),\n    remote_ip:\n      {integer(), integer(), integer(), integer()} or\n        {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n    req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n    req_headers: list({binary(), binary()}),\n    request_path: binary(),\n    resp_body:\n      nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n    resp_cookies: %{binary() => map()},\n    resp_headers: list({binary(), binary()}),\n    scheme: :http or :https,\n    script_name: list(binary()),\n    secret_key_base: nil or binary(),\n    state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n    status: nil or integer()\n  } and\n    not %Plug.Conn{\n      req_headers: list({binary(), binary()}),\n      state: :chunked or :file or :sent or :upgraded\n    }\n)"
             ],
+            "established": false,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
@@ -2958,12 +3025,13 @@
               "no_extra",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "none",
             "warn": false
           },
-          "body_us": 10025,
+          "body_us": 12667,
           "default": {
             "applied": [
               0
@@ -2987,6 +3055,7 @@
             "clauses": [
               "(%{..., req_headers: term()} and %Plug.Conn{} and not %Plug.Conn{\n  state: not :set and not :set_chunked and not :set_file and not :set_upgrade and not :unset\n}, list(term())) -> dynamic(%Plug.Conn{state: :set or :set_chunked or :set_file or :set_upgrade or :unset})"
             ],
+            "established": false,
             "extra": "%Plug.Conn{} and not (%Plug.Conn{\n  state: not :set and not :set_chunked and not :set_file and not :set_upgrade and not :unset\n} or %Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n})",
             "guard_blocked": false,
             "near_top": false,
@@ -2997,6 +3066,7 @@
               "no_counted_component",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "unknown",
@@ -3044,6 +3114,7 @@
               "(%Plug.Conn{\n  state: not :set and not :set_chunked and not :set_file and not :set_upgrade and not :unset\n}, term()) -> none()",
               "(%Plug.Conn{}, list(term())) -> dynamic(%Plug.Conn{})"
             ],
+            "established": false,
             "extra": "%Plug.Conn{} and not %Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n}",
             "guard_blocked": false,
             "near_top": false,
@@ -3054,6 +3125,7 @@
               "no_counted_component",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "unknown",
@@ -3097,6 +3169,7 @@
             "clauses": [
               "(%{..., resp_headers: term()} and %Plug.Conn{adapter: {atom(), term()}, resp_headers: list({binary(), binary()})} and %Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n} and not %Plug.Conn{state: :chunked or :file or :sent or :upgraded}, list({binary(), binary()})) -> dynamic(\n  %Plug.Conn{\n    adapter: {atom(), term()},\n    assigns: %{atom() => term()},\n    body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n    cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n    halted: boolean(),\n    host: binary(),\n    method: binary(),\n    owner: nil or pid(),\n    params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n    path_info: list(binary()),\n    path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n    port: integer(),\n    private: %{atom() => term()},\n    query_params:\n      %Plug.Conn.Unfetched{aspect: atom()} or\n        %{binary() => %{binary() => term()} or binary() or list(term())},\n    query_string: binary(),\n    remote_ip:\n      {integer(), integer(), integer(), integer()} or\n        {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n    req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n    req_headers: list({binary(), binary()}),\n    request_path: binary(),\n    resp_body:\n      nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n    resp_cookies: %{binary() => map()},\n    resp_headers: list({binary(), binary()}),\n    scheme: :http or :https,\n    script_name: list(binary()),\n    secret_key_base: nil or binary(),\n    state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n    status: nil or integer()\n  } and\n    not %Plug.Conn{\n      resp_headers: list({binary(), binary()}),\n      state: :chunked or :file or :sent or :upgraded\n    }\n)"
             ],
+            "established": false,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
@@ -3104,6 +3177,7 @@
               "no_extra",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "none",
@@ -3121,6 +3195,7 @@
             "clauses": [
               "(%{..., resp_headers: term()} and %Plug.Conn{adapter: {atom(), term()}, resp_headers: list({binary(), binary()})} and %Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n} and not %Plug.Conn{state: :chunked or :file or :sent or :upgraded}, list({binary(), binary()})) -> dynamic(\n  %Plug.Conn{\n    adapter: {atom(), term()},\n    assigns: %{atom() => term()},\n    body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n    cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n    halted: boolean(),\n    host: binary(),\n    method: binary(),\n    owner: nil or pid(),\n    params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n    path_info: list(binary()),\n    path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n    port: integer(),\n    private: %{atom() => term()},\n    query_params:\n      %Plug.Conn.Unfetched{aspect: atom()} or\n        %{binary() => %{binary() => term()} or binary() or list(term())},\n    query_string: binary(),\n    remote_ip:\n      {integer(), integer(), integer(), integer()} or\n        {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n    req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n    req_headers: list({binary(), binary()}),\n    request_path: binary(),\n    resp_body:\n      nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n    resp_cookies: %{binary() => map()},\n    resp_headers: list({binary(), binary()}),\n    scheme: :http or :https,\n    script_name: list(binary()),\n    secret_key_base: nil or binary(),\n    state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n    status: nil or integer()\n  } and\n    not %Plug.Conn{\n      resp_headers: list({binary(), binary()}),\n      state: :chunked or :file or :sent or :upgraded\n    }\n)"
             ],
+            "established": false,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
@@ -3128,12 +3203,13 @@
               "no_extra",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "none",
             "warn": false
           },
-          "body_us": 12224,
+          "body_us": 11639,
           "default": {
             "applied": [
               0
@@ -3157,6 +3233,7 @@
             "clauses": [
               "(%{..., resp_headers: term()} and %Plug.Conn{} and not %Plug.Conn{\n  state: not :set and not :set_chunked and not :set_file and not :set_upgrade and not :unset\n}, list(term())) -> dynamic(%Plug.Conn{state: :set or :set_chunked or :set_file or :set_upgrade or :unset})"
             ],
+            "established": false,
             "extra": "%Plug.Conn{} and not (%Plug.Conn{\n  state: not :set and not :set_chunked and not :set_file and not :set_upgrade and not :unset\n} or %Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n})",
             "guard_blocked": false,
             "near_top": false,
@@ -3167,6 +3244,7 @@
               "no_counted_component",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "unknown",
@@ -3214,6 +3292,7 @@
               "(%Plug.Conn{\n  state: not :set and not :set_chunked and not :set_file and not :set_upgrade and not :unset\n}, term()) -> none()",
               "(%Plug.Conn{}, list(term())) -> dynamic(%Plug.Conn{})"
             ],
+            "established": false,
             "extra": "%Plug.Conn{} and not %Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n}",
             "guard_blocked": false,
             "near_top": false,
@@ -3224,6 +3303,7 @@
               "no_counted_component",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "unknown",
@@ -3267,6 +3347,7 @@
             "clauses": [
               "(%Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n}, binary(), list({atom(), term()})) -> dynamic(%Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n})"
             ],
+            "established": false,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
@@ -3274,6 +3355,7 @@
               "no_extra",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "none",
@@ -3291,6 +3373,7 @@
             "clauses": [
               "(%Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n}, binary(), list({atom(), term()})) -> dynamic(%Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n})"
             ],
+            "established": false,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
@@ -3298,12 +3381,13 @@
               "no_extra",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "none",
             "warn": false
           },
-          "body_us": 10569,
+          "body_us": 11018,
           "default": {
             "applied": [
               0
@@ -3327,6 +3411,7 @@
             "clauses": [
               "(%Plug.Conn{adapter: {atom(), term()}}, term(), term()) -> dynamic(%Plug.Conn{adapter: {atom(), term()}})"
             ],
+            "established": false,
             "extra": "%Plug.Conn{adapter: {atom(), term()}} and not %Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n}",
             "guard_blocked": false,
             "near_top": false,
@@ -3337,6 +3422,7 @@
               "no_counted_component",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "unknown",
@@ -3372,6 +3458,7 @@
             "clauses": [
               "((%Plug.Conn{\n  state: not :set and not :set_chunked and not :set_file and not :set_upgrade and not :unset\n} and %Plug.Conn{}) or %Plug.Conn{} and %Plug.Conn{adapter: {atom(), term()}}, term(), term()) -> dynamic(\n  %Plug.Conn{adapter: {atom(), term()}} or\n    %Plug.Conn{\n      state: not :set and not :set_chunked and not :set_file and not :set_upgrade and not :unset\n    }\n)"
             ],
+            "established": false,
             "extra": "(%Plug.Conn{\n  state: not :set and not :set_chunked and not :set_file and not :set_upgrade and not :unset\n} and %Plug.Conn{} and not %Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n}) or (%Plug.Conn{} and %Plug.Conn{adapter: {atom(), term()}} and not %Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n})",
             "guard_blocked": false,
             "near_top": false,
@@ -3382,6 +3469,7 @@
               "no_counted_component",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "unknown",
@@ -3426,6 +3514,7 @@
             "clauses": [
               "(%Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n}, binary(), list({atom(), term()})) -> dynamic(%Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n})"
             ],
+            "established": false,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
@@ -3433,6 +3522,7 @@
               "no_extra",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "none",
@@ -3450,6 +3540,7 @@
             "clauses": [
               "(%Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n}, binary(), list({atom(), term()})) -> dynamic(%Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n})"
             ],
+            "established": false,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
@@ -3457,12 +3548,13 @@
               "no_extra",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "none",
             "warn": false
           },
-          "body_us": 12123,
+          "body_us": 11093,
           "default": {
             "applied": [
               0
@@ -3486,6 +3578,7 @@
             "clauses": [
               "(%Plug.Conn{adapter: {atom(), term()}}, term(), term()) -> dynamic(%Plug.Conn{adapter: {atom(), term()}})"
             ],
+            "established": false,
             "extra": "%Plug.Conn{adapter: {atom(), term()}} and not %Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n}",
             "guard_blocked": false,
             "near_top": false,
@@ -3496,6 +3589,7 @@
               "no_counted_component",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "unknown",
@@ -3531,6 +3625,7 @@
             "clauses": [
               "(%Plug.Conn{adapter: {term(), term()}} and %Plug.Conn{adapter: {atom(), term()}}, term(), term()) -> dynamic(%Plug.Conn{adapter: {atom(), term()}})"
             ],
+            "established": false,
             "extra": "%Plug.Conn{adapter: {term(), term()}} and %Plug.Conn{adapter: {atom(), term()}} and not %Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n}",
             "guard_blocked": false,
             "near_top": false,
@@ -3541,6 +3636,7 @@
               "no_counted_component",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "unknown",
@@ -3585,6 +3681,7 @@
             "clauses": [
               "(%Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n}, atom(), term()) -> dynamic(%Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n})"
             ],
+            "established": false,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
@@ -3592,6 +3689,7 @@
               "no_extra",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "none",
@@ -3609,6 +3707,7 @@
             "clauses": [
               "(%Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n}, atom(), term()) -> dynamic(%Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n})"
             ],
+            "established": false,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
@@ -3616,12 +3715,13 @@
               "no_extra",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "none",
             "warn": false
           },
-          "body_us": 11472,
+          "body_us": 11386,
           "default": {
             "applied": [
               0
@@ -3645,6 +3745,7 @@
             "clauses": [
               "(%Plug.Conn{private: map()}, atom(), term()) -> dynamic(%Plug.Conn{private: map()})"
             ],
+            "established": false,
             "extra": "%Plug.Conn{private: map()} and not %Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n}",
             "guard_blocked": false,
             "near_top": false,
@@ -3655,6 +3756,7 @@
               "no_counted_component",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "unknown",
@@ -3690,6 +3792,7 @@
             "clauses": [
               "(%Plug.Conn{private: map()}, atom(), term()) -> dynamic(%Plug.Conn{private: map()})"
             ],
+            "established": false,
             "extra": "%Plug.Conn{private: map()} and not %Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n}",
             "guard_blocked": false,
             "near_top": false,
@@ -3700,6 +3803,7 @@
               "no_counted_component",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "unknown",
@@ -3746,6 +3850,7 @@
               "(%{..., status: term()} and %Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n} and %Plug.Conn{} and not %Plug.Conn{state: :chunked or :file or :sent or :upgraded}, nil) -> dynamic(\n  %Plug.Conn{\n    adapter: {atom(), term()},\n    assigns: %{atom() => term()},\n    body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n    cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n    halted: boolean(),\n    host: binary(),\n    method: binary(),\n    owner: nil or pid(),\n    params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n    path_info: list(binary()),\n    path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n    port: integer(),\n    private: %{atom() => term()},\n    query_params:\n      %Plug.Conn.Unfetched{aspect: atom()} or\n        %{binary() => %{binary() => term()} or binary() or list(term())},\n    query_string: binary(),\n    remote_ip:\n      {integer(), integer(), integer(), integer()} or\n        {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n    req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n    req_headers: list({binary(), binary()}),\n    request_path: binary(),\n    resp_body:\n      nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n    resp_cookies: %{binary() => map()},\n    resp_headers: list({binary(), binary()}),\n    scheme: :http or :https,\n    script_name: list(binary()),\n    secret_key_base: nil or binary(),\n    state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n    status: nil\n  } and not %Plug.Conn{state: :chunked or :file or :sent or :upgraded, status: nil}\n)",
               "(%{..., status: term()} and %Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n} and %Plug.Conn{} and not %Plug.Conn{state: :chunked or :file or :sent or :upgraded}, :accepted or :already_reported or :bad_gateway or :bad_request or :conflict or :content_too_large or\n  :continue or :created or :early_hints or :expectation_failed or :failed_dependency or :forbidden or\n  :found or :gateway_timeout or :gone or :http_version_not_supported or :im_a_teapot or :im_used or\n  :insufficient_storage or :internal_server_error or :length_required or :locked or :loop_detected or\n  :method_not_allowed or :misdirected_request or :moved_permanently or :multi_status or\n  :multiple_choices or :network_authentication_required or :no_content or\n  :non_authoritative_information or :not_acceptable or :not_an_rfc_status_code or :not_extended or\n  :not_found or :not_implemented or :not_modified or :ok or :partial_content or :payment_required or\n  :permanent_redirect or :precondition_failed or :precondition_required or :processing or\n  :proxy_authentication_required or :range_not_satisfiable or :request_entity_too_large or\n  :request_header_fields_too_large or :request_timeout or :request_uri_too_long or\n  :requested_range_not_satisfiable or :reset_content or :see_other or :service_unavailable or\n  :switch_proxy or :switching_protocols or :temporary_redirect or :too_early or :too_many_requests or\n  :totally_not_a_teapot or :unauthorized or :unavailable_for_legal_reasons or\n  :unprocessable_content or :unprocessable_entity or :unsupported_media_type or :upgrade_required or\n  :uri_too_long or :use_proxy or :variant_also_negotiates or integer()) -> dynamic(\n  %Plug.Conn{\n    adapter: {atom(), term()},\n    assigns: %{atom() => term()},\n    body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n    cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n    halted: boolean(),\n    host: binary(),\n    method: binary(),\n    owner: nil or pid(),\n    params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n    path_info: list(binary()),\n    path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n    port: integer(),\n    private: %{atom() => term()},\n    query_params:\n      %Plug.Conn.Unfetched{aspect: atom()} or\n        %{binary() => %{binary() => term()} or binary() or list(term())},\n    query_string: binary(),\n    remote_ip:\n      {integer(), integer(), integer(), integer()} or\n        {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n    req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n    req_headers: list({binary(), binary()}),\n    request_path: binary(),\n    resp_body:\n      nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n    resp_cookies: %{binary() => map()},\n    resp_headers: list({binary(), binary()}),\n    scheme: :http or :https,\n    script_name: list(binary()),\n    secret_key_base: nil or binary(),\n    state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n    status: integer()\n  } and not %Plug.Conn{state: :chunked or :file or :sent or :upgraded, status: integer()}\n)"
             ],
+            "established": false,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
@@ -3753,6 +3858,7 @@
               "no_extra",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "none",
@@ -3772,6 +3878,7 @@
               "(%{..., status: term()} and %Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n} and %Plug.Conn{} and not %Plug.Conn{state: :chunked or :file or :sent or :upgraded}, nil) -> dynamic(\n  %Plug.Conn{\n    adapter: {atom(), term()},\n    assigns: %{atom() => term()},\n    body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n    cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n    halted: boolean(),\n    host: binary(),\n    method: binary(),\n    owner: nil or pid(),\n    params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n    path_info: list(binary()),\n    path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n    port: integer(),\n    private: %{atom() => term()},\n    query_params:\n      %Plug.Conn.Unfetched{aspect: atom()} or\n        %{binary() => %{binary() => term()} or binary() or list(term())},\n    query_string: binary(),\n    remote_ip:\n      {integer(), integer(), integer(), integer()} or\n        {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n    req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n    req_headers: list({binary(), binary()}),\n    request_path: binary(),\n    resp_body:\n      nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n    resp_cookies: %{binary() => map()},\n    resp_headers: list({binary(), binary()}),\n    scheme: :http or :https,\n    script_name: list(binary()),\n    secret_key_base: nil or binary(),\n    state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n    status: nil\n  } and not %Plug.Conn{state: :chunked or :file or :sent or :upgraded, status: nil}\n)",
               "(%{..., status: term()} and %Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n} and %Plug.Conn{} and not %Plug.Conn{state: :chunked or :file or :sent or :upgraded}, :accepted or :already_reported or :bad_gateway or :bad_request or :conflict or :content_too_large or\n  :continue or :created or :early_hints or :expectation_failed or :failed_dependency or :forbidden or\n  :found or :gateway_timeout or :gone or :http_version_not_supported or :im_a_teapot or :im_used or\n  :insufficient_storage or :internal_server_error or :length_required or :locked or :loop_detected or\n  :method_not_allowed or :misdirected_request or :moved_permanently or :multi_status or\n  :multiple_choices or :network_authentication_required or :no_content or\n  :non_authoritative_information or :not_acceptable or :not_an_rfc_status_code or :not_extended or\n  :not_found or :not_implemented or :not_modified or :ok or :partial_content or :payment_required or\n  :permanent_redirect or :precondition_failed or :precondition_required or :processing or\n  :proxy_authentication_required or :range_not_satisfiable or :request_entity_too_large or\n  :request_header_fields_too_large or :request_timeout or :request_uri_too_long or\n  :requested_range_not_satisfiable or :reset_content or :see_other or :service_unavailable or\n  :switch_proxy or :switching_protocols or :temporary_redirect or :too_early or :too_many_requests or\n  :totally_not_a_teapot or :unauthorized or :unavailable_for_legal_reasons or\n  :unprocessable_content or :unprocessable_entity or :unsupported_media_type or :upgrade_required or\n  :uri_too_long or :use_proxy or :variant_also_negotiates or integer()) -> dynamic(\n  %Plug.Conn{\n    adapter: {atom(), term()},\n    assigns: %{atom() => term()},\n    body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n    cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n    halted: boolean(),\n    host: binary(),\n    method: binary(),\n    owner: nil or pid(),\n    params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n    path_info: list(binary()),\n    path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n    port: integer(),\n    private: %{atom() => term()},\n    query_params:\n      %Plug.Conn.Unfetched{aspect: atom()} or\n        %{binary() => %{binary() => term()} or binary() or list(term())},\n    query_string: binary(),\n    remote_ip:\n      {integer(), integer(), integer(), integer()} or\n        {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n    req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n    req_headers: list({binary(), binary()}),\n    request_path: binary(),\n    resp_body:\n      nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n    resp_cookies: %{binary() => map()},\n    resp_headers: list({binary(), binary()}),\n    scheme: :http or :https,\n    script_name: list(binary()),\n    secret_key_base: nil or binary(),\n    state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n    status: integer()\n  } and not %Plug.Conn{state: :chunked or :file or :sent or :upgraded, status: integer()}\n)"
             ],
+            "established": false,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
@@ -3779,12 +3886,13 @@
               "no_extra",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "none",
             "warn": false
           },
-          "body_us": 10205,
+          "body_us": 11343,
           "default": {
             "applied": [
               0,
@@ -3821,6 +3929,7 @@
               "(%{..., status: term()} and %Plug.Conn{} and not %Plug.Conn{\n  state: not :set and not :set_chunked and not :set_file and not :set_upgrade and not :unset\n}, nil) -> dynamic(%Plug.Conn{\n  state: :set or :set_chunked or :set_file or :set_upgrade or :unset,\n  status: nil\n})",
               "(%{..., status: term()} and %Plug.Conn{} and not %Plug.Conn{\n  state: not :set and not :set_chunked and not :set_file and not :set_upgrade and not :unset\n}, :accepted or :already_reported or :bad_gateway or :bad_request or :conflict or :content_too_large or\n  :continue or :created or :early_hints or :expectation_failed or :failed_dependency or :forbidden or\n  :found or :gateway_timeout or :gone or :http_version_not_supported or :im_a_teapot or :im_used or\n  :insufficient_storage or :internal_server_error or :length_required or :locked or :loop_detected or\n  :method_not_allowed or :misdirected_request or :moved_permanently or :multi_status or\n  :multiple_choices or :network_authentication_required or :no_content or\n  :non_authoritative_information or :not_acceptable or :not_an_rfc_status_code or :not_extended or\n  :not_found or :not_implemented or :not_modified or :ok or :partial_content or :payment_required or\n  :permanent_redirect or :precondition_failed or :precondition_required or :processing or\n  :proxy_authentication_required or :range_not_satisfiable or :request_entity_too_large or\n  :request_header_fields_too_large or :request_timeout or :request_uri_too_long or\n  :requested_range_not_satisfiable or :reset_content or :see_other or :service_unavailable or\n  :switch_proxy or :switching_protocols or :temporary_redirect or :too_early or :too_many_requests or\n  :totally_not_a_teapot or :unauthorized or :unavailable_for_legal_reasons or\n  :unprocessable_content or :unprocessable_entity or :unsupported_media_type or :upgrade_required or\n  :uri_too_long or :use_proxy or :variant_also_negotiates or integer()) -> dynamic(%Plug.Conn{\n  state: :set or :set_chunked or :set_file or :set_upgrade or :unset,\n  status: integer()\n})"
             ],
+            "established": false,
             "extra": "(%Plug.Conn{status: nil} and not (%Plug.Conn{\n  state: not :set and not :set_chunked and not :set_file and not :set_upgrade and not :unset,\n  status: nil\n} or %Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n})) or (%Plug.Conn{status: integer()} and not (%Plug.Conn{\n  state: not :set and not :set_chunked and not :set_file and not :set_upgrade and not :unset,\n  status: integer()\n} or %Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n}))",
             "guard_blocked": false,
             "near_top": false,
@@ -3831,6 +3940,7 @@
               "no_counted_component",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "unknown",
@@ -3891,6 +4001,7 @@
               "(%Plug.Conn{}, nil) -> dynamic(%Plug.Conn{status: nil})",
               "(%Plug.Conn{}, not nil) -> dynamic(%Plug.Conn{})"
             ],
+            "established": false,
             "extra": "%Plug.Conn{} and not %Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n}",
             "guard_blocked": false,
             "near_top": false,
@@ -3901,6 +4012,7 @@
               "no_counted_component",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "unknown",
@@ -3945,6 +4057,7 @@
               "(%Plug.Conn{}, term(), nil) -> none()",
               "(%{..., resp_body: term(), state: term(), status: term()} and %Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n} and %Plug.Conn{} and not %Plug.Conn{state: :chunked or :file or :sent or :upgraded}, :accepted or :already_reported or :bad_gateway or :bad_request or :conflict or :content_too_large or\n  :continue or :created or :early_hints or :expectation_failed or :failed_dependency or :forbidden or\n  :found or :gateway_timeout or :gone or :http_version_not_supported or :im_a_teapot or :im_used or\n  :insufficient_storage or :internal_server_error or :length_required or :locked or :loop_detected or\n  :method_not_allowed or :misdirected_request or :moved_permanently or :multi_status or\n  :multiple_choices or :network_authentication_required or :no_content or\n  :non_authoritative_information or :not_acceptable or :not_an_rfc_status_code or :not_extended or\n  :not_found or :not_implemented or :not_modified or :ok or :partial_content or :payment_required or\n  :permanent_redirect or :precondition_failed or :precondition_required or :processing or\n  :proxy_authentication_required or :range_not_satisfiable or :request_entity_too_large or\n  :request_header_fields_too_large or :request_timeout or :request_uri_too_long or\n  :requested_range_not_satisfiable or :reset_content or :see_other or :service_unavailable or\n  :switch_proxy or :switching_protocols or :temporary_redirect or :too_early or :too_many_requests or\n  :totally_not_a_teapot or :unauthorized or :unavailable_for_legal_reasons or\n  :unprocessable_content or :unprocessable_entity or :unsupported_media_type or :upgrade_required or\n  :uri_too_long or :use_proxy or :variant_also_negotiates or integer(), binary() or empty_list() or non_empty_list(term(), binary() or empty_list())) -> dynamic(%Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :set,\n  status: integer()\n})"
             ],
+            "established": false,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
@@ -3952,6 +4065,7 @@
               "no_extra",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "none",
@@ -3970,6 +4084,7 @@
               "(%Plug.Conn{}, term(), nil) -> none()",
               "(%{..., resp_body: term(), state: term(), status: term()} and %Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n} and %Plug.Conn{} and not %Plug.Conn{state: :chunked or :file or :sent or :upgraded}, :accepted or :already_reported or :bad_gateway or :bad_request or :conflict or :content_too_large or\n  :continue or :created or :early_hints or :expectation_failed or :failed_dependency or :forbidden or\n  :found or :gateway_timeout or :gone or :http_version_not_supported or :im_a_teapot or :im_used or\n  :insufficient_storage or :internal_server_error or :length_required or :locked or :loop_detected or\n  :method_not_allowed or :misdirected_request or :moved_permanently or :multi_status or\n  :multiple_choices or :network_authentication_required or :no_content or\n  :non_authoritative_information or :not_acceptable or :not_an_rfc_status_code or :not_extended or\n  :not_found or :not_implemented or :not_modified or :ok or :partial_content or :payment_required or\n  :permanent_redirect or :precondition_failed or :precondition_required or :processing or\n  :proxy_authentication_required or :range_not_satisfiable or :request_entity_too_large or\n  :request_header_fields_too_large or :request_timeout or :request_uri_too_long or\n  :requested_range_not_satisfiable or :reset_content or :see_other or :service_unavailable or\n  :switch_proxy or :switching_protocols or :temporary_redirect or :too_early or :too_many_requests or\n  :totally_not_a_teapot or :unauthorized or :unavailable_for_legal_reasons or\n  :unprocessable_content or :unprocessable_entity or :unsupported_media_type or :upgrade_required or\n  :uri_too_long or :use_proxy or :variant_also_negotiates or integer(), binary() or empty_list() or non_empty_list(term(), binary() or empty_list())) -> dynamic(%Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :set,\n  status: integer()\n})"
             ],
+            "established": false,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
@@ -3977,12 +4092,13 @@
               "no_extra",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "none",
             "warn": false
           },
-          "body_us": 11577,
+          "body_us": 12665,
           "default": {
             "applied": [
               0
@@ -4006,6 +4122,7 @@
             "clauses": [
               "(%{..., resp_body: term(), state: term(), status: term()} and %Plug.Conn{} and not %Plug.Conn{\n  state: not :set and not :set_chunked and not :set_file and not :set_upgrade and not :unset\n}, :accepted or :already_reported or :bad_gateway or :bad_request or :conflict or :content_too_large or\n  :continue or :created or :early_hints or :expectation_failed or :failed_dependency or :forbidden or\n  :found or :gateway_timeout or :gone or :http_version_not_supported or :im_a_teapot or :im_used or\n  :insufficient_storage or :internal_server_error or :length_required or :locked or :loop_detected or\n  :method_not_allowed or :misdirected_request or :moved_permanently or :multi_status or\n  :multiple_choices or :network_authentication_required or :no_content or\n  :non_authoritative_information or :not_acceptable or :not_an_rfc_status_code or :not_extended or\n  :not_found or :not_implemented or :not_modified or :ok or :partial_content or :payment_required or\n  :permanent_redirect or :precondition_failed or :precondition_required or :processing or\n  :proxy_authentication_required or :range_not_satisfiable or :request_entity_too_large or\n  :request_header_fields_too_large or :request_timeout or :request_uri_too_long or\n  :requested_range_not_satisfiable or :reset_content or :see_other or :service_unavailable or\n  :switch_proxy or :switching_protocols or :temporary_redirect or :too_early or :too_many_requests or\n  :totally_not_a_teapot or :unauthorized or :unavailable_for_legal_reasons or\n  :unprocessable_content or :unprocessable_entity or :unsupported_media_type or :upgrade_required or\n  :uri_too_long or :use_proxy or :variant_also_negotiates or integer(), binary() or empty_list() or non_empty_list(term(), term())) -> dynamic(%Plug.Conn{\n  resp_body: binary() or empty_list() or non_empty_list(term(), term()),\n  state: :set,\n  status: integer()\n})"
             ],
+            "established": false,
             "extra": "%Plug.Conn{\n  resp_body: binary() or empty_list() or non_empty_list(term(), term()),\n  state: :set,\n  status: integer()\n} and not %Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n}",
             "guard_blocked": false,
             "near_top": false,
@@ -4016,6 +4133,7 @@
               "no_counted_component",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "unknown",
@@ -4065,6 +4183,7 @@
               "(%Plug.Conn{\n  state: not :set and not :set_chunked and not :set_file and not :set_upgrade and not :unset\n}, term(), term()) -> none()",
               "(%Plug.Conn{}, term(), binary() or empty_list() or non_empty_list(term(), term())) -> dynamic(%Plug.Conn{\n  resp_body: binary() or empty_list() or non_empty_list(term(), term()),\n  state: :set\n})"
             ],
+            "established": false,
             "extra": "%Plug.Conn{resp_body: binary() or empty_list() or non_empty_list(term(), term()), state: :set} and not %Plug.Conn{\n  adapter: {atom(), term()},\n  assigns: %{atom() => term()},\n  body_params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  halted: boolean(),\n  host: binary(),\n  method: binary(),\n  owner: nil or pid(),\n  params: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => term()},\n  path_info: list(binary()),\n  path_params: %{binary() => %{binary() => term()} or binary() or list(term())},\n  port: integer(),\n  private: %{atom() => term()},\n  query_params:\n    %Plug.Conn.Unfetched{aspect: atom()} or\n      %{binary() => %{binary() => term()} or binary() or list(term())},\n  query_string: binary(),\n  remote_ip:\n    {integer(), integer(), integer(), integer()} or\n      {integer(), integer(), integer(), integer(), integer(), integer(), integer(), integer()},\n  req_cookies: %Plug.Conn.Unfetched{aspect: atom()} or %{binary() => binary()},\n  req_headers: list({binary(), binary()}),\n  request_path: binary(),\n  resp_body: nil or binary() or empty_list() or non_empty_list(term(), binary() or empty_list()),\n  resp_cookies: %{binary() => map()},\n  resp_headers: list({binary(), binary()}),\n  scheme: :http or :https,\n  script_name: list(binary()),\n  secret_key_base: nil or binary(),\n  state: :chunked or :file or :sent or :set or :set_chunked or :set_file or :unset or :upgraded,\n  status: nil or integer()\n}",
             "guard_blocked": false,
             "near_top": false,
@@ -4075,6 +4194,7 @@
               "no_counted_component",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "unknown",
@@ -4129,12 +4249,14 @@
             "clauses": [
               "(binary(), list({atom(), term()}), atom(), boolean()) -> dynamic()"
             ],
+            "established": false,
             "extra": "not %{binary() => term()}",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "top_only"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -4162,18 +4284,20 @@
             "clauses": [
               "(binary(), list({atom(), term()}), atom(), boolean()) -> dynamic()"
             ],
+            "established": false,
             "extra": "not %{binary() => term()}",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "top_only"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
             "warn": false
           },
-          "body_us": 452,
+          "body_us": 459,
           "default": {
             "applied": [
               0
@@ -4196,12 +4320,14 @@
             "clauses": [
               "(binary(), term(), term(), term()) -> dynamic()"
             ],
+            "established": false,
             "extra": "not %{binary() => term()}",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "top_only"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -4233,12 +4359,14 @@
             "clauses": [
               "(binary(), term(), term(), term()) -> dynamic()"
             ],
+            "established": false,
             "extra": "not %{binary() => term()}",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "top_only"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -4264,91 +4392,91 @@
   "label": "plug",
   "modules": [
     {
-      "default_run_us": 5434,
+      "default_run_us": 6546,
       "default_warnings": 0,
       "error": null,
       "module": "Plug",
       "sampled": true
     },
     {
-      "default_run_us": 2800,
+      "default_run_us": 3495,
       "default_warnings": 0,
       "error": null,
       "module": "Plug.BasicAuth",
       "sampled": true
     },
     {
-      "default_run_us": 2386,
+      "default_run_us": 2836,
       "default_warnings": 0,
       "error": null,
       "module": "Plug.Builder",
       "sampled": true
     },
     {
-      "default_run_us": 7710,
+      "default_run_us": 11712,
       "default_warnings": 0,
       "error": null,
       "module": "Plug.Conn",
       "sampled": false
     },
     {
-      "default_run_us": 1749,
+      "default_run_us": 2479,
       "default_warnings": 0,
       "error": null,
       "module": "Plug.Conn.Query",
       "sampled": false
     },
     {
-      "default_run_us": 199,
+      "default_run_us": 217,
       "default_warnings": 0,
       "error": null,
       "module": "Plug.Conn.Status",
       "sampled": true
     },
     {
-      "default_run_us": 1239,
+      "default_run_us": 1586,
       "default_warnings": 0,
       "error": null,
       "module": "Plug.Conn.Utils",
       "sampled": true
     },
     {
-      "default_run_us": 86,
+      "default_run_us": 94,
       "default_warnings": 0,
       "error": null,
       "module": "Plug.HTML",
       "sampled": true
     },
     {
-      "default_run_us": 343,
+      "default_run_us": 420,
       "default_warnings": 0,
       "error": null,
       "module": "Plug.RequestId",
       "sampled": true
     },
     {
-      "default_run_us": 3974,
+      "default_run_us": 3604,
       "default_warnings": 0,
       "error": null,
       "module": "Plug.Router",
       "sampled": true
     },
     {
-      "default_run_us": 3043,
+      "default_run_us": 2398,
       "default_warnings": 0,
       "error": null,
       "module": "Plug.SSL",
       "sampled": true
     },
     {
-      "default_run_us": 979,
+      "default_run_us": 809,
       "default_warnings": 0,
       "error": null,
       "module": "Plug.Test",
       "sampled": true
     },
     {
-      "default_run_us": 4039,
+      "default_run_us": 4743,
       "default_warnings": 0,
       "error": null,
       "module": "Plug.Upload",
@@ -4446,12 +4574,12 @@
     "body_unavailable": 0,
     "cost": {
       "body_calls": 86,
-      "body_max_us": 19085,
-      "body_median_us": 4933,
-      "body_p90_us": 11577,
-      "body_total_ms": 480,
+      "body_max_us": 16659,
+      "body_median_us": 5504,
+      "body_p90_us": 12665,
+      "body_total_ms": 527,
       "default_calls": 13,
-      "default_total_ms": 33
+      "default_total_ms": 40
     },
     "extra_warning_slices": 2,
     "extra_warnings": 2,

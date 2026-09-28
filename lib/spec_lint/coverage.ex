@@ -32,18 +32,29 @@ defmodule SpecLint.Coverage do
   would otherwise make its analysis disappear without a trace. Given the
   baseline, `inventory/3` adds an entry with the status `unanalysed` for
   every slice the baseline inventory lists as `compared` (or as an
-  acknowledged `unanalysed`) whose function is still exported by an
-  analysed module but has no spec in scope any more
-  (`lost_analysis/2`). The reason is `spec_removed`, or
-  `spec_out_of_scope:<reason>` when the spec is still there but now out
-  of scope (for example `generated`). A function that is no longer
-  exported (deleted, made private or turned into a macro), a module that
-  is gone, excluded or not part of a partial run, and a function that
-  still has specs in scope (with fewer clauses) produce no entry. These
-  entries are coverage findings (`SL008`) and, when the baseline listed
-  the slice as `compared`, regressions (`regressions/2`); regenerating
-  the baseline stores them as acknowledged `unanalysed` entries. The
-  ledger counts them apart from the slices found (`lost_analysis`).
+  acknowledged `unanalysed`) whose analysis is gone although its
+  definition is still there (`lost_analysis/2`):
+
+    * the function is still exported by an analysed module but has no spec
+      in scope any more: the reason is `spec_removed`, or
+      `spec_out_of_scope:<reason>` when the spec is still there but now out
+      of scope (for example `generated`);
+    * the function still has specs in scope, but fewer clauses than the
+      slice index needs (one overload of a multi-clause spec was removed,
+      or overloads were merged): the reason is `spec_clause_removed`, one
+      entry per missing index. Slices are numbered by position, so the
+      missing indexes are the last ones whichever clause was removed.
+
+  A function that is no longer exported (deleted, made private or turned
+  into a macro), a module that is gone, excluded or not part of a partial
+  run, and an export that is now an overridable default injected by `use`
+  and not overridden (the user deleted their override of `GenServer`'s
+  `handle_info/2`, say; `SpecLint.Beam` reads this from the debug info)
+  produce no entry: the user's definition is deleted. These entries are
+  coverage findings (`SL008`) and, when the baseline listed the slice as
+  `compared`, regressions (`regressions/2`); regenerating the baseline
+  stores them as acknowledged `unanalysed` entries. The ledger counts them
+  apart from the slices found (`lost_analysis`).
   """
 
   alias SpecLint.{Analysis, Baseline, Bound, Evidence, Issue}
@@ -81,9 +92,10 @@ defmodule SpecLint.Coverage do
   @doc """
   The `unanalysed` inventory entries for slices of the baseline inventory
   (`compared`, or already acknowledged as `unanalysed`) whose function is
-  still exported by an analysed module but has no spec in scope any more
-  (see "Lost analysis" in the moduledoc). A deleted function is not
-  listed.
+  still exported by an analysed module but has no spec in scope any more,
+  or has fewer spec clauses in scope than the slice index needs (see "Lost
+  analysis" in the moduledoc). A deleted function, and an export that is
+  now a `use`-injected overridable default, are not listed.
   """
   @spec lost_analysis([Analysis.result()], Baseline.t() | nil) :: [entry()]
   def lost_analysis(_modules, nil), do: []
@@ -96,7 +108,7 @@ defmodule SpecLint.Coverage do
         is_binary(mfa),
         result = Map.get(current, module),
         result != nil,
-        reason = lost_reason(result, mfa),
+        reason = lost_reason(result, mfa, entry["slice"]),
         reason != nil,
         uniq: true do
       %{
@@ -114,13 +126,20 @@ defmodule SpecLint.Coverage do
     end
   end
 
-  # nil when the function still has specs in scope or is no longer exported.
-  defp lost_reason(result, mfa) do
-    in_scope? = Enum.any?(result.functions, &(Issue.mfa_string(&1.mfa) == mfa))
-    exported? = Enum.any?(result.exports, &(Issue.mfa_string(export_mfa(result, &1)) == mfa))
+  # nil when the slice is still in scope, or the user's definition is gone
+  # (no longer exported, or the export is now an injected overridable
+  # default).
+  defp lost_reason(result, mfa, slice) do
+    function = Enum.find(result.functions, &(Issue.mfa_string(&1.mfa) == mfa))
+    export = exported_mfa(result, mfa)
 
     cond do
-      in_scope? or not exported? ->
+      function != nil ->
+        if is_integer(slice) and slice >= length(function.slices),
+          do: "spec_clause_removed",
+          else: nil
+
+      export == nil or overridable_default?(result, export) ->
         nil
 
       out = Enum.find(result.out_of_scope, &(Issue.mfa_string(&1.mfa) == mfa)) ->
@@ -130,6 +149,9 @@ defmodule SpecLint.Coverage do
         "spec_removed"
     end
   end
+
+  defp overridable_default?(result, {_module, name, arity}),
+    do: {name, arity} in result.overridable_defaults
 
   @doc """
   The exported MFA of `result` that an inventory entry of status
@@ -316,9 +338,11 @@ defmodule SpecLint.Coverage do
   The inventory keys (`{subject, slice}`, as `SpecLint.Baseline.inventory_key/1`)
   that regressed against the baseline inventory: a slice stored as
   `compared` that is now `unsupported`, `unavailable` or `unanalysed` (its
-  function is still exported but its spec is gone, `lost_analysis/2`), and
-  every module now unavailable as a whole that had a compared slice.
-  Functions that are no longer exported (deleted) are not regressions.
+  function is still exported but its spec, or this overload of it, is
+  gone, `lost_analysis/2`), and every module now unavailable as a whole
+  that had a compared slice. Functions that are no longer exported
+  (deleted), and user overrides deleted in favour of a `use`-injected
+  default, are not regressions.
   `inventory` must come from `inventory/3` with the same baseline for spec
   removals to be seen.
   """

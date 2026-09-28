@@ -30,6 +30,13 @@ defmodule SpecLint.Config do
 
   `require_static_return` defaults to `false`, the Phase 1 rerun decision
   (DESIGN.md section 4, `EXPERIMENTS.md`).
+
+  A baseline path given explicitly (`baseline:` in the file, or
+  `--baseline`) sets `baseline_explicit`: `SpecLint.Run` then treats a
+  missing file as a configuration error, as `load/2` does for an explicit
+  `--config`, so a mistyped path cannot silently disable the baseline and
+  with it regression detection. The default path may be missing (a project
+  without a baseline yet).
   """
 
   alias SpecLint.Rules
@@ -48,6 +55,7 @@ defmodule SpecLint.Config do
           expand_opaque: boolean(),
           require_static_return: boolean(),
           warnings_as_errors: boolean(),
+          baseline_explicit: boolean(),
           source: String.t() | nil
         }
 
@@ -60,6 +68,7 @@ defmodule SpecLint.Config do
             expand_opaque: false,
             require_static_return: false,
             warnings_as_errors: false,
+            baseline_explicit: false,
             source: nil
 
   @keys [
@@ -127,7 +136,9 @@ defmodule SpecLint.Config do
   defp put(config, :profile, value) when value in [:review, :soundness],
     do: {:ok, %{config | profile: value}}
 
-  defp put(config, :baseline, value) when is_binary(value), do: {:ok, %{config | baseline: value}}
+  defp put(config, :baseline, value) when is_binary(value),
+    do: {:ok, %{config | baseline: value, baseline_explicit: true}}
+
   defp put(config, :rules, value), do: put_rules(config, value)
   defp put(config, :coverage, value), do: put_coverage(config, value)
 
@@ -264,12 +275,15 @@ defmodule SpecLint.Config do
   end
 
   @doc """
-  A digest of the effective configuration (without its source path), for
-  the report envelope.
+  A digest of the effective configuration (without its source path and
+  without whether the baseline path was explicit), for the report
+  envelope.
   """
   @spec digest(t()) :: String.t()
   def digest(config) do
-    term = config |> Map.from_struct() |> Map.delete(:source) |> Enum.sort()
+    term =
+      config |> Map.from_struct() |> Map.drop([:source, :baseline_explicit]) |> Enum.sort()
+
     hash = :crypto.hash(:sha256, :erlang.term_to_binary(term, [:deterministic]))
     "sha256:" <> Base.encode16(hash, case: :lower)
   end

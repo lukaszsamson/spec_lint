@@ -18,6 +18,9 @@
 # $TMP, keys sorted, the wall-clock totals.runtime_ms removed) so a diff
 # between two runs shows only real changes. A file over 2 MB is stored in reduced form: totals,
 # class counts and every function that is neither `none` nor `unknown`.
+#
+# Runs under bash 3.2 (the macOS system bash) and later: no associative
+# arrays, and empty arrays are expanded with ${a[@]+"${a[@]}"} (set -u).
 set -euo pipefail
 
 root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
@@ -30,17 +33,24 @@ limit=2000000
 
 command -v jq >/dev/null || { echo "jq is required" >&2; exit 2; }
 
-declare -A revisions=(
-  [jason]=4ede42858eb19f80ec9e863aab52df466eab8608
-  [decimal]=92a28e6b9a103f2b52a22b3f772f7a2a34b7b1d5
-  [nimble_options]=825c05837f236c612c6ac2855735ec6cf7f2be69
-  [mime]=23dcc1593ccc49648e33b9ed3c03bd516795f6d9
-  [plug]=73404f851852a00ffb2014be95d4598900fa77b8
-  [ecto]=94d69279c517347ff0962b138f4ccd0556486ae2
-)
+# revision NAME -> the pinned revision of a corpus checkout.
+revision() {
+  case "$1" in
+    jason) echo 4ede42858eb19f80ec9e863aab52df466eab8608 ;;
+    decimal) echo 92a28e6b9a103f2b52a22b3f772f7a2a34b7b1d5 ;;
+    nimble_options) echo 825c05837f236c612c6ac2855735ec6cf7f2be69 ;;
+    mime) echo 23dcc1593ccc49648e33b9ed3c03bd516795f6d9 ;;
+    plug) echo 73404f851852a00ffb2014be95d4598900fa77b8 ;;
+    ecto) echo 94d69279c517347ff0962b138f4ccd0556486ae2 ;;
+    *) echo "unknown corpus: $1" >&2; exit 2 ;;
+  esac
+}
 
-corpora=("$@")
-[ ${#corpora[@]} -gt 0 ] || corpora=(stdlib jason decimal nimble_options mime plug ecto fixtures)
+if [ $# -gt 0 ]; then
+  corpora=("$@")
+else
+  corpora=(stdlib jason decimal nimble_options mime plug ecto fixtures)
+fi
 
 cd "$root"
 mkdir -p "$out"
@@ -68,10 +78,11 @@ select_corpus() {
       ;;
     *)
       project_root="$oss/$1"
-      local rev
+      local rev pinned
+      pinned="$(revision "$1")"
       rev="$(git -C "$oss/$1" rev-parse HEAD)"
-      if [ "$rev" != "${revisions[$1]}" ]; then
-        echo "warning: $1 is at $rev, expected ${revisions[$1]}" >&2
+      if [ "$rev" != "$pinned" ]; then
+        echo "warning: $1 is at $rev, expected $pinned" >&2
       fi
       ebins=("$oss/$1/_build/test/lib/$1/ebin")
       for d in "$oss/$1"/_build/test/lib/*/ebin; do codepaths+=("$d"); done
@@ -103,15 +114,15 @@ for name in "${corpora[@]}"; do
   args=()
   for e in "${ebins[@]}"; do args+=(--ebin "$e"); done
   cp_args=()
-  for c in "${codepaths[@]}"; do cp_args+=(--code-path "$c"); done
+  for c in ${codepaths[@]+"${codepaths[@]}"}; do cp_args+=(--code-path "$c"); done
 
-  MIX_ENV=test mix run bench/experiment.exs -- "${args[@]}" "${cp_args[@]}" \
+  MIX_ENV=test mix run bench/experiment.exs -- "${args[@]}" ${cp_args[@]+"${cp_args[@]}"} \
     --label "$name" --out "$raw/$name.json" 2>"$raw/$name.log" || { cat "$raw/$name.log" >&2; exit 1; }
   normalise "$raw/$name.json" "$out/$name.json"
 
   if [ "$name" != fixtures ]; then
     set +e
-    MIX_ENV=test mix run bench/run_on_ebin.exs -- "${args[@]}" "${cp_args[@]}" \
+    MIX_ENV=test mix run bench/run_on_ebin.exs -- "${args[@]}" ${cp_args[@]+"${cp_args[@]}"} \
       --root "$project_root" --ci --format json --output "$raw/$name.spec_lint.json" \
       >"$raw/$name.run.log" 2>&1
     status=$?

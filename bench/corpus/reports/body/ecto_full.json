@@ -2908,21 +2908,21 @@
   "label": "ecto_full",
   "modules": [
     {
-      "default_run_us": 9557,
+      "default_run_us": 10324,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto",
       "sampled": false
     },
     {
-      "default_run_us": 89,
+      "default_run_us": 117,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Adapter",
       "sampled": false
     },
     {
-      "default_run_us": 308,
+      "default_run_us": 461,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Adapter.Queryable",
@@ -2950,672 +2950,672 @@
       "sampled": false
     },
     {
-      "default_run_us": 548,
+      "default_run_us": 619,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Application",
       "sampled": false
     },
     {
-      "default_run_us": 11495,
+      "default_run_us": 13651,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Association",
       "sampled": false
     },
     {
-      "default_run_us": 6614,
+      "default_run_us": 7113,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Association.BelongsTo",
       "sampled": false
     },
     {
-      "default_run_us": 4124,
+      "default_run_us": 4827,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Association.Has",
       "sampled": false
     },
     {
-      "default_run_us": 2185,
+      "default_run_us": 2322,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Association.HasThrough",
       "sampled": false
     },
     {
-      "default_run_us": 3785,
+      "default_run_us": 4355,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Association.ManyToMany",
       "sampled": false
     },
     {
-      "default_run_us": 25,
+      "default_run_us": 29,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Association.NotLoaded",
       "sampled": false
     },
     {
-      "default_run_us": 1834,
+      "default_run_us": 2040,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.CastError",
       "sampled": false
     },
     {
-      "default_run_us": 26,
+      "default_run_us": 32,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.ChangeError",
       "sampled": false
     },
     {
-      "default_run_us": 32158,
+      "default_run_us": 35641,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Changeset",
       "sampled": false
     },
     {
-      "default_run_us": 5527,
+      "default_run_us": 5962,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Changeset.Relation",
       "sampled": false
     },
     {
-      "default_run_us": 1691,
+      "default_run_us": 1964,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.ConstraintError",
       "sampled": false
     },
     {
-      "default_run_us": 808,
+      "default_run_us": 2088,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Embedded",
       "sampled": false
     },
     {
-      "default_run_us": 271,
+      "default_run_us": 339,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Enum",
       "sampled": false
     },
     {
-      "default_run_us": 216,
+      "default_run_us": 144,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.InvalidChangesetError",
       "sampled": false
     },
     {
-      "default_run_us": 2088,
+      "default_run_us": 2204,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.InvalidURLError",
       "sampled": false
     },
     {
-      "default_run_us": 29,
+      "default_run_us": 38,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.MigrationError",
       "sampled": false
     },
     {
-      "default_run_us": 5661,
+      "default_run_us": 5499,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Multi",
       "sampled": false
     },
     {
-      "default_run_us": 1542,
+      "default_run_us": 1714,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.MultiplePrimaryKeyError",
       "sampled": false
     },
     {
-      "default_run_us": 1275,
+      "default_run_us": 1884,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.MultipleResultsError",
       "sampled": false
     },
     {
-      "default_run_us": 1035,
+      "default_run_us": 1243,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.NoPrimaryKeyFieldError",
       "sampled": false
     },
     {
-      "default_run_us": 988,
+      "default_run_us": 1105,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.NoPrimaryKeyValueError",
       "sampled": false
     },
     {
-      "default_run_us": 1090,
+      "default_run_us": 1118,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.NoResultsError",
       "sampled": false
     },
     {
-      "default_run_us": 307,
+      "default_run_us": 325,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.ParameterizedType",
       "sampled": false
     },
     {
-      "default_run_us": 12536,
+      "default_run_us": 15402,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Query",
       "sampled": false
     },
     {
-      "default_run_us": 137,
+      "default_run_us": 132,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Query.API",
       "sampled": false
     },
     {
-      "default_run_us": 14,
+      "default_run_us": 20,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Query.BooleanExpr",
       "sampled": false
     },
     {
-      "default_run_us": 11713,
+      "default_run_us": 12737,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Query.Builder",
       "sampled": false
     },
     {
-      "default_run_us": 989,
+      "default_run_us": 1742,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Query.Builder.CTE",
       "sampled": false
     },
     {
-      "default_run_us": 174,
+      "default_run_us": 78,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Query.Builder.Combination",
       "sampled": false
     },
     {
-      "default_run_us": 174,
+      "default_run_us": 206,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Query.Builder.Distinct",
       "sampled": false
     },
     {
-      "default_run_us": 986,
+      "default_run_us": 1440,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Query.Builder.Dynamic",
       "sampled": false
     },
     {
-      "default_run_us": 1238,
+      "default_run_us": 2301,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Query.Builder.Filter",
       "sampled": false
     },
     {
-      "default_run_us": 2309,
+      "default_run_us": 2972,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Query.Builder.From",
       "sampled": false
     },
     {
-      "default_run_us": 1148,
+      "default_run_us": 525,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Query.Builder.GroupBy",
       "sampled": false
     },
     {
-      "default_run_us": 2169,
+      "default_run_us": 1909,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Query.Builder.Join",
       "sampled": false
     },
     {
-      "default_run_us": 1133,
+      "default_run_us": 1107,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Query.Builder.LimitOffset",
       "sampled": false
     },
     {
-      "default_run_us": 652,
+      "default_run_us": 217,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Query.Builder.Lock",
       "sampled": false
     },
     {
-      "default_run_us": 3501,
+      "default_run_us": 3564,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Query.Builder.OrderBy",
       "sampled": false
     },
     {
-      "default_run_us": 1245,
+      "default_run_us": 1426,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Query.Builder.Preload",
       "sampled": false
     },
     {
-      "default_run_us": 7163,
+      "default_run_us": 7198,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Query.Builder.Select",
       "sampled": false
     },
     {
-      "default_run_us": 2266,
+      "default_run_us": 2400,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Query.Builder.Update",
       "sampled": false
     },
     {
-      "default_run_us": 1302,
+      "default_run_us": 1303,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Query.Builder.Windows",
       "sampled": false
     },
     {
-      "default_run_us": 50,
+      "default_run_us": 17,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Query.ByExpr",
       "sampled": false
     },
     {
-      "default_run_us": 1104,
+      "default_run_us": 1163,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Query.CastError",
       "sampled": false
     },
     {
-      "default_run_us": 32,
+      "default_run_us": 31,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Query.CompileError",
       "sampled": false
     },
     {
-      "default_run_us": 25,
+      "default_run_us": 16,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Query.DynamicExpr",
       "sampled": false
     },
     {
-      "default_run_us": 14,
+      "default_run_us": 19,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Query.FromExpr",
       "sampled": false
     },
     {
-      "default_run_us": 17,
+      "default_run_us": 12,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Query.JoinExpr",
       "sampled": false
     },
     {
-      "default_run_us": 11,
+      "default_run_us": 9,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Query.LimitExpr",
       "sampled": false
     },
     {
-      "default_run_us": 19913,
+      "default_run_us": 17059,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Query.Planner",
       "sampled": false
     },
     {
-      "default_run_us": 23,
+      "default_run_us": 16,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Query.QueryExpr",
       "sampled": false
     },
     {
-      "default_run_us": 16,
+      "default_run_us": 13,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Query.SelectExpr",
       "sampled": false
     },
     {
-      "default_run_us": 17,
+      "default_run_us": 9,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Query.Tagged",
       "sampled": false
     },
     {
-      "default_run_us": 1378,
+      "default_run_us": 1616,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Query.Values",
       "sampled": false
     },
     {
-      "default_run_us": 64,
+      "default_run_us": 91,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Query.WindowAPI",
       "sampled": false
     },
     {
-      "default_run_us": 13,
+      "default_run_us": 19,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Query.WithExpr",
       "sampled": false
     },
     {
-      "default_run_us": 1041,
+      "default_run_us": 1449,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.QueryError",
       "sampled": false
     },
     {
-      "default_run_us": 1830,
+      "default_run_us": 1733,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Queryable",
       "sampled": false
     },
     {
-      "default_run_us": 2860,
+      "default_run_us": 3073,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Queryable.Atom",
       "sampled": false
     },
     {
-      "default_run_us": 23,
+      "default_run_us": 24,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Queryable.BitString",
       "sampled": false
     },
     {
-      "default_run_us": 8,
+      "default_run_us": 10,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Queryable.Ecto.Query",
       "sampled": false
     },
     {
-      "default_run_us": 14,
+      "default_run_us": 20,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Queryable.Ecto.SubQuery",
       "sampled": false
     },
     {
-      "default_run_us": 56,
+      "default_run_us": 36,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Queryable.Tuple",
       "sampled": false
     },
     {
-      "default_run_us": 12367,
+      "default_run_us": 12497,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Repo",
       "sampled": false
     },
     {
-      "default_run_us": 981,
+      "default_run_us": 1031,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Repo.Assoc",
       "sampled": false
     },
     {
-      "default_run_us": 3477,
+      "default_run_us": 3236,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Repo.Preloader",
       "sampled": false
     },
     {
-      "default_run_us": 2895,
+      "default_run_us": 4532,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Repo.Queryable",
       "sampled": false
     },
     {
-      "default_run_us": 384,
+      "default_run_us": 790,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Repo.Registry",
       "sampled": false
     },
     {
-      "default_run_us": 4398,
+      "default_run_us": 10691,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Repo.Schema",
       "sampled": false
     },
     {
-      "default_run_us": 15,
+      "default_run_us": 32,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Repo.SensitiveData",
       "sampled": false
     },
     {
-      "default_run_us": 4011,
+      "default_run_us": 4111,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Repo.Supervisor",
       "sampled": false
     },
     {
-      "default_run_us": 550,
+      "default_run_us": 508,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Repo.Transaction",
       "sampled": false
     },
     {
-      "default_run_us": 5269,
+      "default_run_us": 5133,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Schema",
       "sampled": false
     },
     {
-      "default_run_us": 357,
+      "default_run_us": 338,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Schema.Loader",
       "sampled": false
     },
     {
-      "default_run_us": 15,
+      "default_run_us": 12,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Schema.Metadata",
       "sampled": false
     },
     {
-      "default_run_us": 29,
+      "default_run_us": 82,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.StaleEntryError",
       "sampled": false
     },
     {
-      "default_run_us": 11,
+      "default_run_us": 15,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.SubQuery",
       "sampled": false
     },
     {
-      "default_run_us": 1203,
+      "default_run_us": 1077,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.SubQueryError",
       "sampled": false
     },
     {
-      "default_run_us": 29478,
+      "default_run_us": 16229,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.Type",
       "sampled": false
     },
     {
-      "default_run_us": 868,
+      "default_run_us": 1296,
       "default_warnings": 0,
       "error": null,
       "module": "Ecto.UUID",
       "sampled": false
     },
     {
-      "default_run_us": 14,
+      "default_run_us": 16,
       "default_warnings": 0,
       "error": null,
       "module": "Inspect.Ecto.Association.NotLoaded",
       "sampled": false
     },
     {
-      "default_run_us": 505,
+      "default_run_us": 907,
       "default_warnings": 0,
       "error": null,
       "module": "Inspect.Ecto.Changeset",
       "sampled": false
     },
     {
-      "default_run_us": 3067,
+      "default_run_us": 4143,
       "default_warnings": 0,
       "error": null,
       "module": "Inspect.Ecto.Query",
       "sampled": false
     },
     {
-      "default_run_us": 426,
+      "default_run_us": 122,
       "default_warnings": 0,
       "error": null,
       "module": "Inspect.Ecto.Query.DynamicExpr",
       "sampled": false
     },
     {
-      "default_run_us": 399,
+      "default_run_us": 1001,
       "default_warnings": 0,
       "error": null,
       "module": "Inspect.Ecto.Repo.SensitiveData",
       "sampled": false
     },
     {
-      "default_run_us": 29,
+      "default_run_us": 35,
       "default_warnings": 0,
       "error": null,
       "module": "Inspect.Ecto.Schema.Metadata",
       "sampled": false
     },
     {
-      "default_run_us": 1102,
+      "default_run_us": 1297,
       "default_warnings": 0,
       "error": null,
       "module": "JSON.Encoder.Ecto.Association.NotLoaded",
       "sampled": false
     },
     {
-      "default_run_us": 14,
+      "default_run_us": 26,
       "default_warnings": 0,
       "error": null,
       "module": "JSON.Encoder.Ecto.Schema.Metadata",
       "sampled": false
     },
     {
-      "default_run_us": 832,
+      "default_run_us": 1199,
       "default_warnings": 0,
       "error": null,
       "module": "Jason.Encoder.Ecto.Association.NotLoaded",
       "sampled": false
     },
     {
-      "default_run_us": 18,
+      "default_run_us": 13,
       "default_warnings": 0,
       "error": null,
       "module": "Jason.Encoder.Ecto.Schema.Metadata",
       "sampled": false
     },
     {
-      "default_run_us": 988,
+      "default_run_us": 1332,
       "default_warnings": 0,
       "error": null,
       "module": "Mix.Ecto",
       "sampled": false
     },
     {
-      "default_run_us": 562,
+      "default_run_us": 551,
       "default_warnings": 0,
       "error": null,
       "module": "Mix.Tasks.Ecto",
       "sampled": false
     },
     {
-      "default_run_us": 219,
+      "default_run_us": 245,
       "default_warnings": 0,
       "error": null,
       "module": "Mix.Tasks.Ecto.Create",
       "sampled": false
     },
     {
-      "default_run_us": 143,
+      "default_run_us": 184,
       "default_warnings": 0,
       "error": null,
       "module": "Mix.Tasks.Ecto.Drop",
       "sampled": false
     },
     {
-      "default_run_us": 1147,
+      "default_run_us": 1219,
       "default_warnings": 0,
       "error": null,
       "module": "Mix.Tasks.Ecto.Gen.Repo",
@@ -3799,12 +3799,12 @@
     "body_unavailable": 0,
     "cost": {
       "body_calls": 165,
-      "body_max_us": 16469,
-      "body_median_us": 2893,
-      "body_p90_us": 13802,
-      "body_total_ms": 788,
+      "body_max_us": 31978,
+      "body_median_us": 3455,
+      "body_p90_us": 14830,
+      "body_total_ms": 876,
       "default_calls": 102,
-      "default_total_ms": 250
+      "default_total_ms": 264
     },
     "extra_warning_slices": 5,
     "extra_warnings": 8,

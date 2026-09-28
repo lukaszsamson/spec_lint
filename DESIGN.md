@@ -746,13 +746,69 @@ These notes record choices the text above left open.
   has no spec in scope is an `unanalysed` inventory entry (reason
   `spec_removed`, or `spec_out_of_scope:<reason>`), an `SL008` finding and
   a coverage regression. A function no longer exported (deleted, private,
-  now a macro), a module that is gone, excluded or outside a partial run,
-  and a function that still has specs in scope (with fewer clauses) are
-  not. Regenerating the baseline stores the entry as an acknowledged
-  `unanalysed` one, which later runs match like any inventory
+  now a macro), and a module that is gone, excluded or outside a partial
+  run, are not. Regenerating the baseline stores the entry as an
+  acknowledged `unanalysed` one, which later runs match like any inventory
   acknowledgement and which goes stale when the spec comes back or the
   function is deleted. The ledger counts these as `lost_analysis`, apart
   from the slices found.
+- **Overload removal (second external review).** Section 9's "losing one
+  overload while another stays analysed is a violation" is implemented: a
+  function that still has specs in scope but fewer clauses than a slice
+  index the baseline lists as `compared` gets an `unanalysed` entry with
+  reason `spec_clause_removed` for each missing index, which is a
+  regression like `spec_removed`. Slices are numbered by position, so the
+  missing indexes are the last ones whichever clause was removed; merging
+  overloads into one `term()` clause counts too. The first review fix had
+  exempted a function with fewer clauses, contradicting section 9.
+- **Injected defaults (second external review).** Deleting a user
+  definition that overrode a `defoverridable` default injected by `use`
+  (`GenServer`'s `handle_info/2`, `child_spec/1`) leaves the default
+  exported. It is a deleted definition, not a regression: an export whose
+  debug-info definition metadata carries `from_super: false` (the
+  compiler's marker for an overridable default that was not overridden,
+  `elixir_overridable:store_not_overridden/1`) produces no `unanalysed`
+  entry. A user definition that keeps its body but loses its spec is still
+  `spec_removed`.
+- **Missing BEAM files (second external review).** An ebin that exists
+  but lost BEAM files (deleted, or a partial `_build` cache restore) is a
+  configuration error (exit 2, `{:error, :missing_beams}`), not a smaller
+  project: Mix does not rebuild them, because its manifest says the build
+  is up to date, and before this fix every baseline entry of the vanished
+  modules was skipped, so CI went green. The build's module list is the
+  Elixir compile manifest of a Mix project (read with the pinned
+  toolchain's `Mix.Compilers.Elixir.read_manifest/1`), or else the
+  `modules` of `<app>.app`, which Mix rewrites only when the ebin's
+  modification time is newer than its own (one-second resolution) and so
+  can briefly list a deleted module. As a second line, a `compared`
+  inventory entry whose slice is absent from the whole inventory (outside
+  unavailable modules) is listed as a stale inventory entry in a complete
+  run.
+- **Gate state in the baseline (second external review).** Fingerprints
+  hash the slice's own evidence, not its siblings, so an `SL001` blocked
+  by an overlapping overload has the same fingerprint once the overload
+  is removed and it gates. Every baseline finding records its blocked
+  prerequisites (`"blocked"`). An entry written with a blocked
+  prerequisite does not acknowledge an issue of a prerequisite-gated rule
+  (`SL001` `conflict`/`clause_conflict`, `SL003`) whose prerequisites are
+  now met: the issue is new and the entry is listed under `gate_changed`.
+  Entries without the field (earlier baselines) acknowledge as before.
+- **Regeneration keeps what was not analysed (second external review).**
+  `mix spec_lint.baseline` keeps the previous findings of slices and
+  modules that are now `unsupported`, `unavailable` or `unanalysed`, by
+  the rule stale detection uses, and the previous `compared` inventory
+  entries of modules that are unavailable as a whole. Regenerating while
+  debug info is off (the documented `fail_on_regression` workflow) no
+  longer drops acknowledgements that come back with the analysis. A kept
+  entry whose own adapter is the running one loses its
+  `pending_reconciliation` flag, so reverting a toolchain change does not
+  turn reviewed acknowledgements into new findings.
+- **Baseline paths (second external review).** A baseline path given
+  explicitly (`--baseline`, or `baseline:` in `.spec_lint.exs`) must
+  exist; a missing one is a configuration error (exit 2), as an explicit
+  `--config` is. The default path may be missing. `mix spec_lint.baseline
+  --output PATH` runs against `PATH` too, so lost analysis, regressions
+  and kept entries all come from the file being written.
 - **Per-entry adapter (external review fix).** A baseline finding
   acknowledges an issue only when its own `adapter` (or the file's, when
   it has none) is the running adapter. `mix spec_lint.baseline` keeps the
@@ -827,6 +883,71 @@ The follow-ups that could change the decision are open questions in section
 12: near-top inference, and per-clause evidence under top-only unions. The
 second one found 4 stale ecto specs that are SL001-grade.
 
+**Body backend experiment outcome (2026-09-28, Phase 0 item 3 and Phase 3;
+details in `EXPERIMENTS.md` "Body backend experiment", reports in
+`bench/corpus/reports/body/`).** Each spec slice's body was type-checked
+under its spec domain through the `warnings/7` hook on a patched `c24c235`
+build (`bench/corpus/warnings7.patch`).
+
+- **Recall.** Gated recall on the 9 known omissions went from 0 to 1
+  (`Ecto.Query.Builder.quoted_type/2`, a `clause_conflict`); reported
+  recall stayed at 2 of 9. One new real omission was found,
+  `Ecto.Changeset.apply_changes/1`, report-only.
+- **Precision.** No new false positive on 297 real-code slices (decimal,
+  plug, ecto); 1 new fixture false positive after the redundancy guard
+  (`display/1`, an unreachable `case` catch-all the checker does not flag).
+- **Obligations.** 18 slices moved from `unknown` to `none`, but only 5
+  are established (`U(D)` within `S_lo`); the other 13 have inexact spec
+  returns and are compatible at available precision only.
+- **Cost.** About one module re-check per slice: 1.7 s of body calls over
+  decimal, plug and ecto, against 1.2 s for the whole signature analysis.
+
+**Decision: body analysis is not adopted and not qualified further.**
+Recall did not improve materially. The 8 misses are blocked by compiler
+inference, not by the missing spec domain: 5 are top-only returns through
+helpers analysed under default domains or generic `Enum`/`Map` calls, and
+2 (`apply_action/2`, `merge_private/2`) are not top-only but leave only an
+uncounted component for the same two reasons; input approximation caps 3
+of them (`Decimal.compare/2`, `merge_private/2`, `apply_action/2`) at
+`possible_input_approximate` whatever the inference does.
+
+**Next investment: compiler inference, then translation, not a body
+backend.** In order of the misses each would unblock (at most 4 of the 8
+become gateable even with both compiler changes, realistically 3):
+
+1. **Parametric signatures for `Enum.map/2`, `Enum.reduce/3`,
+   `Enum.into/2` and `Map.new/1`** (the return follows the fun's return or
+   the collectable): `Plug.Conn.Query.decode/4`, `Ecto.Repo.Assoc.query/4`,
+   `Ecto.Repo.Preloader.query/7` (top-only today) and
+   `Plug.Conn.merge_private/2`.
+2. **Call-site-sensitive inference of local helpers and same-module
+   callees** (a helper called from a typed context is inferred under that
+   context's argument types, not `dynamic()`): `Decimal.compare/2` (the
+   `error/4` macro and private `handle_error/4`), `Decimal.cmp/2`
+   (delegates to `compare/2`), `Ecto.Changeset.apply_action/2` (through
+   `apply_changes/1`).
+3. **Recursive definitions inferred to a fixed point** instead of
+   `dynamic()` at the self-call: `Ecto.Query.Builder.Join.escape/3`,
+   `quoted_type/2`, and `unextract/3` under `Preloader.query/7`. Per-clause
+   evidence already isolates these clauses, so this is never the only
+   blocker.
+4. **Clause reachability per source clause in the checker chunk** (the
+   compiler's redundancy verdict): replaces the shadowing approximation
+   that over-blocks 23 guarded stdlib clauses, and lets a body run drop the
+   return of a clause its domain makes redundant (the `name/1` fixture
+   false positive; `display/1`'s unreachable `case` branch is not a clause
+   and the checker does not flag it).
+
+On the SpecLint side, the lever that lifts the input-approximation cap is a
+translator that keeps `D_lo` for struct and recursive types
+(`integer_refinement_erased` in `Decimal.t()`, `Plug.Conn.t()`;
+`map_key_widened` and `recursive_cutoff` in `Ecto.Changeset.t()`,
+`Macro.t()`, `Macro.Env.t()`), plus counted components for negated struct
+fields (`merge_private/2`) and list-of-lists extras (`Assoc.query/4`).
+The decision reopens when an upstream build provides item 1 or 2, or a
+corpus shows the body run gating at least 3 confirmed omissions the
+signature misses with no confirmed false positive.
+
 ### Phase 0: investigations (before implementation expands)
 
 1. **Missing-return usefulness, the go/no-go experiment.** No canonical
@@ -873,7 +994,9 @@ semantics, `--explain`, SL004 and SL005, stdlib dogfooding replacing
 
 Qualify backend B per section 7, upstream the hook or a replacement API,
 SARIF, caching under `_build`, additional adapters, performance budgets set
-after measurement.
+after measurement. **Status:** backend B was measured and not adopted (see
+the outcome above); qualifying it waits for the compiler inference
+improvements listed there.
 
 ## 12. Open questions
 

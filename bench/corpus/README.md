@@ -8,6 +8,7 @@ nine real omissions as executable reproducers.
       README.md        this file
       run.sh           regenerates reports/
       body_run.sh      regenerates reports/body/ (body-backend experiment)
+      warnings7.patch  the Module.Types.warnings/7 hook body_run.sh needs
       reports/         one JSON pair per corpus (see below)
       reports/body/    body-backend experiment reports (see the last section)
       omissions/       README.md mapping the nine fixtures to their origin
@@ -19,7 +20,7 @@ asserted by `test/spec_lint/omissions_test.exs`.
 
 | Component | Version |
 | --- | --- |
-| Elixir | 1.21.0-dev, `c24c235` (built from `~/elixir`, `git -C ~/elixir rev-parse --short HEAD` prints `c24c23538`) |
+| Elixir | 1.21.0-dev, `c24c235` (`c24c23538d521d25edd6a9a7a66fc5206caab70e`), built from a checkout of the fork `https://github.com/lukaszsamson/elixir` (the commit is on its branch `ls-mixed-into`; it is not upstream). The scripts take the checkout as `ELIXIR_DIR` (default `~/elixir`). |
 | Erlang/OTP | 28 |
 | Compiler adapter | `SpecLint.Compiler.V121` (`1.21.0-dev+c24c235`, checker `elixir_checker_v10`) |
 
@@ -96,7 +97,10 @@ temporary `fixtures/ebin` directory and puts the spec_lint ebin on
     SPEC_LINT_OSS=$OSS ELIXIR_DIR=$ELIXIR bench/corpus/run.sh
     SPEC_LINT_OSS=$OSS bench/corpus/run.sh mime plug
 
-Requirements: `bash`, `jq` (1.6 or later), the pinned toolchain on `PATH`.
+Requirements: `bash` 3.2 or later (the macOS system bash is enough: the
+scripts use no associative arrays and expand possibly empty arrays safely
+under `set -u`), `jq` (1.6 or later), the pinned toolchain on `PATH`. Both
+scripts were last run under `/bin/bash` 3.2.57.
 The script warns when a checkout is not at the pinned revision. Reports are
 normalised: machine paths become `$OSS`, `$ELIXIR`, `$SPEC_LINT` and `$TMP`,
 keys are sorted and the wall-clock `totals.runtime_ms` is removed, so two runs
@@ -119,9 +123,9 @@ Two files per corpus in `reports/`:
 Provenance: **all fifteen files were regenerated for this bundle**, with the
 classifier at this repository's HEAD (after the post-Phase 1 review fixes
 and the four external review fixes). The earlier results in the session
-scratchpad (`results_phase1`) were not copied: they were produced by the
-classifier at `70316ce`, before those fixes, they carry absolute machine
-paths and `stdlib.json` was 5.0 MB. Compared with Phase 1 the function
+scratchpad (`results_phase1`, not durable) were not copied: they were
+produced by the classifier at `70316ce`, before those fixes, they carry
+absolute machine paths and `stdlib.json` was 5.0 MB. Compared with Phase 1 the function
 class counts are identical for jason, decimal, nimble_options, mime, plug
 and ecto. Only the stdlib moved, by the post-review change already recorded
 in EXPERIMENTS.md ("Post-Phase 1 review re-measurement"): unknown 1035 to
@@ -157,13 +161,23 @@ gating class: gating recall on the nine known real omissions is 0 of 9
 These are the reports behind EXPERIMENTS.md "Body backend experiment",
 written by `bench/body_experiment.exs`. The runner needs a build of
 `c24c235` carrying the `Module.Types.warnings/7` hook; it cannot run under
-the plain toolchain. `body_run.sh` states how to build it (a worktree of
-the Elixir checkout, one hunk of `b88a257a3`, `make compile`), and it
-recompiles decimal, plug and ecto with that build into a separate
-`MIX_BUILD_PATH`:
+the plain toolchain. The hook is the `lib/elixir/lib/module/types.ex` hunk
+of commit `b88a257a3` (`b88a257a3008b60fcf843c70390734dacad445d5`, on the
+branch `ls-typespec-tightening` of the fork
+`https://github.com/lukaszsamson/elixir`; not upstream), committed here as
+`warnings7.patch` (25 lines added, 3 removed). Build it and run:
 
-    ELIXIR_BODY=/path/to/elixir-body SPEC_LINT_OSS=$OSS \
+    git clone https://github.com/lukaszsamson/elixir.git $ELIXIR_BODY
+    git -C $ELIXIR_BODY checkout --detach c24c235
+    git -C $ELIXIR_BODY apply $PWD/bench/corpus/warnings7.patch
+    make -C $ELIXIR_BODY compile
+
+    ELIXIR_BODY=$ELIXIR_BODY SPEC_LINT_OSS=$OSS \
       [SPEC_LINT_OSS_BODY=/path/to/oss-body] bench/corpus/body_run.sh
+
+`body_run.sh` recompiles decimal, plug and ecto with that build into a
+separate `MIX_BUILD_PATH` (`SPEC_LINT_OSS_BODY`, default a temporary
+directory), so the pinned checkouts are not touched.
 
 Files:
 
@@ -179,5 +193,14 @@ or warning differs between modes, and for functions with an extra checker
 diagnostic. Every function has a row in `function_rows`. Paths are
 normalised as above.
 
+Each mode entry records the class, the reasons and, since the external
+review, whether the obligation is established (`established`: `U(D)`
+within `S_lo`, DESIGN.md section 3) and whether the spec return translates
+exactly (`return_exact`). A class of `none` only says that the extra over
+`S_hi` is empty; with an inexact return it is "compatible at available
+precision", not established.
+
 The cost fields (`body_us`, `default_run_us`, `totals.cost`) are wall-clock
-times, so two runs differ there. Everything else is deterministic.
+times, so two runs differ there. Everything else is deterministic: the
+last regeneration (adding `established` and `return_exact`) left every
+other field of every report unchanged.

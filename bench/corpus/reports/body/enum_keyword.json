@@ -2391,6 +2391,7 @@
             "clauses": [
               "(term(), (-> term())) -> dynamic()"
             ],
+            "established": false,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
@@ -2398,6 +2399,7 @@
               "no_extra",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "none",
@@ -2415,6 +2417,7 @@
             "clauses": [
               "(term(), (-> term())) -> dynamic()"
             ],
+            "established": false,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
@@ -2422,12 +2425,13 @@
               "no_extra",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "none",
             "warn": false
           },
-          "body_us": 5060,
+          "body_us": 5094,
           "default": {
             "applied": [
               0
@@ -2439,6 +2443,7 @@
             "clauses": [
               "(term(), (-> term()) or (none(), none() -> term()) or atom()) -> dynamic()"
             ],
+            "established": false,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
@@ -2446,6 +2451,7 @@
               "no_extra",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "none",
@@ -2470,6 +2476,7 @@
             "clauses": [
               "(term(), (-> term()) or (none(), none() -> term()) or atom()) -> dynamic()"
             ],
+            "established": false,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
@@ -2477,6 +2484,7 @@
               "no_extra",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "none",
@@ -2500,12 +2508,14 @@
             "clauses": [
               "(term(), (term(), term() -> boolean()) or atom()) -> dynamic()"
             ],
+            "established": true,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "no_extra"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "none",
@@ -2523,18 +2533,20 @@
             "clauses": [
               "(term(), (term(), term() -> boolean()) or atom()) -> dynamic()"
             ],
+            "established": true,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "no_extra"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "none",
             "warn": false
           },
-          "body_us": 5876,
+          "body_us": 6126,
           "default": {
             "applied": [
               0
@@ -2546,12 +2558,14 @@
             "clauses": [
               "(term(), (-> term()) or (none(), none() -> term()) or atom()) -> dynamic()"
             ],
+            "established": true,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "no_extra"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "none",
@@ -2575,12 +2589,14 @@
             "clauses": [
               "(term(), (-> term()) or (none(), none() -> term()) or atom()) -> dynamic()"
             ],
+            "established": true,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "no_extra"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "none",
@@ -2624,6 +2640,7 @@
             "clauses": [
               "(term(), (-> term())) -> dynamic()"
             ],
+            "established": false,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
@@ -2631,6 +2648,7 @@
               "no_extra",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "none",
@@ -2648,6 +2666,7 @@
             "clauses": [
               "(term(), (-> term())) -> dynamic()"
             ],
+            "established": false,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
@@ -2655,12 +2674,13 @@
               "no_extra",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "none",
             "warn": false
           },
-          "body_us": 5185,
+          "body_us": 4732,
           "default": {
             "applied": [
               0
@@ -2672,6 +2692,7 @@
             "clauses": [
               "(term(), (-> term()) or (none(), none() -> term()) or atom()) -> dynamic()"
             ],
+            "established": false,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
@@ -2679,6 +2700,7 @@
               "no_extra",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "none",
@@ -2703,6 +2725,7 @@
             "clauses": [
               "(term(), (-> term()) or (none(), none() -> term()) or atom()) -> dynamic()"
             ],
+            "established": false,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
@@ -2710,6 +2733,7 @@
               "no_extra",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "none",
@@ -2733,12 +2757,14 @@
             "clauses": [
               "(term(), (term(), term() -> boolean()) or atom()) -> dynamic()"
             ],
+            "established": true,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "no_extra"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "none",
@@ -2756,18 +2782,20 @@
             "clauses": [
               "(term(), (term(), term() -> boolean()) or atom()) -> dynamic()"
             ],
+            "established": true,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "no_extra"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "none",
             "warn": false
           },
-          "body_us": 4453,
+          "body_us": 4500,
           "default": {
             "applied": [
               0
@@ -2779,12 +2807,14 @@
             "clauses": [
               "(term(), (-> term()) or (none(), none() -> term()) or atom()) -> dynamic()"
             ],
+            "established": true,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "no_extra"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "none",
@@ -2808,12 +2838,14 @@
             "clauses": [
               "(term(), (-> term()) or (none(), none() -> term()) or atom()) -> dynamic()"
             ],
+            "established": true,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "no_extra"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "none",
@@ -2867,12 +2899,14 @@
             "clauses": [
               "(term(), (term(), term() -> boolean()) or atom()) -> dynamic()"
             ],
+            "established": false,
             "extra": "not {term(), term()}",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "top_only"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -2900,18 +2934,20 @@
             "clauses": [
               "(term(), (term(), term() -> boolean()) or atom()) -> dynamic()"
             ],
+            "established": false,
             "extra": "not {term(), term()}",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "top_only"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
             "warn": false
           },
-          "body_us": 4274,
+          "body_us": 4238,
           "default": {
             "applied": [
               0
@@ -2934,12 +2970,14 @@
             "clauses": [
               "(term(), (-> term()) or (none(), none() -> term()) or atom()) -> dynamic()"
             ],
+            "established": false,
             "extra": "not {term(), term()}",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "top_only"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -2976,12 +3014,14 @@
             "clauses": [
               "(term(), (-> term()) or (none(), none() -> term()) or atom()) -> dynamic()"
             ],
+            "established": false,
             "extra": "not {term(), term()}",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "top_only"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -3005,6 +3045,7 @@
             "clauses": [
               "(term(), (-> term())) -> dynamic()"
             ],
+            "established": false,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
@@ -3012,6 +3053,7 @@
               "no_extra",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "none",
@@ -3029,6 +3071,7 @@
             "clauses": [
               "(term(), (-> term())) -> dynamic()"
             ],
+            "established": false,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
@@ -3036,12 +3079,13 @@
               "no_extra",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "none",
             "warn": false
           },
-          "body_us": 4648,
+          "body_us": 5291,
           "default": {
             "applied": [
               0
@@ -3053,6 +3097,7 @@
             "clauses": [
               "(term(), (-> term()) or (none(), none() -> term()) or atom()) -> dynamic()"
             ],
+            "established": false,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
@@ -3060,6 +3105,7 @@
               "no_extra",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "none",
@@ -3085,6 +3131,7 @@
             "clauses": [
               "(term(), (-> term()) or (none(), none() -> term()) or atom()) -> dynamic()"
             ],
+            "established": false,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
@@ -3092,6 +3139,7 @@
               "no_extra",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "none",
@@ -3135,6 +3183,7 @@
             "clauses": [
               "(term(), (term() -> term()), (-> term())) -> dynamic()"
             ],
+            "established": false,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
@@ -3142,6 +3191,7 @@
               "no_extra",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "none",
@@ -3159,6 +3209,7 @@
             "clauses": [
               "(term(), (term() -> term()), (-> term())) -> dynamic()"
             ],
+            "established": false,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
@@ -3166,12 +3217,13 @@
               "no_extra",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "none",
             "warn": false
           },
-          "body_us": 4460,
+          "body_us": 4735,
           "default": {
             "applied": [
               0
@@ -3183,6 +3235,7 @@
             "clauses": [
               "(term(), (none() -> term()), (-> term()) or (none(), none() -> term()) or atom()) -> dynamic()"
             ],
+            "established": false,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
@@ -3190,6 +3243,7 @@
               "no_extra",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "none",
@@ -3214,6 +3268,7 @@
             "clauses": [
               "(term(), (none() -> term()), (-> term()) or (none(), none() -> term()) or atom()) -> dynamic()"
             ],
+            "established": false,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
@@ -3221,6 +3276,7 @@
               "no_extra",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "none",
@@ -3245,12 +3301,14 @@
             "clauses": [
               "(term(), (term() -> term()), (term(), term() -> boolean()) or atom()) -> dynamic()"
             ],
+            "established": true,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "no_extra"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "none",
@@ -3268,18 +3326,20 @@
             "clauses": [
               "(term(), (term() -> term()), (term(), term() -> boolean()) or atom()) -> dynamic()"
             ],
+            "established": true,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "no_extra"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "none",
             "warn": false
           },
-          "body_us": 4717,
+          "body_us": 4434,
           "default": {
             "applied": [
               0
@@ -3291,12 +3351,14 @@
             "clauses": [
               "(term(), (none() -> term()), (-> term()) or (none(), none() -> term()) or atom()) -> dynamic()"
             ],
+            "established": true,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "no_extra"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "none",
@@ -3319,12 +3381,14 @@
             "clauses": [
               "(term(), (none() -> term()), (-> term()) or (none(), none() -> term()) or atom()) -> dynamic()"
             ],
+            "established": true,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "no_extra"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "none",
@@ -3380,12 +3444,14 @@
             "clauses": [
               "(term(), %Range{first: integer(), last: integer(), step: integer()}) -> dynamic()"
             ],
+            "established": false,
             "extra": "not list(term())",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "top_only"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -3414,18 +3480,20 @@
             "clauses": [
               "(term(), %Range{first: integer(), last: integer(), step: integer()}) -> dynamic()"
             ],
+            "established": false,
             "extra": "not list(term())",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "top_only"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
             "warn": false
           },
-          "body_us": 5951,
+          "body_us": 4290,
           "default": {
             "applied": [
               0
@@ -3448,12 +3516,14 @@
             "clauses": [
               "(term(), %Range{} or (%{..., __struct__: Range, first: term(), last: term()} and not %Range{})) -> dynamic()"
             ],
+            "established": false,
             "extra": "not list(term())",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "top_only"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -3489,12 +3559,14 @@
             "clauses": [
               "(term(), %Range{} or (%{..., __struct__: Range, first: term(), last: term()} and not %Range{})) -> dynamic()"
             ],
+            "established": false,
             "extra": "not list(term())",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "top_only"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -3560,12 +3632,14 @@
               "(empty_list() or non_empty_list(term(), term()), integer()) -> dynamic(empty_list() or non_empty_list(term(), term()))",
               "(term(), integer()) -> dynamic()"
             ],
+            "established": false,
             "extra": "not list({term(), integer()})",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "top_only"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -3605,18 +3679,20 @@
               "(empty_list() or non_empty_list(term(), term()), integer()) -> dynamic(empty_list() or non_empty_list(term(), term()))",
               "(term(), integer()) -> dynamic()"
             ],
+            "established": false,
             "extra": "not list({term(), integer()})",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "top_only"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
             "warn": false
           },
-          "body_us": 4584,
+          "body_us": 4797,
           "default": {
             "applied": [
               0,
@@ -3652,12 +3728,14 @@
               "(empty_list() or non_empty_list(term(), term()), (none(), none() -> term()) or integer()) -> dynamic(empty_list() or non_empty_list(term(), term()))",
               "(term(), (none(), none() -> term()) or integer()) -> dynamic()"
             ],
+            "established": false,
             "extra": "not list({term(), integer()})",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "top_only"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -3705,12 +3783,14 @@
               "(empty_list() or non_empty_list(term(), term()), (none(), none() -> term()) or integer()) -> dynamic(empty_list() or non_empty_list(term(), term()))",
               "(term(), (none(), none() -> term()) or integer()) -> dynamic()"
             ],
+            "established": false,
             "extra": "not list({term(), integer()})",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "top_only"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -3756,6 +3836,7 @@
               "(empty_list() or non_empty_list(term(), term()), (term(), integer() -> term())) -> dynamic(empty_list() or non_empty_list(term(), term()))",
               "(term(), (term(), integer() -> term())) -> dynamic()"
             ],
+            "established": false,
             "extra": "not list(term())",
             "guard_blocked": false,
             "near_top": false,
@@ -3763,6 +3844,7 @@
               "top_only",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -3802,6 +3884,7 @@
               "(empty_list() or non_empty_list(term(), term()), (term(), integer() -> term())) -> dynamic(empty_list() or non_empty_list(term(), term()))",
               "(term(), (term(), integer() -> term())) -> dynamic()"
             ],
+            "established": false,
             "extra": "not list(term())",
             "guard_blocked": false,
             "near_top": false,
@@ -3809,12 +3892,13 @@
               "top_only",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
             "warn": false
           },
-          "body_us": 4625,
+          "body_us": 4824,
           "default": {
             "applied": [
               0,
@@ -3850,6 +3934,7 @@
               "(empty_list() or non_empty_list(term(), term()), (none(), none() -> term()) or integer()) -> dynamic(empty_list() or non_empty_list(term(), term()))",
               "(term(), (none(), none() -> term()) or integer()) -> dynamic()"
             ],
+            "established": false,
             "extra": "not list(term())",
             "guard_blocked": false,
             "near_top": false,
@@ -3857,6 +3942,7 @@
               "top_only",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -3907,6 +3993,7 @@
               "(empty_list() or non_empty_list(term(), term()), (none(), none() -> term()) or integer()) -> dynamic(empty_list() or non_empty_list(term(), term()))",
               "(term(), (none(), none() -> term()) or integer()) -> dynamic()"
             ],
+            "established": false,
             "extra": "not list(term())",
             "guard_blocked": false,
             "near_top": false,
@@ -3914,6 +4001,7 @@
               "top_only",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -3957,12 +4045,14 @@
             "clauses": [
               "(list({atom(), term()}), atom(), term()) -> dynamic(list({atom(), term()}))"
             ],
+            "established": true,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "no_extra"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "none",
@@ -3980,18 +4070,20 @@
             "clauses": [
               "(list({atom(), term()}), atom(), term()) -> dynamic(list({atom(), term()}))"
             ],
+            "established": true,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "no_extra"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "none",
             "warn": false
           },
-          "body_us": 1830,
+          "body_us": 1063,
           "default": {
             "applied": [
               0
@@ -4015,6 +4107,7 @@
             "clauses": [
               "(empty_list() or non_empty_list(term(), term()), atom(), term()) -> dynamic(empty_list() or non_empty_list(term(), term()))"
             ],
+            "established": false,
             "extra": "non_empty_list(term(), term()) and not non_empty_list({atom(), term()})",
             "guard_blocked": false,
             "near_top": false,
@@ -4023,6 +4116,7 @@
               "unknown_components=1",
               "no_counted_component"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "unknown",
@@ -4055,6 +4149,7 @@
             "clauses": [
               "(empty_list() or non_empty_list(term(), term()), atom(), term()) -> dynamic(empty_list() or non_empty_list(term(), term()))"
             ],
+            "established": false,
             "extra": "non_empty_list(term(), term()) and not non_empty_list({atom(), term()})",
             "guard_blocked": false,
             "near_top": false,
@@ -4063,6 +4158,7 @@
               "unknown_components=1",
               "no_counted_component"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "unknown",
@@ -4107,12 +4203,14 @@
             "clauses": [
               "(list({atom(), term()}), atom(), (-> term())) -> dynamic(list({atom(), term()}))"
             ],
+            "established": true,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "no_extra"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "none",
@@ -4130,18 +4228,20 @@
             "clauses": [
               "(list({atom(), term()}), atom(), (-> term())) -> dynamic(list({atom(), term()}))"
             ],
+            "established": true,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "no_extra"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "none",
             "warn": false
           },
-          "body_us": 7347,
+          "body_us": 935,
           "default": {
             "applied": [
               0
@@ -4165,6 +4265,7 @@
             "clauses": [
               "(empty_list() or non_empty_list(term(), term()), atom(), (-> term())) -> dynamic(empty_list() or non_empty_list(term(), term()))"
             ],
+            "established": false,
             "extra": "non_empty_list(term(), term()) and not non_empty_list({atom(), term()})",
             "guard_blocked": false,
             "near_top": false,
@@ -4173,6 +4274,7 @@
               "unknown_components=1",
               "no_counted_component"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "unknown",
@@ -4205,6 +4307,7 @@
             "clauses": [
               "(empty_list() or non_empty_list(term(), term()), atom(), (-> term())) -> dynamic(empty_list() or non_empty_list(term(), term()))"
             ],
+            "established": false,
             "extra": "non_empty_list(term(), term()) and not non_empty_list({atom(), term()})",
             "guard_blocked": false,
             "near_top": false,
@@ -4213,6 +4316,7 @@
               "unknown_components=1",
               "no_counted_component"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "unknown",
@@ -4257,12 +4361,14 @@
             "clauses": [
               "(list({atom(), term()})) -> dynamic(list({atom(), term()}))"
             ],
+            "established": true,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "no_extra"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "none",
@@ -4280,18 +4386,20 @@
             "clauses": [
               "(list({atom(), term()})) -> dynamic(list({atom(), term()}))"
             ],
+            "established": true,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "no_extra"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "none",
             "warn": false
           },
-          "body_us": 2633,
+          "body_us": 955,
           "default": {
             "applied": [
               0
@@ -4315,6 +4423,7 @@
             "clauses": [
               "(empty_list() or non_empty_list(term(), term())) -> dynamic(empty_list() or non_empty_list(term(), term()))"
             ],
+            "established": false,
             "extra": "non_empty_list(term(), term()) and not non_empty_list({atom(), term()})",
             "guard_blocked": false,
             "near_top": false,
@@ -4323,6 +4432,7 @@
               "unknown_components=1",
               "no_counted_component"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "unknown",
@@ -4355,6 +4465,7 @@
             "clauses": [
               "(empty_list() or non_empty_list(term(), term())) -> dynamic(empty_list() or non_empty_list(term(), term()))"
             ],
+            "established": false,
             "extra": "non_empty_list(term(), term()) and not non_empty_list({atom(), term()})",
             "guard_blocked": false,
             "near_top": false,
@@ -4363,6 +4474,7 @@
               "unknown_components=1",
               "no_counted_component"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "unknown",
@@ -4385,14 +4497,14 @@
   "label": "enum_keyword",
   "modules": [
     {
-      "default_run_us": 13876,
+      "default_run_us": 12434,
       "default_warnings": 0,
       "error": null,
       "module": "Enum",
       "sampled": false
     },
     {
-      "default_run_us": 1463,
+      "default_run_us": 1646,
       "default_warnings": 0,
       "error": null,
       "module": "Keyword",
@@ -4411,12 +4523,12 @@
     "body_unavailable": 0,
     "cost": {
       "body_calls": 142,
-      "body_max_us": 8644,
-      "body_median_us": 4377,
-      "body_p90_us": 5007,
-      "body_total_ms": 542,
+      "body_max_us": 7824,
+      "body_median_us": 4366,
+      "body_p90_us": 5015,
+      "body_total_ms": 510,
       "default_calls": 2,
-      "default_total_ms": 15
+      "default_total_ms": 14
     },
     "extra_warning_slices": 11,
     "extra_warnings": 20,

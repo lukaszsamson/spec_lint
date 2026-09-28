@@ -49,13 +49,25 @@ defmodule SpecLint.Policy do
   defp warnings_as_errors?(%Issue{rule: "SL008"}, _config), do: false
   defp warnings_as_errors?(_issue, %Config{warnings_as_errors: value}), do: value
 
+  @doc """
+  Whether the evidence policy gates `issue` exactly when its prerequisites
+  are met (`SL001` `conflict` and `clause_conflict`, `SL003`). A baseline
+  entry written while such an issue was blocked does not acknowledge it
+  once it gates (`SpecLint.Baseline`, "Gate state").
+  """
+  @spec gated_by_prerequisites?(Issue.t()) :: boolean()
+  def gated_by_prerequisites?(%Issue{rule: "SL001", evidence: evidence})
+      when evidence in [:conflict, :clause_conflict],
+      do: true
+
+  def gated_by_prerequisites?(%Issue{rule: "SL003"}), do: true
+  def gated_by_prerequisites?(%Issue{}), do: false
+
   @doc "Whether an issue gates under the evidence policy (ignoring `warnings_as_errors`)."
   @spec gate?(Issue.t(), Config.t()) :: boolean()
-  def gate?(%Issue{rule: "SL001", evidence: evidence} = issue, _config)
-      when evidence in [:conflict, :clause_conflict],
-      do: Issue.prerequisites_met?(issue)
+  def gate?(%Issue{rule: rule} = issue, _config) when rule in ["SL001", "SL003"],
+    do: gated_by_prerequisites?(issue) and Issue.prerequisites_met?(issue)
 
-  def gate?(%Issue{rule: "SL003"} = issue, _config), do: Issue.prerequisites_met?(issue)
   def gate?(%Issue{rule: "SL006"}, %Config{profile: profile}), do: profile == :review
 
   def gate?(%Issue{rule: "SL008", data: %{regression: true}}, %Config{coverage: coverage}),

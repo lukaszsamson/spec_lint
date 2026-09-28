@@ -98,7 +98,8 @@ defmodule SpecLint.Run do
               reason: :missing,
               stale_findings: [],
               stale_inventory: [],
-              pending_reconciliation: []
+              pending_reconciliation: [],
+              gate_changed: []
             },
             coverage_violations: [],
             completion: :complete,
@@ -119,8 +120,10 @@ defmodule SpecLint.Run do
   @doc """
   Runs SpecLint over `project` with `config`. Returns `{:error, message}`
   for configuration errors found before analysis (exit code 2), including
-  a missing ebin directory of an owned application
-  (`SpecLint.Project.check_build_paths/1`), otherwise the finished run.
+  a missing ebin directory of an owned application, an ebin missing BEAM
+  files its build lists (`SpecLint.Project.check_build_paths/1`), and an
+  explicitly configured baseline file that does not exist
+  (`SpecLint.Config`), otherwise the finished run.
   """
   @spec execute(Project.t(), Config.t(), [option()]) :: {:ok, t()} | {:error, String.t()}
   def execute(%Project{} = project, %Config{} = config, opts \\ []) do
@@ -172,11 +175,24 @@ defmodule SpecLint.Run do
     end
   end
 
-  # A missing ebin is a configuration error (exit 2), never "0 specs".
+  # A missing ebin, or an ebin missing some of its BEAM files, is a
+  # configuration error (exit 2), never "0 specs" or a smaller project.
   defp check_build_paths(project) do
     case Project.check_build_paths(project) do
       :ok ->
         :ok
+
+      {:error, :missing_beams} ->
+        missing =
+          Enum.map_join(Project.missing_modules(project), "; ", fn missing ->
+            "#{missing.app} (#{Project.relative(project, missing.ebin)}): " <>
+              Enum.map_join(missing.modules, ", ", &inspect/1)
+          end)
+
+        {:error,
+         "incomplete build: modules the build lists have no BEAM file, so they cannot be " <>
+           "analysed: #{missing}; the compile manifest still says the build is up to " <>
+           "date, so recompile with mix compile --force"}
 
       {:error, :missing_build_path} ->
         missing =
@@ -203,11 +219,26 @@ defmodule SpecLint.Run do
     end
   end
 
+  # A missing baseline is "no baseline" only at the default path; an
+  # explicit path (--baseline, baseline: in the configuration) must exist.
   defp load_baseline(project, config) do
-    case Baseline.load(Path.expand(config.baseline, project.root)) do
-      {:ok, baseline} -> {:ok, baseline}
-      :missing -> {:ok, nil}
-      {:error, message} -> {:error, message}
+    path = Path.expand(config.baseline, project.root)
+
+    case Baseline.load(path) do
+      {:ok, baseline} ->
+        {:ok, baseline}
+
+      :missing when config.baseline_explicit ->
+        {:error,
+         "baseline file not found: #{Project.relative(project, path)} (given with --baseline " <>
+           "or baseline: in the configuration); fix the path, or create the baseline with " <>
+           "mix spec_lint.baseline"}
+
+      :missing ->
+        {:ok, nil}
+
+      {:error, message} ->
+        {:error, message}
     end
   end
 

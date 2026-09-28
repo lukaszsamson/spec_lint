@@ -4,6 +4,7 @@ defmodule SpecLint.BaselineTest do
   import SpecLint.TestHelpers
 
   alias SpecLint.{Baseline, Config, Issue, Project, Run}
+  alias SpecLint.Report.Console
   alias SpecLint.Fixtures.Compare
 
   @moduletag :tmp_dir
@@ -370,6 +371,28 @@ defmodule SpecLint.BaselineTest do
       assert length(decisions.pending_reconciliation) == length(pending)
     end
 
+    test "a pending entry regenerated under its own adapter acknowledges again", ctx do
+      # The review's repro: an adapter-A entry of a rule that is off becomes
+      # pending under B; the toolchain goes back to A and the baseline is
+      # regenerated with the rule still off.
+      [issue | _] = ctx.run.issues
+      rules = ctx.run.issues |> Enum.map(& &1.rule) |> Enum.uniq() |> List.delete(issue.rule)
+      remaining = Enum.reject(ctx.run.issues, &(&1.rule == issue.rule))
+
+      {:ok, under_a} = parsed(ctx.baseline)
+      under_b = Baseline.build(remaining, ctx.run.inventory, "other", under_a, rules: rules)
+      {:ok, under_b} = parsed(under_b)
+      assert Enum.any?(under_b.findings, &(&1["pending_reconciliation"] == true))
+
+      back = Baseline.build(remaining, ctx.run.inventory, ctx.adapter, under_b, rules: rules)
+      refute Enum.any?(back["findings"], &Map.has_key?(&1, "pending_reconciliation"))
+      {:ok, back} = parsed(back)
+
+      {issues, decisions} = Baseline.decide(ctx.run.issues, back, adapter: ctx.adapter)
+      assert Enum.all?(issues, &(&1.baseline == :baselined))
+      assert decisions.pending_reconciliation == []
+    end
+
     test "an expires value that is not a date never suppresses a finding", ctx do
       for bad <- ["2020-13-45", "31/12/2020", "tomorrow", "2020-01-01T00:00:00Z", 20_200_101] do
         broken =
@@ -530,5 +553,124 @@ defmodule SpecLint.BaselineTest do
     {:ok, fourth} = Run.execute(project, config, ci: true)
     assert [%{rule: "SL008", baseline: :baselined}] = fourth.issues
     assert fourth.exit_code == 0
+  end
+
+  describe "gate state" do
+    @overlapping """
+    defmodule GateFx do
+      @spec f(atom()) :: integer()
+      @spec f(:a) :: atom()
+      def f(x) when is_atom(x), do: x
+    end
+    """
+
+    @alone """
+    defmodule GateFx do
+      @spec f(atom()) :: integer()
+      def f(x) when is_atom(x), do: x
+    end
+    """
+
+    test "a report-only finding in the baseline does not acknowledge it once it gates",
+         %{tmp_dir: tmp_dir} do
+      ebin = elixirc!(tmp_dir, @overlapping)
+      project = Project.from_ebins([{:fx, ebin}], tmp_dir)
+      config = %Config{baseline: "baseline.json"}
+      path = Path.join(tmp_dir, "baseline.json")
+
+      {:ok, first} = Run.execute(project, config, ci: true)
+      assert [%Issue{rule: "SL001", slice: 0, gate: false} = blocked] = first.issues
+      assert Issue.blocked(blocked) == [:no_overlap]
+      assert first.exit_code == 0
+
+      written = Baseline.build(first.issues, first.inventory, first.capabilities.adapter_id, nil)
+      assert [%{"blocked" => ["no_overlap"]}] = written["findings"]
+      # Without the removed overload's inventory entry, which would be a
+      # coverage regression of its own (spec_clause_removed).
+      written = Map.update!(written, "inventory", fn i -> Enum.reject(i, &(&1["slice"] == 1)) end)
+      :ok = Baseline.write(path, written)
+
+      # The overlapping overload goes: the same slice evidence, the same
+      # fingerprint, but it gates now.
+      File.rm_rf!(ebin)
+      elixirc!(tmp_dir, @alone)
+      {:ok, run} = Run.execute(project, config, ci: true)
+      assert [%Issue{rule: "SL001", gate: true, baseline: :new} = gating] = run.issues
+      assert Issue.blocking?(gating)
+      assert gating.fingerprint == blocked.fingerprint
+      assert [%{"fingerprint" => fingerprint}] = run.baseline_decisions.gate_changed
+      assert fingerprint == blocked.fingerprint
+      assert run.exit_code == 1
+
+      json = run |> SpecLint.Report.Json.envelope() |> SpecLint.Report.Json.encode()
+      assert [_] = JSON.decode!(IO.iodata_to_binary(json))["baseline"]["gate_changed"]
+      assert Console.render(run) |> IO.iodata_to_binary() =~ "gate changed"
+
+      # An entry written before the field existed acknowledges as before;
+      # regenerating records the gating state and acknowledges it.
+      legacy =
+        Map.update!(written, "findings", fn f -> Enum.map(f, &Map.delete(&1, "blocked")) end)
+
+      :ok = Baseline.write(path, legacy)
+      {:ok, run} = Run.execute(project, config, ci: true)
+      assert [%Issue{baseline: :baselined}] = run.issues
+      assert run.exit_code == 0
+
+      {:ok, previous} = Baseline.load(path)
+      rebuilt = Baseline.build(run.issues, run.inventory, run.capabilities.adapter_id, previous)
+      assert [%{"blocked" => []}] = rebuilt["findings"]
+      :ok = Baseline.write(path, rebuilt)
+      {:ok, run} = Run.execute(project, config, ci: true)
+      assert [%Issue{baseline: :baselined}] = run.issues
+      assert run.baseline_decisions.gate_changed == []
+      assert run.exit_code == 0
+    end
+  end
+
+  test "regenerating while a module is unavailable keeps its acknowledgements",
+       %{tmp_dir: tmp_dir} do
+    ebin = Path.join(tmp_dir, "ebin")
+    File.mkdir_p!(ebin)
+    File.cp!(beam_path(Compare), Path.join(ebin, "#{Compare}.beam"))
+    project = Project.from_ebins([{:fx, ebin}], tmp_dir)
+    config = %Config{baseline: "baseline.json"}
+    path = Path.join(tmp_dir, "baseline.json")
+
+    {:ok, first} = Run.execute(project, config, ci: true)
+    adapter = first.capabilities.adapter_id
+    :ok = Baseline.write(path, Baseline.build(first.issues, first.inventory, adapter, nil))
+    {:ok, previous} = Baseline.load(path)
+    compared = Enum.filter(previous.inventory, &(&1["status"] == "compared"))
+    assert [_ | _] = previous.findings
+
+    # Debug info off (a toolchain change): the module is unavailable, and
+    # the baseline is regenerated from that complete run.
+    rebuild_beam(Compare, ebin, &List.keydelete(&1, ~c"Dbgi", 0))
+    {:ok, unavailable} = Run.execute(project, config, ci: true)
+    assert [%{rule: "SL008", data: %{status: "unavailable"}}] = unavailable.issues
+    rebuilt = Baseline.build(unavailable.issues, unavailable.inventory, adapter, previous)
+    :ok = Baseline.write(path, rebuilt)
+
+    # The findings and the compared slices are kept, next to the module's
+    # acknowledged unavailable entry.
+    assert Enum.sort_by(rebuilt["findings"], & &1["fingerprint"]) ==
+             Enum.sort_by(previous.findings, & &1["fingerprint"])
+
+    assert Enum.filter(rebuilt["inventory"], &(&1["status"] == "compared")) == compared
+    assert [%{"status" => "unavailable"}] = Enum.reject(rebuilt["inventory"], & &1["mfa"])
+
+    # Debug info back: every finding is acknowledged again, nothing is new.
+    File.cp!(beam_path(Compare), Path.join(ebin, "#{Compare}.beam"))
+    {:ok, restored} = Run.execute(project, config, ci: true)
+    assert restored.exit_code == 0
+    assert Enum.all?(restored.issues, &(&1.baseline == :baselined))
+    assert [%{"status" => "unavailable"}] = restored.baseline_decisions.stale_inventory
+
+    # A slice that is now unsupported keeps its finding the same way.
+    [finding | _] = previous.findings
+    entry = %{module: "SpecLint.Fixtures.Compare", mfa: finding["mfa"], slice: finding["slice"]}
+    inventory = [Map.merge(entry, %{status: "unsupported", reason: "x", translation: nil})]
+    rebuilt = Baseline.build([], inventory, adapter, previous)
+    assert Enum.any?(rebuilt["findings"], &(&1["fingerprint"] == finding["fingerprint"]))
   end
 end

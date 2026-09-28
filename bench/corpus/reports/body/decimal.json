@@ -846,12 +846,14 @@
             "clauses": [
               "(binary() or integer() or %Decimal{sign: integer(), coef: :NaN or :inf or integer(), exp: integer()}, binary() or integer() or %Decimal{sign: integer(), coef: :NaN or :inf or integer(), exp: integer()}) -> dynamic()"
             ],
+            "established": false,
             "extra": "not (:eq or :gt or :lt)",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "top_only"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -880,18 +882,20 @@
             "clauses": [
               "(binary() or integer() or %Decimal{sign: integer(), coef: :NaN or :inf or integer(), exp: integer()}, binary() or integer() or %Decimal{sign: integer(), coef: :NaN or :inf or integer(), exp: integer()}) -> dynamic()"
             ],
+            "established": false,
             "extra": "not (:eq or :gt or :lt)",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "top_only"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
             "warn": false
           },
-          "body_us": 8248,
+          "body_us": 7990,
           "default": {
             "applied": [
               0
@@ -914,12 +918,14 @@
             "clauses": [
               "(term(), term()) -> dynamic()"
             ],
+            "established": false,
             "extra": "not (:eq or :gt or :lt)",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "top_only"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -953,12 +959,14 @@
             "clauses": [
               "(term(), term()) -> dynamic()"
             ],
+            "established": false,
             "extra": "not (:eq or :gt or :lt)",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "top_only"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -1134,12 +1142,14 @@
               "(%Decimal{sign: integer(), coef: :NaN or :inf or integer(), exp: integer()} and %Decimal{exp: float() or integer()} and %Decimal{} and not %Decimal{sign: integer(), coef: :NaN, exp: integer()}, %Decimal{sign: integer(), coef: :NaN or :inf or integer(), exp: integer()} and %Decimal{exp: float() or integer()} and %Decimal{} and not %Decimal{sign: integer(), coef: :NaN, exp: integer()}) -> dynamic(:eq or :gt or :lt)",
               "(binary() or integer() or (%Decimal{sign: integer(), coef: :NaN or :inf or integer(), exp: integer()} and %Decimal{} and not %Decimal{sign: integer(), coef: :NaN, exp: integer()}), binary() or integer() or (%Decimal{sign: integer(), coef: :NaN or :inf or integer(), exp: integer()} and %Decimal{} and not %Decimal{sign: integer(), coef: :NaN, exp: integer()})) -> dynamic()"
             ],
+            "established": false,
             "extra": "not (:eq or :gt or :lt)",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "top_only"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -1289,18 +1299,20 @@
               "(%Decimal{sign: integer(), coef: :NaN or :inf or integer(), exp: integer()} and %Decimal{exp: float() or integer()} and %Decimal{} and not %Decimal{sign: integer(), coef: :NaN, exp: integer()}, %Decimal{sign: integer(), coef: :NaN or :inf or integer(), exp: integer()} and %Decimal{exp: float() or integer()} and %Decimal{} and not %Decimal{sign: integer(), coef: :NaN, exp: integer()}) -> dynamic(:eq or :gt or :lt)",
               "(binary() or integer() or (%Decimal{sign: integer(), coef: :NaN or :inf or integer(), exp: integer()} and %Decimal{} and not %Decimal{sign: integer(), coef: :NaN, exp: integer()}), binary() or integer() or (%Decimal{sign: integer(), coef: :NaN or :inf or integer(), exp: integer()} and %Decimal{} and not %Decimal{sign: integer(), coef: :NaN, exp: integer()})) -> dynamic()"
             ],
+            "established": false,
             "extra": "not (:eq or :gt or :lt)",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "top_only"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
             "warn": false
           },
-          "body_us": 9318,
+          "body_us": 9428,
           "default": {
             "applied": [
               0,
@@ -1444,12 +1456,14 @@
               "(%Decimal{exp: float() or integer()} and %Decimal{} and not %Decimal{coef: :NaN}, %Decimal{exp: float() or integer()} and %Decimal{} and not %Decimal{coef: :NaN}) -> dynamic(:eq or :gt or :lt)",
               "(binary() or float() or integer() or (map() and %Decimal{} and not %Decimal{coef: :NaN}), binary() or float() or integer() or (map() and %Decimal{} and not %Decimal{coef: :NaN})) -> dynamic()"
             ],
+            "established": false,
             "extra": "not (:eq or :gt or :lt)",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "top_only"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -1604,12 +1618,14 @@
               "(%Decimal{exp: float() or integer()} and %Decimal{} and not %Decimal{coef: :NaN}, %Decimal{exp: float() or integer()} and %Decimal{} and not %Decimal{coef: :NaN}) -> dynamic(:eq or :gt or :lt)",
               "(binary() or float() or integer() or (map() and %Decimal{} and not %Decimal{coef: :NaN}), binary() or float() or integer() or (map() and %Decimal{} and not %Decimal{coef: :NaN})) -> dynamic()"
             ],
+            "established": false,
             "extra": "not (:eq or :gt or :lt)",
             "guard_blocked": false,
             "near_top": false,
             "reasons": [
               "top_only"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": true,
             "union_class": "unknown",
@@ -1653,6 +1669,7 @@
             "clauses": [
               "(%Decimal{exp: integer()}) -> integer()"
             ],
+            "established": false,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
@@ -1660,6 +1677,7 @@
               "no_extra",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "none",
@@ -1677,6 +1695,7 @@
             "clauses": [
               "(%Decimal{exp: integer()}) -> integer()"
             ],
+            "established": false,
             "extra": "none()",
             "guard_blocked": false,
             "near_top": false,
@@ -1684,12 +1703,13 @@
               "no_extra",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "none",
             "warn": false
           },
-          "body_us": 8503,
+          "body_us": 8927,
           "default": {
             "applied": [
               0
@@ -1712,6 +1732,7 @@
             "clauses": [
               "(%Decimal{exp: float() or integer()}) -> dynamic(float()) or integer()"
             ],
+            "established": false,
             "extra": "float()",
             "guard_blocked": false,
             "near_top": false,
@@ -1721,6 +1742,7 @@
               "whole_kind_only",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "possible_domain_escape",
@@ -1754,6 +1776,7 @@
             "clauses": [
               "(%Decimal{exp: float() or integer()}) -> dynamic(float()) or integer()"
             ],
+            "established": false,
             "extra": "float()",
             "guard_blocked": false,
             "near_top": false,
@@ -1763,6 +1786,7 @@
               "whole_kind_only",
               "return_inexact"
             ],
+            "return_exact": false,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "possible_domain_escape",
@@ -1816,6 +1840,7 @@
             "clauses": [
               "(%Decimal{sign: integer(), coef: integer(), exp: integer()}) -> dynamic(float() or integer())"
             ],
+            "established": false,
             "extra": "float()",
             "guard_blocked": false,
             "near_top": false,
@@ -1824,6 +1849,7 @@
               "containment_unknown=[0]",
               "whole_kind_only"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "possible_input_approximate",
@@ -1852,6 +1878,7 @@
             "clauses": [
               "(%Decimal{sign: integer(), coef: integer(), exp: integer()}) -> dynamic(float() or integer())"
             ],
+            "established": false,
             "extra": "float()",
             "guard_blocked": false,
             "near_top": false,
@@ -1860,12 +1887,13 @@
               "containment_unknown=[0]",
               "whole_kind_only"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "possible_input_approximate",
             "warn": false
           },
-          "body_us": 8413,
+          "body_us": 8554,
           "default": {
             "applied": [
               0
@@ -1888,6 +1916,7 @@
             "clauses": [
               "(%Decimal{coef: integer()}) -> dynamic(float() or integer())"
             ],
+            "established": false,
             "extra": "float()",
             "guard_blocked": false,
             "near_top": false,
@@ -1896,6 +1925,7 @@
               "domain_escape=[0]",
               "whole_kind_only"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "possible_domain_escape",
@@ -1929,6 +1959,7 @@
             "clauses": [
               "(%Decimal{coef: integer()}) -> dynamic(float() or integer())"
             ],
+            "established": false,
             "extra": "float()",
             "guard_blocked": false,
             "near_top": false,
@@ -1937,6 +1968,7 @@
               "domain_escape=[0]",
               "whole_kind_only"
             ],
+            "return_exact": true,
             "sl002_candidate": false,
             "top_only": false,
             "union_class": "possible_domain_escape",
@@ -1959,14 +1991,14 @@
   "label": "decimal",
   "modules": [
     {
-      "default_run_us": 17822,
+      "default_run_us": 19496,
       "default_warnings": 0,
       "error": null,
       "module": "Decimal",
       "sampled": false
     },
     {
-      "default_run_us": 337,
+      "default_run_us": 305,
       "default_warnings": 0,
       "error": null,
       "module": "Decimal.Context",
@@ -2050,12 +2082,12 @@
     "body_unavailable": 0,
     "cost": {
       "body_calls": 46,
-      "body_max_us": 12976,
-      "body_median_us": 8381,
-      "body_p90_us": 9050,
-      "body_total_ms": 360,
+      "body_max_us": 26990,
+      "body_median_us": 8635,
+      "body_p90_us": 9458,
+      "body_total_ms": 391,
       "default_calls": 2,
-      "default_total_ms": 18
+      "default_total_ms": 19
     },
     "extra_warning_slices": 0,
     "extra_warnings": 0,

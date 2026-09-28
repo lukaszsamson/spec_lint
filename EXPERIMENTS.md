@@ -59,10 +59,14 @@ each of them, because it made the union top-only (open item O2).
     plug `73404f8` and ecto `94d6927`.
   - The fixtures: `test/support/experiment_fixtures.ex`, with expected
     classes in `SpecLint.ExperimentFixtures.expected/0`.
-- Raw results: `scratchpad/results/*.json` (as measured) and
-  `scratchpad/results_postfix/*.json` (post-fix). The as-measured jason
-  file was lost from the shared scratchpad, so its as-measured numbers come
-  from the triage report. Its post-fix file is present.
+- Raw results were written to the session scratchpad (`results/*.json` as
+  measured, `results_postfix/*.json` post-fix), which is not durable and
+  is not part of the repository. The as-measured jason file was lost even
+  there, so its as-measured numbers come from the triage report. The
+  durable, reproducible evidence is `bench/corpus/`: pinned revisions and
+  commands, `run.sh`, and the normalised reports in `bench/corpus/reports/`
+  (regenerated at the current revision, so they show today's classes, not
+  the as-measured Phase 0 ones).
 
 ### Triage method
 
@@ -302,7 +306,7 @@ omissions. None turned up in the 14 reviewed real-code functions.
   union-level top-only inference. Each has at least one precise contributing
   clause whose return is disjoint from `S_hi`, or not inside it.
 - **What found them.** The ecto per-clause probe
-  (`scratchpad/ecto_triage/per_clause.exs`) ran over all 84 top-only slices.
+  (`bench/triage/per_clause.exs`) ran over all 84 top-only slices.
   It surfaced 17 slices with a non-empty per-clause extra; 4 were real, and
   the rest were imprecise payloads in structs and escaped ASTs.
 - **Three of the four stale specs are internal.** They are in
@@ -397,8 +401,8 @@ Structural observations that bound SL002 regardless of bugs:
     caught. Every base kind outside the spec is then counted as a whole-kind
     component.
   - Reproductions: `Config.config/3`, `Ecto.primary_key!/1`, and
-    `SpecLintRepro.NearTop.pk!/1` in
-    `scratchpad/ecto_triage/near_top.ex`.
+    `SpecLintRepro.NearTop.pk!/1` in `bench/triage/near_top.ex` (printed
+    by `bench/triage/near_top.exs`).
   - A possible fix: treat `U(D)` as near-top when its upper bound covers
     every base kind except a finite set of literals, or when the extra
     covers pid, port, reference and fun whole. This is a heuristic, so it
@@ -411,7 +415,7 @@ Structural observations that bound SL002 regardless of bugs:
   - Impact: this hid four ecto stale specs, plus Decimal
     `compare/2`/`cmp/2` and `Plug.Conn.Query.decode/4`.
   - Reproduction: `SpecLintRepro.NearTop.esc/1` in
-    `scratchpad/ecto_triage/near_top.ex`.
+    `bench/triage/near_top.ex`.
   - The proposal: classify the non-top contributing clauses one by one, and
     report per-clause disjointness as an SL001 candidate. This needs design
     work on gating, so it is left open.
@@ -438,10 +442,11 @@ Structural observations that bound SL002 regardless of bugs:
 
 ### Fixed after the report (DESIGN 3.1 steps 7 to 9)
 
-All of O1 to O7 are addressed. Results are in
-`scratchpad/results_perclause/*.json`, produced by the runner, which now
-classifies every slice twice (`require_static_return` false and true) and
-reports per-clause evidence.
+All of O1 to O7 are addressed. The results were written to the session
+scratchpad (`results_perclause/*.json`, not durable) by the runner, which
+now classifies every slice twice (`require_static_return` false and true)
+and reports per-clause evidence. `bench/corpus/run.sh` regenerates the
+same kind of report at the current revision.
 
 - **O1, near-top.** `SpecLint.Compare.near_top?/2` implements step 8. On
   the stdlib, 32 slices are near-top, among them `Config.config/3`,
@@ -661,9 +666,10 @@ remote return) and `passthrough/1` (a negation component), as in Phase 0.
 Date 2026-09-28. The same pinned toolchain, re-run after the review fixes
 (clause reachability approximation, the F1 widening check, the
 `arrow_polarity` argument prerequisite, fingerprint normalisation and the
-CI and baseline fixes; DESIGN 3.1 steps 5 and 7, sections 4 and 9.1). Raw
-results: `scratchpad/rv_before/*.json` (at `9b7c4d0`) and
-`scratchpad/rv_after/*.json`.
+CI and baseline fixes; DESIGN 3.1 steps 5 and 7, sections 4 and 9.1). The
+raw results were written to the session scratchpad (`rv_before/*.json` at
+`9b7c4d0`, `rv_after/*.json`), which is not durable; the current reports
+are in `bench/corpus/reports/`.
 
 ## Stdlib
 
@@ -742,7 +748,9 @@ On the nine known omissions:
 - **The other seven stay `unknown`.**
 
 The nine reproducers in `test/support/omission_fixtures.ex` give the same
-results.
+classes and detections. Two of them (`apply_action/2`, `quoted_type/2`)
+reach their class through different reasons than the originals
+(`bench/corpus/omissions/README.md`).
 
 The measured gains elsewhere are small and all report-only:
 
@@ -752,8 +760,19 @@ The measured gains elsewhere are small and all report-only:
   `apply_action/2`. It is reported as `possible_domain_escape`, not gated.
 - **Two of the four report-only false positives on decimal, plug and ecto
   are removed:** `Decimal.scale/1` and `Ecto.Query.Builder.CTE.escape/2`.
-- **18 more obligations are established** (`unknown` to `none`): 13 in
-  plug, mostly `Plug.Conn` struct updates, and 5 in ecto.
+- **18 more obligations move from `unknown` to `none`**, 13 in plug and 5
+  in ecto. `none` only means the extra over `S_hi` is empty. Only **5 are
+  established** (`U(D)` within `S_lo`, DESIGN section 3):
+  `Plug.Conn.get_cookies/1`, `get_resp_cookies/1`, `Ecto.put_meta/2`,
+  `Ecto.Changeset.constraints/1` and `validations/1`. The other **13 are
+  compatible at available precision only**: the 11 `Plug.Conn` struct
+  updates (`assign/3`, `halt/1`, `inform/3`, `inform!/3`,
+  `prepend_req_headers/2`, `prepend_resp_headers/2`, `push/3`, `push!/3`,
+  `put_private/3`, `put_status/2`, `resp/3`), `Ecto.Changeset.add_error/4`
+  and `prepare_changes/2`. Their spec returns are inexact
+  (`integer_refinement_erased`, `map_key_widened`, `recursive_cutoff`,
+  `arrow_polarity`), so `S_lo` is empty. The reports record both flags
+  (`established`, `return_exact`) per mode.
 
 The measured costs:
 
@@ -779,16 +798,24 @@ The measured costs:
 **What body analysis does not solve**, counting the 8 misses (the cause
 lists overlap):
 
-- **Top-only returns from callees**, which the spec domain does not reach.
-  - Helper insensitivity (3): `Decimal.compare/2`, `cmp/2` and
-    `Ecto.Changeset.apply_action/2`. Helpers keep the `:default` domain
-    (DESIGN 7 item 1), so a value passed through a private helper or a
-    public callee comes back as `dynamic()`.
-  - Generic stdlib calls without parametric signatures (4):
-    `Plug.Conn.Query.decode/4`, `merge_private/2`, `Ecto.Repo.Assoc.query/4`
-    and `Ecto.Repo.Preloader.query/7`. `Enum.map/2`, `Enum.reduce/3`,
+- **Top-only returns** (5 of the 8), which the spec domain does not reach.
+  - Through helpers analysed under the `:default` domain (DESIGN 7 item 1),
+    so a value passed through a private helper or a public callee comes
+    back as `dynamic()` (2): `Decimal.compare/2` and `cmp/2`.
+  - Through generic stdlib calls without parametric signatures (3):
+    `Plug.Conn.Query.decode/4`, `Ecto.Repo.Assoc.query/4` and
+    `Ecto.Repo.Preloader.query/7`. `Enum.map/2`, `Enum.reduce/3`,
     `Enum.into/2` and `Map.new/1` return `dynamic()` whatever the fun or
     the input returns.
+- **Not top-only, but the same two causes leave only an uncounted
+  component** (2 of the 8), on top of input approximation:
+  - `Ecto.Changeset.apply_action/2`: the helper `apply_changes/1` is
+    analysed under its default domain, so `{:ok, term()}` is only a
+    subtraction payload (`subtraction_payload=1, no_counted_component`).
+  - `Plug.Conn.merge_private/2`: the generic `Enum.into/2` leaves `private`
+    as `term()`, and the extra is a struct with a negated field, which is
+    not a counted component (`containment_unknown=[0], unknown_components=1,
+    no_counted_component`).
 - **Input approximation from translation** (primary in 1, secondary in 3).
   `Join.escape/3`: `Macro.t()` (`recursive_cutoff`) and `Macro.Env.t()`
   (`map_key_widened`, `integer_refinement_erased`) make every clause
@@ -845,10 +872,10 @@ lists overlap):
   The build reports `1.21.0-dev (c24c235)`. `:elixir_erl.checker_version()`
   is still `:elixir_checker_v10`, and `SpecLint.Compiler.preflight/0`
   accepts it with `body_hook: true`. `~/elixir` was not modified. The
-  worktree is kept in the session scratchpad at
-  `$SCRATCHPAD/elixir-body`, where `$SCRATCHPAD` is
-  `/private/tmp/claude-501/-Users-lukaszsamson-claude-fun-spec-lint/4edd4a29-0707-4a4d-91b9-c1bef7d15467/scratchpad`.
-  It is not durable, and the commands above recreate it.
+  worktree used for the measurements lived in the session scratchpad and
+  is not durable; the commands above recreate it, and
+  `bench/corpus/README.md` gives the same recipe from a fresh clone of the
+  fork with the committed hunk `bench/corpus/warnings7.patch`.
 - **Corpora.**
   - decimal, plug and ecto at the pinned revisions, compiled with the
     patched build into a separate `MIX_BUILD_PATH` (`$SCRATCHPAD/oss-body`),
@@ -918,7 +945,11 @@ lists overlap):
 Gated recall is 0 of 9 before and 1 of 9 after. Reported recall is 2 of 9
 before and after. All nine fixture reproducers
 (`SpecLint.OmissionFixtures.Cases`) give the same signature class, the
-same body class and the same detection as their originals.
+same body class and the same detection as their originals. The reasons
+behind the class differ for `apply_action/2` (the stand-in struct
+translates exactly, so the fixture lacks the original's input
+approximation) and `quoted_type/2` (the original is top-only, the fixture
+is not); `bench/corpus/omissions/README.md` records both.
 
 The `default` column (not shown) equals `signature` for all nine: remote
 resolution alone changes nothing on them.
@@ -966,7 +997,7 @@ Every class change was triaged by reading the source:
 | `Ecto.Changeset.field_missing?/2` | possible_domain_escape → possible_input_approximate | False positive kept: the falsy branch of `&&`. |
 | `Decimal.scale/1` | possible_domain_escape → none | False positive removed. |
 | `Ecto.Query.Builder.CTE.escape/2` | possible_domain_escape → unknown | False positive removed. |
-| 13 `Plug.Conn` functions, `Ecto.put_meta/2`, 4 `Ecto.Changeset` functions, 3 `Keyword` functions | unknown → none | The obligation is now established. A struct update of `dynamic(Plug.Conn.t())` keeps the typed fields. |
+| 13 `Plug.Conn` functions, `Ecto.put_meta/2`, 4 `Ecto.Changeset` functions, 3 `Keyword` functions | unknown → none | The extra over `S_hi` is now empty: a struct update of `dynamic(Plug.Conn.t())` keeps the typed fields. Established (`U(D)` within `S_lo`) for 8: `get_cookies/1`, `get_resp_cookies/1`, `put_meta/2`, `constraints/1`, `validations/1` and the 3 `Keyword` functions. The other 13 (11 `Plug.Conn` struct updates, `add_error/4`, `prepare_changes/2`) have inexact spec returns with an empty `S_lo`: compatible at available precision, not established. |
 
 In the 30 random modules, the only class changes are `Ecto.put_meta/2`
 (unknown → none) and `CTE.escape/2` (false positive removed).
@@ -1066,4 +1097,13 @@ hook:
 - parametric signatures for `Enum.map/2`, `Enum.reduce/3`, `Enum.into/2`
   and `Map.new/1`.
 
-Together they cover 7 of the 8 misses.
+Together they remove one blocker in 7 of the 8 misses (all but
+`Join.escape/3`), which is not a recall gain by itself. At most 4 of the 7
+could become gated: `Decimal.compare/2`, `Plug.Conn.merge_private/2` and
+`Ecto.Changeset.apply_action/2` stay capped at `possible_input_approximate`
+by their input-approximate struct types (`Decimal.t()`, `Plug.Conn.t()`,
+`Ecto.Changeset.t()`), and `merge_private/2` also needs negated struct
+fields counted. `Decimal.cmp/2` takes the same `Decimal.t()` and is likely
+capped too, so the realistic ceiling is 3 (`decode/4`, `Assoc.query/4`,
+`Preloader.query/7`), each of which also needs its list or map extra
+recognised as a counted component.
