@@ -1,0 +1,1880 @@
+{
+  "adapter": "1.21.0-dev+c24c235",
+  "checker_version": "elixir_checker_v10",
+  "code_paths": [
+    "$OSS/jason/_build/test/lib/decimal/ebin",
+    "$OSS/jason/_build/test/lib/dialyxir/ebin",
+    "$OSS/jason/_build/test/lib/erlex/ebin",
+    "$OSS/jason/_build/test/lib/jason/ebin",
+    "$OSS/jason/_build/test/lib/stream_data/ebin"
+  ],
+  "ebins": [
+    "$OSS/jason/_build/test/lib/jason/ebin"
+  ],
+  "fixtures": null,
+  "functions": [
+    {
+      "class": "none",
+      "class_static": "none",
+      "clause_conflict_candidate": false,
+      "clause_conflict_candidate_static": false,
+      "file": "$OSS/jason/lib/encode.ex",
+      "inferred": [
+        "(atom(), {term(), term()}) -> dynamic(binary() or non_empty_list(term()))"
+      ],
+      "line": 115,
+      "location": "$OSS/jason/lib/encode.ex:115",
+      "mfa": "Jason.Encode.atom/2",
+      "sl002_candidate": false,
+      "sl002_candidate_static": false,
+      "slices": [
+        {
+          "applied": [
+            0
+          ],
+          "applied_return": "binary() or non_empty_list(term())",
+          "arg_loss_kinds": [
+            "arrow_polarity",
+            "recursive_cutoff"
+          ],
+          "badapply": false,
+          "class": "none",
+          "class_static": "none",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [],
+          "components": [],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "domain_escape",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "none()",
+          "index": 0,
+          "input_approximate": true,
+          "loss_kinds": [
+            "arrow_polarity",
+            "recursive_cutoff"
+          ],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "no_extra",
+            "return_inexact"
+          ],
+          "return_loss_kinds": [
+            "recursive_cutoff"
+          ],
+          "return_relation": "subset",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "atom()",
+            "{(binary() -> binary() or empty_list() or non_empty_list(term(), binary() or empty_list())),\n (none(), none(), none() -> term())}"
+          ],
+          "spec_return": "binary() or empty_list() or non_empty_list(term(), binary() or empty_list())",
+          "status": "compared",
+          "top_only": false,
+          "union_class": "none",
+          "union_class_static": "none"
+        }
+      ],
+      "specs": [
+        "atom(atom(), opts()) :: iodata()"
+      ],
+      "status": "compared"
+    },
+    {
+      "class": "unknown",
+      "class_static": "unknown",
+      "clause_conflict_candidate": false,
+      "clause_conflict_candidate_static": false,
+      "file": "$OSS/jason/lib/encode.ex",
+      "inferred": [
+        "(term(), %{\n  ...,\n  escape: :html_safe or :javascript or :javascript_safe or :json or :unicode or :unicode_safe,\n  maps: :naive or :strict\n}) -> dynamic(\n  {:error, %Jason.EncodeError{} or %Protocol.UndefinedError{protocol: Jason.Encoder}} or\n    {:ok, term()}\n)"
+      ],
+      "line": 33,
+      "location": "$OSS/jason/lib/encode.ex:33",
+      "mfa": "Jason.Encode.encode/2",
+      "sl002_candidate": false,
+      "sl002_candidate_static": false,
+      "slices": [
+        {
+          "applied": [
+            0
+          ],
+          "applied_return": "{:ok, term()} or {:error, %Jason.EncodeError{}} or {:error, %Protocol.UndefinedError{protocol: Jason.Encoder}}",
+          "arg_loss_kinds": [],
+          "badapply": false,
+          "class": "unknown",
+          "class_static": "unknown",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [
+            {
+              "class": "unknown",
+              "class_static": "unknown",
+              "clause": 0,
+              "components": [
+                {
+                  "descr": "{:ok, not binary() and not empty_list() and not non_empty_list(term(), binary() or empty_list())}",
+                  "detail": "tuple",
+                  "kind": "tuple",
+                  "label": "unknown",
+                  "payload_gradual": false,
+                  "present_in_contributing": false,
+                  "subtraction_payload": false,
+                  "tag_in_spec": false
+                }
+              ],
+              "containment": "contained",
+              "extra": "{:ok, term()} and not {:ok, binary() or empty_list() or non_empty_list(term(), binary() or empty_list())}",
+              "reasons": [
+                "unknown_components=1",
+                "no_counted_component"
+              ],
+              "static_return": false
+            }
+          ],
+          "components": [
+            {
+              "descr": "{:ok, not binary() and not empty_list() and not non_empty_list(term(), binary() or empty_list())}",
+              "detail": "tuple",
+              "kind": "tuple",
+              "label": "unknown",
+              "payload_gradual": false,
+              "present_in_contributing": false,
+              "subtraction_payload": false,
+              "tag_in_spec": false
+            }
+          ],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "contained",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "{:ok, term()} and not {:ok, binary() or empty_list() or non_empty_list(term(), binary() or empty_list())}",
+          "index": 0,
+          "input_approximate": false,
+          "loss_kinds": [
+            "recursive_cutoff"
+          ],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "unknown_components=1",
+            "no_counted_component",
+            "return_inexact"
+          ],
+          "return_loss_kinds": [
+            "recursive_cutoff"
+          ],
+          "return_relation": "overlapping",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "term()",
+            "map()"
+          ],
+          "spec_return": "{:ok, binary() or empty_list() or non_empty_list(term(), binary() or empty_list())} or {:error,\n %Jason.EncodeError{message: binary()} or\n   %{atom() => term(), __exception__: term(), __struct__: atom()}}",
+          "status": "compared",
+          "top_only": false,
+          "union_class": "unknown",
+          "union_class_static": "unknown"
+        }
+      ],
+      "specs": [
+        "encode(any(), map()) :: {:ok, iodata()} | {:error, Jason.EncodeError.t() | Exception.t()}"
+      ],
+      "status": "compared"
+    },
+    {
+      "class": "unknown",
+      "class_static": "unknown",
+      "clause_conflict_candidate": false,
+      "clause_conflict_candidate_static": false,
+      "file": "$OSS/jason/lib/encode.ex",
+      "inferred": [
+        "(term()) -> dynamic()"
+      ],
+      "line": 140,
+      "location": "$OSS/jason/lib/encode.ex:140",
+      "mfa": "Jason.Encode.float/1",
+      "sl002_candidate": false,
+      "sl002_candidate_static": false,
+      "slices": [
+        {
+          "applied": [
+            0
+          ],
+          "applied_return": "term()",
+          "arg_loss_kinds": [],
+          "badapply": false,
+          "class": "unknown",
+          "class_static": "unknown",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [
+            {
+              "class": "unknown",
+              "class_static": "unknown",
+              "clause": 0,
+              "components": [],
+              "containment": "domain_escape",
+              "extra": "not (binary() or empty_list() or non_empty_list(term(), binary() or empty_list()))",
+              "reasons": [
+                "domain_escape=[0]",
+                "top_only"
+              ],
+              "static_return": false
+            }
+          ],
+          "components": [],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "domain_escape",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "not (binary() or empty_list() or non_empty_list(term(), binary() or empty_list()))",
+          "index": 0,
+          "input_approximate": false,
+          "loss_kinds": [
+            "recursive_cutoff"
+          ],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "top_only",
+            "return_inexact"
+          ],
+          "return_loss_kinds": [
+            "recursive_cutoff"
+          ],
+          "return_relation": "superset",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "float()"
+          ],
+          "spec_return": "binary() or empty_list() or non_empty_list(term(), binary() or empty_list())",
+          "status": "compared",
+          "top_only": true,
+          "union_class": "unknown",
+          "union_class_static": "unknown"
+        }
+      ],
+      "specs": [
+        "float(float()) :: iodata()"
+      ],
+      "status": "compared"
+    },
+    {
+      "class": "none",
+      "class_static": "none",
+      "clause_conflict_candidate": false,
+      "clause_conflict_candidate_static": false,
+      "file": "$OSS/jason/lib/encode.ex",
+      "inferred": [
+        "(integer()) -> dynamic(binary())"
+      ],
+      "line": 126,
+      "location": "$OSS/jason/lib/encode.ex:126",
+      "mfa": "Jason.Encode.integer/1",
+      "sl002_candidate": false,
+      "sl002_candidate_static": false,
+      "slices": [
+        {
+          "applied": [
+            0
+          ],
+          "applied_return": "binary()",
+          "arg_loss_kinds": [],
+          "badapply": false,
+          "class": "none",
+          "class_static": "none",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [],
+          "components": [],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "contained",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "none()",
+          "index": 0,
+          "input_approximate": false,
+          "loss_kinds": [
+            "recursive_cutoff"
+          ],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "no_extra",
+            "return_inexact"
+          ],
+          "return_loss_kinds": [
+            "recursive_cutoff"
+          ],
+          "return_relation": "subset",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "integer()"
+          ],
+          "spec_return": "binary() or empty_list() or non_empty_list(term(), binary() or empty_list())",
+          "status": "compared",
+          "top_only": false,
+          "union_class": "none",
+          "union_class_static": "none"
+        }
+      ],
+      "specs": [
+        "integer(integer()) :: iodata()"
+      ],
+      "status": "compared"
+    },
+    {
+      "class": "unknown",
+      "class_static": "unknown",
+      "clause_conflict_candidate": false,
+      "clause_conflict_candidate_static": false,
+      "file": "$OSS/jason/lib/encode.ex",
+      "inferred": [
+        "(empty_list(), term()) -> binary()",
+        "(non_empty_list(term(), term()), {term(), (none(), none(), none() -> term())}) -> dynamic()"
+      ],
+      "line": 173,
+      "location": "$OSS/jason/lib/encode.ex:173",
+      "mfa": "Jason.Encode.keyword/2",
+      "sl002_candidate": false,
+      "sl002_candidate_static": false,
+      "slices": [
+        {
+          "applied": [
+            0,
+            1
+          ],
+          "applied_return": "term()",
+          "arg_loss_kinds": [
+            "arrow_polarity",
+            "recursive_cutoff"
+          ],
+          "badapply": false,
+          "class": "unknown",
+          "class_static": "unknown",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [
+            {
+              "class": "none",
+              "class_static": "none",
+              "clause": 0,
+              "components": [],
+              "containment": "domain_escape",
+              "extra": "none()",
+              "reasons": [
+                "domain_escape=[0]",
+                "no_extra"
+              ],
+              "static_return": true
+            },
+            {
+              "class": "unknown",
+              "class_static": "unknown",
+              "clause": 1,
+              "components": [],
+              "containment": "domain_escape",
+              "extra": "not (binary() or empty_list() or non_empty_list(term(), binary() or empty_list()))",
+              "reasons": [
+                "domain_escape=[1]",
+                "top_only"
+              ],
+              "static_return": false
+            }
+          ],
+          "components": [],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "domain_escape",
+              "static_return": true
+            },
+            {
+              "clause": 1,
+              "containment": "domain_escape",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "not (binary() or empty_list() or non_empty_list(term(), binary() or empty_list()))",
+          "index": 0,
+          "input_approximate": true,
+          "loss_kinds": [
+            "arrow_polarity",
+            "recursive_cutoff"
+          ],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "top_only",
+            "return_inexact"
+          ],
+          "return_loss_kinds": [
+            "recursive_cutoff"
+          ],
+          "return_relation": "superset",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "list({atom(), term()})",
+            "{(binary() -> binary() or empty_list() or non_empty_list(term(), binary() or empty_list())),\n (none(), none(), none() -> term())}"
+          ],
+          "spec_return": "binary() or empty_list() or non_empty_list(term(), binary() or empty_list())",
+          "status": "compared",
+          "top_only": true,
+          "union_class": "unknown",
+          "union_class_static": "unknown"
+        }
+      ],
+      "specs": [
+        "keyword(keyword(), opts()) :: iodata()"
+      ],
+      "status": "compared"
+    },
+    {
+      "class": "unknown",
+      "class_static": "unknown",
+      "clause_conflict_candidate": false,
+      "clause_conflict_candidate_static": false,
+      "file": "$OSS/jason/lib/encode.ex",
+      "inferred": [
+        "(empty_list() or non_empty_list(term(), term()), {term(), term()}) -> dynamic(binary() or non_empty_list(term(), term()))"
+      ],
+      "line": 150,
+      "location": "$OSS/jason/lib/encode.ex:150",
+      "mfa": "Jason.Encode.list/2",
+      "sl002_candidate": false,
+      "sl002_candidate_static": false,
+      "slices": [
+        {
+          "applied": [
+            0
+          ],
+          "applied_return": "binary() or non_empty_list(term(), term())",
+          "arg_loss_kinds": [
+            "arrow_polarity",
+            "recursive_cutoff"
+          ],
+          "badapply": false,
+          "class": "unknown",
+          "class_static": "unknown",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [
+            {
+              "class": "unknown",
+              "class_static": "unknown",
+              "clause": 0,
+              "components": [
+                {
+                  "descr": "non_empty_list(term(), not binary() and not empty_list())",
+                  "detail": "negation",
+                  "kind": "list",
+                  "label": "unknown",
+                  "payload_gradual": false,
+                  "present_in_contributing": false,
+                  "subtraction_payload": false,
+                  "tag_in_spec": false
+                }
+              ],
+              "containment": "domain_escape",
+              "extra": "non_empty_list(term(), not binary() and not empty_list())",
+              "reasons": [
+                "domain_escape=[0]",
+                "unknown_components=1",
+                "no_counted_component"
+              ],
+              "static_return": false
+            }
+          ],
+          "components": [
+            {
+              "descr": "non_empty_list(term(), not binary() and not empty_list())",
+              "detail": "negation",
+              "kind": "list",
+              "label": "unknown",
+              "payload_gradual": false,
+              "present_in_contributing": false,
+              "subtraction_payload": false,
+              "tag_in_spec": false
+            }
+          ],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "domain_escape",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "non_empty_list(term(), not binary() and not empty_list())",
+          "index": 0,
+          "input_approximate": true,
+          "loss_kinds": [
+            "arrow_polarity",
+            "recursive_cutoff"
+          ],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "input_approximate",
+            "domain_escape=[0]",
+            "unknown_components=1",
+            "no_counted_component",
+            "return_inexact"
+          ],
+          "return_loss_kinds": [
+            "recursive_cutoff"
+          ],
+          "return_relation": "overlapping",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "list(term())",
+            "{(binary() -> binary() or empty_list() or non_empty_list(term(), binary() or empty_list())),\n (none(), none(), none() -> term())}"
+          ],
+          "spec_return": "binary() or empty_list() or non_empty_list(term(), binary() or empty_list())",
+          "status": "compared",
+          "top_only": false,
+          "union_class": "unknown",
+          "union_class_static": "unknown"
+        }
+      ],
+      "specs": [
+        "list(list(), opts()) :: iodata()"
+      ],
+      "status": "compared"
+    },
+    {
+      "class": "unknown",
+      "class_static": "unknown",
+      "clause_conflict_candidate": false,
+      "clause_conflict_candidate_static": false,
+      "file": "$OSS/jason/lib/encode.ex",
+      "inferred": [
+        "(map(), {term(), term()}) -> dynamic()"
+      ],
+      "line": 179,
+      "location": "$OSS/jason/lib/encode.ex:179",
+      "mfa": "Jason.Encode.map/2",
+      "sl002_candidate": false,
+      "sl002_candidate_static": false,
+      "slices": [
+        {
+          "applied": [
+            0
+          ],
+          "applied_return": "term()",
+          "arg_loss_kinds": [
+            "arrow_polarity",
+            "recursive_cutoff"
+          ],
+          "badapply": false,
+          "class": "unknown",
+          "class_static": "unknown",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [
+            {
+              "class": "unknown",
+              "class_static": "unknown",
+              "clause": 0,
+              "components": [],
+              "containment": "domain_escape",
+              "extra": "not (binary() or empty_list() or non_empty_list(term(), binary() or empty_list()))",
+              "reasons": [
+                "domain_escape=[0]",
+                "top_only"
+              ],
+              "static_return": false
+            }
+          ],
+          "components": [],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "domain_escape",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "not (binary() or empty_list() or non_empty_list(term(), binary() or empty_list()))",
+          "index": 0,
+          "input_approximate": true,
+          "loss_kinds": [
+            "arrow_polarity",
+            "recursive_cutoff"
+          ],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "top_only",
+            "return_inexact"
+          ],
+          "return_loss_kinds": [
+            "recursive_cutoff"
+          ],
+          "return_relation": "superset",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "map()",
+            "{(binary() -> binary() or empty_list() or non_empty_list(term(), binary() or empty_list())),\n (none(), none(), none() -> term())}"
+          ],
+          "spec_return": "binary() or empty_list() or non_empty_list(term(), binary() or empty_list())",
+          "status": "compared",
+          "top_only": true,
+          "union_class": "unknown",
+          "union_class_static": "unknown"
+        }
+      ],
+      "specs": [
+        "map(map(), opts()) :: iodata()"
+      ],
+      "status": "compared"
+    },
+    {
+      "class": "none",
+      "class_static": "none",
+      "clause_conflict_candidate": false,
+      "clause_conflict_candidate_static": false,
+      "file": "$OSS/jason/lib/encode.ex",
+      "inferred": [
+        "(term(), {(none() -> term()), term()}) -> dynamic(non_empty_list(term()))"
+      ],
+      "line": 276,
+      "location": "$OSS/jason/lib/encode.ex:276",
+      "mfa": "Jason.Encode.string/2",
+      "sl002_candidate": false,
+      "sl002_candidate_static": false,
+      "slices": [
+        {
+          "applied": [
+            0
+          ],
+          "applied_return": "non_empty_list(term())",
+          "arg_loss_kinds": [
+            "arrow_polarity",
+            "recursive_cutoff"
+          ],
+          "badapply": false,
+          "class": "none",
+          "class_static": "none",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [],
+          "components": [],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "domain_escape",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "none()",
+          "index": 0,
+          "input_approximate": true,
+          "loss_kinds": [
+            "arrow_polarity",
+            "recursive_cutoff"
+          ],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "no_extra",
+            "return_inexact"
+          ],
+          "return_loss_kinds": [
+            "recursive_cutoff"
+          ],
+          "return_relation": "subset",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "binary()",
+            "{(binary() -> binary() or empty_list() or non_empty_list(term(), binary() or empty_list())),\n (none(), none(), none() -> term())}"
+          ],
+          "spec_return": "binary() or empty_list() or non_empty_list(term(), binary() or empty_list())",
+          "status": "compared",
+          "top_only": false,
+          "union_class": "none",
+          "union_class_static": "none"
+        }
+      ],
+      "specs": [
+        "string(String.t(), opts()) :: iodata()"
+      ],
+      "status": "compared"
+    },
+    {
+      "class": "unknown",
+      "class_static": "unknown",
+      "clause_conflict_candidate": false,
+      "clause_conflict_candidate_static": false,
+      "file": "$OSS/jason/lib/encode.ex",
+      "inferred": [
+        "(%{..., __struct__: atom()}, {term(), term()}) -> dynamic()"
+      ],
+      "line": 228,
+      "location": "$OSS/jason/lib/encode.ex:228",
+      "mfa": "Jason.Encode.struct/2",
+      "sl002_candidate": false,
+      "sl002_candidate_static": false,
+      "slices": [
+        {
+          "applied": [
+            0
+          ],
+          "applied_return": "term()",
+          "arg_loss_kinds": [
+            "arrow_polarity",
+            "recursive_cutoff"
+          ],
+          "badapply": false,
+          "class": "unknown",
+          "class_static": "unknown",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [
+            {
+              "class": "unknown",
+              "class_static": "unknown",
+              "clause": 0,
+              "components": [],
+              "containment": "domain_escape",
+              "extra": "not (binary() or empty_list() or non_empty_list(term(), binary() or empty_list()))",
+              "reasons": [
+                "domain_escape=[0]",
+                "top_only"
+              ],
+              "static_return": false
+            }
+          ],
+          "components": [],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "domain_escape",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "not (binary() or empty_list() or non_empty_list(term(), binary() or empty_list()))",
+          "index": 0,
+          "input_approximate": true,
+          "loss_kinds": [
+            "arrow_polarity",
+            "recursive_cutoff"
+          ],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "top_only",
+            "return_inexact"
+          ],
+          "return_loss_kinds": [
+            "recursive_cutoff"
+          ],
+          "return_relation": "superset",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "%{atom() => term(), __struct__: atom()}",
+            "{(binary() -> binary() or empty_list() or non_empty_list(term(), binary() or empty_list())),\n (none(), none(), none() -> term())}"
+          ],
+          "spec_return": "binary() or empty_list() or non_empty_list(term(), binary() or empty_list())",
+          "status": "compared",
+          "top_only": true,
+          "union_class": "unknown",
+          "union_class_static": "unknown"
+        }
+      ],
+      "specs": [
+        "struct(struct(), opts()) :: iodata()"
+      ],
+      "status": "compared"
+    },
+    {
+      "class": "unknown",
+      "class_static": "unknown",
+      "clause_conflict_candidate": false,
+      "clause_conflict_candidate_static": false,
+      "file": "$OSS/jason/lib/encode.ex",
+      "inferred": [
+        "(term(), {term(), term()}) -> dynamic()"
+      ],
+      "line": 71,
+      "location": "$OSS/jason/lib/encode.ex:71",
+      "mfa": "Jason.Encode.value/2",
+      "sl002_candidate": false,
+      "sl002_candidate_static": false,
+      "slices": [
+        {
+          "applied": [
+            0
+          ],
+          "applied_return": "term()",
+          "arg_loss_kinds": [
+            "arrow_polarity",
+            "recursive_cutoff"
+          ],
+          "badapply": false,
+          "class": "unknown",
+          "class_static": "unknown",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [
+            {
+              "class": "unknown",
+              "class_static": "unknown",
+              "clause": 0,
+              "components": [],
+              "containment": "domain_escape",
+              "extra": "not (binary() or empty_list() or non_empty_list(term(), binary() or empty_list()))",
+              "reasons": [
+                "domain_escape=[0]",
+                "top_only"
+              ],
+              "static_return": false
+            }
+          ],
+          "components": [],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "domain_escape",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "not (binary() or empty_list() or non_empty_list(term(), binary() or empty_list()))",
+          "index": 0,
+          "input_approximate": true,
+          "loss_kinds": [
+            "arrow_polarity",
+            "recursive_cutoff"
+          ],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "top_only",
+            "return_inexact"
+          ],
+          "return_loss_kinds": [
+            "recursive_cutoff"
+          ],
+          "return_relation": "superset",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "term()",
+            "{(binary() -> binary() or empty_list() or non_empty_list(term(), binary() or empty_list())),\n (none(), none(), none() -> term())}"
+          ],
+          "spec_return": "binary() or empty_list() or non_empty_list(term(), binary() or empty_list())",
+          "status": "compared",
+          "top_only": true,
+          "union_class": "unknown",
+          "union_class_static": "unknown"
+        }
+      ],
+      "specs": [
+        "value(term(), opts()) :: iodata()"
+      ],
+      "status": "compared"
+    },
+    {
+      "class": "unknown",
+      "class_static": "unknown",
+      "clause_conflict_candidate": false,
+      "clause_conflict_candidate_static": false,
+      "file": "$OSS/jason/lib/formatter.ex",
+      "inferred": [
+        "(binary() or empty_list() or non_empty_list(term(), term()), empty_list() or non_empty_list(term(), term())) -> dynamic()"
+      ],
+      "line": 96,
+      "location": "$OSS/jason/lib/formatter.ex:96",
+      "mfa": "Jason.Formatter.minimize/2",
+      "sl002_candidate": false,
+      "sl002_candidate_static": false,
+      "slices": [
+        {
+          "applied": [
+            0
+          ],
+          "applied_return": "term()",
+          "arg_loss_kinds": [
+            "recursive_cutoff"
+          ],
+          "badapply": false,
+          "class": "unknown",
+          "class_static": "unknown",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [
+            {
+              "class": "unknown",
+              "class_static": "unknown",
+              "clause": 0,
+              "components": [],
+              "containment": "domain_escape",
+              "extra": "not binary()",
+              "reasons": [
+                "domain_escape=[0]",
+                "top_only"
+              ],
+              "static_return": false
+            }
+          ],
+          "components": [],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "domain_escape",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "not binary()",
+          "index": 0,
+          "input_approximate": true,
+          "loss_kinds": [
+            "recursive_cutoff"
+          ],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "top_only"
+          ],
+          "return_loss_kinds": [],
+          "return_relation": "superset",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "binary() or empty_list() or non_empty_list(term(), binary() or empty_list())",
+            "list(\n  {:after_colon or :indent or :line_separator or :record_separator,\n   binary() or empty_list() or non_empty_list(term(), binary() or empty_list())}\n)"
+          ],
+          "spec_return": "binary()",
+          "status": "compared",
+          "top_only": true,
+          "union_class": "unknown",
+          "union_class_static": "unknown"
+        }
+      ],
+      "specs": [
+        "minimize(iodata(), opts()) :: binary()"
+      ],
+      "status": "compared"
+    },
+    {
+      "class": "unknown",
+      "class_static": "unknown",
+      "clause_conflict_candidate": false,
+      "clause_conflict_candidate_static": false,
+      "file": "$OSS/jason/lib/formatter.ex",
+      "inferred": [
+        "(binary() or empty_list() or non_empty_list(term(), term()), empty_list() or non_empty_list(term(), term())) -> dynamic()"
+      ],
+      "line": 112,
+      "location": "$OSS/jason/lib/formatter.ex:112",
+      "mfa": "Jason.Formatter.minimize_to_iodata/2",
+      "sl002_candidate": false,
+      "sl002_candidate_static": false,
+      "slices": [
+        {
+          "applied": [
+            0
+          ],
+          "applied_return": "term()",
+          "arg_loss_kinds": [
+            "recursive_cutoff"
+          ],
+          "badapply": false,
+          "class": "unknown",
+          "class_static": "unknown",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [
+            {
+              "class": "unknown",
+              "class_static": "unknown",
+              "clause": 0,
+              "components": [],
+              "containment": "domain_escape",
+              "extra": "not (binary() or empty_list() or non_empty_list(term(), binary() or empty_list()))",
+              "reasons": [
+                "domain_escape=[0]",
+                "top_only"
+              ],
+              "static_return": false
+            }
+          ],
+          "components": [],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "domain_escape",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "not (binary() or empty_list() or non_empty_list(term(), binary() or empty_list()))",
+          "index": 0,
+          "input_approximate": true,
+          "loss_kinds": [
+            "recursive_cutoff"
+          ],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "top_only",
+            "return_inexact"
+          ],
+          "return_loss_kinds": [
+            "recursive_cutoff"
+          ],
+          "return_relation": "superset",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "binary() or empty_list() or non_empty_list(term(), binary() or empty_list())",
+            "list(\n  {:after_colon or :indent or :line_separator or :record_separator,\n   binary() or empty_list() or non_empty_list(term(), binary() or empty_list())}\n)"
+          ],
+          "spec_return": "binary() or empty_list() or non_empty_list(term(), binary() or empty_list())",
+          "status": "compared",
+          "top_only": true,
+          "union_class": "unknown",
+          "union_class_static": "unknown"
+        }
+      ],
+      "specs": [
+        "minimize_to_iodata(iodata(), opts()) :: iodata()"
+      ],
+      "status": "compared"
+    },
+    {
+      "class": "unknown",
+      "class_static": "unknown",
+      "clause_conflict_candidate": false,
+      "clause_conflict_candidate_static": false,
+      "file": "$OSS/jason/lib/formatter.ex",
+      "inferred": [
+        "(binary() or empty_list() or non_empty_list(term(), term()), empty_list() or non_empty_list(term(), term())) -> dynamic()"
+      ],
+      "line": 51,
+      "location": "$OSS/jason/lib/formatter.ex:51",
+      "mfa": "Jason.Formatter.pretty_print/2",
+      "sl002_candidate": false,
+      "sl002_candidate_static": false,
+      "slices": [
+        {
+          "applied": [
+            0
+          ],
+          "applied_return": "term()",
+          "arg_loss_kinds": [
+            "recursive_cutoff"
+          ],
+          "badapply": false,
+          "class": "unknown",
+          "class_static": "unknown",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [
+            {
+              "class": "unknown",
+              "class_static": "unknown",
+              "clause": 0,
+              "components": [],
+              "containment": "domain_escape",
+              "extra": "not binary()",
+              "reasons": [
+                "domain_escape=[0]",
+                "top_only"
+              ],
+              "static_return": false
+            }
+          ],
+          "components": [],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "domain_escape",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "not binary()",
+          "index": 0,
+          "input_approximate": true,
+          "loss_kinds": [
+            "recursive_cutoff"
+          ],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "top_only"
+          ],
+          "return_loss_kinds": [],
+          "return_relation": "superset",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "binary() or empty_list() or non_empty_list(term(), binary() or empty_list())",
+            "list(\n  {:after_colon or :indent or :line_separator or :record_separator,\n   binary() or empty_list() or non_empty_list(term(), binary() or empty_list())}\n)"
+          ],
+          "spec_return": "binary()",
+          "status": "compared",
+          "top_only": true,
+          "union_class": "unknown",
+          "union_class_static": "unknown"
+        }
+      ],
+      "specs": [
+        "pretty_print(iodata(), opts()) :: binary()"
+      ],
+      "status": "compared"
+    },
+    {
+      "class": "unknown",
+      "class_static": "unknown",
+      "clause_conflict_candidate": false,
+      "clause_conflict_candidate_static": false,
+      "file": "$OSS/jason/lib/formatter.ex",
+      "inferred": [
+        "(binary() or empty_list() or non_empty_list(term(), term()), empty_list() or non_empty_list(term(), term())) -> dynamic()"
+      ],
+      "line": 67,
+      "location": "$OSS/jason/lib/formatter.ex:67",
+      "mfa": "Jason.Formatter.pretty_print_to_iodata/2",
+      "sl002_candidate": false,
+      "sl002_candidate_static": false,
+      "slices": [
+        {
+          "applied": [
+            0
+          ],
+          "applied_return": "term()",
+          "arg_loss_kinds": [
+            "recursive_cutoff"
+          ],
+          "badapply": false,
+          "class": "unknown",
+          "class_static": "unknown",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [
+            {
+              "class": "unknown",
+              "class_static": "unknown",
+              "clause": 0,
+              "components": [],
+              "containment": "domain_escape",
+              "extra": "not (binary() or empty_list() or non_empty_list(term(), binary() or empty_list()))",
+              "reasons": [
+                "domain_escape=[0]",
+                "top_only"
+              ],
+              "static_return": false
+            }
+          ],
+          "components": [],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "domain_escape",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "not (binary() or empty_list() or non_empty_list(term(), binary() or empty_list()))",
+          "index": 0,
+          "input_approximate": true,
+          "loss_kinds": [
+            "recursive_cutoff"
+          ],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "top_only",
+            "return_inexact"
+          ],
+          "return_loss_kinds": [
+            "recursive_cutoff"
+          ],
+          "return_relation": "superset",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "binary() or empty_list() or non_empty_list(term(), binary() or empty_list())",
+            "list(\n  {:after_colon or :indent or :line_separator or :record_separator,\n   binary() or empty_list() or non_empty_list(term(), binary() or empty_list())}\n)"
+          ],
+          "spec_return": "binary() or empty_list() or non_empty_list(term(), binary() or empty_list())",
+          "status": "compared",
+          "top_only": true,
+          "union_class": "unknown",
+          "union_class_static": "unknown"
+        }
+      ],
+      "specs": [
+        "pretty_print_to_iodata(iodata(), opts()) :: iodata()"
+      ],
+      "status": "compared"
+    },
+    {
+      "class": "none",
+      "class_static": "none",
+      "clause_conflict_candidate": false,
+      "clause_conflict_candidate_static": false,
+      "file": "$OSS/jason/lib/jason.ex",
+      "inferred": [
+        "(term(), term()) -> dynamic()"
+      ],
+      "line": 89,
+      "location": "$OSS/jason/lib/jason.ex:89",
+      "mfa": "Jason.decode!/2",
+      "sl002_candidate": false,
+      "sl002_candidate_static": false,
+      "slices": [
+        {
+          "applied": [
+            0
+          ],
+          "applied_return": "term()",
+          "arg_loss_kinds": [
+            "recursive_cutoff"
+          ],
+          "badapply": false,
+          "class": "none",
+          "class_static": "none",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [],
+          "components": [],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "domain_escape",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "none()",
+          "index": 0,
+          "input_approximate": true,
+          "loss_kinds": [
+            "recursive_cutoff"
+          ],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "no_extra"
+          ],
+          "return_loss_kinds": [],
+          "return_relation": "equal",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "binary() or empty_list() or non_empty_list(term(), binary() or empty_list())",
+            "list(\n  {:floats, :decimals or :native} or\n    {:keys, :atoms or :atoms! or :copy or :strings or (binary() -> term())} or\n    {:objects, :maps or :ordered_objects} or {:strings, :copy or :reference}\n)"
+          ],
+          "spec_return": "term()",
+          "status": "compared",
+          "top_only": true,
+          "union_class": "none",
+          "union_class_static": "none"
+        }
+      ],
+      "specs": [
+        "decode!(iodata(), [decode_opt()]) :: term() | no_return()"
+      ],
+      "status": "compared"
+    },
+    {
+      "class": "unknown",
+      "class_static": "unknown",
+      "clause_conflict_candidate": false,
+      "clause_conflict_candidate_static": false,
+      "file": "$OSS/jason/lib/jason.ex",
+      "inferred": [
+        "(term(), term()) -> dynamic()"
+      ],
+      "line": 68,
+      "location": "$OSS/jason/lib/jason.ex:68",
+      "mfa": "Jason.decode/2",
+      "sl002_candidate": false,
+      "sl002_candidate_static": false,
+      "slices": [
+        {
+          "applied": [
+            0
+          ],
+          "applied_return": "term()",
+          "arg_loss_kinds": [
+            "recursive_cutoff"
+          ],
+          "badapply": false,
+          "class": "unknown",
+          "class_static": "unknown",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [
+            {
+              "class": "unknown",
+              "class_static": "unknown",
+              "clause": 0,
+              "components": [],
+              "containment": "domain_escape",
+              "extra": "not ({:error, %Jason.DecodeError{position: integer(), data: binary()}} or {:ok, term()})",
+              "reasons": [
+                "domain_escape=[0]",
+                "top_only"
+              ],
+              "static_return": false
+            }
+          ],
+          "components": [],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "domain_escape",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "not ({:error, %Jason.DecodeError{position: integer(), data: binary()}} or {:ok, term()})",
+          "index": 0,
+          "input_approximate": true,
+          "loss_kinds": [
+            "recursive_cutoff"
+          ],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "top_only"
+          ],
+          "return_loss_kinds": [],
+          "return_relation": "superset",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "binary() or empty_list() or non_empty_list(term(), binary() or empty_list())",
+            "list(\n  {:floats, :decimals or :native} or\n    {:keys, :atoms or :atoms! or :copy or :strings or (binary() -> term())} or\n    {:objects, :maps or :ordered_objects} or {:strings, :copy or :reference}\n)"
+          ],
+          "spec_return": "{:ok, term()} or {:error, %Jason.DecodeError{position: integer(), data: binary()}}",
+          "status": "compared",
+          "top_only": true,
+          "union_class": "unknown",
+          "union_class_static": "unknown"
+        }
+      ],
+      "specs": [
+        "decode(iodata(), [decode_opt()]) :: {:ok, term()} | {:error, Jason.DecodeError.t()}"
+      ],
+      "status": "compared"
+    },
+    {
+      "class": "unknown",
+      "class_static": "unknown",
+      "clause_conflict_candidate": false,
+      "clause_conflict_candidate_static": false,
+      "file": "$OSS/jason/lib/jason.ex",
+      "inferred": [
+        "(term(), term()) -> dynamic()"
+      ],
+      "line": 161,
+      "location": "$OSS/jason/lib/jason.ex:161",
+      "mfa": "Jason.encode!/2",
+      "sl002_candidate": false,
+      "sl002_candidate_static": false,
+      "slices": [
+        {
+          "applied": [
+            0
+          ],
+          "applied_return": "term()",
+          "arg_loss_kinds": [
+            "recursive_cutoff"
+          ],
+          "badapply": false,
+          "class": "unknown",
+          "class_static": "unknown",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [
+            {
+              "class": "unknown",
+              "class_static": "unknown",
+              "clause": 0,
+              "components": [],
+              "containment": "domain_escape",
+              "extra": "not binary()",
+              "reasons": [
+                "domain_escape=[0]",
+                "top_only"
+              ],
+              "static_return": false
+            }
+          ],
+          "components": [],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "domain_escape",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "not binary()",
+          "index": 0,
+          "input_approximate": true,
+          "loss_kinds": [
+            "recursive_cutoff"
+          ],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "top_only"
+          ],
+          "return_loss_kinds": [],
+          "return_relation": "superset",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "term()",
+            "list(\n  {:escape, :html_safe or :javascript_safe or :json or :unicode_safe} or\n    {:maps, :naive or :strict} or\n    {:pretty,\n     boolean() or\n       list(\n         {:after_colon or :indent or :line_separator or :record_separator,\n          binary() or empty_list() or non_empty_list(term(), binary() or empty_list())}\n       )}\n)"
+          ],
+          "spec_return": "binary()",
+          "status": "compared",
+          "top_only": true,
+          "union_class": "unknown",
+          "union_class_static": "unknown"
+        }
+      ],
+      "specs": [
+        "encode!(term(), [encode_opt()]) :: String.t() | no_return()"
+      ],
+      "status": "compared"
+    },
+    {
+      "class": "unknown",
+      "class_static": "unknown",
+      "clause_conflict_candidate": false,
+      "clause_conflict_candidate_static": false,
+      "file": "$OSS/jason/lib/jason.ex",
+      "inferred": [
+        "(term(), term()) -> dynamic({:error or :ok, term()})"
+      ],
+      "line": 138,
+      "location": "$OSS/jason/lib/jason.ex:138",
+      "mfa": "Jason.encode/2",
+      "sl002_candidate": false,
+      "sl002_candidate_static": false,
+      "slices": [
+        {
+          "applied": [
+            0
+          ],
+          "applied_return": "{:error or :ok, term()}",
+          "arg_loss_kinds": [
+            "recursive_cutoff"
+          ],
+          "badapply": false,
+          "class": "unknown",
+          "class_static": "unknown",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [
+            {
+              "class": "unknown",
+              "class_static": "unknown",
+              "clause": 0,
+              "components": [
+                {
+                  "descr": "{:error,\n not %Jason.EncodeError{message: binary()} and\n   not (%{atom() => term(), __exception__: term(), __struct__: atom()} and\n          not %Jason.EncodeError{message: binary()})}",
+                  "detail": "tuple",
+                  "kind": "tuple",
+                  "label": "unknown",
+                  "payload_gradual": false,
+                  "present_in_contributing": false,
+                  "subtraction_payload": false,
+                  "tag_in_spec": false
+                },
+                {
+                  "descr": "{:ok, not binary()}",
+                  "detail": "tuple",
+                  "kind": "tuple",
+                  "label": "structured",
+                  "payload_gradual": false,
+                  "present_in_contributing": false,
+                  "subtraction_payload": true,
+                  "tag_in_spec": true
+                }
+              ],
+              "containment": "domain_escape",
+              "extra": "{:error or :ok, term()} and not ({:ok, binary()} or {:error,\n %Jason.EncodeError{message: binary()} or\n   %{atom() => term(), __exception__: term(), __struct__: atom()}})",
+              "reasons": [
+                "domain_escape=[0]",
+                "not_in_contributing=1",
+                "unknown_components=1",
+                "tag_in_spec=1",
+                "subtraction_payload=1",
+                "no_counted_component"
+              ],
+              "static_return": false
+            }
+          ],
+          "components": [
+            {
+              "descr": "{:error,\n not %Jason.EncodeError{message: binary()} and\n   not (%{atom() => term(), __exception__: term(), __struct__: atom()} and\n          not %Jason.EncodeError{message: binary()})}",
+              "detail": "tuple",
+              "kind": "tuple",
+              "label": "unknown",
+              "payload_gradual": false,
+              "present_in_contributing": false,
+              "subtraction_payload": false,
+              "tag_in_spec": false
+            },
+            {
+              "descr": "{:ok, not binary()}",
+              "detail": "tuple",
+              "kind": "tuple",
+              "label": "structured",
+              "payload_gradual": false,
+              "present_in_contributing": false,
+              "subtraction_payload": true,
+              "tag_in_spec": true
+            }
+          ],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "domain_escape",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "{:error or :ok, term()} and not ({:ok, binary()} or {:error,\n %Jason.EncodeError{message: binary()} or\n   %{atom() => term(), __exception__: term(), __struct__: atom()}})",
+          "index": 0,
+          "input_approximate": true,
+          "loss_kinds": [
+            "recursive_cutoff"
+          ],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "input_approximate",
+            "domain_escape=[0]",
+            "not_in_contributing=1",
+            "unknown_components=1",
+            "tag_in_spec=1",
+            "subtraction_payload=1",
+            "no_counted_component"
+          ],
+          "return_loss_kinds": [],
+          "return_relation": "superset",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "term()",
+            "list(\n  {:escape, :html_safe or :javascript_safe or :json or :unicode_safe} or\n    {:maps, :naive or :strict} or\n    {:pretty,\n     boolean() or\n       list(\n         {:after_colon or :indent or :line_separator or :record_separator,\n          binary() or empty_list() or non_empty_list(term(), binary() or empty_list())}\n       )}\n)"
+          ],
+          "spec_return": "{:ok, binary()} or {:error,\n %Jason.EncodeError{message: binary()} or\n   %{atom() => term(), __exception__: term(), __struct__: atom()}}",
+          "status": "compared",
+          "top_only": false,
+          "union_class": "unknown",
+          "union_class_static": "unknown"
+        }
+      ],
+      "specs": [
+        "encode(term(), [encode_opt()]) ::\n  {:ok, String.t()} | {:error, Jason.EncodeError.t() | Exception.t()}"
+      ],
+      "status": "compared"
+    },
+    {
+      "class": "unknown",
+      "class_static": "unknown",
+      "clause_conflict_candidate": false,
+      "clause_conflict_candidate_static": false,
+      "file": "$OSS/jason/lib/jason.ex",
+      "inferred": [
+        "(term(), term()) -> dynamic()"
+      ],
+      "line": 210,
+      "location": "$OSS/jason/lib/jason.ex:210",
+      "mfa": "Jason.encode_to_iodata!/2",
+      "sl002_candidate": false,
+      "sl002_candidate_static": false,
+      "slices": [
+        {
+          "applied": [
+            0
+          ],
+          "applied_return": "term()",
+          "arg_loss_kinds": [
+            "recursive_cutoff"
+          ],
+          "badapply": false,
+          "class": "unknown",
+          "class_static": "unknown",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [
+            {
+              "class": "unknown",
+              "class_static": "unknown",
+              "clause": 0,
+              "components": [],
+              "containment": "domain_escape",
+              "extra": "not (binary() or empty_list() or non_empty_list(term(), binary() or empty_list()))",
+              "reasons": [
+                "domain_escape=[0]",
+                "top_only"
+              ],
+              "static_return": false
+            }
+          ],
+          "components": [],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "domain_escape",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "not (binary() or empty_list() or non_empty_list(term(), binary() or empty_list()))",
+          "index": 0,
+          "input_approximate": true,
+          "loss_kinds": [
+            "recursive_cutoff"
+          ],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "top_only",
+            "return_inexact"
+          ],
+          "return_loss_kinds": [
+            "recursive_cutoff"
+          ],
+          "return_relation": "superset",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "term()",
+            "list(\n  {:escape, :html_safe or :javascript_safe or :json or :unicode_safe} or\n    {:maps, :naive or :strict} or\n    {:pretty,\n     boolean() or\n       list(\n         {:after_colon or :indent or :line_separator or :record_separator,\n          binary() or empty_list() or non_empty_list(term(), binary() or empty_list())}\n       )}\n)"
+          ],
+          "spec_return": "binary() or empty_list() or non_empty_list(term(), binary() or empty_list())",
+          "status": "compared",
+          "top_only": true,
+          "union_class": "unknown",
+          "union_class_static": "unknown"
+        }
+      ],
+      "specs": [
+        "encode_to_iodata!(term(), [encode_opt()]) :: iodata() | no_return()"
+      ],
+      "status": "compared"
+    },
+    {
+      "class": "unknown",
+      "class_static": "unknown",
+      "clause_conflict_candidate": false,
+      "clause_conflict_candidate_static": false,
+      "file": "$OSS/jason/lib/jason.ex",
+      "inferred": [
+        "(term(), term()) -> dynamic()"
+      ],
+      "line": 189,
+      "location": "$OSS/jason/lib/jason.ex:189",
+      "mfa": "Jason.encode_to_iodata/2",
+      "sl002_candidate": false,
+      "sl002_candidate_static": false,
+      "slices": [
+        {
+          "applied": [
+            0
+          ],
+          "applied_return": "term()",
+          "arg_loss_kinds": [
+            "recursive_cutoff"
+          ],
+          "badapply": false,
+          "class": "unknown",
+          "class_static": "unknown",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [
+            {
+              "class": "unknown",
+              "class_static": "unknown",
+              "clause": 0,
+              "components": [],
+              "containment": "domain_escape",
+              "extra": "not ({:error,\n %Jason.EncodeError{message: binary()} or\n   %{atom() => term(), __exception__: term(), __struct__: atom()}} or {:ok, binary() or empty_list() or non_empty_list(term(), binary() or empty_list())})",
+              "reasons": [
+                "domain_escape=[0]",
+                "top_only"
+              ],
+              "static_return": false
+            }
+          ],
+          "components": [],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "domain_escape",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "not ({:error,\n %Jason.EncodeError{message: binary()} or\n   %{atom() => term(), __exception__: term(), __struct__: atom()}} or {:ok, binary() or empty_list() or non_empty_list(term(), binary() or empty_list())})",
+          "index": 0,
+          "input_approximate": true,
+          "loss_kinds": [
+            "recursive_cutoff"
+          ],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "top_only",
+            "return_inexact"
+          ],
+          "return_loss_kinds": [
+            "recursive_cutoff"
+          ],
+          "return_relation": "superset",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "term()",
+            "list(\n  {:escape, :html_safe or :javascript_safe or :json or :unicode_safe} or\n    {:maps, :naive or :strict} or\n    {:pretty,\n     boolean() or\n       list(\n         {:after_colon or :indent or :line_separator or :record_separator,\n          binary() or empty_list() or non_empty_list(term(), binary() or empty_list())}\n       )}\n)"
+          ],
+          "spec_return": "{:ok, binary() or empty_list() or non_empty_list(term(), binary() or empty_list())} or {:error,\n %Jason.EncodeError{message: binary()} or\n   %{atom() => term(), __exception__: term(), __struct__: atom()}}",
+          "status": "compared",
+          "top_only": true,
+          "union_class": "unknown",
+          "union_class_static": "unknown"
+        }
+      ],
+      "specs": [
+        "encode_to_iodata(term(), [encode_opt()]) ::\n  {:ok, iodata()} | {:error, Jason.EncodeError.t() | Exception.t()}"
+      ],
+      "status": "compared"
+    }
+  ],
+  "label": "jason",
+  "otp_release": "28",
+  "totals": {
+    "badapply_slices": 0,
+    "clause_classes": {
+      "none": 1,
+      "unknown": 16
+    },
+    "clause_classes_static": {
+      "none": 1,
+      "unknown": 16
+    },
+    "clause_conflict_candidate_functions": 0,
+    "clause_conflict_candidate_functions_static": 0,
+    "component_labels": {
+      "structured_absent": 1,
+      "unknown_absent": 3
+    },
+    "function_classes": {
+      "none": 4,
+      "unknown": 16
+    },
+    "function_classes_static": {
+      "none": 4,
+      "unknown": 16
+    },
+    "functions": 20,
+    "functions_by_status": {
+      "compared": 20
+    },
+    "loss_kinds": {
+      "arrow_polarity": 7,
+      "recursive_cutoff": 20
+    },
+    "modules": 28,
+    "modules_by_status": {
+      "ok": 28
+    },
+    "near_top_slices": 0,
+    "out_of_scope_by_reason": {
+      "generated": 15,
+      "not_exported": 1,
+      "protocol": 4
+    },
+    "overlap_slices": 0,
+    "overlap_unknown_slices": 0,
+    "sl002_candidate_functions": 0,
+    "sl002_candidate_functions_static": 0,
+    "sl002_candidate_slices": 0,
+    "sl002_candidate_slices_tag_in_spec": 0,
+    "slice_classes": {
+      "none": 4,
+      "unknown": 16
+    },
+    "slice_classes_static": {
+      "none": 4,
+      "unknown": 16
+    },
+    "slices": 20,
+    "slices_approximate": 20,
+    "slices_compared": 20,
+    "slices_exact": 0,
+    "top_only_slices": 14,
+    "unavailable_by_reason": {},
+    "union_classes": {
+      "none": 4,
+      "unknown": 16
+    },
+    "unsupported_by_reason": {}
+  }
+}

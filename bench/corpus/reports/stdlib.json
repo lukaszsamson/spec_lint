@@ -1,0 +1,3762 @@
+{
+  "adapter": "1.21.0-dev+c24c235",
+  "checker_version": "elixir_checker_v10",
+  "code_paths": [],
+  "ebins": [
+    "$ELIXIR/lib/elixir/ebin",
+    "$ELIXIR/lib/eex/ebin",
+    "$ELIXIR/lib/ex_unit/ebin",
+    "$ELIXIR/lib/iex/ebin",
+    "$ELIXIR/lib/logger/ebin",
+    "$ELIXIR/lib/mix/ebin"
+  ],
+  "functions": [
+    {
+      "class": "structured_possible",
+      "class_static": "possible_gradual",
+      "clause_conflict_candidate": false,
+      "clause_conflict_candidate_static": false,
+      "file": "$ELIXIR/lib/elixir/lib/calendar/iso.ex",
+      "inferred": [
+        "(binary()) -> dynamic(\n  {:error, :invalid_date or :invalid_format or :invalid_time or :missing_offset} or\n    {:ok,\n     {integer(), integer(), integer(), integer(), integer(), integer(), {integer(), integer()}},\n     float() or integer()}\n)"
+      ],
+      "line": 603,
+      "location": "$ELIXIR/lib/elixir/lib/calendar/iso.ex:603",
+      "mfa": "Calendar.ISO.parse_utc_datetime/1",
+      "sl002_candidate": true,
+      "sl002_candidate_static": false,
+      "slices": [
+        {
+          "applied": [
+            0
+          ],
+          "applied_return": "{:error, :missing_offset} or {:error, :invalid_format} or {:ok, {integer(), integer(), integer(), integer(), integer(), integer(), {integer(), integer()}},\n float() or integer()} or {:error, :invalid_date or :invalid_time}",
+          "arg_loss_kinds": [],
+          "badapply": false,
+          "class": "structured_possible",
+          "class_static": "possible_gradual",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [
+            {
+              "class": "structured_possible",
+              "class_static": "possible_gradual",
+              "clause": 0,
+              "components": [
+                {
+                  "descr": "{:ok, {integer(), integer(), integer(), integer(), integer(), integer(), {integer(), integer()}},\n float()}",
+                  "detail": "tuple",
+                  "kind": "tuple",
+                  "label": "structured",
+                  "payload_gradual": true,
+                  "present_in_contributing": true,
+                  "subtraction_payload": false,
+                  "tag_in_spec": true
+                }
+              ],
+              "containment": "contained",
+              "extra": "{:ok, {integer(), integer(), integer(), integer(), integer(), integer(), {integer(), integer()}},\n float() or integer()} and not {:ok, {integer(), integer(), integer(), integer(), integer(), integer(), {integer(), integer()}},\n integer()}",
+              "reasons": [
+                "tag_in_spec=1",
+                "payload_gradual=1"
+              ],
+              "static_return": false
+            }
+          ],
+          "components": [
+            {
+              "descr": "{:ok, {integer(), integer(), integer(), integer(), integer(), integer(), {integer(), integer()}},\n float()}",
+              "detail": "tuple",
+              "kind": "tuple",
+              "label": "structured",
+              "payload_gradual": true,
+              "present_in_contributing": true,
+              "subtraction_payload": false,
+              "tag_in_spec": true
+            }
+          ],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "contained",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "{:ok, {integer(), integer(), integer(), integer(), integer(), integer(), {integer(), integer()}},\n float() or integer()} and not {:ok, {integer(), integer(), integer(), integer(), integer(), integer(), {integer(), integer()}},\n integer()}",
+          "index": 0,
+          "input_approximate": false,
+          "loss_kinds": [
+            "integer_refinement_erased"
+          ],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "tag_in_spec=1",
+            "payload_gradual=1",
+            "return_inexact"
+          ],
+          "return_loss_kinds": [
+            "integer_refinement_erased"
+          ],
+          "return_relation": "overlapping",
+          "sl002_candidate": true,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "binary()"
+          ],
+          "spec_return": "{:ok, {integer(), integer(), integer(), integer(), integer(), integer(), {integer(), integer()}},\n integer()} or {:error, atom()}",
+          "status": "compared",
+          "top_only": false,
+          "union_class": "structured_possible",
+          "union_class_static": "possible_gradual"
+        }
+      ],
+      "specs": [
+        "parse_utc_datetime(String.t()) ::\n  {:ok, {year(), month(), day(), hour(), minute(), second(), microsecond()}, utc_offset()}\n  | {:error, atom()}"
+      ],
+      "status": "compared"
+    },
+    {
+      "class": "structured_possible",
+      "class_static": "possible_gradual",
+      "clause_conflict_candidate": false,
+      "clause_conflict_candidate_static": false,
+      "file": "$ELIXIR/lib/elixir/lib/calendar/iso.ex",
+      "inferred": [
+        "(binary(), :basic or :extended) -> dynamic(\n  {:error, :invalid_date or :invalid_format or :invalid_time or :missing_offset} or\n    {:ok,\n     {integer(), integer(), integer(), integer(), integer(), integer(), {integer(), integer()}},\n     float() or integer()}\n)"
+      ],
+      "line": 626,
+      "location": "$ELIXIR/lib/elixir/lib/calendar/iso.ex:626",
+      "mfa": "Calendar.ISO.parse_utc_datetime/2",
+      "sl002_candidate": true,
+      "sl002_candidate_static": false,
+      "slices": [
+        {
+          "applied": [
+            0
+          ],
+          "applied_return": "{:error, :missing_offset} or {:error, :invalid_format} or {:ok, {integer(), integer(), integer(), integer(), integer(), integer(), {integer(), integer()}},\n float() or integer()} or {:error, :invalid_date or :invalid_time}",
+          "arg_loss_kinds": [],
+          "badapply": false,
+          "class": "structured_possible",
+          "class_static": "possible_gradual",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [
+            {
+              "class": "structured_possible",
+              "class_static": "possible_gradual",
+              "clause": 0,
+              "components": [
+                {
+                  "descr": "{:ok, {integer(), integer(), integer(), integer(), integer(), integer(), {integer(), integer()}},\n float()}",
+                  "detail": "tuple",
+                  "kind": "tuple",
+                  "label": "structured",
+                  "payload_gradual": true,
+                  "present_in_contributing": true,
+                  "subtraction_payload": false,
+                  "tag_in_spec": true
+                }
+              ],
+              "containment": "contained",
+              "extra": "{:ok, {integer(), integer(), integer(), integer(), integer(), integer(), {integer(), integer()}},\n float() or integer()} and not {:ok, {integer(), integer(), integer(), integer(), integer(), integer(), {integer(), integer()}},\n integer()}",
+              "reasons": [
+                "tag_in_spec=1",
+                "payload_gradual=1"
+              ],
+              "static_return": false
+            }
+          ],
+          "components": [
+            {
+              "descr": "{:ok, {integer(), integer(), integer(), integer(), integer(), integer(), {integer(), integer()}},\n float()}",
+              "detail": "tuple",
+              "kind": "tuple",
+              "label": "structured",
+              "payload_gradual": true,
+              "present_in_contributing": true,
+              "subtraction_payload": false,
+              "tag_in_spec": true
+            }
+          ],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "contained",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "{:ok, {integer(), integer(), integer(), integer(), integer(), integer(), {integer(), integer()}},\n float() or integer()} and not {:ok, {integer(), integer(), integer(), integer(), integer(), integer(), {integer(), integer()}},\n integer()}",
+          "index": 0,
+          "input_approximate": false,
+          "loss_kinds": [
+            "integer_refinement_erased"
+          ],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "tag_in_spec=1",
+            "payload_gradual=1",
+            "return_inexact"
+          ],
+          "return_loss_kinds": [
+            "integer_refinement_erased"
+          ],
+          "return_relation": "overlapping",
+          "sl002_candidate": true,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "binary()",
+            ":basic or :extended"
+          ],
+          "spec_return": "{:ok, {integer(), integer(), integer(), integer(), integer(), integer(), {integer(), integer()}},\n integer()} or {:error, atom()}",
+          "status": "compared",
+          "top_only": false,
+          "union_class": "structured_possible",
+          "union_class_static": "possible_gradual"
+        }
+      ],
+      "specs": [
+        "parse_utc_datetime(String.t(), format()) ::\n  {:ok, {year(), month(), day(), hour(), minute(), second(), microsecond()}, utc_offset()}\n  | {:error, atom()}"
+      ],
+      "status": "compared"
+    },
+    {
+      "class": "possible_input_approximate",
+      "class_static": "possible_input_approximate",
+      "clause_conflict_candidate": false,
+      "clause_conflict_candidate_static": false,
+      "file": "$ELIXIR/lib/elixir/lib/calendar/date.ex",
+      "inferred": [
+        "(%{..., calendar: Calendar.ISO, day: term(), month: term(), year: term()}, %{..., calendar: Calendar.ISO, day: term(), month: term(), year: term()}) -> dynamic(float() or integer())",
+        "(%{..., calendar: term()}, %{..., calendar: term()}) -> dynamic(float() or integer())"
+      ],
+      "line": 754,
+      "location": "$ELIXIR/lib/elixir/lib/calendar/date.ex:754",
+      "mfa": "Date.diff/2",
+      "sl002_candidate": false,
+      "sl002_candidate_static": false,
+      "slices": [
+        {
+          "applied": [
+            0,
+            1
+          ],
+          "applied_return": "float() or integer()",
+          "arg_loss_kinds": [
+            "integer_refinement_erased"
+          ],
+          "badapply": false,
+          "class": "possible_input_approximate",
+          "class_static": "possible_input_approximate",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [
+            {
+              "class": "whole_kind_possible",
+              "class_static": "whole_kind_possible",
+              "clause": 0,
+              "components": [
+                {
+                  "descr": "float()",
+                  "detail": null,
+                  "kind": "float",
+                  "label": "whole_kind",
+                  "payload_gradual": false,
+                  "present_in_contributing": true,
+                  "subtraction_payload": false,
+                  "tag_in_spec": false
+                }
+              ],
+              "containment": "contained",
+              "extra": "float()",
+              "reasons": [],
+              "static_return": false
+            },
+            {
+              "class": "whole_kind_possible",
+              "class_static": "whole_kind_possible",
+              "clause": 1,
+              "components": [
+                {
+                  "descr": "float()",
+                  "detail": null,
+                  "kind": "float",
+                  "label": "whole_kind",
+                  "payload_gradual": false,
+                  "present_in_contributing": true,
+                  "subtraction_payload": false,
+                  "tag_in_spec": false
+                }
+              ],
+              "containment": "contained",
+              "extra": "float()",
+              "reasons": [],
+              "static_return": false
+            }
+          ],
+          "components": [
+            {
+              "descr": "float()",
+              "detail": null,
+              "kind": "float",
+              "label": "whole_kind",
+              "payload_gradual": false,
+              "present_in_contributing": true,
+              "subtraction_payload": false,
+              "tag_in_spec": false
+            }
+          ],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "contained",
+              "static_return": false
+            },
+            {
+              "clause": 1,
+              "containment": "contained",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "float()",
+          "index": 0,
+          "input_approximate": true,
+          "loss_kinds": [
+            "integer_refinement_erased"
+          ],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "input_approximate",
+            "whole_kind_only"
+          ],
+          "return_loss_kinds": [],
+          "return_relation": "superset",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "not ((not map() and not {...}) or {...})",
+            "not ((not map() and not {...}) or {...})"
+          ],
+          "spec_return": "integer()",
+          "status": "compared",
+          "top_only": false,
+          "union_class": "possible_input_approximate",
+          "union_class_static": "possible_input_approximate"
+        }
+      ],
+      "specs": [
+        "diff(Calendar.date(), Calendar.date()) :: integer()"
+      ],
+      "status": "compared"
+    },
+    {
+      "class": "possible_domain_escape",
+      "class_static": "possible_domain_escape",
+      "clause_conflict_candidate": false,
+      "clause_conflict_candidate_static": false,
+      "file": "$ELIXIR/lib/elixir/lib/calendar/datetime.ex",
+      "inferred": [
+        "(term(), atom()) -> dynamic(\n  ({:error, :invalid_format} and\n     not {:ok,\n      {integer(), integer(), integer(), integer(), integer(), integer(), {integer(), integer()}},\n      float() or integer()}) or\n    ({:error, :invalid_date or :invalid_time} and\n       not {:ok,\n        {integer(), integer(), integer(), integer(), integer(), integer(),\n         {integer(), integer()}}, float() or integer()}) or\n    {:error, :incompatible_calendars or :missing_offset} or\n    {:ok, %DateTime{}, float() or integer()}\n)"
+      ],
+      "line": 1272,
+      "location": "$ELIXIR/lib/elixir/lib/calendar/datetime.ex:1272",
+      "mfa": "DateTime.from_iso8601/2",
+      "sl002_candidate": false,
+      "sl002_candidate_static": false,
+      "slices": [
+        {
+          "applied": [
+            0
+          ],
+          "applied_return": "{:error, :incompatible_calendars} or {:error, :missing_offset} or {:ok, %DateTime{}, float() or integer()} or {:error, :invalid_format} or {:error, :invalid_date or :invalid_time}",
+          "arg_loss_kinds": [],
+          "badapply": false,
+          "class": "possible_domain_escape",
+          "class_static": "possible_domain_escape",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [
+            {
+              "class": "possible_domain_escape",
+              "class_static": "possible_domain_escape",
+              "clause": 0,
+              "components": [
+                {
+                  "descr": "{:ok,\n %DateTime{} and\n   not %DateTime{\n     year: integer(),\n     month: integer(),\n     day: integer(),\n     hour: integer(),\n     minute: integer(),\n     second: integer(),\n     time_zone: binary(),\n     zone_abbr: binary(),\n     utc_offset: integer(),\n     std_offset: integer(),\n     microsecond: {integer(), integer()},\n     calendar: atom()\n   }, float() or integer()}",
+                  "detail": "tuple",
+                  "kind": "tuple",
+                  "label": "unknown",
+                  "payload_gradual": false,
+                  "present_in_contributing": false,
+                  "subtraction_payload": false,
+                  "tag_in_spec": false
+                },
+                {
+                  "descr": "{:ok,\n %DateTime{\n   year: integer(),\n   month: integer(),\n   day: integer(),\n   hour: integer(),\n   minute: integer(),\n   second: integer(),\n   time_zone: binary(),\n   zone_abbr: binary(),\n   utc_offset: integer(),\n   std_offset: integer(),\n   microsecond: {integer(), integer()},\n   calendar: atom()\n }, float()}",
+                  "detail": "tuple",
+                  "kind": "tuple",
+                  "label": "structured",
+                  "payload_gradual": true,
+                  "present_in_contributing": true,
+                  "subtraction_payload": false,
+                  "tag_in_spec": true
+                }
+              ],
+              "containment": "domain_escape",
+              "extra": "{:ok, %DateTime{}, float() or integer()} and not {:ok,\n %DateTime{\n   year: integer(),\n   month: integer(),\n   day: integer(),\n   hour: integer(),\n   minute: integer(),\n   second: integer(),\n   time_zone: binary(),\n   zone_abbr: binary(),\n   utc_offset: integer(),\n   std_offset: integer(),\n   microsecond: {integer(), integer()},\n   calendar: atom()\n }, integer()}",
+              "reasons": [
+                "domain_escape=[0]",
+                "unknown_components=1",
+                "tag_in_spec=1",
+                "payload_gradual=1"
+              ],
+              "static_return": false
+            }
+          ],
+          "components": [
+            {
+              "descr": "{:ok,\n %DateTime{} and\n   not %DateTime{\n     year: integer(),\n     month: integer(),\n     day: integer(),\n     hour: integer(),\n     minute: integer(),\n     second: integer(),\n     time_zone: binary(),\n     zone_abbr: binary(),\n     utc_offset: integer(),\n     std_offset: integer(),\n     microsecond: {integer(), integer()},\n     calendar: atom()\n   }, float() or integer()}",
+              "detail": "tuple",
+              "kind": "tuple",
+              "label": "unknown",
+              "payload_gradual": false,
+              "present_in_contributing": false,
+              "subtraction_payload": false,
+              "tag_in_spec": false
+            },
+            {
+              "descr": "{:ok,\n %DateTime{\n   year: integer(),\n   month: integer(),\n   day: integer(),\n   hour: integer(),\n   minute: integer(),\n   second: integer(),\n   time_zone: binary(),\n   zone_abbr: binary(),\n   utc_offset: integer(),\n   std_offset: integer(),\n   microsecond: {integer(), integer()},\n   calendar: atom()\n }, float()}",
+              "detail": "tuple",
+              "kind": "tuple",
+              "label": "structured",
+              "payload_gradual": true,
+              "present_in_contributing": true,
+              "subtraction_payload": false,
+              "tag_in_spec": true
+            }
+          ],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "domain_escape",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "{:ok, %DateTime{}, float() or integer()} and not {:ok,\n %DateTime{\n   year: integer(),\n   month: integer(),\n   day: integer(),\n   hour: integer(),\n   minute: integer(),\n   second: integer(),\n   time_zone: binary(),\n   zone_abbr: binary(),\n   utc_offset: integer(),\n   std_offset: integer(),\n   microsecond: {integer(), integer()},\n   calendar: atom()\n }, integer()}",
+          "index": 0,
+          "input_approximate": false,
+          "loss_kinds": [
+            "integer_refinement_erased"
+          ],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "domain_escape=[0]",
+            "unknown_components=1",
+            "tag_in_spec=1",
+            "payload_gradual=1",
+            "return_inexact"
+          ],
+          "return_loss_kinds": [
+            "integer_refinement_erased"
+          ],
+          "return_relation": "overlapping",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "binary()",
+            "atom()"
+          ],
+          "spec_return": "{:ok,\n %DateTime{\n   year: integer(),\n   month: integer(),\n   day: integer(),\n   hour: integer(),\n   minute: integer(),\n   second: integer(),\n   time_zone: binary(),\n   zone_abbr: binary(),\n   utc_offset: integer(),\n   std_offset: integer(),\n   microsecond: {integer(), integer()},\n   calendar: atom()\n }, integer()} or {:error, atom()}",
+          "status": "compared",
+          "top_only": false,
+          "union_class": "possible_domain_escape",
+          "union_class_static": "possible_domain_escape"
+        }
+      ],
+      "specs": [
+        "from_iso8601(String.t(), Calendar.calendar() | :extended | :basic) ::\n  {:ok, t(), Calendar.utc_offset()} | {:error, atom()}"
+      ],
+      "status": "compared"
+    },
+    {
+      "class": "possible_domain_escape",
+      "class_static": "possible_domain_escape",
+      "clause_conflict_candidate": false,
+      "clause_conflict_candidate_static": false,
+      "file": "$ELIXIR/lib/elixir/lib/calendar/datetime.ex",
+      "inferred": [
+        "(term(), term(), term()) -> dynamic(\n  ({:error, :invalid_format} and\n     not {:ok,\n      {integer(), integer(), integer(), integer(), integer(), integer(), {integer(), integer()}},\n      float() or integer()}) or\n    ({:error, :invalid_date or :invalid_time} and\n       not {:ok,\n        {integer(), integer(), integer(), integer(), integer(), integer(),\n         {integer(), integer()}}, float() or integer()}) or\n    {:error, :incompatible_calendars or :missing_offset} or\n    {:ok, %DateTime{}, float() or integer()}\n)"
+      ],
+      "line": 1300,
+      "location": "$ELIXIR/lib/elixir/lib/calendar/datetime.ex:1300",
+      "mfa": "DateTime.from_iso8601/3",
+      "sl002_candidate": false,
+      "sl002_candidate_static": false,
+      "slices": [
+        {
+          "applied": [
+            0
+          ],
+          "applied_return": "{:error, :incompatible_calendars} or {:error, :missing_offset} or {:ok, %DateTime{}, float() or integer()} or {:error, :invalid_format} or {:error, :invalid_date or :invalid_time}",
+          "arg_loss_kinds": [],
+          "badapply": false,
+          "class": "possible_domain_escape",
+          "class_static": "possible_domain_escape",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [
+            {
+              "class": "possible_domain_escape",
+              "class_static": "possible_domain_escape",
+              "clause": 0,
+              "components": [
+                {
+                  "descr": "{:ok,\n %DateTime{} and\n   not %DateTime{\n     year: integer(),\n     month: integer(),\n     day: integer(),\n     hour: integer(),\n     minute: integer(),\n     second: integer(),\n     time_zone: binary(),\n     zone_abbr: binary(),\n     utc_offset: integer(),\n     std_offset: integer(),\n     microsecond: {integer(), integer()},\n     calendar: atom()\n   }, float() or integer()}",
+                  "detail": "tuple",
+                  "kind": "tuple",
+                  "label": "unknown",
+                  "payload_gradual": false,
+                  "present_in_contributing": false,
+                  "subtraction_payload": false,
+                  "tag_in_spec": false
+                },
+                {
+                  "descr": "{:ok,\n %DateTime{\n   year: integer(),\n   month: integer(),\n   day: integer(),\n   hour: integer(),\n   minute: integer(),\n   second: integer(),\n   time_zone: binary(),\n   zone_abbr: binary(),\n   utc_offset: integer(),\n   std_offset: integer(),\n   microsecond: {integer(), integer()},\n   calendar: atom()\n }, float()}",
+                  "detail": "tuple",
+                  "kind": "tuple",
+                  "label": "structured",
+                  "payload_gradual": true,
+                  "present_in_contributing": true,
+                  "subtraction_payload": false,
+                  "tag_in_spec": true
+                }
+              ],
+              "containment": "domain_escape",
+              "extra": "{:ok, %DateTime{}, float() or integer()} and not {:ok,\n %DateTime{\n   year: integer(),\n   month: integer(),\n   day: integer(),\n   hour: integer(),\n   minute: integer(),\n   second: integer(),\n   time_zone: binary(),\n   zone_abbr: binary(),\n   utc_offset: integer(),\n   std_offset: integer(),\n   microsecond: {integer(), integer()},\n   calendar: atom()\n }, integer()}",
+              "reasons": [
+                "domain_escape=[0]",
+                "unknown_components=1",
+                "tag_in_spec=1",
+                "payload_gradual=1"
+              ],
+              "static_return": false
+            }
+          ],
+          "components": [
+            {
+              "descr": "{:ok,\n %DateTime{} and\n   not %DateTime{\n     year: integer(),\n     month: integer(),\n     day: integer(),\n     hour: integer(),\n     minute: integer(),\n     second: integer(),\n     time_zone: binary(),\n     zone_abbr: binary(),\n     utc_offset: integer(),\n     std_offset: integer(),\n     microsecond: {integer(), integer()},\n     calendar: atom()\n   }, float() or integer()}",
+              "detail": "tuple",
+              "kind": "tuple",
+              "label": "unknown",
+              "payload_gradual": false,
+              "present_in_contributing": false,
+              "subtraction_payload": false,
+              "tag_in_spec": false
+            },
+            {
+              "descr": "{:ok,\n %DateTime{\n   year: integer(),\n   month: integer(),\n   day: integer(),\n   hour: integer(),\n   minute: integer(),\n   second: integer(),\n   time_zone: binary(),\n   zone_abbr: binary(),\n   utc_offset: integer(),\n   std_offset: integer(),\n   microsecond: {integer(), integer()},\n   calendar: atom()\n }, float()}",
+              "detail": "tuple",
+              "kind": "tuple",
+              "label": "structured",
+              "payload_gradual": true,
+              "present_in_contributing": true,
+              "subtraction_payload": false,
+              "tag_in_spec": true
+            }
+          ],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "domain_escape",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "{:ok, %DateTime{}, float() or integer()} and not {:ok,\n %DateTime{\n   year: integer(),\n   month: integer(),\n   day: integer(),\n   hour: integer(),\n   minute: integer(),\n   second: integer(),\n   time_zone: binary(),\n   zone_abbr: binary(),\n   utc_offset: integer(),\n   std_offset: integer(),\n   microsecond: {integer(), integer()},\n   calendar: atom()\n }, integer()}",
+          "index": 0,
+          "input_approximate": false,
+          "loss_kinds": [
+            "integer_refinement_erased"
+          ],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "domain_escape=[0]",
+            "unknown_components=1",
+            "tag_in_spec=1",
+            "payload_gradual=1",
+            "return_inexact"
+          ],
+          "return_loss_kinds": [
+            "integer_refinement_erased"
+          ],
+          "return_relation": "overlapping",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "binary()",
+            "atom()",
+            ":basic or :extended"
+          ],
+          "spec_return": "{:ok,\n %DateTime{\n   year: integer(),\n   month: integer(),\n   day: integer(),\n   hour: integer(),\n   minute: integer(),\n   second: integer(),\n   time_zone: binary(),\n   zone_abbr: binary(),\n   utc_offset: integer(),\n   std_offset: integer(),\n   microsecond: {integer(), integer()},\n   calendar: atom()\n }, integer()} or {:error, atom()}",
+          "status": "compared",
+          "top_only": false,
+          "union_class": "possible_domain_escape",
+          "union_class_static": "possible_domain_escape"
+        }
+      ],
+      "specs": [
+        "from_iso8601(String.t(), Calendar.calendar(), :extended | :basic) ::\n  {:ok, t(), Calendar.utc_offset()} | {:error, atom()}"
+      ],
+      "status": "compared"
+    },
+    {
+      "class": "possible_domain_escape",
+      "class_static": "possible_domain_escape",
+      "clause_conflict_candidate": false,
+      "clause_conflict_candidate_static": false,
+      "file": "$ELIXIR/lib/elixir/lib/calendar/datetime.ex",
+      "inferred": [
+        "(%{\n  ...,\n  calendar: atom(),\n  day: term(),\n  hour: term(),\n  microsecond: term(),\n  minute: term(),\n  month: term(),\n  second: term(),\n  std_offset: float() or integer(),\n  utc_offset: float() or integer(),\n  year: term()\n}, :micro_seconds or :microsecond or :microseconds or :milli_seconds or :millisecond or :milliseconds or\n  :nano_seconds or :nanosecond or :nanoseconds or :native or :second or :seconds or integer()) -> dynamic(float() or integer())"
+      ],
+      "line": 936,
+      "location": "$ELIXIR/lib/elixir/lib/calendar/datetime.ex:936",
+      "mfa": "DateTime.to_unix/2",
+      "sl002_candidate": false,
+      "sl002_candidate_static": false,
+      "slices": [
+        {
+          "applied": [
+            0
+          ],
+          "applied_return": "float() or integer()",
+          "arg_loss_kinds": [
+            "integer_refinement_erased"
+          ],
+          "badapply": false,
+          "class": "possible_domain_escape",
+          "class_static": "possible_domain_escape",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [
+            {
+              "class": "possible_domain_escape",
+              "class_static": "possible_domain_escape",
+              "clause": 0,
+              "components": [
+                {
+                  "descr": "float()",
+                  "detail": null,
+                  "kind": "float",
+                  "label": "whole_kind",
+                  "payload_gradual": false,
+                  "present_in_contributing": true,
+                  "subtraction_payload": false,
+                  "tag_in_spec": false
+                }
+              ],
+              "containment": "domain_escape",
+              "extra": "float()",
+              "reasons": [
+                "domain_escape=[0]",
+                "whole_kind_only"
+              ],
+              "static_return": false
+            }
+          ],
+          "components": [
+            {
+              "descr": "float()",
+              "detail": null,
+              "kind": "float",
+              "label": "whole_kind",
+              "payload_gradual": false,
+              "present_in_contributing": true,
+              "subtraction_payload": false,
+              "tag_in_spec": false
+            }
+          ],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "domain_escape",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "float()",
+          "index": 0,
+          "input_approximate": true,
+          "loss_kinds": [
+            "integer_refinement_erased"
+          ],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "input_approximate",
+            "domain_escape=[0]",
+            "whole_kind_only"
+          ],
+          "return_loss_kinds": [],
+          "return_relation": "superset",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "not ((not map() and not {...}) or {...})",
+            ":microsecond or :millisecond or :nanosecond or :native or :second or integer()"
+          ],
+          "spec_return": "integer()",
+          "status": "compared",
+          "top_only": false,
+          "union_class": "possible_domain_escape",
+          "union_class_static": "possible_domain_escape"
+        }
+      ],
+      "specs": [
+        "to_unix(Calendar.datetime(), :native | System.time_unit()) :: integer()"
+      ],
+      "status": "compared"
+    },
+    {
+      "class": "possible_input_approximate",
+      "class_static": "possible_input_approximate",
+      "clause_conflict_candidate": false,
+      "clause_conflict_candidate_static": false,
+      "file": "$ELIXIR/lib/elixir/lib/float.ex",
+      "inferred": [
+        "(float(), integer()) -> dynamic(float() or integer())"
+      ],
+      "line": 380,
+      "location": "$ELIXIR/lib/elixir/lib/float.ex:380",
+      "mfa": "Float.round/2",
+      "sl002_candidate": false,
+      "sl002_candidate_static": false,
+      "slices": [
+        {
+          "applied": [
+            0
+          ],
+          "applied_return": "float() or integer()",
+          "arg_loss_kinds": [
+            "integer_refinement_erased"
+          ],
+          "badapply": false,
+          "class": "possible_input_approximate",
+          "class_static": "possible_input_approximate",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [
+            {
+              "class": "possible_input_approximate",
+              "class_static": "possible_input_approximate",
+              "clause": 0,
+              "components": [
+                {
+                  "descr": "integer()",
+                  "detail": null,
+                  "kind": "integer",
+                  "label": "whole_kind",
+                  "payload_gradual": false,
+                  "present_in_contributing": true,
+                  "subtraction_payload": false,
+                  "tag_in_spec": false
+                }
+              ],
+              "containment": "containment_unknown",
+              "extra": "integer()",
+              "reasons": [
+                "containment_unknown=[0]",
+                "whole_kind_only"
+              ],
+              "static_return": false
+            }
+          ],
+          "components": [
+            {
+              "descr": "integer()",
+              "detail": null,
+              "kind": "integer",
+              "label": "whole_kind",
+              "payload_gradual": false,
+              "present_in_contributing": true,
+              "subtraction_payload": false,
+              "tag_in_spec": false
+            }
+          ],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "containment_unknown",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "integer()",
+          "index": 0,
+          "input_approximate": true,
+          "loss_kinds": [
+            "integer_refinement_erased"
+          ],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "input_approximate",
+            "containment_unknown=[0]",
+            "whole_kind_only"
+          ],
+          "return_loss_kinds": [],
+          "return_relation": "superset",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "float()",
+            "integer()"
+          ],
+          "spec_return": "float()",
+          "status": "compared",
+          "top_only": false,
+          "union_class": "possible_input_approximate",
+          "union_class_static": "possible_input_approximate"
+        }
+      ],
+      "specs": [
+        "round(float(), precision_range()) :: float()"
+      ],
+      "status": "compared"
+    },
+    {
+      "class": "possible_domain_escape",
+      "class_static": "possible_domain_escape",
+      "clause_conflict_candidate": false,
+      "clause_conflict_candidate_static": false,
+      "file": "$ELIXIR/lib/elixir/lib/kernel.ex",
+      "inferred": [
+        "(float() or integer(), float() or integer()) -> dynamic(float() or integer())"
+      ],
+      "line": 1597,
+      "location": "$ELIXIR/lib/elixir/lib/kernel.ex:1597",
+      "mfa": "Kernel.*/2",
+      "sl002_candidate": false,
+      "sl002_candidate_static": false,
+      "slices": [
+        {
+          "applied": [
+            0
+          ],
+          "applied_return": "float() or integer()",
+          "arg_loss_kinds": [],
+          "badapply": false,
+          "class": "possible_domain_escape",
+          "class_static": "possible_domain_escape",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [
+            {
+              "class": "possible_domain_escape",
+              "class_static": "possible_domain_escape",
+              "clause": 0,
+              "components": [
+                {
+                  "descr": "float()",
+                  "detail": null,
+                  "kind": "float",
+                  "label": "whole_kind",
+                  "payload_gradual": false,
+                  "present_in_contributing": true,
+                  "subtraction_payload": false,
+                  "tag_in_spec": false
+                }
+              ],
+              "containment": "domain_escape",
+              "extra": "float()",
+              "reasons": [
+                "domain_escape=[0]",
+                "whole_kind_only"
+              ],
+              "static_return": false
+            }
+          ],
+          "components": [
+            {
+              "descr": "float()",
+              "detail": null,
+              "kind": "float",
+              "label": "whole_kind",
+              "payload_gradual": false,
+              "present_in_contributing": true,
+              "subtraction_payload": false,
+              "tag_in_spec": false
+            }
+          ],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "domain_escape",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "float()",
+          "index": 0,
+          "input_approximate": false,
+          "loss_kinds": [],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "domain_escape=[0]",
+            "whole_kind_only"
+          ],
+          "return_loss_kinds": [],
+          "return_relation": "superset",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "integer()",
+            "integer()"
+          ],
+          "spec_return": "integer()",
+          "status": "compared",
+          "top_only": false,
+          "union_class": "possible_domain_escape",
+          "union_class_static": "possible_domain_escape"
+        },
+        {
+          "applied": [
+            0
+          ],
+          "applied_return": "float() or integer()",
+          "arg_loss_kinds": [],
+          "badapply": false,
+          "class": "possible_domain_escape",
+          "class_static": "possible_domain_escape",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [
+            {
+              "class": "possible_domain_escape",
+              "class_static": "possible_domain_escape",
+              "clause": 0,
+              "components": [
+                {
+                  "descr": "integer()",
+                  "detail": null,
+                  "kind": "integer",
+                  "label": "whole_kind",
+                  "payload_gradual": false,
+                  "present_in_contributing": true,
+                  "subtraction_payload": false,
+                  "tag_in_spec": false
+                }
+              ],
+              "containment": "domain_escape",
+              "extra": "integer()",
+              "reasons": [
+                "domain_escape=[0]",
+                "whole_kind_only"
+              ],
+              "static_return": false
+            }
+          ],
+          "components": [
+            {
+              "descr": "integer()",
+              "detail": null,
+              "kind": "integer",
+              "label": "whole_kind",
+              "payload_gradual": false,
+              "present_in_contributing": true,
+              "subtraction_payload": false,
+              "tag_in_spec": false
+            }
+          ],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "domain_escape",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "integer()",
+          "index": 1,
+          "input_approximate": false,
+          "loss_kinds": [],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "domain_escape=[0]",
+            "whole_kind_only"
+          ],
+          "return_loss_kinds": [],
+          "return_relation": "superset",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "float()",
+            "float()"
+          ],
+          "spec_return": "float()",
+          "status": "compared",
+          "top_only": false,
+          "union_class": "possible_domain_escape",
+          "union_class_static": "possible_domain_escape"
+        },
+        {
+          "applied": [
+            0
+          ],
+          "applied_return": "float() or integer()",
+          "arg_loss_kinds": [],
+          "badapply": false,
+          "class": "possible_domain_escape",
+          "class_static": "possible_domain_escape",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [
+            {
+              "class": "possible_domain_escape",
+              "class_static": "possible_domain_escape",
+              "clause": 0,
+              "components": [
+                {
+                  "descr": "integer()",
+                  "detail": null,
+                  "kind": "integer",
+                  "label": "whole_kind",
+                  "payload_gradual": false,
+                  "present_in_contributing": true,
+                  "subtraction_payload": false,
+                  "tag_in_spec": false
+                }
+              ],
+              "containment": "domain_escape",
+              "extra": "integer()",
+              "reasons": [
+                "domain_escape=[0]",
+                "whole_kind_only"
+              ],
+              "static_return": false
+            }
+          ],
+          "components": [
+            {
+              "descr": "integer()",
+              "detail": null,
+              "kind": "integer",
+              "label": "whole_kind",
+              "payload_gradual": false,
+              "present_in_contributing": true,
+              "subtraction_payload": false,
+              "tag_in_spec": false
+            }
+          ],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "domain_escape",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "integer()",
+          "index": 2,
+          "input_approximate": false,
+          "loss_kinds": [],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "domain_escape=[0]",
+            "whole_kind_only"
+          ],
+          "return_loss_kinds": [],
+          "return_relation": "superset",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "integer()",
+            "float()"
+          ],
+          "spec_return": "float()",
+          "status": "compared",
+          "top_only": false,
+          "union_class": "possible_domain_escape",
+          "union_class_static": "possible_domain_escape"
+        },
+        {
+          "applied": [
+            0
+          ],
+          "applied_return": "float() or integer()",
+          "arg_loss_kinds": [],
+          "badapply": false,
+          "class": "possible_domain_escape",
+          "class_static": "possible_domain_escape",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [
+            {
+              "class": "possible_domain_escape",
+              "class_static": "possible_domain_escape",
+              "clause": 0,
+              "components": [
+                {
+                  "descr": "integer()",
+                  "detail": null,
+                  "kind": "integer",
+                  "label": "whole_kind",
+                  "payload_gradual": false,
+                  "present_in_contributing": true,
+                  "subtraction_payload": false,
+                  "tag_in_spec": false
+                }
+              ],
+              "containment": "domain_escape",
+              "extra": "integer()",
+              "reasons": [
+                "domain_escape=[0]",
+                "whole_kind_only"
+              ],
+              "static_return": false
+            }
+          ],
+          "components": [
+            {
+              "descr": "integer()",
+              "detail": null,
+              "kind": "integer",
+              "label": "whole_kind",
+              "payload_gradual": false,
+              "present_in_contributing": true,
+              "subtraction_payload": false,
+              "tag_in_spec": false
+            }
+          ],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "domain_escape",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "integer()",
+          "index": 3,
+          "input_approximate": false,
+          "loss_kinds": [],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "domain_escape=[0]",
+            "whole_kind_only"
+          ],
+          "return_loss_kinds": [],
+          "return_relation": "superset",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "float()",
+            "integer()"
+          ],
+          "spec_return": "float()",
+          "status": "compared",
+          "top_only": false,
+          "union_class": "possible_domain_escape",
+          "union_class_static": "possible_domain_escape"
+        }
+      ],
+      "specs": [
+        "integer() * integer() :: integer()",
+        "float() * float() :: float()",
+        "integer() * float() :: float()",
+        "float() * integer() :: float()"
+      ],
+      "status": "compared"
+    },
+    {
+      "class": "possible_domain_escape",
+      "class_static": "possible_domain_escape",
+      "clause_conflict_candidate": false,
+      "clause_conflict_candidate_static": false,
+      "file": "$ELIXIR/lib/elixir/lib/kernel.ex",
+      "inferred": [
+        "(float() or integer()) -> dynamic(float() or integer())"
+      ],
+      "line": 1557,
+      "location": "$ELIXIR/lib/elixir/lib/kernel.ex:1557",
+      "mfa": "Kernel.+/1",
+      "sl002_candidate": false,
+      "sl002_candidate_static": false,
+      "slices": [
+        {
+          "applied": [
+            0
+          ],
+          "applied_return": "float() or integer()",
+          "arg_loss_kinds": [],
+          "badapply": false,
+          "class": "possible_domain_escape",
+          "class_static": "possible_domain_escape",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [
+            {
+              "class": "possible_domain_escape",
+              "class_static": "possible_domain_escape",
+              "clause": 0,
+              "components": [
+                {
+                  "descr": "float()",
+                  "detail": null,
+                  "kind": "float",
+                  "label": "whole_kind",
+                  "payload_gradual": false,
+                  "present_in_contributing": true,
+                  "subtraction_payload": false,
+                  "tag_in_spec": false
+                }
+              ],
+              "containment": "domain_escape",
+              "extra": "float()",
+              "reasons": [
+                "domain_escape=[0]",
+                "whole_kind_only"
+              ],
+              "static_return": false
+            }
+          ],
+          "components": [
+            {
+              "descr": "float()",
+              "detail": null,
+              "kind": "float",
+              "label": "whole_kind",
+              "payload_gradual": false,
+              "present_in_contributing": true,
+              "subtraction_payload": false,
+              "tag_in_spec": false
+            }
+          ],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "domain_escape",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "float()",
+          "index": 0,
+          "input_approximate": false,
+          "loss_kinds": [],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "domain_escape=[0]",
+            "whole_kind_only"
+          ],
+          "return_loss_kinds": [],
+          "return_relation": "superset",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "integer()"
+          ],
+          "spec_return": "integer()",
+          "status": "compared",
+          "top_only": false,
+          "union_class": "possible_domain_escape",
+          "union_class_static": "possible_domain_escape"
+        },
+        {
+          "applied": [
+            0
+          ],
+          "applied_return": "float() or integer()",
+          "arg_loss_kinds": [],
+          "badapply": false,
+          "class": "possible_domain_escape",
+          "class_static": "possible_domain_escape",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [
+            {
+              "class": "possible_domain_escape",
+              "class_static": "possible_domain_escape",
+              "clause": 0,
+              "components": [
+                {
+                  "descr": "integer()",
+                  "detail": null,
+                  "kind": "integer",
+                  "label": "whole_kind",
+                  "payload_gradual": false,
+                  "present_in_contributing": true,
+                  "subtraction_payload": false,
+                  "tag_in_spec": false
+                }
+              ],
+              "containment": "domain_escape",
+              "extra": "integer()",
+              "reasons": [
+                "domain_escape=[0]",
+                "whole_kind_only"
+              ],
+              "static_return": false
+            }
+          ],
+          "components": [
+            {
+              "descr": "integer()",
+              "detail": null,
+              "kind": "integer",
+              "label": "whole_kind",
+              "payload_gradual": false,
+              "present_in_contributing": true,
+              "subtraction_payload": false,
+              "tag_in_spec": false
+            }
+          ],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "domain_escape",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "integer()",
+          "index": 1,
+          "input_approximate": false,
+          "loss_kinds": [],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "domain_escape=[0]",
+            "whole_kind_only"
+          ],
+          "return_loss_kinds": [],
+          "return_relation": "superset",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "float()"
+          ],
+          "spec_return": "float()",
+          "status": "compared",
+          "top_only": false,
+          "union_class": "possible_domain_escape",
+          "union_class_static": "possible_domain_escape"
+        }
+      ],
+      "specs": [
+        "+integer() :: integer()",
+        "+float() :: float()"
+      ],
+      "status": "compared"
+    },
+    {
+      "class": "possible_domain_escape",
+      "class_static": "possible_domain_escape",
+      "clause_conflict_candidate": false,
+      "clause_conflict_candidate_static": false,
+      "file": "$ELIXIR/lib/elixir/lib/kernel.ex",
+      "inferred": [
+        "(float() or integer(), float() or integer()) -> dynamic(float() or integer())"
+      ],
+      "line": 1519,
+      "location": "$ELIXIR/lib/elixir/lib/kernel.ex:1519",
+      "mfa": "Kernel.+/2",
+      "sl002_candidate": false,
+      "sl002_candidate_static": false,
+      "slices": [
+        {
+          "applied": [
+            0
+          ],
+          "applied_return": "float() or integer()",
+          "arg_loss_kinds": [],
+          "badapply": false,
+          "class": "possible_domain_escape",
+          "class_static": "possible_domain_escape",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [
+            {
+              "class": "possible_domain_escape",
+              "class_static": "possible_domain_escape",
+              "clause": 0,
+              "components": [
+                {
+                  "descr": "float()",
+                  "detail": null,
+                  "kind": "float",
+                  "label": "whole_kind",
+                  "payload_gradual": false,
+                  "present_in_contributing": true,
+                  "subtraction_payload": false,
+                  "tag_in_spec": false
+                }
+              ],
+              "containment": "domain_escape",
+              "extra": "float()",
+              "reasons": [
+                "domain_escape=[0]",
+                "whole_kind_only"
+              ],
+              "static_return": false
+            }
+          ],
+          "components": [
+            {
+              "descr": "float()",
+              "detail": null,
+              "kind": "float",
+              "label": "whole_kind",
+              "payload_gradual": false,
+              "present_in_contributing": true,
+              "subtraction_payload": false,
+              "tag_in_spec": false
+            }
+          ],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "domain_escape",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "float()",
+          "index": 0,
+          "input_approximate": false,
+          "loss_kinds": [],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "domain_escape=[0]",
+            "whole_kind_only"
+          ],
+          "return_loss_kinds": [],
+          "return_relation": "superset",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "integer()",
+            "integer()"
+          ],
+          "spec_return": "integer()",
+          "status": "compared",
+          "top_only": false,
+          "union_class": "possible_domain_escape",
+          "union_class_static": "possible_domain_escape"
+        },
+        {
+          "applied": [
+            0
+          ],
+          "applied_return": "float() or integer()",
+          "arg_loss_kinds": [],
+          "badapply": false,
+          "class": "possible_domain_escape",
+          "class_static": "possible_domain_escape",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [
+            {
+              "class": "possible_domain_escape",
+              "class_static": "possible_domain_escape",
+              "clause": 0,
+              "components": [
+                {
+                  "descr": "integer()",
+                  "detail": null,
+                  "kind": "integer",
+                  "label": "whole_kind",
+                  "payload_gradual": false,
+                  "present_in_contributing": true,
+                  "subtraction_payload": false,
+                  "tag_in_spec": false
+                }
+              ],
+              "containment": "domain_escape",
+              "extra": "integer()",
+              "reasons": [
+                "domain_escape=[0]",
+                "whole_kind_only"
+              ],
+              "static_return": false
+            }
+          ],
+          "components": [
+            {
+              "descr": "integer()",
+              "detail": null,
+              "kind": "integer",
+              "label": "whole_kind",
+              "payload_gradual": false,
+              "present_in_contributing": true,
+              "subtraction_payload": false,
+              "tag_in_spec": false
+            }
+          ],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "domain_escape",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "integer()",
+          "index": 1,
+          "input_approximate": false,
+          "loss_kinds": [],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "domain_escape=[0]",
+            "whole_kind_only"
+          ],
+          "return_loss_kinds": [],
+          "return_relation": "superset",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "float()",
+            "float()"
+          ],
+          "spec_return": "float()",
+          "status": "compared",
+          "top_only": false,
+          "union_class": "possible_domain_escape",
+          "union_class_static": "possible_domain_escape"
+        },
+        {
+          "applied": [
+            0
+          ],
+          "applied_return": "float() or integer()",
+          "arg_loss_kinds": [],
+          "badapply": false,
+          "class": "possible_domain_escape",
+          "class_static": "possible_domain_escape",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [
+            {
+              "class": "possible_domain_escape",
+              "class_static": "possible_domain_escape",
+              "clause": 0,
+              "components": [
+                {
+                  "descr": "integer()",
+                  "detail": null,
+                  "kind": "integer",
+                  "label": "whole_kind",
+                  "payload_gradual": false,
+                  "present_in_contributing": true,
+                  "subtraction_payload": false,
+                  "tag_in_spec": false
+                }
+              ],
+              "containment": "domain_escape",
+              "extra": "integer()",
+              "reasons": [
+                "domain_escape=[0]",
+                "whole_kind_only"
+              ],
+              "static_return": false
+            }
+          ],
+          "components": [
+            {
+              "descr": "integer()",
+              "detail": null,
+              "kind": "integer",
+              "label": "whole_kind",
+              "payload_gradual": false,
+              "present_in_contributing": true,
+              "subtraction_payload": false,
+              "tag_in_spec": false
+            }
+          ],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "domain_escape",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "integer()",
+          "index": 2,
+          "input_approximate": false,
+          "loss_kinds": [],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "domain_escape=[0]",
+            "whole_kind_only"
+          ],
+          "return_loss_kinds": [],
+          "return_relation": "superset",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "integer()",
+            "float()"
+          ],
+          "spec_return": "float()",
+          "status": "compared",
+          "top_only": false,
+          "union_class": "possible_domain_escape",
+          "union_class_static": "possible_domain_escape"
+        },
+        {
+          "applied": [
+            0
+          ],
+          "applied_return": "float() or integer()",
+          "arg_loss_kinds": [],
+          "badapply": false,
+          "class": "possible_domain_escape",
+          "class_static": "possible_domain_escape",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [
+            {
+              "class": "possible_domain_escape",
+              "class_static": "possible_domain_escape",
+              "clause": 0,
+              "components": [
+                {
+                  "descr": "integer()",
+                  "detail": null,
+                  "kind": "integer",
+                  "label": "whole_kind",
+                  "payload_gradual": false,
+                  "present_in_contributing": true,
+                  "subtraction_payload": false,
+                  "tag_in_spec": false
+                }
+              ],
+              "containment": "domain_escape",
+              "extra": "integer()",
+              "reasons": [
+                "domain_escape=[0]",
+                "whole_kind_only"
+              ],
+              "static_return": false
+            }
+          ],
+          "components": [
+            {
+              "descr": "integer()",
+              "detail": null,
+              "kind": "integer",
+              "label": "whole_kind",
+              "payload_gradual": false,
+              "present_in_contributing": true,
+              "subtraction_payload": false,
+              "tag_in_spec": false
+            }
+          ],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "domain_escape",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "integer()",
+          "index": 3,
+          "input_approximate": false,
+          "loss_kinds": [],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "domain_escape=[0]",
+            "whole_kind_only"
+          ],
+          "return_loss_kinds": [],
+          "return_relation": "superset",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "float()",
+            "integer()"
+          ],
+          "spec_return": "float()",
+          "status": "compared",
+          "top_only": false,
+          "union_class": "possible_domain_escape",
+          "union_class_static": "possible_domain_escape"
+        }
+      ],
+      "specs": [
+        "integer() + integer() :: integer()",
+        "float() + float() :: float()",
+        "integer() + float() :: float()",
+        "float() + integer() :: float()"
+      ],
+      "status": "compared"
+    },
+    {
+      "class": "possible_domain_escape",
+      "class_static": "possible_domain_escape",
+      "clause_conflict_candidate": false,
+      "clause_conflict_candidate_static": false,
+      "file": "$ELIXIR/lib/elixir/lib/kernel.ex",
+      "inferred": [
+        "(float() or integer()) -> dynamic(float() or integer())"
+      ],
+      "line": 1577,
+      "location": "$ELIXIR/lib/elixir/lib/kernel.ex:1577",
+      "mfa": "Kernel.-/1",
+      "sl002_candidate": false,
+      "sl002_candidate_static": false,
+      "slices": [
+        {
+          "applied": [
+            0
+          ],
+          "applied_return": "float() or integer()",
+          "arg_loss_kinds": [
+            "integer_refinement_erased"
+          ],
+          "badapply": false,
+          "class": "possible_domain_escape",
+          "class_static": "possible_domain_escape",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [
+            {
+              "class": "possible_domain_escape",
+              "class_static": "possible_domain_escape",
+              "clause": 0,
+              "components": [
+                {
+                  "descr": "float()",
+                  "detail": null,
+                  "kind": "float",
+                  "label": "whole_kind",
+                  "payload_gradual": false,
+                  "present_in_contributing": true,
+                  "subtraction_payload": false,
+                  "tag_in_spec": false
+                }
+              ],
+              "containment": "domain_escape",
+              "extra": "float()",
+              "reasons": [
+                "domain_escape=[0]",
+                "whole_kind_only"
+              ],
+              "static_return": false
+            }
+          ],
+          "components": [
+            {
+              "descr": "float()",
+              "detail": null,
+              "kind": "float",
+              "label": "whole_kind",
+              "payload_gradual": false,
+              "present_in_contributing": true,
+              "subtraction_payload": false,
+              "tag_in_spec": false
+            }
+          ],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "domain_escape",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "float()",
+          "index": 0,
+          "input_approximate": true,
+          "loss_kinds": [
+            "integer_refinement_erased"
+          ],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "input_approximate",
+            "domain_escape=[0]",
+            "whole_kind_only",
+            "return_inexact"
+          ],
+          "return_loss_kinds": [
+            "integer_refinement_erased"
+          ],
+          "return_relation": "superset",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "integer()"
+          ],
+          "spec_return": "integer()",
+          "status": "compared",
+          "top_only": false,
+          "union_class": "possible_domain_escape",
+          "union_class_static": "possible_domain_escape"
+        },
+        {
+          "applied": [
+            0
+          ],
+          "applied_return": "float() or integer()",
+          "arg_loss_kinds": [
+            "integer_refinement_erased"
+          ],
+          "badapply": false,
+          "class": "possible_domain_escape",
+          "class_static": "possible_domain_escape",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [
+            {
+              "class": "possible_domain_escape",
+              "class_static": "possible_domain_escape",
+              "clause": 0,
+              "components": [
+                {
+                  "descr": "float()",
+                  "detail": null,
+                  "kind": "float",
+                  "label": "whole_kind",
+                  "payload_gradual": false,
+                  "present_in_contributing": true,
+                  "subtraction_payload": false,
+                  "tag_in_spec": false
+                }
+              ],
+              "containment": "domain_escape",
+              "extra": "float()",
+              "reasons": [
+                "domain_escape=[0]",
+                "whole_kind_only"
+              ],
+              "static_return": false
+            }
+          ],
+          "components": [
+            {
+              "descr": "float()",
+              "detail": null,
+              "kind": "float",
+              "label": "whole_kind",
+              "payload_gradual": false,
+              "present_in_contributing": true,
+              "subtraction_payload": false,
+              "tag_in_spec": false
+            }
+          ],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "domain_escape",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "float()",
+          "index": 1,
+          "input_approximate": true,
+          "loss_kinds": [
+            "integer_refinement_erased"
+          ],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "input_approximate",
+            "domain_escape=[0]",
+            "whole_kind_only",
+            "return_inexact"
+          ],
+          "return_loss_kinds": [
+            "integer_refinement_erased"
+          ],
+          "return_relation": "superset",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "integer()"
+          ],
+          "spec_return": "integer()",
+          "status": "compared",
+          "top_only": false,
+          "union_class": "possible_domain_escape",
+          "union_class_static": "possible_domain_escape"
+        },
+        {
+          "applied": [
+            0
+          ],
+          "applied_return": "float() or integer()",
+          "arg_loss_kinds": [
+            "integer_refinement_erased"
+          ],
+          "badapply": false,
+          "class": "possible_domain_escape",
+          "class_static": "possible_domain_escape",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [
+            {
+              "class": "possible_domain_escape",
+              "class_static": "possible_domain_escape",
+              "clause": 0,
+              "components": [
+                {
+                  "descr": "float()",
+                  "detail": null,
+                  "kind": "float",
+                  "label": "whole_kind",
+                  "payload_gradual": false,
+                  "present_in_contributing": true,
+                  "subtraction_payload": false,
+                  "tag_in_spec": false
+                }
+              ],
+              "containment": "domain_escape",
+              "extra": "float()",
+              "reasons": [
+                "domain_escape=[0]",
+                "whole_kind_only"
+              ],
+              "static_return": false
+            }
+          ],
+          "components": [
+            {
+              "descr": "float()",
+              "detail": null,
+              "kind": "float",
+              "label": "whole_kind",
+              "payload_gradual": false,
+              "present_in_contributing": true,
+              "subtraction_payload": false,
+              "tag_in_spec": false
+            }
+          ],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "domain_escape",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "float()",
+          "index": 2,
+          "input_approximate": true,
+          "loss_kinds": [
+            "integer_refinement_erased"
+          ],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "input_approximate",
+            "domain_escape=[0]",
+            "whole_kind_only",
+            "return_inexact"
+          ],
+          "return_loss_kinds": [
+            "integer_refinement_erased"
+          ],
+          "return_relation": "superset",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "integer()"
+          ],
+          "spec_return": "integer()",
+          "status": "compared",
+          "top_only": false,
+          "union_class": "possible_domain_escape",
+          "union_class_static": "possible_domain_escape"
+        },
+        {
+          "applied": [
+            0
+          ],
+          "applied_return": "float() or integer()",
+          "arg_loss_kinds": [],
+          "badapply": false,
+          "class": "possible_domain_escape",
+          "class_static": "possible_domain_escape",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [
+            {
+              "class": "possible_domain_escape",
+              "class_static": "possible_domain_escape",
+              "clause": 0,
+              "components": [
+                {
+                  "descr": "integer()",
+                  "detail": null,
+                  "kind": "integer",
+                  "label": "whole_kind",
+                  "payload_gradual": false,
+                  "present_in_contributing": true,
+                  "subtraction_payload": false,
+                  "tag_in_spec": false
+                }
+              ],
+              "containment": "domain_escape",
+              "extra": "integer()",
+              "reasons": [
+                "domain_escape=[0]",
+                "whole_kind_only"
+              ],
+              "static_return": false
+            }
+          ],
+          "components": [
+            {
+              "descr": "integer()",
+              "detail": null,
+              "kind": "integer",
+              "label": "whole_kind",
+              "payload_gradual": false,
+              "present_in_contributing": true,
+              "subtraction_payload": false,
+              "tag_in_spec": false
+            }
+          ],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "domain_escape",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "integer()",
+          "index": 3,
+          "input_approximate": false,
+          "loss_kinds": [],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "domain_escape=[0]",
+            "whole_kind_only"
+          ],
+          "return_loss_kinds": [],
+          "return_relation": "superset",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "float()"
+          ],
+          "spec_return": "float()",
+          "status": "compared",
+          "top_only": false,
+          "union_class": "possible_domain_escape",
+          "union_class_static": "possible_domain_escape"
+        }
+      ],
+      "specs": [
+        "-0 :: 0",
+        "-pos_integer() :: neg_integer()",
+        "-neg_integer() :: pos_integer()",
+        "-float() :: float()"
+      ],
+      "status": "compared"
+    },
+    {
+      "class": "possible_domain_escape",
+      "class_static": "possible_domain_escape",
+      "clause_conflict_candidate": false,
+      "clause_conflict_candidate_static": false,
+      "file": "$ELIXIR/lib/elixir/lib/kernel.ex",
+      "inferred": [
+        "(float() or integer(), float() or integer()) -> dynamic(float() or integer())"
+      ],
+      "line": 1539,
+      "location": "$ELIXIR/lib/elixir/lib/kernel.ex:1539",
+      "mfa": "Kernel.-/2",
+      "sl002_candidate": false,
+      "sl002_candidate_static": false,
+      "slices": [
+        {
+          "applied": [
+            0
+          ],
+          "applied_return": "float() or integer()",
+          "arg_loss_kinds": [],
+          "badapply": false,
+          "class": "possible_domain_escape",
+          "class_static": "possible_domain_escape",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [
+            {
+              "class": "possible_domain_escape",
+              "class_static": "possible_domain_escape",
+              "clause": 0,
+              "components": [
+                {
+                  "descr": "float()",
+                  "detail": null,
+                  "kind": "float",
+                  "label": "whole_kind",
+                  "payload_gradual": false,
+                  "present_in_contributing": true,
+                  "subtraction_payload": false,
+                  "tag_in_spec": false
+                }
+              ],
+              "containment": "domain_escape",
+              "extra": "float()",
+              "reasons": [
+                "domain_escape=[0]",
+                "whole_kind_only"
+              ],
+              "static_return": false
+            }
+          ],
+          "components": [
+            {
+              "descr": "float()",
+              "detail": null,
+              "kind": "float",
+              "label": "whole_kind",
+              "payload_gradual": false,
+              "present_in_contributing": true,
+              "subtraction_payload": false,
+              "tag_in_spec": false
+            }
+          ],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "domain_escape",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "float()",
+          "index": 0,
+          "input_approximate": false,
+          "loss_kinds": [],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "domain_escape=[0]",
+            "whole_kind_only"
+          ],
+          "return_loss_kinds": [],
+          "return_relation": "superset",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "integer()",
+            "integer()"
+          ],
+          "spec_return": "integer()",
+          "status": "compared",
+          "top_only": false,
+          "union_class": "possible_domain_escape",
+          "union_class_static": "possible_domain_escape"
+        },
+        {
+          "applied": [
+            0
+          ],
+          "applied_return": "float() or integer()",
+          "arg_loss_kinds": [],
+          "badapply": false,
+          "class": "possible_domain_escape",
+          "class_static": "possible_domain_escape",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [
+            {
+              "class": "possible_domain_escape",
+              "class_static": "possible_domain_escape",
+              "clause": 0,
+              "components": [
+                {
+                  "descr": "integer()",
+                  "detail": null,
+                  "kind": "integer",
+                  "label": "whole_kind",
+                  "payload_gradual": false,
+                  "present_in_contributing": true,
+                  "subtraction_payload": false,
+                  "tag_in_spec": false
+                }
+              ],
+              "containment": "domain_escape",
+              "extra": "integer()",
+              "reasons": [
+                "domain_escape=[0]",
+                "whole_kind_only"
+              ],
+              "static_return": false
+            }
+          ],
+          "components": [
+            {
+              "descr": "integer()",
+              "detail": null,
+              "kind": "integer",
+              "label": "whole_kind",
+              "payload_gradual": false,
+              "present_in_contributing": true,
+              "subtraction_payload": false,
+              "tag_in_spec": false
+            }
+          ],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "domain_escape",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "integer()",
+          "index": 1,
+          "input_approximate": false,
+          "loss_kinds": [],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "domain_escape=[0]",
+            "whole_kind_only"
+          ],
+          "return_loss_kinds": [],
+          "return_relation": "superset",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "float()",
+            "float()"
+          ],
+          "spec_return": "float()",
+          "status": "compared",
+          "top_only": false,
+          "union_class": "possible_domain_escape",
+          "union_class_static": "possible_domain_escape"
+        },
+        {
+          "applied": [
+            0
+          ],
+          "applied_return": "float() or integer()",
+          "arg_loss_kinds": [],
+          "badapply": false,
+          "class": "possible_domain_escape",
+          "class_static": "possible_domain_escape",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [
+            {
+              "class": "possible_domain_escape",
+              "class_static": "possible_domain_escape",
+              "clause": 0,
+              "components": [
+                {
+                  "descr": "integer()",
+                  "detail": null,
+                  "kind": "integer",
+                  "label": "whole_kind",
+                  "payload_gradual": false,
+                  "present_in_contributing": true,
+                  "subtraction_payload": false,
+                  "tag_in_spec": false
+                }
+              ],
+              "containment": "domain_escape",
+              "extra": "integer()",
+              "reasons": [
+                "domain_escape=[0]",
+                "whole_kind_only"
+              ],
+              "static_return": false
+            }
+          ],
+          "components": [
+            {
+              "descr": "integer()",
+              "detail": null,
+              "kind": "integer",
+              "label": "whole_kind",
+              "payload_gradual": false,
+              "present_in_contributing": true,
+              "subtraction_payload": false,
+              "tag_in_spec": false
+            }
+          ],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "domain_escape",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "integer()",
+          "index": 2,
+          "input_approximate": false,
+          "loss_kinds": [],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "domain_escape=[0]",
+            "whole_kind_only"
+          ],
+          "return_loss_kinds": [],
+          "return_relation": "superset",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "integer()",
+            "float()"
+          ],
+          "spec_return": "float()",
+          "status": "compared",
+          "top_only": false,
+          "union_class": "possible_domain_escape",
+          "union_class_static": "possible_domain_escape"
+        },
+        {
+          "applied": [
+            0
+          ],
+          "applied_return": "float() or integer()",
+          "arg_loss_kinds": [],
+          "badapply": false,
+          "class": "possible_domain_escape",
+          "class_static": "possible_domain_escape",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [
+            {
+              "class": "possible_domain_escape",
+              "class_static": "possible_domain_escape",
+              "clause": 0,
+              "components": [
+                {
+                  "descr": "integer()",
+                  "detail": null,
+                  "kind": "integer",
+                  "label": "whole_kind",
+                  "payload_gradual": false,
+                  "present_in_contributing": true,
+                  "subtraction_payload": false,
+                  "tag_in_spec": false
+                }
+              ],
+              "containment": "domain_escape",
+              "extra": "integer()",
+              "reasons": [
+                "domain_escape=[0]",
+                "whole_kind_only"
+              ],
+              "static_return": false
+            }
+          ],
+          "components": [
+            {
+              "descr": "integer()",
+              "detail": null,
+              "kind": "integer",
+              "label": "whole_kind",
+              "payload_gradual": false,
+              "present_in_contributing": true,
+              "subtraction_payload": false,
+              "tag_in_spec": false
+            }
+          ],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "domain_escape",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "integer()",
+          "index": 3,
+          "input_approximate": false,
+          "loss_kinds": [],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "domain_escape=[0]",
+            "whole_kind_only"
+          ],
+          "return_loss_kinds": [],
+          "return_relation": "superset",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "float()",
+            "integer()"
+          ],
+          "spec_return": "float()",
+          "status": "compared",
+          "top_only": false,
+          "union_class": "possible_domain_escape",
+          "union_class_static": "possible_domain_escape"
+        }
+      ],
+      "specs": [
+        "integer() - integer() :: integer()",
+        "float() - float() :: float()",
+        "integer() - float() :: float()",
+        "float() - integer() :: float()"
+      ],
+      "status": "compared"
+    },
+    {
+      "class": "possible_domain_escape",
+      "class_static": "possible_domain_escape",
+      "clause_conflict_candidate": false,
+      "clause_conflict_candidate_static": false,
+      "file": "$ELIXIR/lib/elixir/lib/kernel.ex",
+      "inferred": [
+        "(boolean()) -> dynamic(boolean())"
+      ],
+      "line": 1735,
+      "location": "$ELIXIR/lib/elixir/lib/kernel.ex:1735",
+      "mfa": "Kernel.not/1",
+      "sl002_candidate": false,
+      "sl002_candidate_static": false,
+      "slices": [
+        {
+          "applied": [
+            0
+          ],
+          "applied_return": "boolean()",
+          "arg_loss_kinds": [],
+          "badapply": false,
+          "class": "possible_domain_escape",
+          "class_static": "possible_domain_escape",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [
+            {
+              "class": "possible_domain_escape",
+              "class_static": "possible_domain_escape",
+              "clause": 0,
+              "components": [
+                {
+                  "descr": "true",
+                  "detail": "atoms",
+                  "kind": "atom",
+                  "label": "structured",
+                  "payload_gradual": true,
+                  "present_in_contributing": true,
+                  "subtraction_payload": false,
+                  "tag_in_spec": false
+                }
+              ],
+              "containment": "domain_escape",
+              "extra": "true",
+              "reasons": [
+                "domain_escape=[0]",
+                "payload_gradual=1"
+              ],
+              "static_return": false
+            }
+          ],
+          "components": [
+            {
+              "descr": "true",
+              "detail": "atoms",
+              "kind": "atom",
+              "label": "structured",
+              "payload_gradual": true,
+              "present_in_contributing": true,
+              "subtraction_payload": false,
+              "tag_in_spec": false
+            }
+          ],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "domain_escape",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "true",
+          "index": 0,
+          "input_approximate": false,
+          "loss_kinds": [],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "domain_escape=[0]",
+            "payload_gradual=1"
+          ],
+          "return_loss_kinds": [],
+          "return_relation": "superset",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "true"
+          ],
+          "spec_return": "false",
+          "status": "compared",
+          "top_only": false,
+          "union_class": "possible_domain_escape",
+          "union_class_static": "possible_domain_escape"
+        },
+        {
+          "applied": [
+            0
+          ],
+          "applied_return": "boolean()",
+          "arg_loss_kinds": [],
+          "badapply": false,
+          "class": "possible_domain_escape",
+          "class_static": "possible_domain_escape",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [
+            {
+              "class": "possible_domain_escape",
+              "class_static": "possible_domain_escape",
+              "clause": 0,
+              "components": [
+                {
+                  "descr": "false",
+                  "detail": "atoms",
+                  "kind": "atom",
+                  "label": "structured",
+                  "payload_gradual": true,
+                  "present_in_contributing": true,
+                  "subtraction_payload": false,
+                  "tag_in_spec": false
+                }
+              ],
+              "containment": "domain_escape",
+              "extra": "false",
+              "reasons": [
+                "domain_escape=[0]",
+                "payload_gradual=1"
+              ],
+              "static_return": false
+            }
+          ],
+          "components": [
+            {
+              "descr": "false",
+              "detail": "atoms",
+              "kind": "atom",
+              "label": "structured",
+              "payload_gradual": true,
+              "present_in_contributing": true,
+              "subtraction_payload": false,
+              "tag_in_spec": false
+            }
+          ],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "domain_escape",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "false",
+          "index": 1,
+          "input_approximate": false,
+          "loss_kinds": [],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "domain_escape=[0]",
+            "payload_gradual=1"
+          ],
+          "return_loss_kinds": [],
+          "return_relation": "superset",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "false"
+          ],
+          "spec_return": "true",
+          "status": "compared",
+          "top_only": false,
+          "union_class": "possible_domain_escape",
+          "union_class_static": "possible_domain_escape"
+        }
+      ],
+      "specs": [
+        "not true :: false",
+        "not false :: true"
+      ],
+      "status": "compared"
+    },
+    {
+      "class": "possible_domain_escape",
+      "class_static": "possible_domain_escape",
+      "clause_conflict_candidate": false,
+      "clause_conflict_candidate_static": false,
+      "file": "$ELIXIR/lib/elixir/lib/kernel.ex",
+      "inferred": [
+        "(:infinity) -> :infinity",
+        "(integer()) -> dynamic(integer())",
+        "(%{..., __struct__: Duration}) -> dynamic(float() or integer())",
+        "(empty_list() or non_empty_list(term(), term())) -> dynamic()"
+      ],
+      "line": 6411,
+      "location": "$ELIXIR/lib/elixir/lib/kernel.ex:6411",
+      "mfa": "Kernel.to_timeout/1",
+      "sl002_candidate": false,
+      "sl002_candidate_static": false,
+      "slices": [
+        {
+          "applied": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "applied_return": "term()",
+          "arg_loss_kinds": [
+            "integer_refinement_erased"
+          ],
+          "badapply": false,
+          "class": "possible_domain_escape",
+          "class_static": "possible_domain_escape",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [
+            {
+              "class": "none",
+              "class_static": "none",
+              "clause": 0,
+              "components": [],
+              "containment": "contained",
+              "extra": "none()",
+              "reasons": [
+                "no_extra"
+              ],
+              "static_return": true
+            },
+            {
+              "class": "none",
+              "class_static": "none",
+              "clause": 1,
+              "components": [],
+              "containment": "containment_unknown",
+              "extra": "none()",
+              "reasons": [
+                "containment_unknown=[1]",
+                "no_extra"
+              ],
+              "static_return": false
+            },
+            {
+              "class": "possible_domain_escape",
+              "class_static": "possible_domain_escape",
+              "clause": 2,
+              "components": [
+                {
+                  "descr": "float()",
+                  "detail": null,
+                  "kind": "float",
+                  "label": "whole_kind",
+                  "payload_gradual": false,
+                  "present_in_contributing": true,
+                  "subtraction_payload": false,
+                  "tag_in_spec": false
+                }
+              ],
+              "containment": "domain_escape",
+              "extra": "float()",
+              "reasons": [
+                "domain_escape=[2]",
+                "whole_kind_only"
+              ],
+              "static_return": false
+            },
+            {
+              "class": "unknown",
+              "class_static": "unknown",
+              "clause": 3,
+              "components": [],
+              "containment": "domain_escape",
+              "extra": "not (:infinity or integer())",
+              "reasons": [
+                "domain_escape=[3]",
+                "top_only"
+              ],
+              "static_return": false
+            }
+          ],
+          "components": [],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "contained",
+              "static_return": true
+            },
+            {
+              "clause": 1,
+              "containment": "containment_unknown",
+              "static_return": false
+            },
+            {
+              "clause": 2,
+              "containment": "domain_escape",
+              "static_return": false
+            },
+            {
+              "clause": 3,
+              "containment": "domain_escape",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "not (:infinity or integer())",
+          "index": 0,
+          "input_approximate": true,
+          "loss_kinds": [
+            "integer_refinement_erased"
+          ],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "top_only",
+            "return_inexact"
+          ],
+          "return_loss_kinds": [
+            "integer_refinement_erased"
+          ],
+          "return_relation": "superset",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            ":infinity or integer() or\n  list({:day or :hour or :millisecond or :minute or :second or :week, integer()}) or %Duration{\n  year: integer(),\n  month: integer(),\n  week: integer(),\n  day: integer(),\n  hour: integer(),\n  minute: integer(),\n  second: integer(),\n  microsecond: {integer(), integer()}\n}"
+          ],
+          "spec_return": ":infinity or integer()",
+          "status": "compared",
+          "top_only": true,
+          "union_class": "unknown",
+          "union_class_static": "unknown"
+        }
+      ],
+      "specs": [
+        "to_timeout([{unit, non_neg_integer()}] | timeout() | Duration.t()) :: timeout()\nwhen unit: :week | :day | :hour | :minute | :second | :millisecond"
+      ],
+      "status": "compared"
+    },
+    {
+      "class": "possible_input_approximate",
+      "class_static": "possible_input_approximate",
+      "clause_conflict_candidate": false,
+      "clause_conflict_candidate_static": false,
+      "file": "$ELIXIR/lib/elixir/lib/macro.ex",
+      "inferred": [
+        "(integer(), atom()) -> dynamic(list(term()))"
+      ],
+      "line": 409,
+      "location": "$ELIXIR/lib/elixir/lib/macro.ex:409",
+      "mfa": "Macro.generate_arguments/2",
+      "sl002_candidate": false,
+      "sl002_candidate_static": false,
+      "slices": [
+        {
+          "applied": [
+            0
+          ],
+          "applied_return": "list(term())",
+          "arg_loss_kinds": [
+            "integer_refinement_erased"
+          ],
+          "badapply": false,
+          "class": "possible_input_approximate",
+          "class_static": "possible_input_approximate",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [
+            {
+              "class": "possible_input_approximate",
+              "class_static": "possible_input_approximate",
+              "clause": 0,
+              "components": [
+                {
+                  "descr": "non_empty_list(term())",
+                  "detail": "list",
+                  "kind": "list",
+                  "label": "whole_kind",
+                  "payload_gradual": false,
+                  "present_in_contributing": true,
+                  "subtraction_payload": false,
+                  "tag_in_spec": false
+                }
+              ],
+              "containment": "containment_unknown",
+              "extra": "non_empty_list(term())",
+              "reasons": [
+                "containment_unknown=[0]",
+                "whole_kind_only"
+              ],
+              "static_return": false
+            }
+          ],
+          "components": [
+            {
+              "descr": "non_empty_list(term())",
+              "detail": "list",
+              "kind": "list",
+              "label": "whole_kind",
+              "payload_gradual": false,
+              "present_in_contributing": true,
+              "subtraction_payload": false,
+              "tag_in_spec": false
+            }
+          ],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "containment_unknown",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "non_empty_list(term())",
+          "index": 0,
+          "input_approximate": true,
+          "loss_kinds": [
+            "integer_refinement_erased"
+          ],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "input_approximate",
+            "containment_unknown=[0]",
+            "whole_kind_only"
+          ],
+          "return_loss_kinds": [],
+          "return_relation": "superset",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "integer()",
+            "atom()"
+          ],
+          "spec_return": "empty_list()",
+          "status": "compared",
+          "top_only": false,
+          "union_class": "possible_input_approximate",
+          "union_class_static": "possible_input_approximate"
+        },
+        {
+          "applied": [
+            0
+          ],
+          "applied_return": "list(term())",
+          "arg_loss_kinds": [
+            "integer_refinement_erased"
+          ],
+          "badapply": false,
+          "class": "unknown",
+          "class_static": "unknown",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [
+            {
+              "class": "unknown",
+              "class_static": "unknown",
+              "clause": 0,
+              "components": [
+                {
+                  "descr": "list(term()) and not non_empty_list({atom(), empty_list(), atom()})",
+                  "detail": "negation",
+                  "kind": "list",
+                  "label": "unknown",
+                  "payload_gradual": false,
+                  "present_in_contributing": false,
+                  "subtraction_payload": false,
+                  "tag_in_spec": false
+                }
+              ],
+              "containment": "containment_unknown",
+              "extra": "list(term()) and not non_empty_list({atom(), empty_list(), atom()})",
+              "reasons": [
+                "containment_unknown=[0]",
+                "unknown_components=1",
+                "no_counted_component"
+              ],
+              "static_return": false
+            }
+          ],
+          "components": [
+            {
+              "descr": "list(term()) and not non_empty_list({atom(), empty_list(), atom()})",
+              "detail": "negation",
+              "kind": "list",
+              "label": "unknown",
+              "payload_gradual": false,
+              "present_in_contributing": false,
+              "subtraction_payload": false,
+              "tag_in_spec": false
+            }
+          ],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "containment_unknown",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "list(term()) and not non_empty_list({atom(), empty_list(), atom()})",
+          "index": 1,
+          "input_approximate": true,
+          "loss_kinds": [
+            "integer_refinement_erased",
+            "type_variable_correlation"
+          ],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "input_approximate",
+            "containment_unknown=[0]",
+            "unknown_components=1",
+            "no_counted_component",
+            "return_inexact"
+          ],
+          "return_loss_kinds": [
+            "type_variable_correlation"
+          ],
+          "return_relation": "superset",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "integer()",
+            "atom()"
+          ],
+          "spec_return": "non_empty_list({atom(), empty_list(), atom()})",
+          "status": "compared",
+          "top_only": false,
+          "union_class": "unknown",
+          "union_class_static": "unknown"
+        }
+      ],
+      "specs": [
+        "generate_arguments(0, context :: atom()) :: []",
+        "generate_arguments(pos_integer(), context) :: [{atom(), [], context}, ...] when context: atom()"
+      ],
+      "status": "compared"
+    },
+    {
+      "class": "possible_input_approximate",
+      "class_static": "possible_input_approximate",
+      "clause_conflict_candidate": false,
+      "clause_conflict_candidate_static": false,
+      "file": "$ELIXIR/lib/elixir/lib/macro.ex",
+      "inferred": [
+        "(integer(), atom()) -> dynamic(list(term()))"
+      ],
+      "line": 523,
+      "location": "$ELIXIR/lib/elixir/lib/macro.ex:523",
+      "mfa": "Macro.generate_unique_arguments/2",
+      "sl002_candidate": false,
+      "sl002_candidate_static": false,
+      "slices": [
+        {
+          "applied": [
+            0
+          ],
+          "applied_return": "list(term())",
+          "arg_loss_kinds": [
+            "integer_refinement_erased"
+          ],
+          "badapply": false,
+          "class": "possible_input_approximate",
+          "class_static": "possible_input_approximate",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [
+            {
+              "class": "possible_input_approximate",
+              "class_static": "possible_input_approximate",
+              "clause": 0,
+              "components": [
+                {
+                  "descr": "non_empty_list(term())",
+                  "detail": "list",
+                  "kind": "list",
+                  "label": "whole_kind",
+                  "payload_gradual": false,
+                  "present_in_contributing": true,
+                  "subtraction_payload": false,
+                  "tag_in_spec": false
+                }
+              ],
+              "containment": "containment_unknown",
+              "extra": "non_empty_list(term())",
+              "reasons": [
+                "containment_unknown=[0]",
+                "whole_kind_only"
+              ],
+              "static_return": false
+            }
+          ],
+          "components": [
+            {
+              "descr": "non_empty_list(term())",
+              "detail": "list",
+              "kind": "list",
+              "label": "whole_kind",
+              "payload_gradual": false,
+              "present_in_contributing": true,
+              "subtraction_payload": false,
+              "tag_in_spec": false
+            }
+          ],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "containment_unknown",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "non_empty_list(term())",
+          "index": 0,
+          "input_approximate": true,
+          "loss_kinds": [
+            "integer_refinement_erased"
+          ],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "input_approximate",
+            "containment_unknown=[0]",
+            "whole_kind_only"
+          ],
+          "return_loss_kinds": [],
+          "return_relation": "superset",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "integer()",
+            "atom()"
+          ],
+          "spec_return": "empty_list()",
+          "status": "compared",
+          "top_only": false,
+          "union_class": "possible_input_approximate",
+          "union_class_static": "possible_input_approximate"
+        },
+        {
+          "applied": [
+            0
+          ],
+          "applied_return": "list(term())",
+          "arg_loss_kinds": [
+            "integer_refinement_erased"
+          ],
+          "badapply": false,
+          "class": "unknown",
+          "class_static": "unknown",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [
+            {
+              "class": "unknown",
+              "class_static": "unknown",
+              "clause": 0,
+              "components": [
+                {
+                  "descr": "list(term()) and not non_empty_list({atom(), list({atom(), term()}), atom()})",
+                  "detail": "negation",
+                  "kind": "list",
+                  "label": "unknown",
+                  "payload_gradual": false,
+                  "present_in_contributing": false,
+                  "subtraction_payload": false,
+                  "tag_in_spec": false
+                }
+              ],
+              "containment": "containment_unknown",
+              "extra": "list(term()) and not non_empty_list({atom(), list({atom(), term()}), atom()})",
+              "reasons": [
+                "containment_unknown=[0]",
+                "unknown_components=1",
+                "no_counted_component"
+              ],
+              "static_return": false
+            }
+          ],
+          "components": [
+            {
+              "descr": "list(term()) and not non_empty_list({atom(), list({atom(), term()}), atom()})",
+              "detail": "negation",
+              "kind": "list",
+              "label": "unknown",
+              "payload_gradual": false,
+              "present_in_contributing": false,
+              "subtraction_payload": false,
+              "tag_in_spec": false
+            }
+          ],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "containment_unknown",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "list(term()) and not non_empty_list({atom(), list({atom(), term()}), atom()})",
+          "index": 1,
+          "input_approximate": true,
+          "loss_kinds": [
+            "integer_refinement_erased",
+            "type_variable_correlation"
+          ],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "input_approximate",
+            "containment_unknown=[0]",
+            "unknown_components=1",
+            "no_counted_component",
+            "return_inexact"
+          ],
+          "return_loss_kinds": [
+            "type_variable_correlation"
+          ],
+          "return_relation": "superset",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "integer()",
+            "atom()"
+          ],
+          "spec_return": "non_empty_list({atom(), list({atom(), term()}), atom()})",
+          "status": "compared",
+          "top_only": false,
+          "union_class": "unknown",
+          "union_class_static": "unknown"
+        }
+      ],
+      "specs": [
+        "generate_unique_arguments(0, context :: atom()) :: []",
+        "generate_unique_arguments(pos_integer(), context) :: [{atom(), metadata(), context}, ...]\nwhen context: atom()"
+      ],
+      "status": "compared"
+    },
+    {
+      "class": "possible_domain_escape",
+      "class_static": "possible_domain_escape",
+      "clause_conflict_candidate": false,
+      "clause_conflict_candidate_static": false,
+      "file": "$ELIXIR/lib/elixir/lib/string.ex",
+      "inferred": [
+        "(binary(), binary()) -> dynamic(float() or integer())",
+        "(term(), empty_list()) -> integer()",
+        "(binary(), %Regex{}) -> dynamic(integer())",
+        "(term(), not empty_list()) -> dynamic(integer())"
+      ],
+      "line": 765,
+      "location": "$ELIXIR/lib/elixir/lib/string.ex:765",
+      "mfa": "String.count/2",
+      "sl002_candidate": false,
+      "sl002_candidate_static": false,
+      "slices": [
+        {
+          "applied": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "applied_return": "float() or integer()",
+          "arg_loss_kinds": [
+            "opaque_boundary",
+            "sized_binary_erased"
+          ],
+          "badapply": false,
+          "class": "possible_domain_escape",
+          "class_static": "possible_domain_escape",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [
+            {
+              "class": "whole_kind_possible",
+              "class_static": "whole_kind_possible",
+              "clause": 0,
+              "components": [
+                {
+                  "descr": "float()",
+                  "detail": null,
+                  "kind": "float",
+                  "label": "whole_kind",
+                  "payload_gradual": false,
+                  "present_in_contributing": true,
+                  "subtraction_payload": false,
+                  "tag_in_spec": false
+                }
+              ],
+              "containment": "contained",
+              "extra": "float()",
+              "reasons": [],
+              "static_return": false
+            },
+            {
+              "class": "none",
+              "class_static": "none",
+              "clause": 1,
+              "components": [],
+              "containment": "domain_escape",
+              "extra": "none()",
+              "reasons": [
+                "domain_escape=[1]",
+                "no_extra"
+              ],
+              "static_return": true
+            },
+            {
+              "class": "none",
+              "class_static": "none",
+              "clause": 2,
+              "components": [],
+              "containment": "containment_unknown",
+              "extra": "none()",
+              "reasons": [
+                "containment_unknown=[2]",
+                "no_extra"
+              ],
+              "static_return": false
+            },
+            {
+              "class": "none",
+              "class_static": "none",
+              "clause": 3,
+              "components": [],
+              "containment": "domain_escape",
+              "extra": "none()",
+              "reasons": [
+                "domain_escape=[3]",
+                "no_extra"
+              ],
+              "static_return": false
+            }
+          ],
+          "components": [
+            {
+              "descr": "float()",
+              "detail": null,
+              "kind": "float",
+              "label": "whole_kind",
+              "payload_gradual": false,
+              "present_in_contributing": true,
+              "subtraction_payload": false,
+              "tag_in_spec": false
+            }
+          ],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "contained",
+              "static_return": false
+            },
+            {
+              "clause": 1,
+              "containment": "domain_escape",
+              "static_return": true
+            },
+            {
+              "clause": 2,
+              "containment": "containment_unknown",
+              "static_return": false
+            },
+            {
+              "clause": 3,
+              "containment": "domain_escape",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "float()",
+          "index": 0,
+          "input_approximate": true,
+          "loss_kinds": [
+            "integer_refinement_erased",
+            "opaque_boundary",
+            "sized_binary_erased"
+          ],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "input_approximate",
+            "domain_escape=[1, 3]",
+            "containment_unknown=[2]",
+            "whole_kind_only",
+            "return_inexact"
+          ],
+          "return_loss_kinds": [
+            "integer_refinement_erased"
+          ],
+          "return_relation": "superset",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "binary()",
+            "term()"
+          ],
+          "spec_return": "integer()",
+          "status": "compared",
+          "top_only": false,
+          "union_class": "possible_domain_escape",
+          "union_class_static": "possible_domain_escape"
+        }
+      ],
+      "specs": [
+        "count(t(), pattern() | Regex.t()) :: non_neg_integer()"
+      ],
+      "status": "compared"
+    },
+    {
+      "class": "possible_domain_escape",
+      "class_static": "possible_domain_escape",
+      "clause_conflict_candidate": false,
+      "clause_conflict_candidate_static": false,
+      "file": "$ELIXIR/lib/elixir/lib/system.ex",
+      "inferred": [
+        "(binary(), nil or binary()) -> dynamic(nil or binary())"
+      ],
+      "line": 680,
+      "location": "$ELIXIR/lib/elixir/lib/system.ex:680",
+      "mfa": "System.get_env/2",
+      "sl002_candidate": false,
+      "sl002_candidate_static": false,
+      "slices": [
+        {
+          "applied": [
+            0
+          ],
+          "applied_return": "nil or binary()",
+          "arg_loss_kinds": [],
+          "badapply": false,
+          "class": "possible_domain_escape",
+          "class_static": "possible_domain_escape",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [
+            {
+              "class": "possible_domain_escape",
+              "class_static": "possible_domain_escape",
+              "clause": 0,
+              "components": [
+                {
+                  "descr": "nil",
+                  "detail": "atoms",
+                  "kind": "atom",
+                  "label": "structured",
+                  "payload_gradual": true,
+                  "present_in_contributing": true,
+                  "subtraction_payload": false,
+                  "tag_in_spec": false
+                }
+              ],
+              "containment": "domain_escape",
+              "extra": "nil",
+              "reasons": [
+                "domain_escape=[0]",
+                "payload_gradual=1"
+              ],
+              "static_return": false
+            }
+          ],
+          "components": [
+            {
+              "descr": "nil",
+              "detail": "atoms",
+              "kind": "atom",
+              "label": "structured",
+              "payload_gradual": true,
+              "present_in_contributing": true,
+              "subtraction_payload": false,
+              "tag_in_spec": false
+            }
+          ],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "domain_escape",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "nil",
+          "index": 0,
+          "input_approximate": false,
+          "loss_kinds": [],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "domain_escape=[0]",
+            "payload_gradual=1"
+          ],
+          "return_loss_kinds": [],
+          "return_relation": "superset",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "binary()",
+            "binary()"
+          ],
+          "spec_return": "binary()",
+          "status": "compared",
+          "top_only": false,
+          "union_class": "possible_domain_escape",
+          "union_class_static": "possible_domain_escape"
+        },
+        {
+          "applied": [
+            0
+          ],
+          "applied_return": "nil or binary()",
+          "arg_loss_kinds": [],
+          "badapply": false,
+          "class": "none",
+          "class_static": "none",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [],
+          "components": [],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "domain_escape",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "none()",
+          "index": 1,
+          "input_approximate": false,
+          "loss_kinds": [],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "no_extra"
+          ],
+          "return_loss_kinds": [],
+          "return_relation": "equal",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "binary()",
+            "nil"
+          ],
+          "spec_return": "nil or binary()",
+          "status": "compared",
+          "top_only": false,
+          "union_class": "none",
+          "union_class_static": "none"
+        }
+      ],
+      "specs": [
+        "get_env(String.t(), String.t()) :: String.t()",
+        "get_env(String.t(), nil) :: String.t() | nil"
+      ],
+      "status": "compared"
+    },
+    {
+      "class": "possible_domain_escape",
+      "class_static": "possible_domain_escape",
+      "clause_conflict_candidate": false,
+      "clause_conflict_candidate_static": false,
+      "file": "$ELIXIR/lib/elixir/lib/calendar/time.ex",
+      "inferred": [
+        "(term(), term(), :hour or :minute) -> dynamic(integer())",
+        "(%{\n  ...,\n  calendar: Calendar.ISO,\n  hour: float() or integer(),\n  microsecond: {float() or integer(), term()},\n  minute: float() or integer(),\n  second: float() or integer()\n}, %{\n  ...,\n  calendar: Calendar.ISO,\n  hour: float() or integer(),\n  microsecond: {float() or integer(), term()},\n  minute: float() or integer(),\n  second: float() or integer()\n}, :micro_seconds or :microsecond or :microseconds or :milli_seconds or :millisecond or :milliseconds or\n  :nano_seconds or :nanosecond or :nanoseconds or :native or :second or :seconds or integer()) -> dynamic()",
+        "(not ((not map() and not {...}) or {...} or (map() and not (%{\n  ...,\n  calendar: atom(),\n  hour: term(),\n  microsecond: {term(), term()},\n  minute: term(),\n  second: term()\n} or %{\n  ...,\n  calendar: Calendar.ISO,\n  hour: term(),\n  microsecond: {term(), term()},\n  minute: term(),\n  second: term()\n}))), %{\n  ...,\n  calendar: atom(),\n  hour: term(),\n  microsecond: {term(), term()},\n  minute: term(),\n  second: term()\n}, not (:hour or :minute)) -> dynamic(float() or integer())"
+      ],
+      "line": 924,
+      "location": "$ELIXIR/lib/elixir/lib/calendar/time.ex:924",
+      "mfa": "Time.diff/3",
+      "sl002_candidate": false,
+      "sl002_candidate_static": false,
+      "slices": [
+        {
+          "applied": [
+            0,
+            1,
+            2
+          ],
+          "applied_return": "term()",
+          "arg_loss_kinds": [
+            "integer_refinement_erased"
+          ],
+          "badapply": false,
+          "class": "possible_domain_escape",
+          "class_static": "possible_domain_escape",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [
+            {
+              "class": "none",
+              "class_static": "none",
+              "clause": 0,
+              "components": [],
+              "containment": "domain_escape",
+              "extra": "none()",
+              "reasons": [
+                "domain_escape=[0]",
+                "no_extra"
+              ],
+              "static_return": false
+            },
+            {
+              "class": "unknown",
+              "class_static": "unknown",
+              "clause": 1,
+              "components": [],
+              "containment": "domain_escape",
+              "extra": "not integer()",
+              "reasons": [
+                "domain_escape=[1]",
+                "top_only"
+              ],
+              "static_return": false
+            },
+            {
+              "class": "possible_domain_escape",
+              "class_static": "possible_domain_escape",
+              "clause": 2,
+              "components": [
+                {
+                  "descr": "float()",
+                  "detail": null,
+                  "kind": "float",
+                  "label": "whole_kind",
+                  "payload_gradual": false,
+                  "present_in_contributing": true,
+                  "subtraction_payload": false,
+                  "tag_in_spec": false
+                }
+              ],
+              "containment": "domain_escape",
+              "extra": "float()",
+              "reasons": [
+                "domain_escape=[2]",
+                "whole_kind_only"
+              ],
+              "static_return": false
+            }
+          ],
+          "components": [],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "domain_escape",
+              "static_return": false
+            },
+            {
+              "clause": 1,
+              "containment": "domain_escape",
+              "static_return": false
+            },
+            {
+              "clause": 2,
+              "containment": "domain_escape",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "not integer()",
+          "index": 0,
+          "input_approximate": true,
+          "loss_kinds": [
+            "integer_refinement_erased"
+          ],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "top_only"
+          ],
+          "return_loss_kinds": [],
+          "return_relation": "superset",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "not ((not map() and not {...}) or {...})",
+            "not ((not map() and not {...}) or {...})",
+            ":hour or :microsecond or :millisecond or :minute or :nanosecond or :second or integer()"
+          ],
+          "spec_return": "integer()",
+          "status": "compared",
+          "top_only": true,
+          "union_class": "unknown",
+          "union_class_static": "unknown"
+        }
+      ],
+      "specs": [
+        "diff(Calendar.time(), Calendar.time(), :hour | :minute | System.time_unit()) :: integer()"
+      ],
+      "status": "compared"
+    }
+  ],
+  "label": "stdlib",
+  "otp_release": "28",
+  "reduced": "totals, class counts and every function that is neither none nor unknown; the rest is dropped to stay under 2 MB",
+  "totals": {
+    "badapply_slices": 0,
+    "clause_classes": {
+      "none": 88,
+      "possible_domain_escape": 26,
+      "possible_input_approximate": 3,
+      "structured_possible": 2,
+      "unknown": 1153,
+      "whole_kind_possible": 3
+    },
+    "clause_classes_static": {
+      "none": 88,
+      "possible_domain_escape": 26,
+      "possible_gradual": 2,
+      "possible_input_approximate": 3,
+      "unknown": 1153,
+      "whole_kind_possible": 3
+    },
+    "clause_conflict_candidate_functions": 0,
+    "clause_conflict_candidate_functions_static": 0,
+    "component_labels": {
+      "structured": 7,
+      "structured_absent": 24,
+      "unknown": 152,
+      "unknown_absent": 188,
+      "whole_kind": 24
+    },
+    "function_classes": {
+      "none": 659,
+      "possible_domain_escape": 13,
+      "possible_input_approximate": 4,
+      "structured_possible": 2,
+      "unknown": 1033
+    },
+    "function_classes_static": {
+      "none": 659,
+      "possible_domain_escape": 13,
+      "possible_gradual": 2,
+      "possible_input_approximate": 4,
+      "unknown": 1033
+    },
+    "functions": 1711,
+    "functions_by_status": {
+      "compared": 1711
+    },
+    "loss_kinds": {
+      "arrow_polarity": 94,
+      "charlist_as_integers": 33,
+      "integer_refinement_erased": 746,
+      "map_key_widened": 56,
+      "opaque_boundary": 19,
+      "record_fields_unknown": 16,
+      "recursive_cutoff": 281,
+      "sized_binary_erased": 5,
+      "type_variable_correlation": 104
+    },
+    "modules": 447,
+    "modules_by_status": {
+      "ok": 413,
+      "out_of_scope:erlang_module": 34
+    },
+    "near_top_slices": 32,
+    "out_of_scope_by_reason": {
+      "generated": 96,
+      "macro": 4,
+      "not_exported": 3,
+      "protocol": 30
+    },
+    "overlap_slices": 0,
+    "overlap_unknown_slices": 2,
+    "sl002_candidate_functions": 2,
+    "sl002_candidate_functions_static": 0,
+    "sl002_candidate_slices": 2,
+    "sl002_candidate_slices_tag_in_spec": 2,
+    "slice_classes": {
+      "none": 680,
+      "possible_domain_escape": 27,
+      "possible_input_approximate": 4,
+      "structured_possible": 2,
+      "unknown": 1064
+    },
+    "slice_classes_static": {
+      "none": 680,
+      "possible_domain_escape": 27,
+      "possible_gradual": 2,
+      "possible_input_approximate": 4,
+      "unknown": 1064
+    },
+    "slices": 1777,
+    "slices_approximate": 881,
+    "slices_compared": 1777,
+    "slices_exact": 896,
+    "top_only_slices": 913,
+    "unavailable_by_reason": {},
+    "union_classes": {
+      "none": 680,
+      "possible_domain_escape": 25,
+      "possible_input_approximate": 4,
+      "structured_possible": 2,
+      "unknown": 1066
+    },
+    "unsupported_by_reason": {}
+  }
+}

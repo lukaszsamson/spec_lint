@@ -177,13 +177,21 @@ Each decision is recorded in DESIGN; the section is given in parentheses.
 
 ## Open findings from external review (2026-09-28)
 
-1. Corpus results and the nine omission reproducers live only in the
-   session scratchpad, not in the repository.
+None.
 
 ## Fixed findings from external review
 
 Each fix has end-to-end regression tests; DESIGN section 9.1 records the
 decisions.
+
+0. **Benchmark evidence lived only in the session scratchpad.** It is now a
+   reproducible bundle under `bench/corpus/`: pinned corpus revisions and
+   commands (`README.md`), `run.sh` to regenerate the normalised reports in
+   `reports/` (all regenerated at this revision; `stdlib.json` stored in
+   reduced form), and the nine real omissions as executable reproducers
+   (`test/support/omission_fixtures.ex`, `test/spec_lint/omissions_test.exs`,
+   `bench/corpus/omissions/README.md`). The test pins the current class of
+   each: 7 `unknown` and 2 `possible_domain_escape`, gating recall 0 of 9.
 
 1. **Spec removal bypassed coverage regression (high).** Coverage now
    compares the baseline inventory with the current exports

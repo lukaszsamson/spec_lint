@@ -1,0 +1,402 @@
+{
+  "adapter": "1.21.0-dev+c24c235",
+  "checker_version": "elixir_checker_v10",
+  "code_paths": [
+    "$OSS/mime/_build/test/lib/mime/ebin"
+  ],
+  "ebins": [
+    "$OSS/mime/_build/test/lib/mime/ebin"
+  ],
+  "fixtures": null,
+  "functions": [
+    {
+      "class": "none",
+      "class_static": "none",
+      "clause_conflict_candidate": false,
+      "clause_conflict_candidate_static": false,
+      "file": "$OSS/mime/lib/mime.ex",
+      "inferred": [
+        "(term()) -> dynamic(list(binary()))"
+      ],
+      "line": 215,
+      "location": "$OSS/mime/lib/mime.ex:215",
+      "mfa": "MIME.extensions/1",
+      "sl002_candidate": false,
+      "sl002_candidate_static": false,
+      "slices": [
+        {
+          "applied": [
+            0
+          ],
+          "applied_return": "list(binary())",
+          "arg_loss_kinds": [],
+          "badapply": false,
+          "class": "none",
+          "class_static": "none",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [],
+          "components": [],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "domain_escape",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "none()",
+          "index": 0,
+          "input_approximate": false,
+          "loss_kinds": [],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "no_extra"
+          ],
+          "return_loss_kinds": [],
+          "return_relation": "equal",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "binary()"
+          ],
+          "spec_return": "list(binary())",
+          "status": "compared",
+          "top_only": false,
+          "union_class": "none",
+          "union_class_static": "none"
+        }
+      ],
+      "specs": [
+        "extensions(String.t()) :: [String.t()]"
+      ],
+      "status": "compared"
+    },
+    {
+      "class": "none",
+      "class_static": "none",
+      "clause_conflict_candidate": false,
+      "clause_conflict_candidate_static": false,
+      "file": "$OSS/mime/lib/mime.ex",
+      "inferred": [
+        "(binary() or empty_list() or non_empty_list(term(), term())) -> dynamic(binary())"
+      ],
+      "line": 280,
+      "location": "$OSS/mime/lib/mime.ex:280",
+      "mfa": "MIME.from_path/1",
+      "sl002_candidate": false,
+      "sl002_candidate_static": false,
+      "slices": [
+        {
+          "applied": [
+            0
+          ],
+          "applied_return": "binary()",
+          "arg_loss_kinds": [
+            "integer_refinement_erased",
+            "recursive_cutoff"
+          ],
+          "badapply": false,
+          "class": "none",
+          "class_static": "none",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [],
+          "components": [],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "domain_escape",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "none()",
+          "index": 0,
+          "input_approximate": true,
+          "loss_kinds": [
+            "integer_refinement_erased",
+            "recursive_cutoff"
+          ],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "no_extra"
+          ],
+          "return_loss_kinds": [],
+          "return_relation": "equal",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "binary() or empty_list() or non_empty_list(term(), binary() or empty_list())"
+          ],
+          "spec_return": "binary()",
+          "status": "compared",
+          "top_only": false,
+          "union_class": "none",
+          "union_class_static": "none"
+        }
+      ],
+      "specs": [
+        "from_path(Path.t()) :: String.t()"
+      ],
+      "status": "compared"
+    },
+    {
+      "class": "none",
+      "class_static": "none",
+      "clause_conflict_candidate": false,
+      "clause_conflict_candidate_static": false,
+      "file": "$OSS/mime/lib/mime.ex",
+      "inferred": [
+        "(term()) -> dynamic(boolean())"
+      ],
+      "line": 266,
+      "location": "$OSS/mime/lib/mime.ex:266",
+      "mfa": "MIME.has_type?/1",
+      "sl002_candidate": false,
+      "sl002_candidate_static": false,
+      "slices": [
+        {
+          "applied": [
+            0
+          ],
+          "applied_return": "boolean()",
+          "arg_loss_kinds": [],
+          "badapply": false,
+          "class": "none",
+          "class_static": "none",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [],
+          "components": [],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "domain_escape",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "none()",
+          "index": 0,
+          "input_approximate": false,
+          "loss_kinds": [],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "no_extra"
+          ],
+          "return_loss_kinds": [],
+          "return_relation": "equal",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "binary()"
+          ],
+          "spec_return": "boolean()",
+          "status": "compared",
+          "top_only": false,
+          "union_class": "none",
+          "union_class_static": "none"
+        }
+      ],
+      "specs": [
+        "has_type?(String.t()) :: boolean()"
+      ],
+      "status": "compared"
+    },
+    {
+      "class": "none",
+      "class_static": "none",
+      "clause_conflict_candidate": false,
+      "clause_conflict_candidate_static": false,
+      "file": "$OSS/mime/lib/mime.ex",
+      "inferred": [
+        "() -> %{binary() => non_empty_list(binary())}"
+      ],
+      "line": 192,
+      "location": "$OSS/mime/lib/mime.ex:192",
+      "mfa": "MIME.known_types/0",
+      "sl002_candidate": false,
+      "sl002_candidate_static": false,
+      "slices": [
+        {
+          "applied": [
+            0
+          ],
+          "applied_return": "%{binary() => non_empty_list(binary())}",
+          "arg_loss_kinds": [],
+          "badapply": false,
+          "class": "none",
+          "class_static": "none",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [],
+          "components": [],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "contained",
+              "static_return": true
+            }
+          ],
+          "cutoff": false,
+          "extra": "none()",
+          "index": 0,
+          "input_approximate": false,
+          "loss_kinds": [
+            "map_key_widened"
+          ],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "no_extra",
+            "return_inexact"
+          ],
+          "return_loss_kinds": [
+            "map_key_widened"
+          ],
+          "return_relation": "subset",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [],
+          "spec_return": "%{binary() => list(binary())}",
+          "status": "compared",
+          "top_only": false,
+          "union_class": "none",
+          "union_class_static": "none"
+        }
+      ],
+      "specs": [
+        "known_types() :: %{required(String.t()) => [String.t()]}"
+      ],
+      "status": "compared"
+    },
+    {
+      "class": "none",
+      "class_static": "none",
+      "clause_conflict_candidate": false,
+      "clause_conflict_candidate_static": false,
+      "file": "$OSS/mime/lib/mime.ex",
+      "inferred": [
+        "(term()) -> dynamic(binary())"
+      ],
+      "line": 249,
+      "location": "$OSS/mime/lib/mime.ex:249",
+      "mfa": "MIME.type/1",
+      "sl002_candidate": false,
+      "sl002_candidate_static": false,
+      "slices": [
+        {
+          "applied": [
+            0
+          ],
+          "applied_return": "binary()",
+          "arg_loss_kinds": [],
+          "badapply": false,
+          "class": "none",
+          "class_static": "none",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [],
+          "components": [],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "domain_escape",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "none()",
+          "index": 0,
+          "input_approximate": false,
+          "loss_kinds": [],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "no_extra"
+          ],
+          "return_loss_kinds": [],
+          "return_relation": "equal",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "binary()"
+          ],
+          "spec_return": "binary()",
+          "status": "compared",
+          "top_only": false,
+          "union_class": "none",
+          "union_class_static": "none"
+        }
+      ],
+      "specs": [
+        "type(String.t()) :: String.t()"
+      ],
+      "status": "compared"
+    }
+  ],
+  "label": "mime",
+  "otp_release": "28",
+  "totals": {
+    "badapply_slices": 0,
+    "clause_classes": {},
+    "clause_classes_static": {},
+    "clause_conflict_candidate_functions": 0,
+    "clause_conflict_candidate_functions_static": 0,
+    "component_labels": {},
+    "function_classes": {
+      "none": 5
+    },
+    "function_classes_static": {
+      "none": 5
+    },
+    "functions": 5,
+    "functions_by_status": {
+      "compared": 5
+    },
+    "loss_kinds": {
+      "integer_refinement_erased": 1,
+      "map_key_widened": 1,
+      "recursive_cutoff": 1
+    },
+    "modules": 1,
+    "modules_by_status": {
+      "ok": 1
+    },
+    "near_top_slices": 0,
+    "out_of_scope_by_reason": {
+      "not_exported": 3
+    },
+    "overlap_slices": 0,
+    "overlap_unknown_slices": 0,
+    "sl002_candidate_functions": 0,
+    "sl002_candidate_functions_static": 0,
+    "sl002_candidate_slices": 0,
+    "sl002_candidate_slices_tag_in_spec": 0,
+    "slice_classes": {
+      "none": 5
+    },
+    "slice_classes_static": {
+      "none": 5
+    },
+    "slices": 5,
+    "slices_approximate": 2,
+    "slices_compared": 5,
+    "slices_exact": 3,
+    "top_only_slices": 0,
+    "unavailable_by_reason": {},
+    "union_classes": {
+      "none": 5
+    },
+    "unsupported_by_reason": {}
+  }
+}
