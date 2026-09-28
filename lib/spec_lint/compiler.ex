@@ -11,9 +11,12 @@ defmodule SpecLint.Compiler do
   `SpecLint.Compiler.V121`) and the rest of SpecLint never touches compiler
   modules directly.
 
-  This module defines the adapter behaviour and a facade that delegates to the
-  adapter selected at compile time (`adapter/0`). Descr values are treated as
-  opaque terms outside the adapter; printed forms are presentation only.
+  This module defines the adapter behaviour and a facade that delegates to
+  the adapter returned by `adapter/0`. The adapter is read at runtime, on
+  every call, from the `:compiler_adapter` setting of the `:spec_lint`
+  application and defaults to `SpecLint.Compiler.V121`; `preflight/0` checks
+  that it is qualified for the running compiler. Descr values are treated
+  as opaque terms outside the adapter; printed forms are presentation only.
   """
 
   @typedoc "A `Module.Types.Descr` type. Opaque outside the adapter."
@@ -35,6 +38,7 @@ defmodule SpecLint.Compiler do
   @typedoc "Reasons a checker chunk cannot be decoded."
   @type chunk_error ::
           {:checker_version_mismatch, found :: term(), expected :: atom()}
+          | {:unqualified_checker_version, running :: atom(), qualified :: atom()}
           | :malformed_chunk
 
   @typedoc """
@@ -47,7 +51,9 @@ defmodule SpecLint.Compiler do
   @typedoc "Capability report returned by `preflight/0`."
   @type capabilities :: %{
           adapter: module(),
+          adapter_id: String.t(),
           elixir_version: String.t(),
+          revision: String.t() | nil,
           otp_release: String.t(),
           checker_version: atom(),
           max_clauses: pos_integer(),
@@ -169,7 +175,7 @@ defmodule SpecLint.Compiler do
   @callback to_string(descr()) :: String.t()
   @doc "Finite atom set of a type, if its atom component is finite."
   @callback atom_fetch(descr()) :: {:finite, [atom()]} | {:infinite, [atom()]} | :error
-  @doc "Base kinds a map key type touches."
+  @doc "Base kinds a map key type touches; a finite atom component counts as `:atom`."
   @callback key_kinds(descr()) :: [key_kind()]
   @doc "The whole base kind for a map key kind."
   @callback key_kind_descr(key_kind()) :: descr()
@@ -187,6 +193,26 @@ defmodule SpecLint.Compiler do
   @doc "See `c:preflight/0`."
   @spec preflight() :: {:ok, capabilities()} | {:error, term()}
   def preflight, do: adapter().preflight()
+
+  @doc """
+  `preflight/0` of the current adapter, memoised per adapter for the life of
+  the VM (the running compiler cannot change within a VM).
+  """
+  @spec preflight_once() :: {:ok, capabilities()} | {:error, term()}
+  def preflight_once do
+    adapter = adapter()
+    key = {__MODULE__, :preflight, adapter}
+
+    case :persistent_term.get(key, nil) do
+      nil ->
+        result = adapter.preflight()
+        :persistent_term.put(key, result)
+        result
+
+      result ->
+        result
+    end
+  end
 
   @doc "See `c:qualified_checker_version/0`."
   @spec qualified_checker_version() :: atom()
@@ -298,8 +324,7 @@ defmodule SpecLint.Compiler do
 
   @doc """
   A closed map. Literal atom `fields` take precedence over non-literal key
-  `domains` for their key, matching the singleton-key reading of Erlang map
-  types.
+  `domains` for their key.
   """
   @spec closed_map([map_field()], [map_domain()]) :: descr()
   def closed_map(fields, domains), do: adapter().closed_map(fields, domains)
@@ -368,7 +393,10 @@ defmodule SpecLint.Compiler do
   @spec atom_fetch(descr()) :: {:finite, [atom()]} | {:infinite, [atom()]} | :error
   def atom_fetch(descr), do: adapter().atom_fetch(descr)
 
-  @doc "Base kinds a map key type touches."
+  @doc """
+  Base kinds a map key type touches. A finite atom component counts as the
+  atom kind, so the kinds always cover the key.
+  """
   @spec key_kinds(descr()) :: [key_kind()]
   def key_kinds(descr), do: adapter().key_kinds(descr)
 

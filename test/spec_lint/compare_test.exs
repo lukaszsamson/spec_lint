@@ -71,6 +71,18 @@ defmodule SpecLint.CompareTest do
     assert C.empty?(rel.applied_upper)
     assert rel.domain_relation == [:disjoint]
     refute rel.domain_overlap?
+    # A rejected domain never establishes the obligation, although none()
+    # is a subtype of every spec return.
+    refute rel.established?
+  end
+
+  test "a type variable in a callback argument is not a domain escape" do
+    # apply_to({a}, (a -> term())): the inferred callback domain is fun(1).
+    # Translating the callback as (term() -> term()) excluded instances such
+    # as (integer() -> term()) from D_hi and reported a certain escape.
+    rel = relations(:apply_to, 2)
+    assert rel.input_approximate?
+    assert [%{containment: :containment_unknown}] = rel.contributing
   end
 
   test "overlapping overloads are tagged" do

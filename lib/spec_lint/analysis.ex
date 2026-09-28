@@ -7,9 +7,14 @@ defmodule SpecLint.Analysis do
   functions, `behaviour_info/1` and specs of non-exported functions are
   listed under `out_of_scope` with a reason; they are never silently
   dropped. Nothing in the analysed module is loaded or invoked.
+
+  Analysis requires a successful compiler preflight
+  (`SpecLint.Compiler.preflight/0`): on a compiler the adapter is not
+  qualified for, the module is `{:unavailable, {:unsupported_compiler,
+  reason}}` and nothing is read or compared.
   """
 
-  alias SpecLint.{Beam, Compare, Translate, TypeCache}
+  alias SpecLint.{Beam, Compare, Compiler, Translate, TypeCache}
 
   @typedoc "Status of a function or a module."
   @type status :: :compared | {:unsupported, term()} | {:unavailable, term()}
@@ -56,9 +61,32 @@ defmodule SpecLint.Analysis do
       When absent, a cache is created for this call and deleted afterwards.
     * `:expand_opaque` - expand other modules' opaque and nominal types
       structurally (default `false`).
+    * `:preflight` - the result of `SpecLint.Compiler.preflight/0` for this
+      run. Defaults to `SpecLint.Compiler.preflight_once/0`.
   """
   @spec module(Path.t(), keyword()) :: result()
   def module(beam_path, opts \\ []) do
+    case Keyword.get_lazy(opts, :preflight, &Compiler.preflight_once/0) do
+      {:ok, _capabilities} ->
+        with_cache(beam_path, opts)
+
+      {:error, reason} ->
+        unavailable(beam_path, {:unsupported_compiler, reason}, {:error, :not_read})
+    end
+  end
+
+  defp unavailable(beam_path, reason, debug_info) do
+    %{
+      module: nil,
+      path: Path.expand(beam_path),
+      status: {:unavailable, reason},
+      debug_info: debug_info,
+      functions: [],
+      out_of_scope: []
+    }
+  end
+
+  defp with_cache(beam_path, opts) do
     case Keyword.fetch(opts, :cache) do
       {:ok, %TypeCache{} = cache} ->
         run(beam_path, cache, opts)
@@ -80,14 +108,7 @@ defmodule SpecLint.Analysis do
         analyse(beam, cache, opts)
 
       {:error, reason} ->
-        %{
-          module: nil,
-          path: Path.expand(beam_path),
-          status: {:unavailable, reason},
-          debug_info: {:error, :not_read},
-          functions: [],
-          out_of_scope: []
-        }
+        unavailable(beam_path, reason, {:error, :not_read})
     end
   end
 

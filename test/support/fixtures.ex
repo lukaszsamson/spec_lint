@@ -66,6 +66,46 @@ defmodule SpecLint.Fixtures.Types do
 
   @spec timeout_mfa(timeout(), mfa()) :: :ok
   def timeout_mfa(_, _), do: :ok
+
+  @spec reduce_like([a], (a -> term())) :: :ok when a: var
+  def reduce_like(_, _), do: :ok
+
+  @spec acc_fun((integer(), acc -> acc)) :: :ok when acc: var
+  def acc_fun(_), do: :ok
+
+  @spec make_id() :: (a -> a) when a: var
+  def make_id, do: fn x -> x end
+
+  @spec covariant_arrow((integer() -> a), a) :: :ok when a: atom()
+  def covariant_arrow(_, _), do: :ok
+
+  @spec nested_arrow(((a -> term()) -> term()), a) :: :ok when a: atom()
+  def nested_arrow(_, _), do: :ok
+
+  @spec annotated(value :: atom()) :: value :: atom()
+  def annotated(value), do: value
+
+  @spec indirect(x) :: y when x: [a], y: a, a: var
+  def indirect([h | _]), do: h
+
+  @spec via_constraint(a) :: b when b: [a], a: atom()
+  def via_constraint(a), do: [a]
+
+  @spec map_mixed(%{optional(:a | integer()) => atom()}, %{required(:a | integer()) => atom()}) ::
+          :ok
+  def map_mixed(_, _), do: :ok
+
+  @spec map_shared_atoms(%{optional(:a | :b) => integer(), optional(:b | :c) => atom()}) :: :ok
+  def map_shared_atoms(_), do: :ok
+
+  @spec map_shadowed(%{optional(atom()) => binary(), name: integer()}) :: :ok
+  def map_shadowed(_), do: :ok
+
+  @spec map_inexact_key(
+          %{optional(timeout()) => atom()},
+          %{optional(timeout()) => atom(), optional(:infinity) => binary()}
+        ) :: :ok
+  def map_inexact_key(_, _), do: :ok
 end
 
 defmodule SpecLint.Fixtures.Compare do
@@ -107,6 +147,18 @@ defmodule SpecLint.Fixtures.Compare do
 
   @spec twice(term()) :: term()
   defmacro twice(x), do: x
+
+  @spec apply_to({a}, (a -> term())) :: :ok when a: var
+  def apply_to({x}, f) do
+    f.(x)
+    :ok
+  end
+
+  # The second clause refers to a type that tests seed with an unsupported
+  # construct; on the code path the module does not exist.
+  @spec two_slices(atom()) :: atom()
+  @spec two_slices(integer()) :: SpecLint.Fixtures.Synthetic.weird()
+  def two_slices(x), do: x
 end
 
 defprotocol SpecLint.Fixtures.Proto do

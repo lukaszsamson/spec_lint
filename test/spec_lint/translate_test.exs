@@ -179,6 +179,63 @@ defmodule SpecLint.TranslateTest do
              )
     end
 
+    test "a key mixing finite atoms with another kind keeps the atoms in hi" do
+      %{args: [optional, required]} = slice(Types, :map_mixed, 2)
+      a_atom = C.closed_map([{:a, C.atom([:x]), false}], [])
+      ints = C.closed_map([], [{[:integer], C.atom()}])
+
+      # %{optional(:a | integer()) => atom()} is exact: :a is a field, the
+      # integers a whole-kind domain.
+      assert optional.losses == []
+      assert C.subtype?(a_atom, optional.hi)
+      assert C.subtype?(ints, optional.hi)
+      assert C.subtype?(C.empty_map(), optional.lo)
+      refute C.subtype?(C.closed_map([{:a, C.integer(), false}], []), optional.hi)
+
+      assert loss_kinds(required.losses) == [:map_key_widened]
+      assert C.subtype?(a_atom, required.hi)
+      assert C.subtype?(ints, required.hi)
+      assert C.empty?(required.lo)
+    end
+
+    test "overlapping finite atom keys: the first association wins" do
+      %{args: [arg]} = slice(Types, :map_shared_atoms, 1)
+      # %{optional(:a | :b) => integer(), optional(:b | :c) => atom()}
+      assert_exact(
+        arg,
+        C.closed_map(
+          [{:a, C.integer(), true}, {:b, C.integer(), true}, {:c, C.atom(), true}],
+          []
+        )
+      )
+    end
+
+    test "a literal key after optional(atom()) is shadowed" do
+      %{args: [arg]} = slice(Types, :map_shadowed, 1)
+      # %{optional(atom()) => binary(), name: integer()} reads as
+      # %{atom() => binary()}: Elixir emits keyword keys last.
+      assert_exact(arg, C.closed_map([], [{[:atom], C.binary()}]))
+      assert C.subtype?(C.closed_map([{:name, C.binary(), false}], []), arg.hi)
+      assert C.subtype?(C.empty_map(), arg.lo)
+    end
+
+    test "an inexact key keeps its finite atoms and kinds in hi only" do
+      %{args: [single, overlapping]} = slice(Types, :map_inexact_key, 2)
+      infinity = fn value -> C.closed_map([{:infinity, value, false}], []) end
+
+      # optional(timeout()): integer refinement erased on the key.
+      assert loss_kinds(single.losses) == [:integer_refinement_erased, :map_key_widened]
+      assert C.subtype?(infinity.(C.atom()), single.hi)
+      assert C.subtype?(C.closed_map([], [{[:integer], C.atom()}]), single.hi)
+      assert C.equal?(single.lo, C.empty_map())
+
+      # A later optional(:infinity) may apply where the inexact key does
+      # not reach, so the upper bound joins both values.
+      assert C.subtype?(infinity.(C.atom()), overlapping.hi)
+      assert C.subtype?(infinity.(C.binary()), overlapping.hi)
+      assert C.empty?(overlapping.lo)
+    end
+
     test "non-whole-kind optional keys widen the upper bound only" do
       key = {:type, 0, :tuple, [{:type, 0, :atom, []}]}
 
@@ -188,6 +245,65 @@ defmodule SpecLint.TranslateTest do
       assert loss_kinds(bound.losses) == [:map_key_widened]
       assert C.equal?(bound.lo, C.empty_map())
       assert C.subtype?(C.closed_map([], [{[:tuple], C.integer()}]), bound.hi)
+    end
+  end
+
+  describe "map associations against Dialyzer's reading (erl_types)" do
+    # Differential test: membership of witness maps in the translated bounds
+    # against :erl_types on the same forms. Forms with at most one
+    # non-singleton key domain only, because Dialyzer merges all key domains
+    # into one default key and value, which is coarser than Descr.
+    defp t(name), do: {:type, 0, name, []}
+    defp a(atom), do: {:atom, 0, atom}
+    defp u(types), do: {:type, 0, :union, types}
+    defp opt(key, value), do: {:type, 0, :map_field_assoc, [key, value]}
+    defp req(key, value), do: {:type, 0, :map_field_exact, [key, value]}
+    defp map_form(assocs), do: {:type, 0, :map, assocs}
+
+    defp dialyzer(form),
+      do: :erl_types.t_from_form_without_remote(form, {:type, {Types, :t, 0}, ~c"nofile"}, %{})
+
+    test "witness membership agrees" do
+      forms = [
+        map_form([opt(t(:atom), t(:binary)), req(a(:name), t(:integer))]),
+        map_form([req(a(:name), t(:integer)), opt(t(:atom), t(:binary))]),
+        map_form([opt(u([a(:a), a(:b)]), t(:integer)), opt(u([a(:b), a(:c)]), t(:atom))]),
+        map_form([opt(u([a(:a), t(:integer)]), t(:atom))]),
+        map_form([req(u([a(:a), t(:integer)]), t(:atom))]),
+        map_form([req(a(:a), t(:integer)), req(a(:a), t(:atom))]),
+        map_form([opt(u([a(:a), a(:b)]), t(:integer)), req(a(:a), t(:atom))]),
+        map_form([opt(t(:atom), t(:integer)), opt(t(:atom), t(:binary))]),
+        map_form([opt(t(:integer), t(:atom)), opt(a(:a), t(:binary))]),
+        map_form([opt(t(:timeout), t(:atom)), opt(a(:infinity), t(:binary))])
+      ]
+
+      field_witnesses =
+        for key <- [:a, :b, :c, :name, :infinity, :x],
+            value <- [:integer, :atom, :binary],
+            do: map_form([req(a(key), t(value))])
+
+      witnesses =
+        field_witnesses ++
+          [
+            map_form([]),
+            map_form([req(a(:a), t(:integer)), req(a(:b), t(:integer))]),
+            map_form([opt(t(:integer), t(:atom))]),
+            map_form([opt(t(:atom), t(:binary))])
+          ]
+
+      for form <- forms, witness <- witnesses do
+        bound = raw(form)
+        w = raw(witness)
+        assert w.losses == []
+        in_dialyzer? = :erl_types.t_is_subtype(dialyzer(witness), dialyzer(form))
+        label = "#{inspect(witness)} in #{inspect(form)}"
+
+        if in_dialyzer?, do: assert(C.subtype?(w.hi, bound.hi), "hi misses " <> label)
+        if C.subtype?(w.hi, bound.lo), do: assert(in_dialyzer?, "lo has extra " <> label)
+
+        if Bound.exact?(bound),
+          do: assert(C.subtype?(w.hi, bound.hi) == in_dialyzer?, "exact differs " <> label)
+      end
     end
   end
 
@@ -207,7 +323,8 @@ defmodule SpecLint.TranslateTest do
       # (pos_integer() -> atom()): widening the argument to integer() would
       # NARROW the function set, so fun([integer()], atom()) is not an upper
       # bound of the spec. The translation must use fun(1).
-      assert_bounds(arg, C.none(), C.fun(1), [:arrow_polarity])
+      assert_bounds(arg, C.none(), C.fun(1), [:arrow_polarity, :integer_refinement_erased])
+      assert %{kind: :arrow_polarity, path: [{:arg, 0}]} = hd(arg.losses)
       narrowed = C.fun([C.integer()], C.atom())
       assert C.subtype?(narrowed, arg.hi)
       refute C.subtype?(arg.hi, narrowed)
@@ -297,11 +414,87 @@ defmodule SpecLint.TranslateTest do
       assert_exact(ret, C.list(C.term()))
     end
 
-    test "a variable repeated only among arguments is exact" do
+    test "annotation names are not type variables" do
+      %{args: [arg], return: ret} = slice(Types, :annotated, 1)
+      assert_exact(arg, C.atom())
+      assert_exact(ret, C.atom())
+    end
+
+    test "a variable reaching the return through `when` constraints is correlated" do
+      # f(x) :: y when x: [a], y: a -- same as f([a]) :: a.
+      %{args: [arg], return: ret} = slice(Types, :indirect, 1)
+      assert_exact(arg, C.list(C.term()))
+      assert_bounds(ret, C.none(), C.term(), [:type_variable_correlation])
+
+      # f(a) :: b when b: [a], a: atom()
+      %{args: [arg], return: ret} = slice(Types, :via_constraint, 1)
+      assert_exact(arg, C.atom())
+      assert_bounds(ret, C.none(), C.list(C.atom()), [:type_variable_correlation])
+    end
+
+    test "a variable inside an arrow argument falls back to fun(arity)" do
+      # reduce_like([a], (a -> term())) when a: var. Instantiating a with
+      # integer() gives (integer() -> term()), which must be inside hi.
+      %{args: [list, callback]} = slice(Types, :reduce_like, 2)
+      assert_exact(list, C.list(C.term()))
+      assert_bounds(callback, C.none(), C.fun(1), [:arrow_polarity, :type_variable_correlation])
+      assert %{kind: :arrow_polarity, path: [{:arg, 1}]} = hd(callback.losses)
+      assert C.subtype?(C.fun([C.integer()], C.integer()), callback.hi)
+      assert C.subtype?(C.fun([C.integer()], C.term()), callback.hi)
+
+      # acc_fun((integer(), acc -> acc)) when acc: var
+      %{args: [acc]} = slice(Types, :acc_fun, 1)
+      assert C.equal?(acc.hi, C.fun(2))
+      assert C.subtype?(C.fun([C.integer(), C.integer()], C.integer()), acc.hi)
+      assert C.subtype?(C.fun([C.integer(), C.atom()], C.atom()), acc.hi)
+    end
+
+    test "a variable inside an arrow argument in the return" do
+      # make_id() :: (a -> a) when a: var
+      %{return: ret} = slice(Types, :make_id, 0)
+      assert C.empty?(ret.lo)
+      assert :arrow_polarity in loss_kinds(ret.losses)
+      assert :type_variable_correlation in loss_kinds(ret.losses)
+      assert C.subtype?(C.fun([C.integer()], C.integer()), ret.hi)
+    end
+
+    test "nested arrows and covariant arrow returns" do
+      # (integer() -> a) with a: atom() elsewhere in the arguments: the
+      # variable is covariant everywhere, the instance at the bound is the
+      # largest.
+      %{args: [callback, atom]} = slice(Types, :covariant_arrow, 2)
+      assert_exact(callback, C.fun([C.integer()], C.atom()))
+      assert_exact(atom, C.atom())
+
+      # ((a -> term()) -> term()): any variable under an arrow argument makes
+      # that arrow inexact, at any nesting.
+      %{args: [nested, _]} = slice(Types, :nested_arrow, 2)
+      assert C.equal?(nested.hi, C.fun(1))
+      instance = C.fun([C.fun([C.atom([:x])], C.term())], C.term())
+      assert C.subtype?(instance, nested.hi)
+    end
+
+    test "stdlib callbacks: List.foldl/3" do
+      # foldl([elem], acc, (elem, acc -> acc))
+      %{args: [_list, _acc, fun], return: ret} = slice(List, :foldl, 3)
+      assert C.subtype?(C.fun([C.integer(), C.integer()], C.integer()), fun.hi)
+      assert :arrow_polarity in loss_kinds(fun.losses)
+      assert C.empty?(ret.lo)
+    end
+
+    test "a variable repeated only among covariant argument positions is exact" do
       %{args: [a, b], return: ret} = slice(Types, :same_args, 2)
       assert_exact(a, C.atom())
       assert_exact(b, C.atom())
       assert_exact(ret, C.atom([:ok]))
+    end
+  end
+
+  describe "adapter key kinds" do
+    test "a finite atom component counts as the atom kind" do
+      assert C.key_kinds(C.union(C.atom([:a]), C.integer())) == [:atom, :integer]
+      assert C.key_kinds(C.atom([:a, :b])) == [:atom]
+      assert C.key_kinds(C.integer()) == [:integer]
     end
   end
 

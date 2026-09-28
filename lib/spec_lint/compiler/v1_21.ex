@@ -3,6 +3,11 @@ defmodule SpecLint.Compiler.V121 do
   Compiler adapter for Elixir 1.21 development builds with checker chunk
   `:elixir_checker_v10`.
 
+  Qualified for the Elixir revisions in `qualified_revisions/0` only:
+  `preflight/0` rejects any other build, even one writing the same checker
+  chunk version, because `Descr` and `apply_infer/2` change between
+  revisions without a chunk version bump.
+
   This is the only module in SpecLint that calls `Module.Types.Descr` or
   `:elixir_erl`. `apply_infer/2` is a line-by-line copy of the private
   `Module.Types.Apply.apply_infer/2` of the qualified revision, including its
@@ -18,6 +23,9 @@ defmodule SpecLint.Compiler.V121 do
   @max_clauses 16
   @checker_version :elixir_checker_v10
   @version_requirement "~> 1.21.0-dev"
+  # Elixir revisions (short SHA, `System.build_info()[:revision]`) against
+  # which the apply_infer/2 copy and the map encoding were qualified.
+  @qualified_revisions ["c24c235"]
 
   @key_kinds [
     :atom,
@@ -81,7 +89,10 @@ defmodule SpecLint.Compiler.V121 do
   @impl true
   @spec preflight() :: {:ok, SpecLint.Compiler.capabilities()} | {:error, term()}
   def preflight do
-    with :ok <- check_version(System.version()),
+    version = System.version()
+    revision = System.build_info()[:revision]
+
+    with :ok <- check_build(version, revision),
          :ok <- check_loaded(),
          :ok <- check_exports(),
          :ok <- check_checker_version(),
@@ -89,13 +100,34 @@ defmodule SpecLint.Compiler.V121 do
       {:ok,
        %{
          adapter: __MODULE__,
-         elixir_version: System.version(),
+         adapter_id: "#{version}+#{revision}",
+         elixir_version: version,
+         revision: revision,
          otp_release: System.otp_release(),
          checker_version: @checker_version,
          max_clauses: @max_clauses,
          signatures: true,
+         # check_loaded/0 loaded Module.Types; function_exported?/3 does not.
          body_hook: function_exported?(Module.Types, :warnings, 7)
        }}
+    end
+  end
+
+  @doc "The Elixir revisions (short commit SHAs) this adapter is qualified for."
+  @spec qualified_revisions() :: [String.t(), ...]
+  def qualified_revisions, do: @qualified_revisions
+
+  @doc """
+  Checks an Elixir version and build revision against this adapter's
+  qualification. Used by `preflight/0` with the running build's values.
+  """
+  @spec check_build(String.t(), String.t() | nil) ::
+          :ok
+          | {:error, {:unsupported_elixir, String.t(), String.t()}}
+          | {:error, {:unqualified_revision, String.t() | nil, [String.t()]}}
+  def check_build(version, revision) do
+    with :ok <- check_version(version) do
+      check_revision(revision)
     end
   end
 
@@ -111,9 +143,18 @@ defmodule SpecLint.Compiler.V121 do
     end
   end
 
+  defp check_revision(revision) when is_binary(revision) and byte_size(revision) >= 7 do
+    if String.slice(revision, 0, 7) in @qualified_revisions,
+      do: :ok,
+      else: {:error, {:unqualified_revision, revision, @qualified_revisions}}
+  end
+
+  defp check_revision(revision),
+    do: {:error, {:unqualified_revision, revision, @qualified_revisions}}
+
   defp check_loaded do
-    missing =
-      Enum.reject([Module.Types.Descr, Module.Types.Apply, :elixir_erl], &Code.ensure_loaded?/1)
+    modules = [Module.Types, Module.Types.Descr, Module.Types.Apply, :elixir_erl]
+    missing = Enum.reject(modules, &Code.ensure_loaded?/1)
 
     if missing == [], do: :ok, else: {:error, {:missing_compiler_modules, missing}}
   end
@@ -168,9 +209,27 @@ defmodule SpecLint.Compiler.V121 do
   @impl true
   @spec decode_checker_chunk(binary()) ::
           {:ok, SpecLint.Compiler.chunk()} | {:error, SpecLint.Compiler.chunk_error()}
-  def decode_checker_chunk(bytes) when is_binary(bytes) do
-    expected = running_checker_version()
+  def decode_checker_chunk(bytes) when is_binary(bytes),
+    do: decode_checker_chunk(bytes, running_checker_version())
 
+  @doc """
+  Decodes an `ExCk` chunk as `decode_checker_chunk/1` does, for a running
+  compiler that writes `running` chunks. A chunk is accepted only when its
+  version equals `running` and `running` is the version this adapter is
+  qualified for; a compiler with another chunk version is never analysed
+  with this adapter's copy of the application rule.
+  """
+  @spec decode_checker_chunk(binary(), atom()) ::
+          {:ok, SpecLint.Compiler.chunk()} | {:error, SpecLint.Compiler.chunk_error()}
+  def decode_checker_chunk(bytes, running) when is_binary(bytes) and is_atom(running) do
+    if running == @checker_version do
+      decode_qualified(bytes, running)
+    else
+      {:error, {:unqualified_checker_version, running, @checker_version}}
+    end
+  end
+
+  defp decode_qualified(bytes, expected) do
     case decode_term(bytes) do
       {:ok, {^expected, %{exports: exports} = contents}} when is_list(exports) ->
         {:ok,
@@ -416,12 +475,19 @@ defmodule SpecLint.Compiler.V121 do
           {:finite, [atom()]} | {:infinite, [atom()]} | :error
   def atom_fetch(descr), do: Descr.atom_fetch(descr)
 
+  # Descr.to_domain_keys/1 skips a finite atom component, because the
+  # compiler's callers split finite atoms out first. Reporting :atom for it
+  # keeps the kinds an upper bound of the key.
   @impl true
   @spec key_kinds(SpecLint.Compiler.descr()) :: [SpecLint.Compiler.key_kind()]
   def key_kinds(descr) do
+    atoms? = not Descr.empty?(Descr.opt_intersection(descr, Descr.atom()))
+
     descr
     |> Descr.to_domain_keys()
+    |> Enum.concat(if atoms?, do: [:atom], else: [])
     |> Enum.filter(&(&1 in @key_kinds))
+    |> Enum.uniq()
     |> Enum.sort()
   end
 

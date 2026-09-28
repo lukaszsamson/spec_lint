@@ -15,12 +15,24 @@ defmodule SpecLint.Translate do
       `hi = term()`, `lo = none()` and `:recursive_cutoff`.
     * `@opaque` and `@nominal` types of other modules are boundaries
       (`term()`/`none()`) unless `expand_opaque: true`.
-    * A type variable that occurs in the return and anywhere else is
-      substituted by its bound and the return keeps only its upper bound
-      (`:type_variable_correlation`). Variables repeated only among the
-      arguments are exact: each argument ranges over the bound independently.
+    * Type variables are substituted by their bound (or `term()` when
+      free). Occurrences are counted after `when` constraints are expanded,
+      so correlation through constraint indirection is seen. A variable
+      that occurs in the return and anywhere else makes the return keep only
+      its upper bound (`:type_variable_correlation`). Any named variable
+      inside an arrow argument, at any nesting, is inexact
+      (`:type_variable_correlation`), so the enclosing arrow falls back to
+      `fun(arity)` with `:arrow_polarity`: instantiating the variable with a
+      smaller type yields a larger function type, so substituting the bound
+      there would under-approximate. Variables whose every occurrence is
+      covariant and outside the return stay exact: instantiating them with
+      their bound maximises every occurrence at once, so the argument
+      product at the bound is exactly the union over all instantiations.
     * Erlang records become open tuples tagged by the record name with
       `:record_fields_unknown`.
+    * Map associations follow Dialyzer's reading (`erl_types`
+      `map_from_form/6`): an earlier association shadows the keys it covers
+      in later ones. See `map/3` below.
     * A construct with no sound translation makes the whole slice
       `{:unsupported, reason}`; other slices of the same spec still translate.
 
@@ -40,7 +52,8 @@ defmodule SpecLint.Translate do
           cache: TypeCache.t(),
           stack: [{module(), atom(), arity()}],
           depth: non_neg_integer(),
-          expand_opaque: boolean()
+          expand_opaque: boolean(),
+          in_arrow_arg: boolean()
         }
 
   @typedoc "A translated spec clause."
@@ -59,7 +72,8 @@ defmodule SpecLint.Translate do
       cache: cache,
       stack: [],
       depth: Keyword.get(opts, :depth, @default_depth),
-      expand_opaque: Keyword.get(opts, :expand_opaque, false)
+      expand_opaque: Keyword.get(opts, :expand_opaque, false),
+      in_arrow_arg: false
     }
   end
 
@@ -70,10 +84,10 @@ defmodule SpecLint.Translate do
 
     case fun_ast do
       {:type, _, :fun, [{:type, _, :product, args}, return]} ->
-        correlated = correlated_vars(args, return)
         subst = constraint_substitution(constraints)
         args = Enum.map(args, &substitute_all(&1, subst))
         return = substitute_all(return, subst)
+        correlated = correlated_vars(args, return)
 
         arg_bounds =
           args
@@ -114,10 +128,12 @@ defmodule SpecLint.Translate do
   defp debound({:type, _, :bounded_fun, [fun, constraints]}), do: {fun, constraints}
   defp debound(fun), do: {fun, []}
 
+  # Each constrained variable is replaced by a marker that keeps its name
+  # next to its bound, so occurrences can still be counted after expansion.
   defp constraint_substitution(constraints) do
     Map.new(constraints, fn
       {:type, _, :constraint, [{:atom, _, :is_subtype}, [{:var, _, name}, type]]} ->
-        {name, type}
+        {name, {:spec_lint_var, 0, name, type}}
 
       other ->
         throw({:unsupported, {:constraint, strip(other)}})
@@ -131,7 +147,7 @@ defmodule SpecLint.Translate do
   defp substitute_all(ast, subst), do: substitute_all(ast, subst, map_size(subst) + 1)
 
   defp substitute_all(ast, subst, 0) do
-    cutoff = Map.new(subst, fn {name, _type} -> {name, {:spec_lint_cutoff, name}} end)
+    cutoff = Map.new(subst, fn {name, _marker} -> {name, {:spec_lint_cutoff, name}} end)
     substitute(ast, cutoff)
   end
 
@@ -141,26 +157,33 @@ defmodule SpecLint.Translate do
   end
 
   # Variables that occur in the return and at least one more time anywhere in
-  # the clause (the return may be restricted per call).
+  # the clause (the return may be restricted per call). Counted on the
+  # expanded clause, so `f(x) :: y when x: [a], y: a` correlates through `a`.
   defp correlated_vars(args, return) do
-    in_return = vars(return)
-    counts = Enum.frequencies(Enum.flat_map(args, &vars/1) ++ in_return)
+    in_return = occurrences(return)
+    counts = Enum.frequencies(Enum.flat_map(args, &occurrences/1) ++ in_return)
 
     in_return
     |> Enum.uniq()
     |> Enum.filter(&(Map.fetch!(counts, &1) >= 2))
   end
 
-  defp vars({:var, _, :_}), do: []
-  defp vars({:var, _, name}), do: [name]
-  defp vars({:ann_type, _, [_var, type]}), do: vars(type)
-  defp vars({:type, _, _, args}) when is_list(args), do: Enum.flat_map(args, &vars/1)
-  defp vars({:user_type, _, _, args}), do: Enum.flat_map(args, &vars/1)
-  defp vars({:remote_type, _, [_, _, args]}), do: Enum.flat_map(args, &vars/1)
-  defp vars(list) when is_list(list), do: Enum.flat_map(list, &vars/1)
-  defp vars(_other), do: []
+  defp occurrences({:spec_lint_var, _, name, type}), do: [name | occurrences(type)]
+  defp occurrences({:spec_lint_cutoff, name}), do: [name]
+  defp occurrences({:ann_type, _, [_name, type]}), do: occurrences(type)
+  defp occurrences({:var, _, :_}), do: []
+  defp occurrences({:var, _, name}), do: [name]
+  defp occurrences(list) when is_list(list), do: Enum.flat_map(list, &occurrences/1)
+
+  defp occurrences(tuple) when is_tuple(tuple),
+    do: tuple |> Tuple.to_list() |> occurrences()
+
+  defp occurrences(_other), do: []
 
   defp substitute({:var, _, name} = var, subst), do: Map.get(subst, name, var)
+
+  defp substitute({:spec_lint_var, line, name, type}, subst),
+    do: {:spec_lint_var, line, name, substitute(type, subst)}
 
   defp substitute({:type, line, name, args}, subst) when is_list(args),
     do: {:type, line, name, Enum.map(args, &substitute(&1, subst))}
@@ -190,9 +213,15 @@ defmodule SpecLint.Translate do
   defp node({:spec_lint_cutoff, _name}, _ctx, path),
     do: Bound.upper(Compiler.term(), :recursive_cutoff, path)
 
+  # A constrained type variable: its bound, marked when inside an arrow
+  # argument.
+  defp node({:spec_lint_var, _, _name, type}, ctx, path),
+    do: variable(node(type, ctx, path), ctx, path)
+
   # Type variables left after `when` substitution and parameter substitution
-  # are unconstrained: any term.
-  defp node({:var, _, _}, _ctx, _path), do: exact(Compiler.term())
+  # are unconstrained: any term. `_` is `term()` and not a variable.
+  defp node({:var, _, :_}, _ctx, _path), do: exact(Compiler.term())
+  defp node({:var, _, _}, ctx, path), do: variable(exact(Compiler.term()), ctx, path)
 
   defp node({:remote_type, _, [{:atom, _, mod}, {:atom, _, name}, args]}, ctx, path),
     do: named(mod, name, args, ctx, path)
@@ -202,6 +231,15 @@ defmodule SpecLint.Translate do
   defp node(other, _ctx, _path), do: throw({:unsupported, {:construct, strip(other)}})
 
   defp exact(descr), do: Bound.exact(descr)
+
+  # Inside an arrow argument a variable ranges contravariantly: the smallest
+  # instance gives the largest function type, so the bound is not an upper
+  # bound of the arrow. Marking the occurrence inexact makes the arrow fall
+  # back to fun(arity).
+  defp variable(bound, %{in_arrow_arg: true}, path),
+    do: %{Bound.add_loss(bound, :type_variable_correlation, path) | lo: Compiler.none()}
+
+  defp variable(bound, _ctx, _path), do: bound
 
   defp refined_integer(path),
     do: Bound.upper(Compiler.integer(), :integer_refinement_erased, path)
@@ -407,10 +445,12 @@ defmodule SpecLint.Translate do
   ## Arrows
 
   defp arrow(args, return, ctx, path) do
+    arg_ctx = %{ctx | in_arrow_arg: true}
+
     arg_bounds =
       args
       |> Enum.with_index()
-      |> Enum.map(fn {arg, index} -> node(arg, ctx, path ++ [{:fun_arg, index}]) end)
+      |> Enum.map(fn {arg, index} -> node(arg, arg_ctx, path ++ [{:fun_arg, index}]) end)
 
     return_bound = node(return, ctx, path ++ [:fun_return])
 
@@ -425,42 +465,44 @@ defmodule SpecLint.Translate do
       }
     else
       # Widening an argument narrows a function type (contravariance), so the
-      # only sound upper bound is the top function of this arity.
-      Bound.upper(Compiler.fun(length(args)), :arrow_polarity, path)
+      # only sound upper bound is the top function of this arity. The child
+      # losses are kept as the reason for the fallback.
+      children = arg_bounds ++ [return_bound]
+
+      %Bound{
+        lo: Compiler.none(),
+        hi: Compiler.fun(length(args)),
+        losses: [Bound.loss(:arrow_polarity, path) | Enum.flat_map(children, & &1.losses)],
+        notes: Enum.flat_map(children, & &1.notes)
+      }
     end
   end
 
   ## Maps
 
-  # Literal map types are closed. Literal atom keys become fields and take
-  # precedence over key domains on overlap (the singleton-key reading of
-  # Erlang map types). A non-literal key is exact only when it is an exact,
-  # optional key that is either a finite atom set (expanded to optional
-  # fields) or a union of whole base kinds not shared with another
-  # non-literal association; anything else is widened with `:map_key_widened`.
+  # Literal map types are closed. Associations are read in order, as
+  # Dialyzer does (`erl_types` `map_from_form/6`): keys already covered by
+  # an earlier association are removed from later ones, so the first
+  # association for a key wins. A literal atom key after `optional(atom())`
+  # is therefore shadowed, and `%{:__struct__ => atom(), optional(atom()) =>
+  # any()}` keeps `__struct__` as an `atom()` field.
+  #
+  # A non-literal key is split into its finite atom part (one optional field
+  # per atom) and whole base kinds (key domains). Its coverage is `certain`
+  # when the key is exact and the kinds are whole, otherwise `possible`: the
+  # upper bound covers more keys than the spec does. A later association
+  # that meets a `possible` entry may still apply there, so both values are
+  # joined in the upper bound and the lower bound becomes `none()`. Required
+  # non-literal keys other than a single atom are widened to optional in the
+  # upper bound with `lo = none()`. Every widening records `:map_key_widened`.
   defp map(assocs, ctx, path) do
-    entries =
-      assocs
-      |> Enum.with_index()
-      |> Enum.map(fn {assoc, index} -> map_entry(assoc, index, ctx, path) end)
+    acc = %{fields: [], domains: [], values: [], losses: [], lo_empty?: false}
 
-    {literals, losses} =
-      entries
-      |> Enum.filter(&(elem(&1, 0) == :literal))
-      |> dedupe_literals(path)
-
-    literal_keys = Enum.map(literals, fn {key, _bound, _optional?} -> key end)
-    domains = Enum.filter(entries, &(elem(&1, 0) == :domain))
-    shared = shared_kinds(domains)
-
-    acc = %{fields: literals, domains: [], losses: losses, lo_empty?: false}
-
-    acc =
-      Enum.reduce(domains, acc, fn entry, acc ->
-        add_domain(entry, literal_keys, shared, path, acc)
-      end)
-
-    build_map(acc)
+    assocs
+    |> Enum.with_index()
+    |> Enum.map(fn {assoc, index} -> map_entry(assoc, index, ctx, path) end)
+    |> Enum.reduce(acc, &add_assoc/2)
+    |> build_map()
   end
 
   defp map_entry({:type, _, kind, [key, value]}, index, ctx, path)
@@ -469,7 +511,8 @@ defmodule SpecLint.Translate do
 
     case key do
       {:atom, _, atom} ->
-        {:literal, atom, node(value, ctx, path ++ [{:map_value, atom}]), not required?}
+        value_bound = node(value, ctx, path ++ [{:map_value, atom}])
+        {:literal, atom, value_bound, required?, path ++ [{:map_value, atom}]}
 
       _ ->
         key_bound = node(key, ctx, path ++ [{:map_key, index}])
@@ -481,113 +524,154 @@ defmodule SpecLint.Translate do
   defp map_entry(other, _index, _ctx, _path),
     do: throw({:unsupported, {:map_association, strip(other)}})
 
-  # A literal key given twice keeps one field with the union of the values
-  # (upper bound only).
-  defp dedupe_literals(literals, path) do
-    {fields, losses} =
-      Enum.reduce(literals, {[], []}, fn {:literal, key, bound, optional?}, {fields, losses} ->
-        case List.keyfind(fields, key, 0) do
-          nil ->
-            {fields ++ [{key, bound, optional?}], losses}
+  defp add_assoc({:literal, atom, value, required?, loss_path}, acc) do
+    acc = %{acc | values: acc.values ++ [value]}
+    add_field(acc, atom, value, not required?, true, loss_path)
+  end
 
-          {^key, previous, previous_optional?} ->
-            union = Bound.map_covariant([previous, bound], &Compiler.union_all/1)
-            field = {key, %{union | lo: Compiler.none()}, optional? and previous_optional?}
-            loss = Bound.loss(:map_key_widened, path ++ [{:map_value, key}])
-            {List.keyreplace(fields, key, 0, field), losses ++ [loss]}
-        end
+  defp add_assoc({:domain, key, value, required?, loss_path}, acc) do
+    acc = %{acc | values: acc.values ++ [value], losses: acc.losses ++ key.losses}
+    certain? = Bound.exact?(key)
+    {atoms, rest} = split_key(key.hi)
+    single_required? = required? and certain? and match?([_], atoms) and Compiler.empty?(rest)
+
+    acc =
+      Enum.reduce(atoms, acc, fn atom, acc ->
+        add_field(acc, atom, value, not single_required?, certain?, loss_path)
       end)
 
-    {fields, losses}
+    kinds = Compiler.key_kinds(rest)
+
+    whole? =
+      Compiler.equal?(rest, Compiler.union_all(Enum.map(kinds, &Compiler.key_kind_descr/1)))
+
+    acc = Enum.reduce(kinds, acc, &add_domain(&2, &1, value, certain? and whole?, loss_path))
+
+    exact? = certain? and whole?
+    record_key_loss(acc, required? and not single_required?, exact?, loss_path)
   end
 
-  defp shared_kinds(domains) do
-    domains
-    |> Enum.flat_map(fn {:domain, key, _value, _required?, _path} ->
-      Compiler.key_kinds(key.hi)
+  # A required key other than a single atom is optional in hi, so lo is
+  # none(); otherwise an inexact key only widens hi.
+  defp record_key_loss(acc, true = _widened_required?, _exact?, loss_path),
+    do: widened(acc, loss_path)
+
+  defp record_key_loss(acc, false, true = _exact?, _loss_path), do: acc
+  defp record_key_loss(acc, false, false, loss_path), do: widened_hi(acc, loss_path)
+
+  # Splits a key into its finite atoms (sorted) and the rest. A whole or
+  # co-finite atom part stays in the rest and is covered by the atom kind.
+  defp split_key(key) do
+    atom_part = Compiler.intersection(key, Compiler.atom())
+    rest = Compiler.difference(key, Compiler.atom())
+
+    case Compiler.atom_fetch(atom_part) do
+      {:finite, atoms} -> {Enum.sort(atoms), rest}
+      {:infinite, _} -> {[], Compiler.union(rest, atom_part)}
+      :error -> {[], rest}
+    end
+  end
+
+  # A required key shadowed by an earlier field still makes that field
+  # required (`promote_to_mand/2` in erl_types).
+  defp add_field(acc, atom, value, optional?, certain?, loss_path) do
+    case {field(acc, atom), domain(acc, :atom)} do
+      {%{certain?: true} = field, _} ->
+        if optional?, do: acc, else: put_field(acc, %{field | optional?: false})
+
+      {nil, %{certain?: true}} ->
+        acc
+
+      {%{} = field, _} ->
+        joined = %{field | hi: Compiler.union(field.hi, value.hi), optional?: true}
+        widened(put_field(acc, joined), loss_path)
+
+      {nil, %{} = domain} ->
+        joined = new_field(atom, Compiler.union(domain.hi, value.hi), value.lo, true, false)
+        widened(put_field(acc, joined), loss_path)
+
+      {nil, nil} ->
+        put_field(acc, new_field(atom, value.hi, value.lo, optional?, certain?))
+    end
+  end
+
+  defp add_domain(acc, kind, value, certain?, loss_path) do
+    case domain(acc, kind) do
+      %{certain?: true} ->
+        acc
+
+      %{} = domain ->
+        joined = %{domain | hi: Compiler.union(domain.hi, value.hi)}
+        widened(put_domain(acc, joined), loss_path)
+
+      nil ->
+        acc = put_domain(acc, %{kind: kind, hi: value.hi, lo: value.lo, certain?: certain?})
+        if kind == :atom, do: join_possible_fields(acc, value, loss_path), else: acc
+    end
+  end
+
+  # A field from an inexact key may not be covered by the spec at all, in
+  # which case a later atom domain applies to that key too.
+  defp join_possible_fields(acc, value, loss_path) do
+    Enum.reduce(acc.fields, acc, fn
+      %{certain?: false} = field, acc ->
+        joined = %{field | hi: Compiler.union(field.hi, value.hi), optional?: true}
+        widened(put_field(acc, joined), loss_path)
+
+      _field, acc ->
+        acc
     end)
-    |> Enum.frequencies()
-    |> Enum.filter(fn {_kind, count} -> count > 1 end)
-    |> Enum.map(fn {kind, _count} -> kind end)
   end
 
-  defp add_domain({:domain, key, value, required?, loss_path}, literal_keys, shared, _path, acc) do
-    acc = %{acc | losses: acc.losses ++ key.losses}
+  defp new_field(atom, hi, lo, optional?, certain?),
+    do: %{key: atom, hi: hi, lo: lo, optional?: optional?, certain?: certain?}
 
-    case finite_atoms(key) do
-      {:ok, [atom]} when required? ->
-        if atom in literal_keys do
-          widened(acc, loss_path)
-        else
-          %{acc | fields: acc.fields ++ [{atom, value, false}]}
-        end
+  defp field(acc, atom), do: Enum.find(acc.fields, &(&1.key == atom))
+  defp domain(acc, kind), do: Enum.find(acc.domains, &(&1.kind == kind))
 
-      {:ok, atoms} ->
-        new_fields = for atom <- atoms, atom not in literal_keys, do: {atom, value, true}
-        acc = %{acc | fields: acc.fields ++ new_fields}
-        if required?, do: widened(acc, loss_path), else: acc
-
-      :error ->
-        kinds = Compiler.key_kinds(key.hi)
-        whole = Compiler.union_all(Enum.map(kinds, &Compiler.key_kind_descr/1))
-
-        exact? =
-          Bound.exact?(key) and not required? and Compiler.equal?(key.hi, whole) and
-            Enum.all?(kinds, &(&1 not in shared))
-
-        domain = %{kinds: kinds, value: value, exact?: exact?}
-        acc = %{acc | domains: acc.domains ++ [domain]}
-
-        cond do
-          exact? -> acc
-          required? -> widened(acc, loss_path)
-          true -> %{acc | losses: acc.losses ++ [Bound.loss(:map_key_widened, loss_path)]}
-        end
+  defp put_field(acc, %{key: key} = field) do
+    case Enum.find_index(acc.fields, &(&1.key == key)) do
+      nil -> %{acc | fields: acc.fields ++ [field]}
+      index -> %{acc | fields: List.replace_at(acc.fields, index, field)}
     end
   end
 
-  defp widened(acc, loss_path) do
-    %{acc | lo_empty?: true, losses: acc.losses ++ [Bound.loss(:map_key_widened, loss_path)]}
-  end
-
-  defp finite_atoms(%Bound{hi: hi} = key) do
-    with true <- Bound.exact?(key),
-         true <- Compiler.subtype?(hi, Compiler.atom()),
-         {:finite, atoms} <- Compiler.atom_fetch(hi) do
-      {:ok, Enum.sort(atoms)}
-    else
-      _ -> :error
+  defp put_domain(acc, %{kind: kind} = domain) do
+    case Enum.find_index(acc.domains, &(&1.kind == kind)) do
+      nil -> %{acc | domains: acc.domains ++ [domain]}
+      index -> %{acc | domains: List.replace_at(acc.domains, index, domain)}
     end
   end
 
-  defp build_map(%{fields: fields, domains: domains} = acc) do
-    value_bounds =
-      Enum.map(fields, fn {_key, bound, _optional?} -> bound end) ++
-        Enum.map(domains, & &1.value)
+  defp widened(acc, loss_path),
+    do: %{widened_hi(acc, loss_path) | lo_empty?: true}
 
-    hi_fields = for {key, bound, optional?} <- fields, do: {key, bound.hi, optional?}
-    hi_domains = for %{kinds: [_ | _] = kinds, value: value} <- domains, do: {kinds, value.hi}
+  defp widened_hi(acc, loss_path) do
+    loss = Bound.loss(:map_key_widened, loss_path)
+    if loss in acc.losses, do: acc, else: %{acc | losses: acc.losses ++ [loss]}
+  end
 
-    # Lower bound: exact domains keep their lower value; an inexact optional
-    # domain is dropped (maps without such keys still belong to S).
+  # Lower bound: only `certain` entries, with their lower values. Leaving out
+  # a `possible` (always optional) entry is sound: maps without those keys
+  # still belong to S.
+  defp build_map(acc) do
+    hi_fields = for field <- acc.fields, do: {field.key, field.hi, field.optional?}
+    hi_domains = for domain <- acc.domains, do: {[domain.kind], domain.hi}
+
     lo =
       if acc.lo_empty? do
         Compiler.none()
       else
-        lo_fields = for {key, bound, optional?} <- fields, do: {key, bound.lo, optional?}
-
-        lo_domains =
-          for %{kinds: [_ | _] = kinds, value: value, exact?: true} <- domains,
-              do: {kinds, value.lo}
-
+        lo_fields = for %{certain?: true} = f <- acc.fields, do: {f.key, f.lo, f.optional?}
+        lo_domains = for %{certain?: true} = d <- acc.domains, do: {[d.kind], d.lo}
         Compiler.closed_map(lo_fields, lo_domains)
       end
 
     %Bound{
       lo: lo,
       hi: Compiler.closed_map(hi_fields, hi_domains),
-      losses: Enum.uniq(acc.losses ++ Enum.flat_map(value_bounds, & &1.losses)),
-      notes: Enum.uniq(Enum.flat_map(value_bounds, & &1.notes))
+      losses: Enum.uniq(acc.losses ++ Enum.flat_map(acc.values, & &1.losses)),
+      notes: Enum.uniq(Enum.flat_map(acc.values, & &1.notes))
     }
   end
 
@@ -659,6 +743,9 @@ defmodule SpecLint.Translate do
 
   defp qualify({:ann_type, line, [var, type]}, module),
     do: {:ann_type, line, [var, qualify(type, module)]}
+
+  defp qualify({:spec_lint_var, line, name, type}, module),
+    do: {:spec_lint_var, line, name, qualify(type, module)}
 
   defp qualify(list, module) when is_list(list), do: Enum.map(list, &qualify(&1, module))
   defp qualify(other, _module), do: other

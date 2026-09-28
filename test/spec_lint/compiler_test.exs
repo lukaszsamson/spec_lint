@@ -2,6 +2,7 @@ defmodule SpecLint.CompilerTest do
   use ExUnit.Case, async: true
 
   alias SpecLint.Compiler, as: C
+  alias SpecLint.Compiler.V121
 
   @pool_size 14
 
@@ -11,9 +12,49 @@ defmodule SpecLint.CompilerTest do
     assert capabilities.checker_version == :elixir_erl.checker_version()
     assert capabilities.max_clauses == 16
     assert capabilities.signatures
+    assert capabilities.revision == System.build_info()[:revision]
+    assert capabilities.adapter_id == "#{System.version()}+#{capabilities.revision}"
+  end
+
+  test "preflight pins the qualified Elixir revisions" do
+    assert V121.check_build(System.version(), System.build_info()[:revision]) == :ok
+    qualified = V121.qualified_revisions()
+
+    assert V121.check_build("1.21.0-dev", "deadbee") ==
+             {:error, {:unqualified_revision, "deadbee", qualified}}
+
+    assert V121.check_build("1.21.0-dev", nil) ==
+             {:error, {:unqualified_revision, nil, qualified}}
+
+    assert {:error, {:unsupported_elixir, "1.20.0", _}} = V121.check_build("1.20.0", "c24c235")
+  end
+
+  test "preflight loads Module.Types before probing the body hook" do
+    # function_exported?/3 does not load modules; run in a fresh VM where
+    # nothing has loaded Module.Types yet.
+    script = """
+    false = :erlang.module_loaded(Module.Types)
+    {:ok, caps} = SpecLint.Compiler.V121.preflight()
+    true = :erlang.module_loaded(Module.Types)
+    true = caps.body_hook == function_exported?(Module.Types, :warnings, 7)
+    IO.write("ok")
+    """
+
+    assert {"ok", 0} =
+             System.cmd("elixir", ["-pa", Mix.Project.compile_path(), "-e", script],
+               stderr_to_stdout: true
+             )
   end
 
   describe "checker chunk decoding" do
+    test "a running compiler with an unqualified checker version is rejected" do
+      running = :elixir_checker_v11
+      bytes = :erlang.term_to_binary({running, %{exports: [], mode: :elixir}})
+
+      assert V121.decode_checker_chunk(bytes, running) ==
+               {:error, {:unqualified_checker_version, running, V121.qualified_checker_version()}}
+    end
+
     test "version mismatch" do
       bytes = :erlang.term_to_binary({:elixir_checker_v9, %{exports: [], mode: :elixir}})
       expected = :elixir_erl.checker_version()

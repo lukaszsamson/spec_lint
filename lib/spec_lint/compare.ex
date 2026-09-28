@@ -10,6 +10,12 @@ defmodule SpecLint.Compare do
   gradual upper bound of the applied return. Translation bounds and gradual
   bounds are never merged.
 
+  When no inferred clause applies (`applied: :badapply`), the applied
+  return is taken as `none()` for `extra`, `missing` and `return_relation`,
+  which then describe nothing about the function's returns; consumers check
+  `applied` first. `established?` is `false` in that case: a rejected domain
+  never establishes the obligation.
+
   All functions are pure.
   """
 
@@ -130,7 +136,7 @@ defmodule SpecLint.Compare do
       extra: Compiler.difference(upper, s_hi),
       missing: Compiler.difference(s_hi, upper),
       return_relation: relation(upper, s_hi),
-      established?: Compiler.subtype?(upper, return.lo),
+      established?: applied != :badapply and Compiler.subtype?(upper, return.lo),
       spec_return_empty?: Compiler.empty?(s_hi),
       return_exact?: Bound.exact?(return),
       domain_relation: Enum.zip_with(d_hi, inferred_domain, &relation/2),
