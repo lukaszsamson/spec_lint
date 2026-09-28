@@ -82,6 +82,53 @@ defmodule SpecLint.Compiler do
   @typedoc "A non-literal map key domain: the key kinds and the value type."
   @type map_domain :: {[key_kind()], descr()}
 
+  @typedoc """
+  A base kind of the lattice, as seen by `components/1`. `:list` covers
+  both the empty list and non-empty lists.
+  """
+  @type kind ::
+          :atom
+          | :integer
+          | :float
+          | :binary
+          | :bitstring_no_binary
+          | :pid
+          | :port
+          | :reference
+          | :tuple
+          | :map
+          | :list
+          | :fun
+
+  @typedoc """
+  Structural view of one component of a type (see `components/1`):
+
+    * `{:whole, kind}` - the entire base kind;
+    * `{:atoms, atoms}` - a finite, non-empty set of atoms (sorted);
+    * `:empty_list` - only `[]`;
+    * `{:tuple, :closed | :open, elements}` - one tuple literal with no
+      remaining negation (`:open` means "at least these elements");
+    * `{:map, :closed | :open, fields, domains}` - one map literal with no
+      remaining negation;
+    * `{:list, element, tail, empty?}` - non-empty lists of `element`
+      ending in `tail`, plus `[]` when `empty?`;
+    * `{:unknown, kind, reason}` - a component the adapter cannot present
+      as a single literal: `:negation` (a negation that could not be
+      eliminated), `:intersection` (several positive literals) or `:shape`
+      (for example a function type other than `fun()`).
+  """
+  @type view ::
+          {:whole, kind()}
+          | {:atoms, [atom(), ...]}
+          | :empty_list
+          | {:tuple, :closed | :open, [descr()]}
+          | {:map, :closed | :open, [map_field()], [map_domain()]}
+          | {:list, descr(), descr(), boolean()}
+          | {:unknown, kind(), :negation | :intersection | :shape}
+
+  @typedoc "One component of a type: its kind, its own type and its view."
+  @type component :: %{kind: kind(), descr: descr(), view: view()}
+
   @doc "Checks the running compiler and reports what this adapter can do."
   @callback preflight() :: {:ok, capabilities()} | {:error, term()}
 
@@ -179,6 +226,8 @@ defmodule SpecLint.Compiler do
   @callback key_kinds(descr()) :: [key_kind()]
   @doc "The whole base kind for a map key kind."
   @callback key_kind_descr(key_kind()) :: descr()
+  @doc "Splits the upper bound of a type into per-kind components."
+  @callback components(descr()) :: [component()]
 
   @default_adapter SpecLint.Compiler.V121
 
@@ -403,4 +452,19 @@ defmodule SpecLint.Compiler do
   @doc "The whole base kind for a map key kind."
   @spec key_kind_descr(key_kind()) :: descr()
   def key_kind_descr(kind), do: adapter().key_kind_descr(kind)
+
+  @doc """
+  Splits the upper bound of `descr` into components, one per base kind
+  and, within tuples, maps and lists, one per literal of its normal form.
+  The union of the components' `descr` is the upper bound of `descr`.
+
+  Order is deterministic: bit kinds, atoms, tuples, maps, lists, functions.
+  Negations the adapter can eliminate soundly are eliminated (negative
+  literals disjoint from the positive one; for closed tuples, negative
+  tuples of the same arity by splitting on the first differing element);
+  anything else is reported as `{:unknown, kind, reason}` rather than
+  guessed.
+  """
+  @spec components(descr()) :: [component()]
+  def components(descr), do: adapter().components(descr)
 end

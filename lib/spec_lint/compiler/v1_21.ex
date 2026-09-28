@@ -83,7 +83,9 @@ defmodule SpecLint.Compiler.V121 do
     lower_bound: 1,
     to_quoted_string: 2,
     atom_fetch: 1,
-    to_domain_keys: 1
+    to_domain_keys: 1,
+    bdd_to_dnf: 1,
+    unfold: 1
   ]
 
   @impl true
@@ -473,7 +475,12 @@ defmodule SpecLint.Compiler.V121 do
   @impl true
   @spec atom_fetch(SpecLint.Compiler.descr()) ::
           {:finite, [atom()]} | {:infinite, [atom()]} | :error
-  def atom_fetch(descr), do: Descr.atom_fetch(descr)
+  def atom_fetch(descr), do: Descr.atom_fetch(unfold_node(descr))
+
+  # Recursive type nodes ({id, state, generator}) must be expanded before
+  # functions that pattern match on the descr map.
+  defp unfold_node({_id, _state, _generator} = node), do: Descr.unfold(node)
+  defp unfold_node(descr), do: descr
 
   # Descr.to_domain_keys/1 skips a finite atom component, because the
   # compiler's callers split finite atoms out first. Reporting :atom for it
@@ -507,4 +514,198 @@ defmodule SpecLint.Compiler.V121 do
 
   def key_kind_descr(:list),
     do: Descr.opt_union(Descr.empty_list(), Descr.non_empty_list(Descr.term(), Descr.term()))
+
+  ## Components
+  #
+  # The walk below reads this revision's descr layout: a map of per-kind
+  # parts (`bitmap`, `atom`, `tuple`, `map`, `list`, `fun`, `dynamic`),
+  # atoms as `{:union | :negation, :sets}`, and tuples, maps and non-empty
+  # lists as BDDs over literals `{hash, tag_or_head, elements_or_tail}`.
+
+  @bit_kinds [
+    binary: 0b1,
+    bitstring_no_binary: 0b10,
+    integer: 0b1000,
+    float: 0b10000,
+    pid: 0b100000,
+    port: 0b1000000,
+    reference: 0b10000000
+  ]
+  @bit_empty_list 0b100
+
+  @impl true
+  @spec components(SpecLint.Compiler.descr()) :: [SpecLint.Compiler.component()]
+  def components(descr) do
+    static = descr |> unfold_node() |> Descr.upper_bound() |> Descr.unfold()
+    bitmap = Map.get(static, :bitmap, 0)
+
+    bit_components(bitmap) ++
+      atom_components(Map.get(static, :atom)) ++
+      bdd_components(:tuple, Map.get(static, :tuple)) ++
+      bdd_components(:map, Map.get(static, :map)) ++
+      list_components(Map.get(static, :list), Bitwise.band(bitmap, @bit_empty_list) != 0) ++
+      fun_components(Map.get(static, :fun))
+  end
+
+  defp bit_components(bitmap) do
+    for {kind, bit} <- @bit_kinds, Bitwise.band(bitmap, bit) != 0 do
+      %{kind: kind, descr: %{bitmap: bit}, view: {:whole, kind}}
+    end
+  end
+
+  defp atom_components(nil), do: []
+
+  defp atom_components({:union, set} = atom) do
+    case :sets.to_list(set) do
+      [] -> []
+      atoms -> [%{kind: :atom, descr: %{atom: atom}, view: {:atoms, Enum.sort(atoms)}}]
+    end
+  end
+
+  defp atom_components({:negation, set} = atom) do
+    view = if :sets.size(set) == 0, do: {:whole, :atom}, else: {:unknown, :atom, :negation}
+    [%{kind: :atom, descr: %{atom: atom}, view: view}]
+  end
+
+  defp fun_components(nil), do: []
+
+  defp fun_components(fun) do
+    view =
+      case fun do
+        {:negation, bdds} when map_size(bdds) == 0 -> {:whole, :fun}
+        _ -> {:unknown, :fun, :shape}
+      end
+
+    [%{kind: :fun, descr: %{fun: fun}, view: view}]
+  end
+
+  defp list_components(nil, false), do: []
+
+  defp list_components(nil, true),
+    do: [%{kind: :list, descr: %{bitmap: @bit_empty_list}, view: :empty_list}]
+
+  defp list_components(bdd, empty?) do
+    case bdd_components(:list, bdd) do
+      [] ->
+        list_components(nil, empty?)
+
+      lines when empty? ->
+        Enum.map(lines, fn %{descr: line_descr, view: view} = component ->
+          view =
+            case view do
+              {:list, element, tail, false} -> {:list, element, tail, true}
+              other -> other
+            end
+
+          %{
+            component
+            | descr: Descr.opt_union(line_descr, %{bitmap: @bit_empty_list}),
+              view: view
+          }
+        end)
+
+      lines ->
+        lines
+    end
+  end
+
+  defp bdd_components(_kind, nil), do: []
+
+  defp bdd_components(kind, bdd) do
+    bdd
+    |> Descr.bdd_to_dnf()
+    |> Enum.reverse()
+    |> Enum.flat_map(fn {pos, negs} -> line_components(kind, pos, negs) end)
+    |> Enum.uniq_by(& &1.descr)
+  end
+
+  defp line_components(kind, pos, negs) do
+    positives = if pos == [], do: [top_literal(kind)], else: pos
+    pos_descr = positives |> Enum.map(&%{kind => &1}) |> Enum.reduce(&Descr.opt_intersection/2)
+    line = Enum.reduce(negs, pos_descr, &Descr.opt_difference(&2, %{kind => &1}))
+
+    cond do
+      Descr.empty?(line) ->
+        []
+
+      match?([_, _ | _], positives) ->
+        [%{kind: kind, descr: line, view: {:unknown, kind, :intersection}}]
+
+      true ->
+        [literal] = positives
+        live = Enum.reject(negs, &Descr.disjoint?(pos_descr, %{kind => &1}))
+        eliminate(kind, literal, live, line)
+    end
+  end
+
+  defp top_literal(:tuple), do: Descr.tuple().tuple
+  defp top_literal(:map), do: Descr.open_map().map
+  defp top_literal(:list), do: Descr.non_empty_list(Descr.term(), Descr.term()).list
+
+  defp eliminate(kind, literal, [], _line),
+    do: [%{kind: kind, descr: %{kind => literal}, view: literal_view(kind, literal)}]
+
+  defp eliminate(:tuple, {_, :closed, elements}, negs, line) do
+    size = length(elements)
+
+    if Enum.all?(negs, &same_size_negation?(&1, size)) do
+      negs
+      |> Enum.reduce([elements], fn {_, _, neg_elements}, acc ->
+        padded = neg_elements ++ List.duplicate(Descr.term(), size - length(neg_elements))
+        Enum.flat_map(acc, &tuple_split(&1, padded))
+      end)
+      |> Enum.map(fn elements ->
+        %{kind: :tuple, descr: Descr.tuple(elements), view: {:tuple, :closed, elements}}
+      end)
+    else
+      [%{kind: :tuple, descr: line, view: {:unknown, :tuple, :negation}}]
+    end
+  end
+
+  defp eliminate(kind, _literal, _negs, line),
+    do: [%{kind: kind, descr: line, view: {:unknown, kind, :negation}}]
+
+  defp same_size_negation?({_, :closed, neg_elements}, size), do: length(neg_elements) == size
+  defp same_size_negation?({_, :open, neg_elements}, size), do: length(neg_elements) <= size
+  defp same_size_negation?(_literal, _size), do: false
+
+  # {t1..tn} and not {u1..un} is the union, over the first index i where a
+  # value differs, of {t1 and u1, ..., ti - ui, t(i+1), ..., tn}.
+  defp tuple_split(elements, neg_elements) do
+    if Enum.any?(Enum.zip(elements, neg_elements), fn {t, u} -> Descr.disjoint?(t, u) end) do
+      [elements]
+    else
+      pairs = Enum.zip(elements, neg_elements)
+
+      for index <- 0..(length(pairs) - 1),
+          line = tuple_split_line(pairs, index),
+          not Enum.any?(line, &Descr.empty?/1),
+          do: line
+    end
+  end
+
+  defp tuple_split_line(pairs, index) do
+    pairs
+    |> Enum.with_index()
+    |> Enum.map(fn
+      {{t, u}, i} when i < index -> Descr.opt_intersection(t, u)
+      {{t, u}, ^index} -> Descr.opt_difference(t, u)
+      {{t, _u}, _i} -> t
+    end)
+  end
+
+  defp literal_view(:tuple, {_, :open, []}), do: {:whole, :tuple}
+  defp literal_view(:tuple, {_, tag, elements}), do: {:tuple, tag, elements}
+  defp literal_view(:map, {_, :open, []}), do: {:whole, :map}
+
+  defp literal_view(:map, {_, tag, fields}) do
+    fields = for {key, {value, optional?}} <- fields, do: {key, value, optional?}
+
+    case tag do
+      tag when tag in [:open, :closed] -> {:map, tag, fields, []}
+      domains -> {:map, :closed, fields, for({kind, value} <- domains, do: {[kind], value})}
+    end
+  end
+
+  defp literal_view(:list, {_, element, tail}), do: {:list, element, tail, false}
 end

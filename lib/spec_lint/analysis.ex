@@ -46,6 +46,7 @@ defmodule SpecLint.Analysis do
   @type result :: %{
           module: module() | nil,
           path: String.t(),
+          file: String.t() | nil,
           status: :ok | {:unavailable, term()} | {:out_of_scope, :erlang_module},
           debug_info: :ok | {:error, term()},
           functions: [function_result()],
@@ -79,6 +80,7 @@ defmodule SpecLint.Analysis do
     %{
       module: nil,
       path: Path.expand(beam_path),
+      file: nil,
       status: {:unavailable, reason},
       debug_info: debug_info,
       functions: [],
@@ -116,6 +118,7 @@ defmodule SpecLint.Analysis do
     base = %{
       module: beam.module,
       path: beam.path,
+      file: source_file(beam),
       status: :ok,
       debug_info: debug_info_status(beam),
       functions: [],
@@ -153,6 +156,9 @@ defmodule SpecLint.Analysis do
   end
 
   defp elixir_module?(module), do: match?("Elixir." <> _, Atom.to_string(module))
+
+  defp source_file(%Beam{debug_info: {:ok, %{file: file}}}) when is_binary(file), do: file
+  defp source_file(%Beam{}), do: nil
 
   defp debug_info_status(%Beam{debug_info: {:ok, _}}), do: :ok
   defp debug_info_status(%Beam{debug_info: {:error, reason}}), do: {:error, reason}

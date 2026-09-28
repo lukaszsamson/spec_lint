@@ -21,6 +21,7 @@ defmodule SpecLint.AnalysisTest do
     result = Analysis.module(beam_path(Compare))
     assert result.status == :ok
     assert result.debug_info == :ok
+    assert String.ends_with?(result.file, "test/support/fixtures.ex")
     assert Enum.all?(result.functions, &(&1.status == :compared))
     assert Enum.all?(result.functions, &is_integer(&1.line))
 

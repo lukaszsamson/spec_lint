@@ -13,6 +13,8 @@ defmodule SpecLint do
       loss records;
     * `SpecLint.Compare` - raw per-slice relations between a translated spec
       and the inferred signature;
-    * `SpecLint.Analysis` - ties the above together for one module.
+    * `SpecLint.Analysis` - ties the above together for one module;
+    * `SpecLint.Evidence` - the `SL002` structured extra-return classifier
+      over per-slice relations.
   """
 end
