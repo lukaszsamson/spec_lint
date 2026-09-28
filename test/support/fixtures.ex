@@ -154,6 +154,28 @@ defmodule SpecLint.Fixtures.Compare do
     :ok
   end
 
+  # Macro.generate_unique_arguments/2 shape (Phase 0 O5, O6): a literal 0
+  # slice and a pos_integer() slice. Both erase to integer(), but the
+  # overloads are disjoint.
+  @spec unique_args(0, context :: atom()) :: []
+  @spec unique_args(pos_integer(), context) :: [{atom(), [], context}, ...]
+        when context: atom()
+  def unique_args(amount, context), do: generate_args(amount, context, &{&1, [], &2})
+
+  defp generate_args(0, context, _fun) when is_atom(context), do: []
+
+  defp generate_args(amount, context, fun)
+       when is_integer(amount) and amount > 0 and is_atom(context) do
+    for id <- 1..amount, do: fun.(String.to_atom("arg" <> Integer.to_string(id)), context)
+  end
+
+  @spec ranges(1..3 | -1, atom()) :: :low
+  @spec ranges(4..10, atom()) :: :high
+  @spec ranges(non_neg_integer(), :x) :: :any
+  def ranges(n, _) when n < 4, do: :low
+  def ranges(n, _) when n <= 10, do: :high
+  def ranges(_, _), do: :any
+
   # The second clause refers to a type that tests seed with an unsupported
   # construct; on the code path the module does not exist.
   @spec two_slices(atom()) :: atom()
@@ -172,4 +194,30 @@ defmodule SpecLint.Fixtures.Behaviour do
   @moduledoc false
 
   @callback run(term()) :: :ok
+end
+
+defimpl SpecLint.Fixtures.Proto, for: Atom do
+  def describe(atom), do: Atom.to_string(atom)
+end
+
+defmodule SpecLint.Fixtures.Generator do
+  @moduledoc false
+
+  @doc false
+  defmacro define_generated do
+    quote generated: true do
+      @spec generated_fun(integer()) :: integer()
+      def generated_fun(x), do: x
+    end
+  end
+end
+
+defmodule SpecLint.Fixtures.Generated do
+  @moduledoc false
+  require SpecLint.Fixtures.Generator
+
+  SpecLint.Fixtures.Generator.define_generated()
+
+  @spec __call__(atom()) :: atom()
+  def __call__(atom), do: atom
 end

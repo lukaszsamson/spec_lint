@@ -4,9 +4,17 @@ defmodule SpecLint.Analysis do
   and compares it with the inferred signature from the checker chunk.
 
   Scope is exported functions with specs. Macros, protocol dispatch
-  functions, `behaviour_info/1` and specs of non-exported functions are
-  listed under `out_of_scope` with a reason; they are never silently
-  dropped. Nothing in the analysed module is loaded or invoked.
+  functions, `behaviour_info/1`, generated definitions and specs of
+  non-exported functions are listed under `out_of_scope` with a reason;
+  they are never silently dropped. Nothing in the analysed module is
+  loaded or invoked.
+
+  A definition is generated (DESIGN.md section 8) when its debug info
+  metadata says `generated: true`, or when it is one of the definitions
+  the compiler itself emits under a `__` name with a spec (`__impl__/1` of
+  every `defimpl`, `__protocol__/1`, `__struct__/0,1`, `__info__/1`,
+  `__deriving__/3`). User-defined `__` functions (`Kernel.SpecialForms`
+  style APIs such as `__call__/3`) stay in scope.
 
   Analysis requires a successful compiler preflight
   (`SpecLint.Compiler.preflight/0`): on a compiler the adapter is not
@@ -15,6 +23,16 @@ defmodule SpecLint.Analysis do
   """
 
   alias SpecLint.{Beam, Compare, Compiler, Translate, TypeCache}
+
+  # Definitions the compiler emits, with a spec, under a `__` name.
+  @compiler_emitted [
+    __impl__: 1,
+    __protocol__: 1,
+    __struct__: 0,
+    __struct__: 1,
+    __info__: 1,
+    __deriving__: 3
+  ]
 
   @typedoc "Status of a function or a module."
   @type status :: :compared | {:unsupported, term()} | {:unavailable, term()}
@@ -40,7 +58,7 @@ defmodule SpecLint.Analysis do
         }
 
   @typedoc "Why a spec'd function is outside the analysis scope."
-  @type out_of_scope_reason :: :macro | :protocol | :behaviour_info | :not_exported
+  @type out_of_scope_reason :: :macro | :protocol | :behaviour_info | :generated | :not_exported
 
   @typedoc "Result of `module/2`."
   @type result :: %{
@@ -178,6 +196,9 @@ defmodule SpecLint.Analysis do
           protocol?(beam) ->
             {:out_of_scope, {module, name, arity}, :protocol}
 
+          generated?(beam, {name, arity}) ->
+            {:out_of_scope, {module, name, arity}, :generated}
+
           {name, arity} not in beam.exports ->
             {:out_of_scope, {module, name, arity}, :not_exported}
 
@@ -186,6 +207,12 @@ defmodule SpecLint.Analysis do
         end
     end
   end
+
+  defp generated?(beam, fun_arity),
+    do: fun_arity in @compiler_emitted or fun_arity in generated_definitions(beam)
+
+  defp generated_definitions(%Beam{debug_info: {:ok, %{generated: generated}}}), do: generated
+  defp generated_definitions(%Beam{}), do: []
 
   defp protocol?(%Beam{exck: {:ok, %{mode: :protocol}}}), do: true
   defp protocol?(%Beam{exports: exports}), do: {:__protocol__, 1} in exports

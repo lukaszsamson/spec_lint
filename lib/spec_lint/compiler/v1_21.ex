@@ -468,15 +468,89 @@ defmodule SpecLint.Compiler.V121 do
   @spec lower_bound(SpecLint.Compiler.descr()) :: SpecLint.Compiler.descr()
   def lower_bound(descr), do: Descr.lower_bound(descr)
 
+  # Printing is presentation only, but it must be readable and must not
+  # depend on how a type was built. Descr keeps differences lazily, so
+  # `term() − (A ∪ B ∪ C)` prints as `not (A and not B and not C) and not (B
+  # and not C) and not C` (Phase 0 bug O4). Static types are printed from
+  # their normal form instead: tuple and map parts line by line from their
+  # DNF, each line as its positive literals and its live negative literals
+  # (negatives disjoint from the positives are dropped); the other kinds
+  # through Descr. The complement is printed the same way, and `not (...)`
+  # of it is used when it is shorter. An empty type prints as `none()`
+  # (a lazy difference that is empty would otherwise print as a non-empty
+  # looking `A and not B`). Gradual types print through Descr.
   @impl true
   @spec to_string(SpecLint.Compiler.descr()) :: String.t()
   def to_string(descr) do
-    # A lazy difference that is empty (for example a map minus a wider map)
-    # would otherwise print as a non-empty looking "A and not B".
-    if Descr.empty?(descr),
-      do: "none()",
-      else: Descr.to_quoted_string(descr, skip_dynamic_for_indivisible: false)
+    cond do
+      Descr.empty?(descr) -> "none()"
+      Descr.gradual?(descr) -> quoted(descr)
+      true -> canonical_or_complement(descr)
+    end
   end
+
+  defp quoted(descr), do: Descr.to_quoted_string(descr, skip_dynamic_for_indivisible: false)
+
+  defp canonical_or_complement(descr) do
+    complement = Descr.opt_difference(Descr.term(), descr)
+
+    if Descr.empty?(complement) do
+      "term()"
+    else
+      direct = canonical(descr)
+      negated = "not " <> parenthesise(canonical(complement))
+      if String.length(negated) < String.length(direct), do: negated, else: direct
+    end
+  end
+
+  defp canonical(descr) do
+    static = descr |> unfold_node() |> Descr.unfold()
+    rest = Map.drop(static, [:tuple, :map])
+
+    rest_string = if Descr.empty?(rest), do: [], else: [quoted(rest)]
+
+    lines =
+      Enum.flat_map([:tuple, :map], fn kind ->
+        case Map.get(static, kind) do
+          nil -> []
+          bdd -> bdd |> Descr.bdd_to_dnf() |> Enum.reverse() |> Enum.flat_map(&line(kind, &1))
+        end
+      end)
+
+    case rest_string ++ Enum.uniq(lines) do
+      [single] -> single
+      pieces -> Enum.map_join(pieces, " or ", &parenthesise_and/1)
+    end
+  end
+
+  defp parenthesise(string) do
+    if String.contains?(string, [" or ", " and "]), do: "(" <> string <> ")", else: string
+  end
+
+  defp parenthesise_and(string) do
+    if String.contains?(string, " and not "), do: "(" <> string <> ")", else: string
+  end
+
+  defp line(kind, {pos, negs}) do
+    positives = if pos == [], do: [top_literal(kind)], else: pos
+    pos_descr = positives |> Enum.map(&%{kind => &1}) |> Enum.reduce(&Descr.opt_intersection/2)
+    live = Enum.reject(negs, &Descr.disjoint?(pos_descr, %{kind => &1}))
+    line = Enum.reduce(live, pos_descr, &Descr.opt_difference(&2, %{kind => &1}))
+
+    if Descr.empty?(line) do
+      []
+    else
+      positive = Enum.map_join(positives, " and ", &literal_string(kind, &1))
+
+      case Enum.map(live, &literal_string(kind, &1)) do
+        [] -> [positive]
+        [neg] -> [positive <> " and not " <> neg]
+        negs -> [positive <> " and not (" <> Enum.join(negs, " or ") <> ")"]
+      end
+    end
+  end
+
+  defp literal_string(kind, literal), do: quoted(%{kind => literal})
 
   @impl true
   @spec atom_fetch(SpecLint.Compiler.descr()) ::

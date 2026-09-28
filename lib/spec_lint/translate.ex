@@ -28,6 +28,10 @@ defmodule SpecLint.Translate do
       covariant and outside the return stay exact: instantiating them with
       their bound maximises every occurrence at once, so the argument
       product at the bound is exactly the union over all instantiations.
+    * Integer literals, ranges and refinements such as `pos_integer()` are
+      `integer()` in `hi` with `:integer_refinement_erased` (the lattice has
+      no integer literals); the intervals they denote are kept in the
+      bound's `integers` so overlapping overloads can still be told apart.
     * Erlang records become open tuples tagged by the record name with
       `:record_fields_unknown`.
     * Map associations follow Dialyzer's reading (`erl_types`
@@ -205,10 +209,10 @@ defmodule SpecLint.Translate do
   defp node({:ann_type, _, [_var, type]}, ctx, path), do: node(type, ctx, path)
   defp node({:paren_type, _, [type]}, ctx, path), do: node(type, ctx, path)
   defp node({:atom, _, atom}, _ctx, _path) when is_atom(atom), do: exact(Compiler.atom([atom]))
-  defp node({:integer, _, _}, _ctx, path), do: refined_integer(path)
-  defp node({:char, _, _}, _ctx, path), do: refined_integer(path)
-  defp node({:op, _, _, _}, _ctx, path), do: refined_integer(path)
-  defp node({:op, _, _, _, _}, _ctx, path), do: refined_integer(path)
+  defp node({:integer, _, _} = ast, _ctx, path), do: literal_integer(ast, path)
+  defp node({:char, _, _} = ast, _ctx, path), do: literal_integer(ast, path)
+  defp node({:op, _, _, _} = ast, _ctx, path), do: literal_integer(ast, path)
+  defp node({:op, _, _, _, _} = ast, _ctx, path), do: literal_integer(ast, path)
 
   defp node({:spec_lint_cutoff, _name}, _ctx, path),
     do: Bound.upper(Compiler.term(), :recursive_cutoff, path)
@@ -241,16 +245,71 @@ defmodule SpecLint.Translate do
 
   defp variable(bound, _ctx, _path), do: bound
 
-  defp refined_integer(path),
-    do: Bound.upper(Compiler.integer(), :integer_refinement_erased, path)
+  # The lattice has no integer literals or ranges: every refinement is
+  # erased to integer() in hi, and the interval it denotes is kept in
+  # `integers` (see SpecLint.Bound).
+  defp refined_integer(path, intervals \\ nil),
+    do: %{Bound.upper(Compiler.integer(), :integer_refinement_erased, path) | integers: intervals}
+
+  defp literal_integer(ast, path) do
+    case integer_value(ast) do
+      {:ok, value} -> refined_integer(path, [{value, value}])
+      :error -> refined_integer(path)
+    end
+  end
+
+  # Value of an integer literal expression in a typespec (`1`, `?a`, `-1`,
+  # `1 + 2`, ...), or :error for anything else.
+  defp integer_value({:integer, _, value}) when is_integer(value), do: {:ok, value}
+  defp integer_value({:char, _, value}) when is_integer(value), do: {:ok, value}
+
+  defp integer_value({:op, _, op, arg}) when op in [:-, :+, :bnot] do
+    with {:ok, value} <- integer_value(arg), do: {:ok, unary(op, value)}
+  end
+
+  defp integer_value({:op, _, op, left, right}) do
+    with {:ok, l} <- integer_value(left),
+         {:ok, r} <- integer_value(right) do
+      binary(op, l, r)
+    end
+  end
+
+  defp integer_value(_ast), do: :error
+
+  defp unary(:-, value), do: -value
+  defp unary(:+, value), do: value
+  defp unary(:bnot, value), do: Bitwise.bnot(value)
+
+  defp binary(:+, l, r), do: {:ok, l + r}
+  defp binary(:-, l, r), do: {:ok, l - r}
+  defp binary(:*, l, r), do: {:ok, l * r}
+  defp binary(:div, l, r) when r != 0, do: {:ok, div(l, r)}
+  defp binary(:rem, l, r) when r != 0, do: {:ok, rem(l, r)}
+  defp binary(:band, l, r), do: {:ok, Bitwise.band(l, r)}
+  defp binary(:bor, l, r), do: {:ok, Bitwise.bor(l, r)}
+  defp binary(:bxor, l, r), do: {:ok, Bitwise.bxor(l, r)}
+  defp binary(_op, _l, _r), do: :error
+
+  defp range_integer(first, last, path) do
+    case {integer_value(first), integer_value(last)} do
+      {{:ok, first}, {:ok, last}} when first <= last -> refined_integer(path, [{first, last}])
+      _ -> refined_integer(path)
+    end
+  end
 
   ## Builtin types
 
   defp builtin(:union, members, ctx, path) do
-    members
-    |> Enum.with_index()
-    |> Enum.map(fn {member, index} -> node(member, ctx, path ++ [{:union, index}]) end)
-    |> Bound.map_covariant(&Compiler.union_all/1)
+    bounds =
+      members
+      |> Enum.with_index()
+      |> Enum.map(fn {member, index} -> node(member, ctx, path ++ [{:union, index}]) end)
+
+    union = Bound.map_covariant(bounds, &Compiler.union_all/1)
+
+    if Enum.any?(bounds, &is_list(&1.integers)),
+      do: %{union | integers: Enum.flat_map(bounds, &Bound.integer_intervals/1)},
+      else: union
   end
 
   defp builtin(name, [], _ctx, _path) when name in [:term, :any, :dynamic],
@@ -265,11 +324,15 @@ defmodule SpecLint.Translate do
   defp builtin(:boolean, [], _ctx, _path), do: exact(Compiler.boolean())
   defp builtin(:integer, [], _ctx, _path), do: exact(Compiler.integer())
 
-  defp builtin(name, [], _ctx, path)
-       when name in [:non_neg_integer, :pos_integer, :neg_integer, :arity, :byte, :char],
-       do: refined_integer(path)
+  defp builtin(:non_neg_integer, [], _ctx, path), do: refined_integer(path, [{0, :infinity}])
+  defp builtin(:pos_integer, [], _ctx, path), do: refined_integer(path, [{1, :infinity}])
+  defp builtin(:neg_integer, [], _ctx, path), do: refined_integer(path, [{:neg_infinity, -1}])
 
-  defp builtin(:range, [_, _], _ctx, path), do: refined_integer(path)
+  defp builtin(name, [], _ctx, path) when name in [:arity, :byte],
+    do: refined_integer(path, [{0, 255}])
+
+  defp builtin(:char, [], _ctx, path), do: refined_integer(path, [{0, 0x10FFFF}])
+  defp builtin(:range, [first, last], _ctx, path), do: range_integer(first, last, path)
   defp builtin(:float, [], _ctx, _path), do: exact(Compiler.float())
 
   defp builtin(:number, [], _ctx, _path),
@@ -386,7 +449,8 @@ defmodule SpecLint.Translate do
     %Bound{
       lo: Compiler.atom([:infinity]),
       hi: Compiler.union(Compiler.integer(), Compiler.atom([:infinity])),
-      losses: [Bound.loss(:integer_refinement_erased, path ++ [{:union, 1}])]
+      losses: [Bound.loss(:integer_refinement_erased, path ++ [{:union, 1}])],
+      integers: [{0, :infinity}]
     }
   end
 

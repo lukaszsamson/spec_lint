@@ -108,6 +108,29 @@ defmodule SpecLint.ExperimentFixtures.Cases do
 
   @spec passthrough(tuple()) :: {:ok, integer()}
   def passthrough(t) when is_tuple(t), do: t
+
+  # O2 (Ecto.Query.Builder.Join.escape/3 shape): the precise clauses return
+  # 5-tuples, the spec declares 4-tuples, and the recursive catch-all
+  # returns dynamic(), which makes the union top-only.
+  @spec stale(term()) :: {atom(), term(), term(), list()}
+  def stale(x) when is_atom(x), do: {:_, x, nil, nil, []}
+  def stale(x) when is_binary(x), do: {:_, {x, nil}, nil, nil, []}
+  def stale(x), do: stale(Macro.expand(x, __ENV__))
+
+  # O1 (Config.config/3 shape): Process.put/2 returns
+  # dynamic(not :undefined), which is not top-only but near-top.
+  @spec put_setting(atom(), term()) :: keyword()
+  def put_setting(key, value) when is_atom(key), do: Process.put(key, value)
+
+  # O3: the extra {:error, term()} is structured and present in the clause
+  # return, but the clause return is gradual (Process.get/1 is dynamic()).
+  @spec gradual_payload(atom()) :: {:ok, atom()}
+  def gradual_payload(a) when is_atom(a) do
+    case a do
+      :ok -> {:ok, a}
+      _ -> {:error, Process.get(a)}
+    end
+  end
 end
 
 defmodule SpecLint.ExperimentFixtures do
@@ -117,6 +140,8 @@ defmodule SpecLint.ExperimentFixtures do
   # For each MFA:
   #   * class     - expected function-level class from
   #                 SpecLint.Evidence.classify_function/2;
+  #   * static_class - expected class with require_static_return: true,
+  #                 when it differs from class;
   #   * slices    - expected per-slice classes, when there are several;
   #   * omission? - ground truth: the spec really omits a return the
   #                 function produces for inputs inside the spec domain;
@@ -129,9 +154,12 @@ defmodule SpecLint.ExperimentFixtures do
 
   @expected %{
     {Cases, :lookup, 1} => %{
-      class: :structured_possible,
+      class: :clause_conflict,
       omission?: true,
-      note: "true omission, tagged tuple {:error, :missing}"
+      note:
+        "true omission, tagged tuple {:error, :missing}: the (:missing) clause is " <>
+          "contained and its whole return is outside the spec (union level: " <>
+          "structured_possible)"
     },
     {Cases, :status, 1} => %{
       class: :structured_possible,
@@ -139,9 +167,13 @@ defmodule SpecLint.ExperimentFixtures do
       note: "true omission, atom :timeout"
     },
     {Cases, :size_of, 1} => %{
-      class: :whole_kind_possible,
+      class: :clause_conflict,
+      static_class: :possible_gradual,
       omission?: true,
-      note: "true omission, whole kind: spec integer(), body also returns binary()"
+      note:
+        "true omission, whole kind: spec integer(), body also returns binary(); the " <>
+          "second clause returns only binary() (union level: whole_kind_possible); its " <>
+          "return is gradual (Atom.to_string/1)"
     },
     {Cases, :name, 1} => %{
       class: :none,
@@ -173,12 +205,13 @@ defmodule SpecLint.ExperimentFixtures do
       note: "incomparable domains: spec atom() | binary(), clause atom() | integer()"
     },
     {Cases, :pick, 1} => %{
-      class: :structured_possible,
-      slices: [:structured_possible, :none],
+      class: :clause_conflict,
+      slices: [:clause_conflict, :none],
       omission?: false,
       note:
         "overlapping overload specs: under the union reading :special is allowed for " <>
-          ":special; the class alone is a false positive, the overlap tag must block it"
+          ":special; the class alone is a false positive (the (:special) clause is a " <>
+          "clause conflict of the first slice), the overlap tag must block it"
     },
     {Cases, :wide, 1} => %{
       class: :none,
@@ -196,11 +229,12 @@ defmodule SpecLint.ExperimentFixtures do
       note: "recursion: the recursive clause returns dynamic(), so inference is top-only"
     },
     {Cases, :count, 1} => %{
-      class: :whole_kind_possible,
+      class: :possible_domain_escape,
       omission?: false,
       note:
         "recursion through arithmetic: 1 + dynamic() is integer() | float(), so " <>
-          "float() is a whole-kind false positive"
+          "float() is a whole-kind false positive; the clause matching improper " <>
+          "lists escapes the spec domain, so the class is possible_domain_escape (O6)"
     },
     {Cases, :wrap, 1} => %{
       class: :none,
@@ -217,18 +251,22 @@ defmodule SpecLint.ExperimentFixtures do
     },
     {Cases, :point, 1} => %{
       class: :structured_possible,
+      static_class: :possible_gradual,
       omission?: true,
       note: "struct return spec; body also returns :origin"
     },
     {Cases, :fetch, 1} => %{
       class: :structured_possible,
+      static_class: :possible_gradual,
       omission?: true,
       note: "true omission of a struct: %Point{} is structured"
     },
     {Cases, :labels, 1} => %{
-      class: :structured_possible,
+      class: :clause_conflict,
       omission?: true,
-      note: "true omission, list whose elements are structured ([:two])"
+      note:
+        "true omission, list whose elements are structured ([:two]); the (:two) " <>
+          "clause returns only [:two] (union level: structured_possible)"
     },
     {Cases, :wrap_error, 1} => %{
       class: :unknown,
@@ -242,6 +280,30 @@ defmodule SpecLint.ExperimentFixtures do
       class: :unknown,
       omission?: true,
       note: "tuple() minus {:ok, integer()} is a negation: unknown, not reported"
+    },
+    {Cases, :stale, 1} => %{
+      class: :clause_conflict,
+      static_class: :possible_gradual,
+      omission?: true,
+      note:
+        "stale spec hidden by a top-only union (O2): the recursive clause returns " <>
+          "dynamic(), the atom and binary clauses return 5-tuples against a 4-tuple " <>
+          "spec; those clause returns are gradual"
+    },
+    {Cases, :put_setting, 2} => %{
+      class: :unknown,
+      omission?: false,
+      note:
+        "near-top inference (O1): Process.put/2 returns dynamic(not :undefined), which " <>
+          "is treated like top-only (reason near_top), not as whole-kind evidence"
+    },
+    {Cases, :gradual_payload, 1} => %{
+      class: :structured_possible,
+      static_class: :possible_gradual,
+      omission?: true,
+      note:
+        "true omission of {:error, _} whose only witness is a gradual clause return " <>
+          "(payload_gradual, O3)"
     }
   }
 

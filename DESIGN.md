@@ -220,8 +220,11 @@ applied return `U(D)`.
      in the subtraction), giving a per-clause class.
    The function class is the worst over the union-level class and all
    per-clause classes. Clauses whose containment is `domain_escape` or
-   `containment_unknown` contribute only `possible_domain_escape`, never a
-   `clause_conflict`.
+   `containment_unknown` never yield a `clause_conflict`. An escaping clause
+   contributes at most `possible_domain_escape`. A `containment_unknown`
+   clause contributes at most `possible_input_approximate`, the same
+   reading as the union level: Compare reports `containment_unknown` only
+   when input approximation hides containment.
 8. **Near-top (added after Phase 0, bug O1).** `U` counts as near-top,
    and is treated like top-only, when its upper bound contains `term()`
    minus a finite set of atoms, or when `difference(U, S_hi)` contains all

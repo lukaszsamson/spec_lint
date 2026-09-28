@@ -11,7 +11,8 @@ defmodule SpecLint.Beam do
     * `specs` and `types` - from `Code.Typespec.fetch_specs/1` and
       `fetch_types/1` on the binary;
     * `debug_info` - the `:elixir_v1` debug info: definitions, the first line
-      of each definition, and the source file.
+      of each definition, the definitions whose metadata marks them
+      `generated: true`, and the source file.
   """
 
   alias SpecLint.Compiler
@@ -20,6 +21,7 @@ defmodule SpecLint.Beam do
   @type debug_info :: %{
           definitions: [tuple()],
           lines: %{optional({atom(), arity()}) => pos_integer()},
+          generated: [{atom(), arity()}],
           file: String.t() | nil
         }
 
@@ -118,6 +120,7 @@ defmodule SpecLint.Beam do
          %{
            definitions: definitions,
            lines: definition_lines(definitions),
+           generated: generated_definitions(definitions),
            file: Map.get(map, :file)
          }}
 
@@ -132,5 +135,11 @@ defmodule SpecLint.Beam do
         is_integer(line),
         into: %{},
         do: {fun_arity, line}
+  end
+
+  defp generated_definitions(definitions) do
+    for {fun_arity, _kind, meta, _clauses} <- definitions,
+        Keyword.get(meta, :generated) == true,
+        do: fun_arity
   end
 end

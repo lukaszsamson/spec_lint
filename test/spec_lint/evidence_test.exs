@@ -29,6 +29,9 @@ defmodule SpecLint.EvidenceTest do
         assert function.status == :compared
         assert Evidence.classify_function(function.slices) == @expected.class
 
+        assert Evidence.classify_function(function.slices, require_static_return: true) ==
+                 (@expected[:static_class] || @expected.class)
+
         if slices = @expected[:slices] do
           assert Enum.map(function.slices, &Evidence.classify(&1.relations).class) == slices
         end
@@ -78,8 +81,50 @@ defmodule SpecLint.EvidenceTest do
          %{functions: functions} do
       [first, _second] = functions[{Cases, :pick, 1}].slices
       classification = Evidence.classify(first.relations)
-      assert classification.class == :structured_possible
+      assert classification.union_class == :structured_possible
+      assert classification.class == :clause_conflict
       assert :overlap in classification.reasons
+    end
+
+    test "a stale spec hidden by a top-only union is a clause conflict",
+         %{functions: functions} do
+      [slice] = functions[{Cases, :stale, 1}].slices
+      classification = Evidence.classify(slice.relations)
+      assert classification.union_class == :unknown
+      assert :top_only in classification.reasons
+      assert classification.class == :clause_conflict
+
+      conflicts = for %{class: :clause_conflict} = clause <- classification.clauses, do: clause
+      assert [_ | _] = conflicts
+      assert Enum.all?(conflicts, &(&1.containment == :contained and :disjoint in &1.reasons))
+
+      assert Enum.any?(
+               classification.clauses,
+               &(&1.class == :unknown and :top_only in &1.reasons)
+             )
+    end
+
+    test "near-top inference is treated like top-only", %{functions: functions} do
+      [slice] = functions[{Cases, :put_setting, 2}].slices
+      assert slice.relations.near_top?
+      refute slice.relations.top_only?
+      classification = Evidence.classify(slice.relations)
+      assert %{class: :unknown, union_class: :unknown, components: []} = classification
+      assert :near_top in classification.reasons
+      assert Enum.all?(classification.clauses, &(:near_top in &1.reasons))
+    end
+
+    test "a structured component witnessed only by a gradual return is payload_gradual",
+         %{functions: functions} do
+      [slice] = functions[{Cases, :gradual_payload, 1}].slices
+      default = Evidence.classify(slice.relations)
+      assert default.class == :structured_possible
+      assert [%{label: :structured, payload_gradual?: true}] = default.components
+      assert {:payload_gradual, 1} in default.reasons
+
+      static = Evidence.classify(slice.relations, require_static_return: true)
+      assert static.class == :possible_gradual
+      assert static.union_class == :possible_gradual
     end
 
     test "domain escape and input approximation are recorded as reasons",
@@ -116,7 +161,7 @@ defmodule SpecLint.EvidenceTest do
       # As if subtracting the spec had produced a tagged tuple.
       rel = %{rel | extra: C.tuple([C.atom([:error]), C.integer()])}
 
-      assert %{class: :unknown, components: [component], reasons: reasons} =
+      assert %{union_class: :unknown, components: [component], reasons: reasons} =
                Evidence.classify(rel)
 
       assert %{label: :structured, present_in_contributing?: false} = component
@@ -167,8 +212,10 @@ defmodule SpecLint.EvidenceTest do
 
       rel = relations([C.atom([:a, :b])], spec, clauses)
       classification = Evidence.classify(rel)
-      assert classification.class == :structured_possible
+      assert classification.union_class == :structured_possible
       assert Enum.all?(classification.components, &(not &1.subtraction_payload?))
+      # The {:ok, :x} clause alone is entirely outside the spec.
+      assert classification.class == :clause_conflict
     end
 
     test "a new tag is never a subtraction payload" do
@@ -187,7 +234,10 @@ defmodule SpecLint.EvidenceTest do
       ]
 
       rel = relations([C.atom([:a, :b])], C.atom([:ok]), clauses)
-      assert %{class: :structured_possible, components: components} = Evidence.classify(rel)
+
+      assert %{union_class: :structured_possible, components: components} =
+               Evidence.classify(rel)
+
       assert Enum.all?(components, & &1.present_in_contributing?)
     end
 
@@ -215,6 +265,181 @@ defmodule SpecLint.EvidenceTest do
       classification = Evidence.classify(rel)
       assert classification.class == :possible_domain_escape
       assert :input_approximate in classification.reasons
+    end
+  end
+
+  describe "per-clause evidence" do
+    test "a precise clause disjoint from the spec under a top-only union is a conflict" do
+      clauses = [
+        {[C.atom()], C.tuple([C.atom([:a]), C.atom([:b])])},
+        {[C.integer()], C.dynamic()}
+      ]
+
+      rel = relations([C.union(C.atom(), C.integer())], C.atom([:ok]), clauses)
+      assert rel.top_only?
+
+      assert %{class: :clause_conflict, union_class: :unknown, clauses: [first, second]} =
+               Evidence.classify(rel)
+
+      assert %{index: 0, class: :clause_conflict, containment: :contained} = first
+      assert :disjoint in first.reasons
+      assert C.equal?(first.extra, C.tuple([C.atom([:a]), C.atom([:b])]))
+      assert %{index: 1, class: :unknown, reasons: [:top_only]} = second
+    end
+
+    test "the stored clause return is used, not the wrapped application result" do
+      # The stored return is static; its application is dynamic(...).
+      clauses = [{[C.atom()], C.integer()}]
+      rel = relations([C.atom()], C.atom(), clauses)
+      assert C.gradual?(rel.applied_return)
+
+      assert %{class: :clause_conflict, clauses: [%{static_return?: true}]} =
+               Evidence.classify(rel)
+    end
+
+    test "an escaping or approximately contained clause is never a conflict" do
+      escape = relations([C.atom()], C.atom(), [{[C.term()], C.integer()}])
+
+      assert %{class: :possible_domain_escape, clauses: [clause]} = Evidence.classify(escape)
+      assert %{class: :possible_domain_escape, containment: :domain_escape} = clause
+      assert :disjoint in clause.reasons
+
+      approximate = %{
+        args: [
+          %Bound{
+            lo: C.none(),
+            hi: C.integer(),
+            losses: [Bound.loss(:integer_refinement_erased, [])]
+          }
+        ],
+        return: Bound.exact(C.atom([:ok]))
+      }
+
+      rel = Compare.slice(approximate, [{[C.integer()], C.binary()}])
+      assert %{class: class, clauses: [clause]} = Evidence.classify(rel)
+      assert class == :possible_input_approximate
+      assert %{class: :possible_input_approximate, containment: :containment_unknown} = clause
+    end
+
+    test "structure only in the subtraction does not count per clause (F1)" do
+      spec = C.tuple([C.atom([:ok]), C.pid()])
+      clauses = [{[C.atom()], C.tuple([C.atom([:ok]), C.term()])}, {[C.integer()], C.dynamic()}]
+      rel = relations([C.union(C.atom(), C.integer())], spec, clauses)
+
+      assert %{class: :unknown, clauses: [first, _second]} = Evidence.classify(rel)
+      assert %{class: :unknown, components: [%{subtraction_payload?: true}]} = first
+    end
+
+    test "a structured per-clause extra is structured_possible" do
+      ret = C.union(C.atom([:ok]), C.tuple([C.atom([:error]), C.atom([:x])]))
+      clauses = [{[C.atom()], ret}, {[C.integer()], C.dynamic()}]
+      rel = relations([C.union(C.atom(), C.integer())], C.atom([:ok]), clauses)
+
+      assert %{class: :structured_possible, union_class: :unknown, clauses: [first, _]} =
+               Evidence.classify(rel)
+
+      assert %{class: :structured_possible, components: [%{label: :structured}]} = first
+    end
+
+    test "a no_return() spec never yields a clause conflict" do
+      rel = relations([C.atom()], C.none(), [{[C.atom()], C.atom([:ok])}])
+      assert rel.spec_return_empty?
+      classification = Evidence.classify(rel)
+      refute classification.class == :clause_conflict
+      assert :spec_return_empty in classification.reasons
+    end
+
+    test "require_static_return downgrades a conflict with a gradual clause return" do
+      clauses = [{[C.atom()], C.dynamic(C.integer())}]
+      rel = relations([C.atom()], C.atom(), clauses)
+      assert Evidence.classify(rel).class == :clause_conflict
+
+      assert %{class: :possible_gradual, clauses: [clause]} =
+               Evidence.classify(rel, require_static_return: true)
+
+      assert :payload_gradual in clause.reasons
+
+      static = relations([C.atom()], C.atom(), [{[C.atom()], C.integer()}])
+      assert Evidence.classify(static, require_static_return: true).class == :clause_conflict
+    end
+
+    test "require_static_return keeps a structured component a static clause witnesses" do
+      extra = C.tuple([C.atom([:error]), C.atom([:x])])
+
+      clauses = [
+        {[C.atom([:a])], C.union(C.atom([:ok]), extra)},
+        {[C.atom([:b])], C.dynamic(C.union(C.atom([:ok]), extra))}
+      ]
+
+      rel = relations([C.atom([:a, :b])], C.atom([:ok]), clauses)
+      classification = Evidence.classify(rel, require_static_return: true)
+      assert classification.union_class == :structured_possible
+      assert [%{payload_gradual?: false}] = classification.components
+    end
+  end
+
+  describe "near-top and whole kinds" do
+    test "term() minus a finite atom set is near-top" do
+      ret = C.dynamic(C.difference(C.term(), C.atom([:undefined])))
+      rel = relations([C.atom()], C.list(C.tuple([C.atom(), C.term()])), [{[C.atom()], ret}])
+      assert rel.near_top?
+      assert %{class: :unknown, reasons: [:near_top]} = Evidence.classify(rel)
+    end
+
+    test "an extra covering pid, port, reference and fun is near-top" do
+      ret = C.dynamic(C.difference(C.term(), C.empty_list()))
+      rel = relations([C.atom()], C.list(C.tuple([C.atom(), C.term()])), [{[C.atom()], ret}])
+      assert rel.near_top?
+      assert %{class: :unknown, reasons: [:near_top]} = Evidence.classify(rel)
+
+      # Not near-top when the spec itself declares those kinds.
+      spec = C.union_all([C.pid(), C.port(), C.reference(), C.fun()])
+      ret = C.union(spec, C.integer())
+      rel = relations([C.atom()], spec, [{[C.atom()], ret}])
+      refute rel.near_top?
+      assert Evidence.classify(rel).class == :whole_kind_possible
+    end
+
+    test "whole-kind evidence respects input approximation and domain escape (O6)" do
+      approximate = %{
+        args: [
+          %Bound{
+            lo: C.none(),
+            hi: C.integer(),
+            losses: [Bound.loss(:integer_refinement_erased, [])]
+          }
+        ],
+        return: Bound.exact(C.empty_list())
+      }
+
+      rel = Compare.slice(approximate, [{[C.integer()], C.list(C.term())}])
+
+      assert %{union_class: :possible_input_approximate, reasons: reasons} =
+               Evidence.classify(rel)
+
+      assert :whole_kind_only in reasons
+
+      escape = relations([C.atom()], C.integer(), [{[C.term()], C.union(C.integer(), C.float())}])
+
+      assert %{union_class: :possible_domain_escape, reasons: reasons} =
+               Evidence.classify(escape)
+
+      assert :whole_kind_only in reasons
+
+      contained =
+        relations([C.atom()], C.integer(), [{[C.atom()], C.union(C.integer(), C.float())}])
+
+      assert Evidence.classify(contained).class == :whole_kind_possible
+    end
+
+    test "Macro.generate_unique_arguments/2 shape: slice 0 is input-approximate" do
+      function = analysed(SpecLint.Fixtures.Compare, :unique_args, 2)
+      [zero, _positive] = function.slices
+      classification = Evidence.classify(zero.relations)
+      assert classification.class == :possible_input_approximate
+      assert :whole_kind_only in classification.reasons
+      refute :overlap in classification.reasons
+      refute :overlap_unknown in classification.reasons
     end
   end
 
@@ -315,7 +540,9 @@ defmodule SpecLint.EvidenceTest do
 
     test "classes are ordered worst first" do
       assert Evidence.classes() == [
+               :clause_conflict,
                :structured_possible,
+               :possible_gradual,
                :possible_domain_escape,
                :possible_input_approximate,
                :whole_kind_possible,

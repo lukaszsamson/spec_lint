@@ -44,6 +44,39 @@ defmodule SpecLint.TranslateTest do
       assert [%{path: [:return]}] = ret.losses
     end
 
+    test "integer refinements keep the intervals they denote" do
+      %{args: args, return: ret} = slice(Types, :refined, 5)
+
+      assert Enum.map(args, & &1.integers) == [
+               [{1, :infinity}],
+               [{0, :infinity}],
+               [{1, 10}],
+               [{-1, -1}],
+               [{0, 255}]
+             ]
+
+      assert ret.integers == [{0, 0x10FFFF}]
+
+      union = raw({:type, 0, :union, [{:integer, 0, 0}, {:type, 0, :atom, []}]})
+      assert union.integers == [{0, 0}]
+      assert Bound.integer_intervals(union) == [{0, 0}]
+
+      mixed = raw({:type, 0, :union, [{:integer, 0, 0}, {:type, 0, :integer, []}]})
+      assert Bound.integer_intervals(mixed) == [{0, 0}, {:neg_infinity, :infinity}]
+
+      assert raw({:op, 0, :+, {:integer, 0, 1}, {:integer, 0, 2}}).integers == [{3, 3}]
+      assert raw({:type, 0, :integer, []}).integers == nil
+      assert Bound.integer_intervals(raw({:type, 0, :atom, []})) == []
+    end
+
+    test "interval disjointness" do
+      assert Bound.intervals_disjoint?([{0, 0}], [{1, :infinity}])
+      assert Bound.intervals_disjoint?([{:neg_infinity, -1}], [{0, :infinity}])
+      refute Bound.intervals_disjoint?([{0, 5}], [{5, 7}])
+      refute Bound.intervals_disjoint?([{:neg_infinity, :infinity}], [{3, 3}])
+      assert Bound.intervals_disjoint?([], [{:neg_infinity, :infinity}])
+    end
+
     test "sized binaries" do
       %{args: [byte, binary, bitstring, nonempty], return: ret} = slice(Types, :sized, 4)
       assert_bounds(byte, C.none(), C.binary(), [:sized_binary_erased])

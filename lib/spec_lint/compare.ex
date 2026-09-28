@@ -16,6 +16,19 @@ defmodule SpecLint.Compare do
   `applied` first. `established?` is `false` in that case: a rejected domain
   never establishes the obligation.
 
+  `top_only?` means `term() ⊆ U(D)`. `near_top?` (DESIGN.md 3.1 step 8)
+  means the applied return is not top-only but is treated like it: see
+  `near_top?/2`.
+
+  Overlap between overloads (`overlap?`, `overlap_unknown?`) is decided on
+  whole argument tuples. Two slices certainly overlap when their lower
+  bounds share a value (`D_lo ⊆ D`), and certainly do not when their upper
+  bounds are disjoint or when some argument position has disjoint integer
+  intervals (`SpecLint.Bound.integer_intervals/1`, for literal integers,
+  ranges and refinements the lattice erases to `integer()`). Otherwise
+  overlap is unknown: the tag is `overlap_unknown?`, never `overlap?`, so a
+  translation loss cannot create a false overlap.
+
   All functions are pure.
   """
 
@@ -47,8 +60,10 @@ defmodule SpecLint.Compare do
           applied: {:ok, [non_neg_integer()]} | :badapply,
           applied_return: Compiler.descr(),
           applied_upper: Compiler.descr(),
+          spec_return: Compiler.descr(),
           cutoff?: boolean(),
           top_only?: boolean(),
+          near_top?: boolean(),
           extra: Compiler.descr(),
           missing: Compiler.descr(),
           return_relation: relation(),
@@ -61,6 +76,8 @@ defmodule SpecLint.Compare do
           badapply?: boolean(),
           overlap?: boolean(),
           overlaps_with: [non_neg_integer()],
+          overlap_unknown?: boolean(),
+          overlaps_unknown_with: [non_neg_integer()],
           contributing: [contributing()],
           input_approximate?: boolean()
         }
@@ -126,14 +143,19 @@ defmodule SpecLint.Compare do
     upper = Compiler.upper_bound(applied_return)
     inferred_domain = inferred_domain(clauses, length(args))
     spec_domain = Compiler.tuple(d_hi)
-    overlaps_with = for {index, other} <- others, overlaps?(spec_domain, other), do: index
+    overlaps = for {index, other} <- others, do: {index, overlap(args, other.args)}
+    overlaps_with = for {index, :yes} <- overlaps, do: index
+    overlaps_unknown_with = for {index, :unknown} <- overlaps, do: index
+    top_only? = applied != :badapply and Compiler.subtype?(Compiler.term(), upper)
 
     %{
       applied: applied,
       applied_return: applied_return,
       applied_upper: upper,
+      spec_return: s_hi,
       cutoff?: length(used) > Compiler.max_clauses(),
-      top_only?: applied != :badapply and Compiler.subtype?(Compiler.term(), upper),
+      top_only?: top_only?,
+      near_top?: applied != :badapply and not top_only? and near_top?(upper, s_hi),
       extra: Compiler.difference(upper, s_hi),
       missing: Compiler.difference(s_hi, upper),
       return_relation: relation(upper, s_hi),
@@ -146,9 +168,47 @@ defmodule SpecLint.Compare do
       badapply?: applied == :badapply and Enum.all?(d_hi, &(not Compiler.empty?(&1))),
       overlap?: overlaps_with != [],
       overlaps_with: overlaps_with,
+      overlap_unknown?: overlaps_unknown_with != [],
+      overlaps_unknown_with: overlaps_unknown_with,
       contributing: contributing(clauses, used, spec_domain, input_approximate?, d_lo),
       input_approximate?: input_approximate?
     }
+  end
+
+  @doc """
+  Whether a return upper bound `upper` is near-top against the spec return
+  upper bound `s_hi` (DESIGN.md 3.1 step 8): `upper` contains `term()`
+  minus a finite set of atoms (`dynamic(not :undefined)`,
+  `dynamic(not false and not nil)`), or `upper − s_hi` contains all of
+  `pid()`, `port()`, `reference()` and `fun()` whole (no ordinary code
+  returns those by accident; their presence means inference gave up, as
+  in `dynamic(not [])`). A top `upper` is near-top too; callers that need
+  to tell the two apart check top first. An empty `upper` is not.
+  """
+  @spec near_top?(Compiler.descr(), Compiler.descr()) :: boolean()
+  def near_top?(upper, s_hi) do
+    upper = Compiler.upper_bound(upper)
+    missing = Compiler.difference(Compiler.term(), upper)
+
+    cond do
+      Compiler.empty?(upper) ->
+        false
+
+      Compiler.subtype?(missing, Compiler.atom()) and
+          match?({:finite, _}, Compiler.atom_fetch(missing)) ->
+        true
+
+      Compiler.empty?(missing) ->
+        true
+
+      true ->
+        extra = Compiler.difference(upper, s_hi)
+
+        Enum.all?(
+          [Compiler.pid(), Compiler.port(), Compiler.reference(), Compiler.fun()],
+          &Compiler.subtype?(&1, extra)
+        )
+    end
   end
 
   @doc """
@@ -235,8 +295,27 @@ defmodule SpecLint.Compare do
     end)
   end
 
-  defp overlaps?(spec_domain, %{args: args}) do
-    other = args |> Enum.map(& &1.hi) |> Compiler.tuple()
-    not Compiler.empty?(spec_domain) and not Compiler.disjoint?(spec_domain, other)
+  # :yes, :no or :unknown (see the moduledoc).
+  defp overlap(args, other_args) do
+    hi = args |> Enum.map(& &1.hi) |> Compiler.tuple()
+    other_hi = other_args |> Enum.map(& &1.hi) |> Compiler.tuple()
+    lo = args |> Enum.map(& &1.lo) |> Compiler.tuple()
+    other_lo = other_args |> Enum.map(& &1.lo) |> Compiler.tuple()
+
+    cond do
+      Compiler.empty?(hi) or Compiler.disjoint?(hi, other_hi) -> :no
+      Enum.any?(Enum.zip(args, other_args), &integers_disjoint?/1) -> :no
+      not Compiler.disjoint?(lo, other_lo) -> :yes
+      true -> :unknown
+    end
+  end
+
+  # One argument position proves the tuples disjoint when its upper bounds
+  # share only integers and the integer intervals are disjoint.
+  defp integers_disjoint?({left, right}) do
+    shared = Compiler.intersection(left.hi, right.hi)
+
+    Compiler.subtype?(shared, Compiler.integer()) and
+      Bound.intervals_disjoint?(Bound.integer_intervals(left), Bound.integer_intervals(right))
   end
 end

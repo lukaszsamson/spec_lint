@@ -47,6 +47,21 @@ defmodule SpecLint.AnalysisTest do
     end
   end
 
+  test "generated definitions are out of scope, user __ functions are not (O7)" do
+    impl = SpecLint.Fixtures.Proto.Atom
+    result = Analysis.module(beam_path(impl))
+    assert result.functions == []
+    assert %{mfa: {impl, :__impl__, 1}, reason: :generated} in result.out_of_scope
+
+    generated = SpecLint.Fixtures.Generated
+    result = Analysis.module(beam_path(generated))
+    assert Enum.map(result.functions, & &1.mfa) == [{generated, :__call__, 1}]
+    assert %{mfa: {generated, :generated_fun, 1}, reason: :generated} in result.out_of_scope
+
+    {:ok, beam} = Beam.read(beam_path(generated))
+    assert {:ok, %{generated: [{:generated_fun, 1}]}} = beam.debug_info
+  end
+
   test "checker chunk version mismatch makes every function unavailable", %{tmp_dir: tmp_dir} do
     fake = :erlang.term_to_binary({:elixir_checker_v1, %{exports: [], mode: :elixir}})
 

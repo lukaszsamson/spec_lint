@@ -1,19 +1,22 @@
 defmodule SpecLint.Evidence do
   @moduledoc """
-  The structured extra-return classifier behind `SL002` (DESIGN.md 3.1).
+  The structured extra-return classifier behind `SL002`, and the per-clause
+  conflict evidence reported under `SL001` (DESIGN.md 3.1).
 
   `classify/2` takes the raw relations of one spec slice
   (`SpecLint.Compare.relations/0`) and returns an evidence class, the
-  labelled components of the slice's `extra` and the reasons behind the
-  class. It is a conservative recogniser with an explicit `:unknown`
-  result, not a complete definition; it gates nothing by itself.
+  labelled components of the slice's `extra`, the reasons behind the class
+  and one entry per contributing inferred clause. It is a conservative
+  recogniser with an explicit `:unknown` result, not a complete definition;
+  it gates nothing by itself.
 
   Steps, in DESIGN order:
 
     1. `extra = U(D) − S_hi`; empty means `:none`. A slice where no inferred
        clause applies (`:badapply`) has no applied return and is `:none`
        with reason `:badapply`.
-    2. Top-only inference (`U(D) ⊇ term()`) is `:unknown`.
+    2. Top-only inference (`U(D) ⊇ term()`) is `:unknown` at the union
+       level, with reason `:top_only`.
     3. Domain containment of each contributing clause is read from the
        relations (`:contained`, `:domain_escape`, `:containment_unknown`).
     4. Input approximation is the slice's `input_approximate?`.
@@ -39,13 +42,12 @@ defmodule SpecLint.Evidence do
        the subtraction: a structured component whose tag is already in
        `S_hi` (`tag_in_spec?`) is `subtraction_payload?`, and not present,
        when every contributing return component with the same label that
-       it overlaps has `term()`
-       at a position (tuple element or struct field, looked up to
-       three levels deep) where the component is narrower.
-       `{:ok, not pid()}` from a clause returning `{:ok, term()}` under a
-       spec `{:ok, pid()}` says nothing about the code beyond `{:ok, _}`,
-       which the spec already declares.
-    6. Classification, over counted components:
+       it overlaps has `term()` at a position (tuple element or struct
+       field, looked up to three levels deep) where the component is
+       narrower. `{:ok, not pid()}` from a clause returning `{:ok, term()}`
+       under a spec `{:ok, pid()}` says nothing about the code beyond
+       `{:ok, _}`, which the spec already declares.
+    6. Union-level classification, over counted components:
          * `:structured_possible` - at least one structured component, every
            contributing clause contained, slice not input-approximate;
          * `:possible_domain_escape` - a structured component and some
@@ -53,36 +55,73 @@ defmodule SpecLint.Evidence do
          * `:possible_input_approximate` - a structured component, no
            certain escape, and the slice's inputs were widened by
            translation (so containment is unknown);
-         * `:whole_kind_possible` - no counted structured component and at
-           least one counted whole-kind component;
+         * `:whole_kind_possible` - no counted structured component, at
+           least one counted whole-kind component, every contributing
+           clause contained and the slice not input-approximate. With a
+           certain escape the class is `:possible_domain_escape`, with
+           input approximation `:possible_input_approximate`, and the
+           reason `:whole_kind_only` records that the evidence is whole
+           kinds only (Phase 0 bug O6);
          * `:unknown` - anything else.
+    7. Per-clause evidence. Every contributing clause `k` is examined on
+       its own, with `R_k' = upper_bound(R_k)` of the stored clause return
+       (never the wrapped application result):
+         * `R_k'` empty is `:none`; `R_k'` top or near-top is `:unknown`;
+           `R_k' ⊆ S_hi` is `:none`;
+         * `R_k'` disjoint from `S_hi` is `:clause_conflict` when the clause
+           is contained: every normal return of the clause, whose inputs
+           are all inside the spec domain, is outside the spec. A spec
+           return of `none()` is `SL006`'s case and never a conflict;
+         * otherwise `R_k' − S_hi` is classified with step 5 against `R_k`
+           alone (structure must be present in `R_k` itself), giving
+           `:structured_possible`, `:whole_kind_possible` or `:unknown`.
+       A clause that is not contained never yields `:clause_conflict` or
+       `:structured_possible`: with `:domain_escape` its evidence is capped
+       at `:possible_domain_escape`, with `:containment_unknown` (Compare
+       reports it only when input approximation hides containment) at
+       `:possible_input_approximate`, the same reading as the union level.
+       The slice class is the worst of the union-level class and every
+       per-clause class. Whether the compiler would flag a clause as
+       unreachable is not available from the checker chunk, so that
+       prerequisite of DESIGN 3.1 step 7 is left to rules.
+    8. Near-top (`SpecLint.Compare.near_top?/2`) is treated like top-only,
+       at the union level (reason `:near_top`) and per clause.
+    9. Gradual payloads. A counted structured component that no static
+       contributing clause return witnesses (`Compiler.gradual?/1` on the
+       stored clause return, `static_return?` in the relations) is
+       `payload_gradual?`. With the option `require_static_return: true`, a
+       class that would be `:structured_possible` only because of such
+       components is `:possible_gradual`, and so is a `:clause_conflict`
+       whose clause return is gradual. The option does not change any
+       other class. The default is `false`.
 
-  Two readings of DESIGN 3.1 are fixed here. A certain escape takes
+  One more reading of DESIGN 3.1 is fixed here. A certain escape takes
   precedence over input approximation: an escape is a fact about the
   clause domain that holds for every refinement of `D_hi`, while
-  approximation only makes containment undecidable (Compare reports
-  `:containment_unknown` for a contained clause of an approximate slice,
-  and `:domain_escape` only when the clause escapes `D_hi` itself). And a
-  mix of whole-kind and unknown components, with no structured one, is
-  `:whole_kind_possible`: the whole-kind component is real evidence and the
-  unknown ones are listed in the components.
+  approximation only makes containment undecidable. A mix of whole-kind
+  and unknown components, with no structured one, is `:whole_kind_possible`:
+  the whole-kind component is real evidence and the unknown ones are
+  listed in the components.
 
   Context that does not change the class but that rules need is recorded
-  in `reasons`: `:overlap`, `:spec_return_empty`, `:return_inexact`,
-  `:cutoff`. For measurement, a structured component whose tag (the first
-  element of a tuple of the same arity, or a struct name) already occurs
-  in `S_hi` is marked `tag_in_spec?` and counted as `{:tag_in_spec, n}`:
-  such an extra is a wider payload under a declared tag, often caused by
-  imprecise inference of the payload, rather than a new alternative.
+  in `reasons`: `:overlap`, `:overlap_unknown`, `:spec_return_empty`,
+  `:return_inexact`, `:cutoff`. For measurement, a structured component
+  whose tag (the first element of a tuple of the same arity, or a struct
+  name) already occurs in `S_hi` is marked `tag_in_spec?` and counted as
+  `{:tag_in_spec, n}`: such an extra is a wider payload under a declared
+  tag, often caused by imprecise inference of the payload, rather than a
+  new alternative.
   """
 
   alias SpecLint.{Compare, Compiler}
 
-  @typedoc "Evidence class of one slice or one function."
+  @typedoc "Evidence class of one slice, one clause or one function."
   @type class ::
           :none
           | :unknown
+          | :clause_conflict
           | :structured_possible
+          | :possible_gradual
           | :possible_domain_escape
           | :possible_input_approximate
           | :whole_kind_possible
@@ -98,33 +137,64 @@ defmodule SpecLint.Evidence do
           present_in_contributing?: boolean(),
           detail: atom() | nil,
           tag_in_spec?: boolean(),
-          subtraction_payload?: boolean()
+          subtraction_payload?: boolean(),
+          payload_gradual?: boolean()
         }
 
-  @typedoc "Why a slice got its class, plus context rules need."
+  @typedoc "Why a slice or a clause got its class, plus context rules need."
   @type reason ::
           :no_extra
+          | :no_return
           | :badapply
           | :top_only
+          | :near_top
           | :cutoff
           | :input_approximate
           | :overlap
+          | :overlap_unknown
           | :spec_return_empty
           | :return_inexact
           | :no_counted_component
+          | :whole_kind_only
+          | :disjoint
+          | :payload_gradual
           | {:domain_escape, [non_neg_integer()]}
           | {:containment_unknown, [non_neg_integer()]}
           | {:not_in_contributing, non_neg_integer()}
           | {:unknown_components, non_neg_integer()}
           | {:tag_in_spec, non_neg_integer()}
           | {:subtraction_payload, non_neg_integer()}
+          | {:payload_gradual, non_neg_integer()}
 
-  @typedoc "Result of `classify/2`."
-  @type classification :: %{class: class(), components: [component()], reasons: [reason()]}
+  @typedoc "Per-clause evidence (DESIGN 3.1 step 7) for one contributing clause."
+  @type clause_evidence :: %{
+          index: non_neg_integer(),
+          containment: Compare.containment(),
+          static_return?: boolean(),
+          class: class(),
+          extra: Compiler.descr(),
+          components: [component()],
+          reasons: [reason()]
+        }
 
-  # Worst first: the order in which a function-level class is chosen.
+  @typedoc """
+  Result of `classify/2`: the slice class (worst of the union-level class
+  and every per-clause class), the union-level class with its components
+  and reasons, and the per-clause evidence.
+  """
+  @type classification :: %{
+          class: class(),
+          union_class: class(),
+          components: [component()],
+          reasons: [reason()],
+          clauses: [clause_evidence()]
+        }
+
+  # Worst first: the order in which a slice or function class is chosen.
   @severity [
+    :clause_conflict,
     :structured_possible,
+    :possible_gradual,
     :possible_domain_escape,
     :possible_input_approximate,
     :whole_kind_possible,
@@ -148,39 +218,44 @@ defmodule SpecLint.Evidence do
   Options:
 
     * `:depth` - how deep list element types are inspected when deciding
-      whether a list is structured (default #{@default_depth}).
+      whether a list is structured (default #{@default_depth});
+    * `:require_static_return` - downgrade structured evidence and clause
+      conflicts that only gradual clause returns support to
+      `:possible_gradual` (DESIGN 3.1 step 9, default `false`).
   """
   @spec classify(Compare.relations(), keyword()) :: classification()
   def classify(relations, opts \\ []) do
-    depth = Keyword.get(opts, :depth, @default_depth)
+    settings = %{
+      depth: Keyword.get(opts, :depth, @default_depth),
+      static?: Keyword.get(opts, :require_static_return, false)
+    }
+
     context = context_reasons(relations)
 
     cond do
       relations.applied == :badapply ->
-        result(:none, [], [:badapply | context])
+        result(:none, [], [:badapply | context], [])
 
       Compiler.empty?(relations.extra) ->
-        result(:none, [], [:no_extra | context])
-
-      relations.top_only? ->
-        result(:unknown, [], [:top_only | context])
+        result(:none, [], [:no_extra | context], [])
 
       true ->
-        recognise(relations, depth, context)
+        {union_class, components, reasons} = union_level(relations, settings)
+        clauses = Enum.map(relations.contributing, &clause(&1, relations, settings))
+        result(union_class, components, reasons ++ context, clauses)
     end
   end
 
   @doc """
-  Reduces the classes of a function's slices to one class, worst first:
-  `structured_possible > possible_domain_escape > possible_input_approximate
-  > whole_kind_possible > unknown > none`.
+  Reduces the classes of a function's slices to one class, worst first, in
+  the order of `classes/0`.
 
   Each element is a classification (as returned by `classify/2`), a bare
   class, the relations of a slice (classified with `opts`), or a slice of
-  `SpecLint.Analysis` (its relations are classified; a slice without
-  relations, i.e. unsupported or unavailable, is skipped). A function with
-  no classified slice is `:none`; coverage of such slices is the ledger's
-  business, not evidence.
+  `SpecLint.Analysis` (its relations are classified with `opts`; a slice
+  without relations, i.e. unsupported or unavailable, is skipped). A
+  function with no classified slice is `:none`; coverage of such slices is
+  the ledger's business, not evidence.
   """
   @spec classify_function([classification() | class() | map()], keyword()) :: class()
   def classify_function(slices, opts \\ []) do
@@ -189,7 +264,7 @@ defmodule SpecLint.Evidence do
     |> worst()
   end
 
-  @doc "The worst of `classes` in the order of `classify_function/2`; `:none` for `[]`."
+  @doc "The worst of `classes` in the order of `classes/0`; `:none` for `[]`."
   @spec worst([class()]) :: class()
   def worst(classes), do: Enum.find(@severity, :none, &(&1 in classes))
 
@@ -199,12 +274,20 @@ defmodule SpecLint.Evidence do
   defp slice_class(%{relations: relations}, opts), do: [classify(relations, opts).class]
   defp slice_class(%{extra: _} = relations, opts), do: [classify(relations, opts).class]
 
-  defp result(class, components, reasons),
-    do: %{class: class, components: components, reasons: reasons}
+  defp result(union_class, components, reasons, clauses) do
+    %{
+      class: worst([union_class | Enum.map(clauses, & &1.class)]),
+      union_class: union_class,
+      components: components,
+      reasons: reasons,
+      clauses: clauses
+    }
+  end
 
   defp context_reasons(relations) do
     [
       relations.overlap? && :overlap,
+      relations.overlap_unknown? && :overlap_unknown,
       relations.spec_return_empty? && :spec_return_empty,
       not relations.return_exact? && :return_inexact,
       relations.cutoff? && :cutoff
@@ -212,72 +295,171 @@ defmodule SpecLint.Evidence do
     |> Enum.filter(& &1)
   end
 
-  defp recognise(relations, depth, context) do
-    returns =
-      relations.contributing
-      |> Enum.flat_map(&Compiler.components(Compiler.upper_bound(&1.return)))
-      |> Enum.map(&{label(&1, depth), &1.descr, &1.view})
+  ## Union level (steps 2 to 6, 8 and 9)
 
-    # S_hi = missing ∪ (U(D) − extra), since missing = S_hi − U(D).
-    spec_return =
-      Compiler.union(
-        relations.missing,
-        Compiler.difference(relations.applied_upper, relations.extra)
-      )
+  defp union_level(%{top_only?: true}, _settings), do: {:unknown, [], [:top_only]}
+  defp union_level(%{near_top?: true}, _settings), do: {:unknown, [], [:near_top]}
 
-    components =
-      relations.extra
-      |> Compiler.components()
-      |> Enum.map(fn component ->
-        label = label(component, depth)
-        tag_in_spec? = label == :structured and tag_in_spec?(component.view, spec_return)
-        subtraction? = tag_in_spec? and subtraction_payload?(component, label, returns)
-
-        %{
-          descr_string: Compiler.to_string(component.descr),
-          kind: component.kind,
-          label: label,
-          present_in_contributing?:
-            not subtraction? and present?(component.descr, label, returns),
-          detail: detail(component.view),
-          tag_in_spec?: tag_in_spec?,
-          subtraction_payload?: subtraction?
-        }
-      end)
-
-    counted = for %{present_in_contributing?: true, label: label} <- components, do: label
-    structured? = :structured in counted
+  defp union_level(relations, settings) do
+    returns = Enum.flat_map(relations.contributing, &witnesses/1)
+    components = components(relations.extra, returns, relations.spec_return, settings.depth)
     escapes = containment(relations, :domain_escape)
     unknown_containment = containment(relations, :containment_unknown)
 
-    class =
+    doubt =
       cond do
-        structured? and escapes != [] -> :possible_domain_escape
-        structured? and relations.input_approximate? -> :possible_input_approximate
-        structured? and unknown_containment != [] -> :possible_domain_escape
-        structured? -> :structured_possible
-        :whole_kind in counted -> :whole_kind_possible
-        true -> :unknown
+        escapes != [] -> :possible_domain_escape
+        relations.input_approximate? -> :possible_input_approximate
+        unknown_containment != [] -> :possible_domain_escape
+        true -> nil
       end
+
+    {class, class_reasons} = decide(components, doubt, settings)
 
     reasons =
       [
         relations.input_approximate? && :input_approximate,
         escapes != [] && {:domain_escape, escapes},
-        unknown_containment != [] && {:containment_unknown, unknown_containment},
-        uncounted(components),
-        unknown_count(components),
-        tag_in_spec_count(components),
-        subtraction_count(components),
-        class == :unknown && :no_counted_component
+        unknown_containment != [] && {:containment_unknown, unknown_containment}
       ]
       |> Enum.filter(& &1)
 
-    result(class, components, reasons ++ context)
+    {class, components, reasons ++ component_reasons(components) ++ class_reasons}
+  end
+
+  ## Per clause (step 7)
+
+  defp clause(contributing, relations, settings) do
+    upper = Compiler.upper_bound(contributing.return)
+    s_hi = relations.spec_return
+    extra = Compiler.difference(upper, s_hi)
+
+    base = %{
+      index: contributing.index,
+      containment: contributing.containment,
+      static_return?: contributing.static_return?,
+      extra: extra,
+      components: []
+    }
+
+    {class, components, reasons} =
+      cond do
+        Compiler.empty?(upper) ->
+          {:none, [], [:no_return]}
+
+        Compiler.subtype?(Compiler.term(), upper) ->
+          {:unknown, [], [:top_only]}
+
+        Compare.near_top?(upper, s_hi) ->
+          {:unknown, [], [:near_top]}
+
+        Compiler.empty?(extra) ->
+          {:none, [], [:no_extra]}
+
+        Compiler.disjoint?(upper, s_hi) and not relations.spec_return_empty? ->
+          conflict(contributing, settings)
+
+        true ->
+          returns = witnesses(contributing)
+          components = components(extra, returns, s_hi, settings.depth)
+          {class, class_reasons} = decide(components, clause_doubt(contributing), settings)
+          {class, components, component_reasons(components) ++ class_reasons}
+      end
+
+    reasons = containment_reason(contributing) ++ reasons
+    Map.merge(base, %{class: class, components: components, reasons: reasons})
+  end
+
+  defp containment_reason(%{containment: :contained}), do: []
+  defp containment_reason(%{containment: outcome, index: index}), do: [{outcome, [index]}]
+
+  defp conflict(%{containment: :contained, static_return?: false}, %{static?: true}),
+    do: {:possible_gradual, [], [:disjoint, :payload_gradual]}
+
+  defp conflict(%{containment: :contained}, _settings), do: {:clause_conflict, [], [:disjoint]}
+
+  defp conflict(contributing, _settings), do: {clause_doubt(contributing), [], [:disjoint]}
+
+  defp clause_doubt(%{containment: :contained}), do: nil
+  defp clause_doubt(%{containment: :domain_escape}), do: :possible_domain_escape
+  defp clause_doubt(%{containment: :containment_unknown}), do: :possible_input_approximate
+
+  ## Shared
+
+  # Class from counted components. `doubt` is the possible_* class that
+  # replaces a positive class when containment is not established.
+  defp decide(components, doubt, settings) do
+    counted = for %{present_in_contributing?: true} = component <- components, do: component
+    structured = for %{label: :structured} = component <- counted, do: component
+    whole? = Enum.any?(counted, &(&1.label == :whole_kind))
+    static_structured? = Enum.any?(structured, &(not &1.payload_gradual?))
+
+    cond do
+      structured != [] and doubt != nil -> {doubt, []}
+      structured != [] and settings.static? and not static_structured? -> {:possible_gradual, []}
+      structured != [] -> {:structured_possible, []}
+      whole? and doubt != nil -> {doubt, [:whole_kind_only]}
+      whole? -> {:whole_kind_possible, []}
+      true -> {:unknown, [:no_counted_component]}
+    end
+  end
+
+  # Return components of one contributing clause, labelled, with whether the
+  # stored clause return is static.
+  defp witnesses(contributing) do
+    for component <- Compiler.components(Compiler.upper_bound(contributing.return)) do
+      {component, contributing.static_return?}
+    end
+  end
+
+  defp components(extra, witnesses, spec_return, depth) do
+    returns =
+      for {component, static?} <- witnesses,
+          do: {label(component, depth), component.descr, component.view, static?}
+
+    extra
+    |> Compiler.components()
+    |> Enum.map(fn component ->
+      label = label(component, depth)
+      tag_in_spec? = label == :structured and tag_in_spec?(component.view, spec_return)
+      subtraction? = tag_in_spec? and subtraction_payload?(component, label, returns)
+      present? = not subtraction? and present?(component.descr, label, returns)
+
+      %{
+        descr_string: Compiler.to_string(component.descr),
+        kind: component.kind,
+        label: label,
+        present_in_contributing?: present?,
+        detail: detail(component.view),
+        tag_in_spec?: tag_in_spec?,
+        subtraction_payload?: subtraction?,
+        payload_gradual?:
+          present? and label == :structured and
+            not present?(component.descr, label, for({_, _, _, true} = r <- returns, do: r))
+      }
+    end)
+  end
+
+  defp component_reasons(components) do
+    [
+      uncounted(components),
+      unknown_count(components),
+      tag_in_spec_count(components),
+      subtraction_count(components),
+      gradual_count(components)
+    ]
+    |> Enum.filter(& &1)
   end
 
   defp containment(relations, outcome),
     do: for(%{containment: ^outcome, index: index} <- relations.contributing, do: index)
+
+  defp gradual_count(components) do
+    case Enum.count(components, & &1.payload_gradual?) do
+      0 -> false
+      n -> {:payload_gradual, n}
+    end
+  end
 
   defp uncounted(components) do
     case Enum.count(components, &(&1.label != :unknown and not &1.present_in_contributing?)) do
@@ -337,7 +519,7 @@ defmodule SpecLint.Evidence do
   end
 
   defp present?(descr, label, returns) do
-    same = for {^label, return, _view} <- returns, do: return
+    same = for {^label, return, _view, _static?} <- returns, do: return
     same != [] and Compiler.subtype?(descr, Compiler.union_all(same))
   end
 
@@ -348,7 +530,7 @@ defmodule SpecLint.Evidence do
   # (see present?/3), so only they are consulted.
   defp subtraction_payload?(component, label, returns) do
     witnesses =
-      for {^label, descr, view} <- returns,
+      for {^label, descr, view, _static?} <- returns,
           not Compiler.disjoint?(component.descr, descr),
           do: view
 

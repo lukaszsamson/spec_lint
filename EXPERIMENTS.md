@@ -436,6 +436,67 @@ Structural observations that bound SL002 regardless of bugs:
   Report them separately, or exclude them as generated definitions (DESIGN
   section 8 scope).
 
+### Fixed after the report (DESIGN 3.1 steps 7 to 9)
+
+All of O1 to O7 are addressed. Results are in
+`scratchpad/results_perclause/*.json`, produced by the runner, which now
+classifies every slice twice (`require_static_return` false and true) and
+reports per-clause evidence.
+
+- **O1, near-top.** `SpecLint.Compare.near_top?/2` implements step 8. On
+  the stdlib, 32 slices are near-top, among them `Config.config/3`,
+  `Process.put/2` and `JSON.decode/1`. 28 of the 39 stdlib
+  `whole_kind_possible` functions became `unknown`.
+- **O2, per-clause evidence.** Step 7 is implemented in
+  `SpecLint.Evidence`. The new class `clause_conflict` is the worst class.
+  It needs a contained clause whose stored return is disjoint from `S_hi`.
+  On the fixtures it detects `lookup/1`, `size_of/1`, `labels/1` and the
+  new `stale/1` (the `Join.escape/3` shape). On real code it finds nothing:
+  the clauses of the four stale ecto specs all escape the spec domain,
+  because their parameters are unguarded. They now show as
+  `possible_domain_escape` (`Join.escape/3` and `quoted_type/2`) rather
+  than `unknown`. The other two stay `unknown`: their non-top clause
+  extras have no structured or whole-kind component.
+- **O3, gradual payloads.** Step 9 is implemented. The option is
+  `require_static_return`, the class `possible_gradual`, and the component
+  flag `payload_gradual?`. The default stays `false` until a re-triage
+  chooses otherwise. With `true`:
+  - both stdlib SL002 candidates become `possible_gradual`;
+  - on the fixtures, 5 of 8 detections are lost (`size_of/1`,
+    `point/1`, `fetch/1`, `stale/1`, `gradual_payload/1`); 2 of them are
+    clause conflicts whose clause returns are gradual;
+  - no stdlib clause conflict exists under either setting.
+- **O4, printing.** `V121.to_string/1` prints static types from their
+  normal form. Tuples and maps are printed line by line, with dead
+  negations dropped, and the complement form is used when it is shorter.
+  `term()` minus the NimbleOptions result type now prints as
+  `not ({:error, ...} or {:ok, ...})`.
+- **O5, integer literals.** Integer literals, ranges and refinements keep
+  their intervals in `SpecLint.Bound` (`integers`). Overlap between
+  overloads has three outcomes:
+  - certain (`overlap?`) when the lower bounds meet;
+  - none when the upper bounds are disjoint or an integer position has
+    disjoint intervals;
+  - `overlap_unknown?` otherwise.
+
+  Stdlib overlap tags went from 18 to 0 certain and 2 unknown.
+- **O6, whole kinds.** Whole-kind evidence with a certain escape is
+  `possible_domain_escape`, and with input approximation it is
+  `possible_input_approximate`. Both carry the reason `whole_kind_only`.
+  7 plus 4 stdlib functions moved.
+- **O7, generated definitions.** Definitions marked `generated: true` in
+  debug info, and the compiler's `__impl__/1`, `__protocol__/1`,
+  `__struct__/0,1`, `__info__/1` and `__deriving__/3`, are out of scope with
+  the reason `generated`. That removes 96 stdlib functions, 15 each in
+  jason and ecto, 3 in decimal, 2 in plug and 1 in nimble_options.
+
+Stdlib function classes after the fixes (1711 functions):
+
+| Setting | unknown | none | possible_domain_escape | possible_input_approximate | structured_possible | possible_gradual | clause_conflict |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| `require_static_return: false` | 1035 | 659 | 11 | 4 | 2 | 0 | 0 |
+| `require_static_return: true` | 1035 | 659 | 11 | 4 | 0 | 2 | 0 |
+
 Not a bug:
 - **Maps whose keys follow an `optional(any)`.** Such map types
   (`Calendar.time()`, `Ecto.Schema.t()`) translate with the later keys

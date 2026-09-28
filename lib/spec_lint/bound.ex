@@ -15,6 +15,17 @@ defmodule SpecLint.Bound do
 
   `notes` carries labels that are not losses, such as structural expansion of
   another module's opaque type when `expand_opaque: true` was requested.
+
+  `integers` keeps what the lattice cannot express about the integers of `S`
+  (it has no integer literals or ranges): `nil` when nothing is known beyond
+  `hi`, otherwise a list of closed intervals whose union contains every
+  integer of `S` (`S ∩ integer() ⊆ ⋃ integers`). It is only an upper bound,
+  it is kept for the top level of the node only (not inside tuples, lists or
+  maps), and it never makes a bound exact: literal integers, ranges and
+  refinements such as `pos_integer()` stay `integer()` in `hi` with an
+  `:integer_refinement_erased` loss. `SpecLint.Compare` uses it to prove
+  that two overloads with, for example, `0` and `pos_integer()` at the same
+  position do not overlap.
   """
 
   alias SpecLint.Compiler
@@ -40,6 +51,12 @@ defmodule SpecLint.Bound do
   @typedoc "A loss record."
   @type loss :: %{kind: loss_kind(), path: [segment()]}
 
+  @typedoc "An integer interval end: an integer or an unbounded end."
+  @type int_end :: integer() | :neg_infinity | :infinity
+
+  @typedoc "A closed integer interval `{first, last}`."
+  @type interval :: {int_end(), int_end()}
+
   @typedoc "A non-loss label."
   @type note :: %{kind: :opaque_expanded | :nominal_expanded, path: [segment()]}
 
@@ -47,11 +64,12 @@ defmodule SpecLint.Bound do
           lo: Compiler.descr(),
           hi: Compiler.descr(),
           losses: [loss()],
-          notes: [note()]
+          notes: [note()],
+          integers: [interval()] | nil
         }
 
   @enforce_keys [:lo, :hi]
-  defstruct [:lo, :hi, losses: [], notes: []]
+  defstruct [:lo, :hi, losses: [], notes: [], integers: nil]
 
   @doc "An exact bound: `lo == hi == descr`."
   @spec exact(Compiler.descr()) :: t()
@@ -95,4 +113,34 @@ defmodule SpecLint.Bound do
   @spec add_loss(t(), loss_kind(), [segment()]) :: t()
   def add_loss(%__MODULE__{} = bound, kind, path),
     do: %{bound | losses: bound.losses ++ [loss(kind, path)]}
+
+  @doc """
+  Intervals that contain every integer of the bound's set: `integers` when
+  known, otherwise `[]` when `hi` has no integer and the whole line when it
+  has some.
+  """
+  @spec integer_intervals(t()) :: [interval()]
+  def integer_intervals(%__MODULE__{integers: integers}) when is_list(integers), do: integers
+
+  def integer_intervals(%__MODULE__{hi: hi}) do
+    if Compiler.disjoint?(hi, Compiler.integer()), do: [], else: [{:neg_infinity, :infinity}]
+  end
+
+  @doc "Whether two interval lists share no integer."
+  @spec intervals_disjoint?([interval()], [interval()]) :: boolean()
+  def intervals_disjoint?(left, right) do
+    Enum.all?(left, fn {first, last} ->
+      Enum.all?(right, fn {other_first, other_last} ->
+        before?(last, other_first) or before?(other_last, first)
+      end)
+    end)
+  end
+
+  # Strict order on interval ends (atoms sort after numbers in term order,
+  # so the unbounded ends are handled explicitly).
+  defp before?(:infinity, _right), do: false
+  defp before?(_left, :neg_infinity), do: false
+  defp before?(:neg_infinity, _right), do: true
+  defp before?(_left, :infinity), do: true
+  defp before?(left, right), do: left < right
 end

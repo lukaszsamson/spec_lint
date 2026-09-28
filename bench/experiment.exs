@@ -2,7 +2,10 @@
 #
 # Runs SpecLint.Analysis and the SL002 classifier (SpecLint.Evidence) over
 # every .beam in the given ebin directories and writes a deterministic JSON
-# report plus a one-screen summary on stderr.
+# report plus a one-screen summary on stderr. Every slice is classified
+# twice, with require_static_return false (the default, reported as
+# `class`) and true (`class_static`), and the per-clause evidence of DESIGN
+# 3.1 step 7 is reported for each contributing clause.
 #
 #     MIX_ENV=test mix run bench/experiment.exs -- \
 #       --ebin DIR [--ebin DIR ...] [--code-path DIR ...] \
@@ -84,8 +87,8 @@ defmodule SpecLint.Experiment do
     {mod, name, arity} = function.mfa
     classifications = Enum.map(function.slices, &classify_slice/1)
     slices = Enum.zip_with(function.slices, classifications, &slice_entry(name, &1, &2))
-    classes = for %{class: class} <- classifications, do: class
-    class = Evidence.worst(classes)
+    class = Evidence.worst(for %{class: class} <- slices, do: class)
+    class_static = Evidence.worst(for %{class_static: class} <- slices, do: class)
     mfa = "#{inspect(mod)}.#{name}/#{arity}"
 
     %{
@@ -99,24 +102,51 @@ defmodule SpecLint.Experiment do
       specs: Enum.map(function.slices, &spec_string(name, &1.spec)),
       inferred: Enum.map(function.inferred, &clause_string/1),
       class: class,
+      class_static: class_static,
       sl002_candidate: Enum.any?(slices, & &1.sl002_candidate),
+      sl002_candidate_static: Enum.any?(slices, & &1.sl002_candidate_static),
+      clause_conflict_candidate: Enum.any?(slices, & &1.clause_conflict_candidate),
+      clause_conflict_candidate_static: Enum.any?(slices, & &1.clause_conflict_candidate_static),
       slices: slices
     }
   end
 
   defp classify_slice(%{relations: nil}), do: nil
-  defp classify_slice(%{relations: relations}), do: Evidence.classify(relations)
 
-  defp slice_entry(_name, slice, nil) do
-    %{index: slice.index, status: status_string(slice.status), sl002_candidate: false}
+  defp classify_slice(%{relations: relations}) do
+    {Evidence.classify(relations), Evidence.classify(relations, require_static_return: true)}
   end
 
-  defp slice_entry(_name, slice, classification) do
+  defp slice_entry(_name, slice, nil) do
+    %{
+      index: slice.index,
+      status: status_string(slice.status),
+      sl002_candidate: false,
+      sl002_candidate_static: false,
+      clause_conflict_candidate: false,
+      clause_conflict_candidate_static: false
+    }
+  end
+
+  defp slice_entry(_name, slice, {classification, static}) do
     rel = slice.relations
     arg_losses = slice.args |> Enum.flat_map(&Bound.loss_kinds/1) |> Enum.uniq() |> Enum.sort()
     return_losses = Bound.loss_kinds(slice.return)
     loss_kinds = Enum.sort(Enum.uniq(arg_losses ++ return_losses))
     arrow_return? = Enum.any?(Compiler.components(slice.return.hi), &(&1.kind == :fun))
+
+    # SL001 prerequisites (DESIGN 4) for a per-clause conflict: no
+    # unsupported loss, no overlap tag (certain or unknown), no arrow in the
+    # return. Containment of the clause is part of the class itself.
+    sl001_ok? =
+      not rel.overlap? and not rel.overlap_unknown? and
+        :unsupported_construct not in loss_kinds and not arrow_return?
+
+    sl002_ok? =
+      not rel.overlap? and not rel.spec_return_empty? and
+        :unsupported_construct not in loss_kinds and not arrow_return?
+
+    static_by_index = Map.new(static.clauses, &{&1.index, &1})
 
     %{
       index: slice.index,
@@ -131,11 +161,17 @@ defmodule SpecLint.Experiment do
       return_relation: rel.return_relation,
       extra: Compiler.to_string(rel.extra),
       class: classification.class,
+      class_static: static.class,
+      union_class: classification.union_class,
+      union_class_static: static.union_class,
       components: Enum.map(classification.components, &component_entry/1),
       reasons: Enum.map(classification.reasons, &reason_string/1),
+      clauses: Enum.map(classification.clauses, &clause_entry(&1, static_by_index[&1.index])),
       input_approximate: rel.input_approximate?,
       top_only: rel.top_only?,
+      near_top: rel.near_top?,
       overlap: rel.overlap?,
+      overlap_unknown: rel.overlap_unknown?,
       badapply: rel.badapply?,
       cutoff: rel.cutoff?,
       containment:
@@ -149,10 +185,23 @@ defmodule SpecLint.Experiment do
       # SL002 prerequisites (DESIGN 4): structured_possible, no unsupported
       # loss, no overlap tag, no arrow in the return. A no_return() spec is
       # SL006's case, not SL002's.
-      sl002_candidate:
-        classification.class == :structured_possible and not rel.overlap? and
-          not rel.spec_return_empty? and
-          :unsupported_construct not in loss_kinds and not arrow_return?
+      sl002_candidate: classification.class == :structured_possible and sl002_ok?,
+      sl002_candidate_static: static.class == :structured_possible and sl002_ok?,
+      clause_conflict_candidate: classification.class == :clause_conflict and sl001_ok?,
+      clause_conflict_candidate_static: static.class == :clause_conflict and sl001_ok?
+    }
+  end
+
+  defp clause_entry(clause, static) do
+    %{
+      clause: clause.index,
+      containment: clause.containment,
+      static_return: clause.static_return?,
+      class: clause.class,
+      class_static: static.class,
+      extra: Compiler.to_string(clause.extra),
+      components: Enum.map(clause.components, &component_entry/1),
+      reasons: Enum.map(clause.reasons, &reason_string/1)
     }
   end
 
@@ -164,6 +213,7 @@ defmodule SpecLint.Experiment do
       present_in_contributing: component.present_in_contributing?,
       tag_in_spec: component.tag_in_spec?,
       subtraction_payload: component.subtraction_payload?,
+      payload_gradual: component.payload_gradual?,
       detail: component.detail
     }
   end
@@ -188,7 +238,7 @@ defmodule SpecLint.Experiment do
   defp status_string(:compared), do: "compared"
   defp status_string({kind, reason}), do: "#{kind}:#{reason_key(reason)}"
 
-  defp reason_string({key, value}), do: "#{key}=#{inspect(value)}"
+  defp reason_string({key, value}), do: "#{key}=#{inspect(value, charlists: :as_lists)}"
   defp reason_string(key), do: Atom.to_string(key)
 
   # A short, stable key for a reason term: its leading atoms, two levels deep.
@@ -240,7 +290,16 @@ defmodule SpecLint.Experiment do
         |> Enum.filter(&String.starts_with?(&1.status, "unavailable:"))
         |> frequencies(&strip_prefix(&1.status)),
       slice_classes: frequencies(compared, &Atom.to_string(&1.class)),
+      slice_classes_static: frequencies(compared, &Atom.to_string(&1.class_static)),
+      union_classes: frequencies(compared, &Atom.to_string(&1.union_class)),
+      clause_classes:
+        compared |> Enum.flat_map(& &1.clauses) |> frequencies(&Atom.to_string(&1.class)),
+      clause_classes_static:
+        compared
+        |> Enum.flat_map(& &1.clauses)
+        |> frequencies(&Atom.to_string(&1.class_static)),
       function_classes: frequencies(functions, &Atom.to_string(&1.class)),
+      function_classes_static: frequencies(functions, &Atom.to_string(&1.class_static)),
       slices_exact: Enum.count(compared, &(&1.loss_kinds == [])),
       slices_approximate: Enum.count(compared, &(&1.loss_kinds != [])),
       loss_kinds: compared |> Enum.flat_map(& &1.loss_kinds) |> frequencies(&Atom.to_string/1),
@@ -249,10 +308,16 @@ defmodule SpecLint.Experiment do
         |> Enum.flat_map(& &1.components)
         |> frequencies(&"#{&1.label}#{if &1.present_in_contributing, do: "", else: "_absent"}"),
       top_only_slices: Enum.count(compared, & &1.top_only),
+      near_top_slices: Enum.count(compared, & &1.near_top),
       badapply_slices: Enum.count(compared, & &1.badapply),
       overlap_slices: Enum.count(compared, & &1.overlap),
+      overlap_unknown_slices: Enum.count(compared, & &1.overlap_unknown),
+      clause_conflict_candidate_functions: Enum.count(functions, & &1.clause_conflict_candidate),
+      clause_conflict_candidate_functions_static:
+        Enum.count(functions, & &1.clause_conflict_candidate_static),
       sl002_candidate_slices: Enum.count(compared, & &1.sl002_candidate),
       sl002_candidate_functions: Enum.count(functions, & &1.sl002_candidate),
+      sl002_candidate_functions_static: Enum.count(functions, & &1.sl002_candidate_static),
       sl002_candidate_slices_tag_in_spec:
         Enum.count(compared, fn slice ->
           slice.sl002_candidate and Enum.any?(slice.components, & &1.tag_in_spec)
@@ -278,24 +343,26 @@ defmodule SpecLint.Experiment do
         for {{mod, name, arity}, expected} <- @fixtures.expected(),
             function = by_mfa["#{inspect(mod)}.#{name}/#{arity}"],
             function != nil do
-          warn? = function.sl002_candidate
+          warn? = function.sl002_candidate or function.clause_conflict_candidate
 
-          outcome =
-            case {expected.omission?, warn?} do
-              {true, true} -> "detected"
-              {true, false} -> "suppressed"
-              {false, true} -> "false_positive"
-              {false, false} -> "true_negative"
-            end
+          warn_static? =
+            function.sl002_candidate_static or function.clause_conflict_candidate_static
+
+          expected_static = Map.get(expected, :static_class, expected.class)
 
           %{
             mfa: function.mfa,
             expected_class: expected.class,
             class: function.class,
             class_ok: expected.class == function.class,
+            expected_class_static: expected_static,
+            class_static: function.class_static,
+            class_static_ok: expected_static == function.class_static,
             omission: expected.omission?,
             warn: warn?,
-            outcome: outcome,
+            outcome: outcome(expected.omission?, warn?),
+            warn_static: warn_static?,
+            outcome_static: outcome(expected.omission?, warn_static?),
             note: expected.note
           }
         end
@@ -307,12 +374,21 @@ defmodule SpecLint.Experiment do
         %{
           total: length(entries),
           class_ok: Enum.count(entries, & &1.class_ok),
+          class_static_ok: Enum.count(entries, & &1.class_static_ok),
           outcomes: frequencies(entries, & &1.outcome),
+          outcomes_static: frequencies(entries, & &1.outcome_static),
           entries: entries
         }
       end
     end
   end
+
+  # Warn means an SL002 candidate or a gated SL001 per-clause conflict, under
+  # the setting of require_static_return being reported.
+  defp outcome(true, true), do: "detected"
+  defp outcome(true, false), do: "suppressed"
+  defp outcome(false, true), do: "false_positive"
+  defp outcome(false, false), do: "true_negative"
 
   ## Summary
 
@@ -331,15 +407,27 @@ defmodule SpecLint.Experiment do
         "  unsupported:  #{fmt(t.unsupported_by_reason)}",
         "  unavailable:  #{fmt(t.unavailable_by_reason)}",
         "  slice classes:    #{fmt(t.slice_classes)}",
+        "  slice classes (require_static_return): #{fmt(t.slice_classes_static)}",
+        "  union-level slice classes: #{fmt(t.union_classes)}",
+        "  clause classes:   #{fmt(t.clause_classes)}",
+        "  clause classes (require_static_return): #{fmt(t.clause_classes_static)}",
         "  function classes: #{fmt(t.function_classes)}",
+        "  function classes (require_static_return): #{fmt(t.function_classes_static)}",
         "  losses:       #{fmt(t.loss_kinds)}",
         "  components:   #{fmt(t.component_labels)}",
-        "  top-only #{t.top_only_slices}, badapply #{t.badapply_slices}, " <>
-          "overlap #{t.overlap_slices}",
+        "  top-only #{t.top_only_slices}, near-top #{t.near_top_slices}, " <>
+          "badapply #{t.badapply_slices}, overlap #{t.overlap_slices}, " <>
+          "overlap unknown #{t.overlap_unknown_slices}",
+        "  SL001 clause-conflict candidates: #{t.clause_conflict_candidate_functions} " <>
+          "functions (require_static_return: " <>
+          "#{t.clause_conflict_candidate_functions_static})",
         "  SL002 candidates: #{t.sl002_candidate_slices} slices, " <>
           "#{t.sl002_candidate_functions} functions " <>
+          "(require_static_return: #{t.sl002_candidate_functions_static}) " <>
           "(#{t.sl002_candidate_slices_tag_in_spec} slices with a tag already in the spec)"
-      ] ++ candidate_lines(report.functions) ++ fixture_lines(report.fixtures) ++ ["  -> #{out}"]
+      ] ++
+        candidate_lines(report.functions) ++
+        conflict_lines(report.functions) ++ fixture_lines(report.fixtures) ++ ["  -> #{out}"]
 
     IO.puts(:stderr, Enum.join(lines, "\n"))
   end
@@ -361,17 +449,39 @@ defmodule SpecLint.Experiment do
     shown ++ more
   end
 
+  defp conflict_lines(functions) do
+    candidates = Enum.filter(functions, & &1.clause_conflict_candidate)
+
+    shown =
+      for function <- Enum.take(candidates, 12) do
+        extra =
+          function.slices
+          |> Enum.flat_map(&Map.get(&1, :clauses, []))
+          |> Enum.filter(&(&1.class == :clause_conflict))
+          |> Enum.map_join(" | ", &"##{&1.clause} #{&1.extra}")
+
+        "    conflict #{function.mfa}: " <>
+          (extra |> String.replace(~r/\s+/, " ") |> String.slice(0, 70))
+      end
+
+    more = if length(candidates) > 12, do: ["    ... #{length(candidates) - 12} more"], else: []
+    shown ++ more
+  end
+
   defp fixture_lines(nil), do: []
 
   defp fixture_lines(fixtures) do
     wrong =
-      for %{class_ok: false} = entry <- fixtures.entries do
-        "    MISMATCH #{entry.mfa}: expected #{entry.expected_class}, got #{entry.class}"
+      for entry <- fixtures.entries, not (entry.class_ok and entry.class_static_ok) do
+        "    MISMATCH #{entry.mfa}: expected #{entry.expected_class} / " <>
+          "#{entry.expected_class_static}, got #{entry.class} / #{entry.class_static}"
       end
 
     [
-      "  fixtures: class #{fixtures.class_ok}/#{fixtures.total} as expected; " <>
-        "outcomes #{fmt(fixtures.outcomes)}"
+      "  fixtures: class #{fixtures.class_ok}/#{fixtures.total} as expected " <>
+        "(require_static_return: #{fixtures.class_static_ok}/#{fixtures.total}); " <>
+        "outcomes #{fmt(fixtures.outcomes)}; " <>
+        "require_static_return outcomes #{fmt(fixtures.outcomes_static)}"
       | wrong
     ]
   end

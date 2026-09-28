@@ -172,6 +172,45 @@ defmodule SpecLint.CompareTest do
       assert [{:unsupported, :why}, {:ok, %{overlap?: false}}] = result.slices
     end
 
+    test "integer literals and ranges do not create false overlap tags (O5)" do
+      # Macro.generate_unique_arguments/2: (0, atom()) and (pos_integer(), atom())
+      # both erase to (integer(), atom()) but are disjoint.
+      function = analysed(F, :unique_args, 2)
+
+      for slice <- function.slices do
+        refute slice.relations.overlap?
+        refute slice.relations.overlap_unknown?
+      end
+
+      # (1..3 | -1, atom()), (4..10, atom()) and (non_neg_integer(), :x):
+      # the first two are disjoint; each meets the third, but the lower
+      # bounds cannot show it, so that overlap is unknown, not certain.
+      assert [first, second, third] = analysed(F, :ranges, 2).slices
+      assert first.relations.overlaps_with == []
+      assert first.relations.overlaps_unknown_with == [2]
+      assert second.relations.overlaps_unknown_with == [2]
+      assert third.relations.overlaps_unknown_with == [0, 1]
+      refute third.relations.overlap?
+    end
+
+    test "near-top returns" do
+      keyword = C.list(C.tuple([C.atom(), C.term()]))
+      assert Compare.near_top?(C.dynamic(C.difference(C.term(), C.atom([:undefined]))), keyword)
+      assert Compare.near_top?(C.difference(C.term(), C.atom([false, nil])), keyword)
+      assert Compare.near_top?(C.dynamic(C.difference(C.term(), C.empty_list())), keyword)
+      assert Compare.near_top?(C.term(), keyword)
+      # term() minus all atoms leaves pid, port, reference and fun whole.
+      assert Compare.near_top?(C.difference(C.term(), C.atom()), C.atom())
+      refute Compare.near_top?(C.union_all([C.pid(), C.port(), C.reference()]), keyword)
+      refute Compare.near_top?(C.union(C.fun(), C.pid()), C.union(C.fun(), C.pid()))
+      refute Compare.near_top?(C.union(C.integer(), C.binary()), keyword)
+      refute Compare.near_top?(C.none(), keyword)
+
+      rel = Compare.slice(exact_slice([C.atom()], keyword), [{[C.atom()], C.dynamic()}])
+      assert rel.top_only?
+      refute rel.near_top?
+    end
+
     test "cutoff above max_clauses collapses to dynamic()" do
       clauses = for _ <- 0..C.max_clauses(), do: {[C.term()], C.atom([:a])}
       rel = Compare.slice(exact_slice([C.term()], C.atom()), clauses)

@@ -55,6 +55,57 @@ defmodule SpecLint.CompilerTest do
     assert C.to_string(C.difference(wide, narrow)) != "none()"
   end
 
+  describe "to_string/1 normal form (O4)" do
+    setup do
+      ok = C.tuple([C.atom([:ok]), C.union(C.list(C.tuple([C.atom(), C.term()])), C.open_map())])
+
+      error =
+        C.tuple([
+          C.atom([:error]),
+          C.closed_map([{:__struct__, C.atom([Foo]), false}, {:key, C.atom(), false}], [])
+        ])
+
+      %{ok: ok, error: error}
+    end
+
+    test "NimbleOptions-style extras print without nested negations", %{ok: ok, error: error} do
+      # term() − S for S = {:ok, ...} | {:error, ...}. Descr alone prints
+      # `not ({:ok, ...} and not {:error, ...}) and not {:error, ...}`.
+      extra = C.difference(C.term(), C.union(ok, error))
+      printed = C.to_string(extra)
+
+      assert printed ==
+               "not ({:error, %{__struct__: Foo, key: atom()}} or " <>
+                 "{:ok, list({atom(), term()}) or map()})"
+
+      refute printed =~ "and not"
+
+      too_many = C.tuple([C.atom([:too_many_attempts]), C.binary(), C.integer()])
+      printed = C.to_string(C.difference(C.term(), C.union_all([ok, too_many, error])))
+      refute printed =~ "and not"
+      assert printed =~ ~r/^not \(.* or .* or .*\)$/
+    end
+
+    test "the printed form does not depend on how the type was built", %{ok: ok, error: error} do
+      built = C.difference(C.difference(C.term(), ok), error)
+      direct = C.difference(C.term(), C.union(error, ok))
+      assert C.to_string(built) == C.to_string(direct)
+    end
+
+    test "negations disjoint from the positive literal are dropped", %{ok: ok, error: error} do
+      assert C.to_string(C.difference(ok, error)) == C.to_string(ok)
+      assert C.to_string(C.difference(C.tuple(), ok)) == "{...} and not " <> C.to_string(ok)
+    end
+
+    test "simple types print as before" do
+      assert C.to_string(C.term()) == "term()"
+      assert C.to_string(C.difference(C.atom(), C.atom([nil]))) == "atom() and not nil"
+      assert C.to_string(C.union(C.integer(), C.list(C.atom()))) == "integer() or list(atom())"
+      assert C.to_string(C.difference(C.term(), C.atom([:undefined]))) == "not :undefined"
+      assert C.to_string(C.dynamic(C.integer())) == "dynamic(integer())"
+    end
+  end
+
   describe "checker chunk decoding" do
     test "a running compiler with an unqualified checker version is rejected" do
       running = :elixir_checker_v11
