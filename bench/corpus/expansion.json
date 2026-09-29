@@ -4,5 +4,7 @@
   "oban": {"revision": "23fa8176b3586ca84f5859793739fad798e69d2b"},
   "phoenix_live_view": {"revision": "517afcb3854fc6e26b3f2caadfce6c82d76bfd7a"},
   "ash": {"revision": "164a4c0d0ef7724c5fd2153876c2cf90cd938863", "holdout": true},
-  "nx": {"revision": "a0076029fe98f851c0183e2fb47d58de3d4bcb34", "project_subdir": "nx", "holdout": true}
+  "nx": {"revision": "a0076029fe98f851c0183e2fb47d58de3d4bcb34", "project_subdir": "nx", "holdout": true},
+  "absinthe": {"revision": "1372ceb5f8226175050a38821601cd57738c177b", "holdout": true, "frozen_at": "3b89842"},
+  "tesla": {"revision": "f1d040b237cf6fe07fc57d4915d95dca24546483", "holdout": true, "frozen_at": "3b89842"}
 }

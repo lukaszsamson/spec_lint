@@ -9,22 +9,28 @@ Nx completed with 7 compared functions, 9 compared slices, and no findings.
 No classifier or compiler behavior was changed after opening these holdouts.
 
 “Confirmed” below means the source supplies a path for an input allowed by the
-spec to return an undeclared value. “Probable” needs an end-to-end witness for
+spec to return an undeclared value. “Witnessed” means a runtime call with an
+input inside the declared spec returned a value outside the declared return,
+with a paired in-domain control that stays inside it (the direct witnesses in
+`holdout_witnesses.exs` and the integration witnesses in
+`ash_integration_witnesses.exs`). “Probable” needs an end-to-end witness for
 reachability. “Refuted” means the inferred alternative comes from a wider
-callee or path than the caller can take. All 12 emitted findings are non-gating
+callee or path than the caller can take, or that a witness aimed at the
+alternative returned inside the declared return. “Still unconfirmed” means a
+witness could not be built; the reason is stated. All 12 emitted findings are non-gating
 under the current policy, regardless of this human judgment.
 
 | Finding | Judgment | Source and reason |
 | --- | --- | --- |
-| `Ash.page/2` SL002 domain escape | **Confirmed** | `ash/lib/ash.ex:2204-2232,2270-2328`: the spec allows integer requests on a `Keyset` page, yet that clause returns `{:error, binary()}`; `Ash.Error.t()` is an exception type. The paths delegating to `read/2` can also relay its third query element. The direct `Keyset` branch is enough to establish the return omission; a runtime page with fully valid `Ash.Page.Keyset.t()` fields was not constructed here. |
+| `Ash.page/2` SL002 domain escape | **Witnessed (integration)** | `ash/lib/ash.ex:2204-2232,2270-2328`: the spec allows integer requests on a `Keyset` page, yet that clause returns `{:error, binary()}`; `Ash.Error.t()` is an exception type. Integration witness: a `%Ash.Page.Keyset{}` read from an ETS resource with `page: [limit: 1, count: true]` (every `Keyset.t()` field checked valid) and request `3` returned `{:error, "Cannot seek to a specific page with keyset based pagination"}`; the control `Ash.page(page, :self)` returned `{:ok, %Ash.Page.Keyset{}}`. The paths delegating to `read/2` can also relay its third query element (not separately witnessed). |
 | `Ash.load/3` SL002 domain escape | **Confirmed, witnessed** | `ash/lib/ash.ex:2446-2454`: `:ok` is an allowed first input and the clause returns `{:ok, :ok}`. The declared successful payload is a resource record, list of records, or nil; `Ash.Resource.record()` is `struct()` (`ash/lib/ash/resource.ex:13`). |
-| `Ash.data_layer_query/2` SL002 domain escape | **Unconfirmed; likely inference spillover** | `ash/lib/ash.ex:2660-2664` calls `read/2` with `data_layer_query?: true`. Its inferred extra is a three-tuple. `ash/lib/ash/actions/read/read.ex:415-425,1040-1060,1160-1178` takes a dedicated query-building branch and appears to return two-tuples. A validated resource/query with `return_query?: true` is needed to establish whether this branch can ever return three elements. |
-| `Ash.read/2` SL002 domain escape | **Confirmed from source** | `ash/lib/ash.ex:108-117,2761-2794`: `return_query?: true` is a documented valid option. The `{:ok, results, query}` case returns a three-tuple even though the spec lists only two-tuples. `ash/lib/ash/actions/read/read.ex:2819-2825` constructs that form. |
-| `Ash.read_one/2` SL002 domain escape | **Confirmed from source** | `ash/lib/ash.ex:163-174,2912-2934`: the valid `return_query?` option passes through the read-one schema, and the function explicitly returns `{:ok, result, query}`. `ash/lib/ash/helpers.ex:318-325` preserves the third element. |
-| `Ash.read_first/2` SL002 domain escape | **Confirmed from source** | `ash/lib/ash.ex:2991-3012` uses the same read-one options and `do_read_one/3`; its `{:ok, result, query}` case also returns an undeclared third element. |
+| `Ash.data_layer_query/2` SL002 domain escape | **Refuted (integration witness)** | `ash/lib/ash.ex:2660-2664` calls `read/2` with `data_layer_query?: true`. Its inferred extra is a three-tuple. `ash/lib/ash/actions/read/read.ex:415-425,1040-1060,1160-1178` takes a dedicated query-building branch that returns two-tuples, and the only three-tuple constructor, `add_query/3` (`read.ex:2819-2825`), has a single call site (`read.ex:508`) in the `else` of that branch. Integration witness: `Ash.data_layer_query(Ash.Query.new(Post), return_query?: true)` on a validated ETS resource returned `{:ok, %{query: _, ash_query: _, count: _, run: _, load: _}}`, inside the declared `{:ok, data_layer_query}`, identical in shape to the control without the option. The extra is spillover from `read/2`'s union. |
+| `Ash.read/2` SL002 domain escape | **Witnessed (integration)** | `ash/lib/ash.ex:108-117,2761-2794`: `return_query?: true` is a documented valid option. The `{:ok, results, query}` case returns a three-tuple even though the spec lists only two-tuples. `ash/lib/ash/actions/read/read.ex:2819-2825` constructs that form. Integration witness: `Ash.read(Post, return_query?: true)` returned `{:ok, [%Post{}], %Ash.Query{}}`; the control without the option returned `{:ok, [%Post{}]}`. |
+| `Ash.read_one/2` SL002 domain escape | **Witnessed (integration)** | `ash/lib/ash.ex:163-174,2912-2934`: the valid `return_query?` option passes through the read-one schema, and the function explicitly returns `{:ok, result, query}`. `ash/lib/ash/helpers.ex:318-325` preserves the third element. Integration witness: `Ash.read_one(Post, return_query?: true)` returned `{:ok, %Post{}, %Ash.Query{}}`; the control returned `{:ok, %Post{}}`. |
+| `Ash.read_first/2` SL002 domain escape | **Witnessed (integration)** | `ash/lib/ash.ex:2991-3012` uses the same read-one options and `do_read_one/3`; its `{:ok, result, query}` case also returns an undeclared third element. Integration witness: `Ash.read_first(Post, return_query?: true)` returned `{:ok, %Post{}, %Ash.Query{}}`; the control returned `{:ok, %Post{}}`. |
 | `Ash.Page.page_opts/1` SL001 clause conflict | **Confirmed, witnessed** | `ash/lib/ash/page/page.ex:11-20`: both `false` and `nil` are explicitly in the input spec, but their clause returns `{:ok, false}` and `{:ok, nil}` rather than `{:ok, page()}`. The finding does not gate because whole-slice translation records arrow polarity loss even though this particular clause is literal and contained. This is a useful case for future per-clause qualification. |
-| `Ash.Policy.Policy.solve/1` SL002 domain escape | **Probable true** | `ash/lib/ash/policy/policy.ex:75-98` returns `{:error, authorizer, :unsatisfiable}` when the solver yields no scenarios; the spec requires an `Ash.Error.t()` third element. The specific `Authorizer.t()` input that reaches an unsatisfiable scenario has not been built. |
-| `Ash.Query.apply_to/3` SL002 domain escape | **Probable true** | `ash/lib/ash/query/query.ex:4346-4373` has an `else {:error, error} -> {:error, Ash.Error.to_ash_error(error)}` branch, while its spec promises only `{:ok, records}`. Reachability with a valid query, resource, and records needs a controlled witness. |
+| `Ash.Policy.Policy.solve/1` SL002 domain escape | **Witnessed (integration)** | `ash/lib/ash/policy/policy.ex:75-98` returns `{:error, authorizer, :unsatisfiable}` when the solver yields no scenarios; the spec requires an `Ash.Error.t()` third element. Integration witness: an `Authorizer.t()` from `Ash.Policy.Authorizer.initial_state/4` for a resource with two applicable policies, `authorize_if CheckA` and `authorize_if CheckB`, returned `{:error, %Ash.Policy.Authorizer{}, :unsatisfiable}`; the control with only `CheckA` returned `{:ok, [%{{CheckA, []} => true}], %Ash.Policy.Authorizer{}}`. Reachability needs a check that stays `:unknown` at strict-check time and declares `conflicts?/3` (here two user-defined `Ash.Policy.Check` modules): every builtin check decides during the strict check, so builtin-only policies fold to a boolean (`{:ok, false, authorizer}` in the attempts made with `actor_present`/`actor_absent`, and with `expr(...)` versus its negation). The public authorization flow maps this result to `Ash.Error.Forbidden.Policy` (`authorizer.ex:1755-1761`), so the escape is at the `solve/1` boundary, not at the user-facing API. |
+| `Ash.Query.apply_to/3` SL002 domain escape | **Witnessed (integration)** | `ash/lib/ash/query/query.ex:4346-4373` has an `else {:error, error} -> {:error, Ash.Error.to_ash_error(error)}` branch, while its spec promises only `{:ok, records}`. Integration witness: `Ash.Query.apply_to(Ash.Query.load(Post, :exploding), records, domain: Domain)`, where `:exploding` is a calculation whose `calculate/3` returns `{:error, _}`, returned `{:error, %Ash.Error.Unknown{}}`; the control loading a well-behaved calculation returned `{:ok, [%Post{}]}`. |
 | `Ash.Resource.Info.sortable?/3` SL002 domain escape | **Refuted** | `ash/lib/ash/resource/info.ex:911-965`: the case clauses return `true` or `false`, including its default. No path returning the inferred `nil` was found. This is propagated call imprecision, not a demonstrated missing alternative. |
 | `Ash.Test.refute_has_error/3` SL002 domain escape | **Confirmed, witnessed** | `ash/lib/ash/test.ex:109-122`: the spec allows `:ok` input but the first clause returns `:ok`, outside `Ash.Error.t() | no_return()`. Passing `Ash.Error.Invalid` as the deprecated class argument keeps the witness inside the declared domain. |
 | `Ash.UUIDv7.generate/0` SL002 structured possible | **Refuted** | `ash/lib/ash/uuid_v7.ex:49-76,95-122`: `bingenerate/0` constructs exactly 128 bits, which matches `encode/1`’s raw-binary clause. The inferred `:error` comes from `encode/1`’s catch-all, which this caller cannot reach. The return type’s fixed-size binary approximation also prevents an established proof. |
@@ -36,9 +42,23 @@ alternatives, are executable with:
 elixir bench/corpus/holdout_witnesses.exs /tmp/spec-lint-expansion
 ```
 
-They load the pinned Ash BEAM without starting its application. The `page/2`,
-`read*/2`, policy, and query judgments above rely on the specified source
-branches and do not claim a separate integration witness.
+They load the pinned Ash BEAM without starting its application. The remaining
+source-only reports are witnessed by a script that builds a minimal Ash domain
+with private, in-memory ETS resources from the pinned build, using inputs that
+satisfy each cited `@spec` and a paired in-domain control per report:
+
+```sh
+elixir bench/corpus/ash_integration_witnesses.exs /tmp/spec-lint-expansion
+```
+
+It loads `_build/test/lib/*/ebin` of the pinned checkout, starts only
+`telemetry`, `decimal`, `jason`, `spark`, `ecto`, `ets`, `splode` and `ash`
+(plus `Mix.start/0`, which Ash's resource verifier reads), needs no network or
+disk, and raises if a pinned observation or verdict changes. Its predicates for
+“inside the declared return” are hand-written from the spec text and do not call
+SpecLint. Outcome: six reports witnessed (`read/2`, `read_one/2`, `read_first/2`,
+`page/2`, `Policy.solve/1`, `Query.apply_to/3`), `data_layer_query/2` refuted,
+none left unconfirmed.
 
 ## Silent function sample
 
@@ -61,5 +81,6 @@ the selected source. Every selected slice was `top_only` in the report.
 | `Nx.vectorize/2` | `nx/nx/lib/nx.ex:5338-5410`: multiple clauses and delegated tensor/container transforms; no omission established by this sample. |
 
 The sample checks silence, not overall false-negative rate. It did not find a
-new omission; three of the 12 Ash reports are direct counterexamples and four
-more have clear source paths, while the structured UUID candidate is refuted.
+new omission; nine of the 12 Ash reports are now witnessed at runtime (three
+direct, six integration), while `Ash.data_layer_query/2`, `Ash.Resource.Info.sortable?/3`
+and the structured UUID candidate are refuted.

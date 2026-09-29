@@ -1,0 +1,270 @@
+{
+  "adapter": "1.21.0-dev+c24c235",
+  "checker_version": "elixir_checker_v10",
+  "code_paths": [
+    "$OSS/tesla/_build/test/lib/castore/ebin",
+    "$OSS/tesla/_build/test/lib/certifi/ebin",
+    "$OSS/tesla/_build/test/lib/con_cache/ebin",
+    "$OSS/tesla/_build/test/lib/cowboy/ebin",
+    "$OSS/tesla/_build/test/lib/cowlib/ebin",
+    "$OSS/tesla/_build/test/lib/dialyxir/ebin",
+    "$OSS/tesla/_build/test/lib/erlex/ebin",
+    "$OSS/tesla/_build/test/lib/excoveralls/ebin",
+    "$OSS/tesla/_build/test/lib/finch/ebin",
+    "$OSS/tesla/_build/test/lib/fuse/ebin",
+    "$OSS/tesla/_build/test/lib/gun/ebin",
+    "$OSS/tesla/_build/test/lib/h2/ebin",
+    "$OSS/tesla/_build/test/lib/hackney/ebin",
+    "$OSS/tesla/_build/test/lib/hpax/ebin",
+    "$OSS/tesla/_build/test/lib/httparrot/ebin",
+    "$OSS/tesla/_build/test/lib/ibrowse/ebin",
+    "$OSS/tesla/_build/test/lib/idna/ebin",
+    "$OSS/tesla/_build/test/lib/jason/ebin",
+    "$OSS/tesla/_build/test/lib/mime/ebin",
+    "$OSS/tesla/_build/test/lib/mimerl/ebin",
+    "$OSS/tesla/_build/test/lib/mint/ebin",
+    "$OSS/tesla/_build/test/lib/mox/ebin",
+    "$OSS/tesla/_build/test/lib/msgpax/ebin",
+    "$OSS/tesla/_build/test/lib/nimble_options/ebin",
+    "$OSS/tesla/_build/test/lib/nimble_ownership/ebin",
+    "$OSS/tesla/_build/test/lib/nimble_pool/ebin",
+    "$OSS/tesla/_build/test/lib/opentelemetry_api/ebin",
+    "$OSS/tesla/_build/test/lib/opentelemetry_process_propagator/ebin",
+    "$OSS/tesla/_build/test/lib/opentelemetry_semantic_conventions/ebin",
+    "$OSS/tesla/_build/test/lib/parse_trans/ebin",
+    "$OSS/tesla/_build/test/lib/poison/ebin",
+    "$OSS/tesla/_build/test/lib/quic/ebin",
+    "$OSS/tesla/_build/test/lib/ranch/ebin",
+    "$OSS/tesla/_build/test/lib/ssl_verify_fun/ebin",
+    "$OSS/tesla/_build/test/lib/telemetry/ebin",
+    "$OSS/tesla/_build/test/lib/tesla/ebin",
+    "$OSS/tesla/_build/test/lib/webtransport/ebin"
+  ],
+  "ebins": [
+    "$OSS/tesla/_build/test/lib/tesla/ebin"
+  ],
+  "fixtures": null,
+  "functions": [
+    {
+      "class": "possible_domain_escape",
+      "class_static": "possible_domain_escape",
+      "clause_conflict_candidate": false,
+      "clause_conflict_candidate_static": false,
+      "file": "$OSS/tesla/lib/tesla/adapter/mint.ex",
+      "inferred": [
+        "(term(), term(), term()) -> dynamic(\n  ({:error, term()} and not {:ok, term(), not {:error, term()}}) or\n    {:fin or :nofin, term(), term()}\n)"
+      ],
+      "line": 76,
+      "location": "$OSS/tesla/lib/tesla/adapter/mint.ex:76",
+      "mfa": "Tesla.Adapter.Mint.read_chunk/3",
+      "sl002_candidate": false,
+      "sl002_candidate_static": false,
+      "slices": [
+        {
+          "applied": [
+            0
+          ],
+          "applied_return": "{:fin or :nofin, term(), term()} or {:error, term()}",
+          "arg_loss_kinds": [
+            "opaque_boundary"
+          ],
+          "badapply": false,
+          "class": "possible_domain_escape",
+          "class_static": "possible_domain_escape",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [
+            {
+              "class": "possible_domain_escape",
+              "class_static": "possible_domain_escape",
+              "clause": 0,
+              "components": [
+                {
+                  "descr": "{:fin or :nofin, term(), not binary()}",
+                  "detail": "tuple",
+                  "kind": "tuple",
+                  "label": "structured",
+                  "payload_gradual": false,
+                  "present_in_contributing": false,
+                  "subtraction_payload": true,
+                  "tag_in_spec": true
+                },
+                {
+                  "descr": "{:error, term()}",
+                  "detail": "tuple",
+                  "kind": "tuple",
+                  "label": "structured",
+                  "payload_gradual": true,
+                  "present_in_contributing": true,
+                  "subtraction_payload": false,
+                  "tag_in_spec": false
+                }
+              ],
+              "containment": "domain_escape",
+              "extra": "({:fin or :nofin, term(), term()} and not {:fin or :nofin, term(), binary()}) or {:error, term()}",
+              "reasons": [
+                "domain_escape=[0]",
+                "not_in_contributing=1",
+                "tag_in_spec=1",
+                "subtraction_payload=1",
+                "payload_gradual=1"
+              ],
+              "static_return": false
+            }
+          ],
+          "components": [
+            {
+              "descr": "{:fin or :nofin, term(), not binary()}",
+              "detail": "tuple",
+              "kind": "tuple",
+              "label": "structured",
+              "payload_gradual": false,
+              "present_in_contributing": false,
+              "subtraction_payload": true,
+              "tag_in_spec": true
+            },
+            {
+              "descr": "{:error, term()}",
+              "detail": "tuple",
+              "kind": "tuple",
+              "label": "structured",
+              "payload_gradual": true,
+              "present_in_contributing": true,
+              "subtraction_payload": false,
+              "tag_in_spec": false
+            }
+          ],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "domain_escape",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "({:fin or :nofin, term(), term()} and not {:fin or :nofin, term(), binary()}) or {:error, term()}",
+          "index": 0,
+          "input_approximate": true,
+          "loss_kinds": [
+            "opaque_boundary"
+          ],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "input_approximate",
+            "domain_escape=[0]",
+            "not_in_contributing=1",
+            "tag_in_spec=1",
+            "subtraction_payload=1",
+            "payload_gradual=1",
+            "return_inexact"
+          ],
+          "return_loss_kinds": [
+            "opaque_boundary"
+          ],
+          "return_relation": "superset",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "term()",
+            "reference()",
+            "list({atom(), term()})"
+          ],
+          "spec_return": "{:fin or :nofin, term(), binary()}",
+          "status": "compared",
+          "top_only": false,
+          "union_class": "possible_domain_escape",
+          "union_class_static": "possible_domain_escape"
+        }
+      ],
+      "specs": [
+        "read_chunk(Mint.HTTP.t(), reference(), keyword()) ::\n  {:fin, Mint.HTTP.t(), binary()} | {:nofin, Mint.HTTP.t(), binary()}"
+      ],
+      "status": "compared"
+    }
+  ],
+  "label": "tesla",
+  "otp_release": "28",
+  "reduced": "full normalized report in adjacent .json.gz",
+  "totals": {
+    "badapply_slices": 0,
+    "clause_classes": {
+      "none": 5,
+      "possible_domain_escape": 1,
+      "unknown": 375
+    },
+    "clause_classes_static": {
+      "none": 5,
+      "possible_domain_escape": 1,
+      "unknown": 375
+    },
+    "clause_conflict_candidate_functions": 0,
+    "clause_conflict_candidate_functions_static": 0,
+    "component_labels": {
+      "structured": 1,
+      "structured_absent": 5,
+      "unknown": 14,
+      "unknown_absent": 30
+    },
+    "function_classes": {
+      "none": 12,
+      "possible_domain_escape": 1,
+      "unknown": 300
+    },
+    "function_classes_static": {
+      "none": 12,
+      "possible_domain_escape": 1,
+      "unknown": 300
+    },
+    "functions": 313,
+    "functions_by_status": {
+      "compared": 313
+    },
+    "loss_kinds": {
+      "arrow_polarity": 332,
+      "integer_refinement_erased": 2,
+      "map_key_widened": 166,
+      "opaque_boundary": 348,
+      "recursive_cutoff": 336,
+      "type_variable_correlation": 1
+    },
+    "modules": 100,
+    "modules_by_status": {
+      "ok": 100
+    },
+    "near_top_slices": 2,
+    "out_of_scope_by_reason": {
+      "generated": 4,
+      "not_exported": 11
+    },
+    "overlap_slices": 0,
+    "overlap_unknown_slices": 0,
+    "sl002_candidate_functions": 0,
+    "sl002_candidate_functions_static": 0,
+    "sl002_candidate_slices": 0,
+    "sl002_candidate_slices_tag_in_spec": 0,
+    "slice_classes": {
+      "none": 13,
+      "possible_domain_escape": 1,
+      "unknown": 373
+    },
+    "slice_classes_static": {
+      "none": 13,
+      "possible_domain_escape": 1,
+      "unknown": 373
+    },
+    "slices": 387,
+    "slices_approximate": 353,
+    "slices_compared": 387,
+    "slices_exact": 34,
+    "top_only_slices": 324,
+    "unavailable_by_reason": {},
+    "union_classes": {
+      "none": 13,
+      "possible_domain_escape": 1,
+      "unknown": 373
+    },
+    "unsupported_by_reason": {}
+  }
+}
