@@ -77,6 +77,83 @@ defmodule SpecLint.Beam do
     end
   end
 
+  @doc """
+  `:beam_lib.chunks/3` on the contents of the file at `path`, never on its
+  name. `beam_lib` turns a file name into an atom when it reports an error
+  (`not_a_beam_file`, `missing_chunk`, ...), which raises `system_limit` for
+  a path longer than 255 characters, so a corrupt BEAM in a deep checkout
+  would crash the caller instead of being reported. Error reasons name
+  `path` where `beam_lib` would name the file; an unreadable file is
+  `{:error, :beam_lib, {:file_error, path, posix}}`.
+  """
+  @spec chunks(Path.t(), [atom() | charlist()], [:allow_missing_chunks]) ::
+          {:ok, {module(), list()}} | {:error, :beam_lib, term()}
+  def chunks(path, chunks, options \\ []) do
+    case File.read(path) do
+      {:ok, binary} ->
+        case binary_chunks(binary, chunks, options) do
+          {:ok, _} = ok -> ok
+          {:error, :beam_lib, reason} -> {:error, :beam_lib, name_file(reason, binary, path)}
+        end
+
+      {:error, posix} ->
+        {:error, :beam_lib, {:file_error, path, posix}}
+    end
+  end
+
+  defp binary_chunks(binary, chunks, options) do
+    :beam_lib.chunks(binary, chunks, options)
+  rescue
+    error -> {:error, :beam_lib, {:invalid_beam_file, binary, Exception.message(error)}}
+  end
+
+  # beam_lib's error reasons are tuples naming the file first.
+  defp name_file(reason, binary, path) do
+    reason
+    |> Tuple.to_list()
+    |> Enum.map(fn element -> if element === binary, do: path, else: element end)
+    |> List.to_tuple()
+  end
+
+  @doc """
+  The identity of the BEAM file at `path` as reports record it: the
+  `:beam_lib.md5/1` of its code, and the SHA-256 of its decoded `ExCk`
+  checker chunk serialised with `:deterministic` (the raw chunk bytes are
+  not deterministic across builds). `beam_lib`'s MD5 leaves the `ExCk`
+  chunk out, so two builds whose stored signatures differ can share it;
+  the chunk digest tells them apart. Either is `nil` when unavailable.
+  """
+  @spec identity(Path.t()) :: {String.t() | nil, String.t() | nil}
+  def identity(path) do
+    case File.read(path) do
+      {:ok, binary} -> {binary |> md5() |> hex(), exck_digest(binary)}
+      {:error, _reason} -> {nil, nil}
+    end
+  end
+
+  defp hex(nil), do: nil
+  defp hex(bytes), do: Base.encode16(bytes, case: :lower)
+
+  defp exck_digest(binary) do
+    with {:ok, {_module, [{~c"ExCk", bytes}]}} when is_binary(bytes) <-
+           binary_chunks(binary, [~c"ExCk"], [:allow_missing_chunks]),
+         {:ok, term} <- decode_term(bytes) do
+      :sha256
+      |> :crypto.hash(:erlang.term_to_binary(term, [:deterministic]))
+      |> hex()
+    else
+      _ -> nil
+    end
+  end
+
+  # Checker chunks contain module atoms that may not exist in this VM yet,
+  # so `:safe` cannot be used (as in the compiler's own reader).
+  defp decode_term(bytes) do
+    {:ok, :erlang.binary_to_term(bytes)}
+  rescue
+    ArgumentError -> :error
+  end
+
   defp read_file(path) do
     case File.read(path) do
       {:ok, binary} -> {:ok, binary}
@@ -108,6 +185,8 @@ defmodule SpecLint.Beam do
       {:ok, {_module, md5}} -> md5
       {:error, :beam_lib, _} -> nil
     end
+  rescue
+    _error -> nil
   end
 
   defp debug_info(binary, module) do

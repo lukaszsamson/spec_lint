@@ -2,7 +2,10 @@ defmodule SpecLint.Report.Json do
   @moduledoc """
   The JSON report (DESIGN.md section 9): a versioned envelope, independent
   of compiler structures, with tool, adapter, Elixir, OTP and checker
-  versions, BEAM hashes, the config digest, scope, capabilities, findings,
+  versions, BEAM hashes (the `beam_lib` MD5 and the digest of the decoded
+  checker chunk, which the MD5 leaves out), the compiler build digest and
+  which applications' BEAM files it is recorded to have produced
+  (`artifacts`), the config digest, scope, capabilities, findings,
   the coverage ledger, baseline decisions and completion status.
 
   Output is deterministic: object keys are sorted, lists are sorted by the
@@ -68,9 +71,10 @@ defmodule SpecLint.Report.Json do
         "body_hook" => Map.get(caps, :body_hook, false)
       },
       "beams" =>
-        for {module, path, md5} <- run.beams do
-          %{"module" => module, "path" => path, "md5" => md5}
+        for {module, path, md5, exck} <- run.beams do
+          %{"module" => module, "path" => path, "md5" => md5, "exck" => exck}
         end,
+      "artifacts" => artifacts(run, caps),
       "findings" => Enum.map(run.issues, &finding/1),
       "ledger" => run.ledger,
       "baseline" => baseline(run),
@@ -81,6 +85,17 @@ defmodule SpecLint.Report.Json do
         "blocking" => Enum.count(run.issues, &Issue.blocking?/1),
         "coverage_violations" => run.coverage_violations
       }
+    }
+  end
+
+  # Which build produced the analysed BEAM files (SpecLint.BuildRecord):
+  # applications whose record names the running build, and applications
+  # without a record. A record naming another build stops the run earlier.
+  defp artifacts(run, caps) do
+    %{
+      "build_digest" => caps[:build_digest],
+      "recorded" => for({app, :verified} <- run.artifacts, do: Atom.to_string(app)),
+      "unrecorded" => for({app, :unrecorded} <- run.artifacts, do: Atom.to_string(app))
     }
   end
 

@@ -1,19 +1,35 @@
 # Fifteen-corpus replay under upstream Elixir 648b2a9
 
 The Milestone 1 review replay (`../m1_review/`, fork revision `c24c235`)
-repeated with the same tool tree under unmodified upstream Elixir
+repeated with the same tool code under unmodified upstream Elixir
 `648b2a94934664cfd2c788348d02d799c68faa69`
 (`../../toolchain/upstream-1.21-648b2a9.md`). Every OSS corpus was
 recompiled with the upstream compiler into a separate build path; the
 stdlib corpus is the upstream build's own `lib/*/ebin`. These are regression
 corpora, not fresh holdouts.
 
+## Tool revision
+
+The reports were produced from the uncommitted Milestone 2 working tree,
+so every `*.provenance.json` records `"tool": {"revision": "63618c2...",
+"dirty": true}`. `63618c2` is not the tool that ran: its adapter does not
+qualify 648b2a9 and fails preflight (exit 2) under it. The tool is
+identified by `source_sha256`
+`4dd50973e4faa2df518fbcfb9c0c212c6869d3d7f83871afa634031bba05ca53`, which
+`provenance.sh` computes to the same value on a clean checkout of commit
+`41f56c3` ("Milestone 2: qualify upstream Elixir 648b2a9"). To repeat the
+runs, check out `41f56c3`. Later commits (the Milestone 2 review) change
+the report format: `beams` entries gain an `exck` digest and reports an
+`artifacts` object, so compare their reports with `compare_replay.sh`, not
+byte for byte.
+
 ## Regenerate
 
 `$UP` is a build from `bench/corpus/toolchain/build_elixir.sh`, `$BUILD` a
 new directory for the corpus builds, `$ORIGINAL_OSS` and `$EXPANSION_OSS`
 the checkouts of `bench/corpus/README.md` and `expansion.json` with their
-dependencies fetched.
+dependencies fetched (repository URLs and a checkout snippet are in
+`bench/corpus/README.md`, "Corpora").
 
 ```sh
 export PATH=$UP/bin:$PATH MIX_BUILD_PATH=/path/to/spec_lint-build-648b2a9/test
@@ -30,6 +46,28 @@ SPEC_LINT_OSS=$ORIGINAL_OSS bench/corpus/run.sh stdlib jason decimal nimble_opti
 SPEC_LINT_OSS=$EXPANSION_OSS bench/corpus/run.sh req broadway oban phoenix_live_view ash nx absinthe tesla
 (cd bench/corpus/reports && ../compare_replay.sh upstream-648b2a9 m1_review)
 ```
+
+### Verify a regeneration
+
+A regeneration in other directories is not byte-identical to the committed
+files, and is not expected to be. BEAM files record the directory they
+were built in (debug info, and literals of `use` macros quoted with
+`location: :keep`), so the `beams` md5 values of the stdlib and of any
+corpus with such modules (12 stdlib modules, `Jason.Decoder.Unescape`), the
+artifact `sha256` values in the provenance files and
+`loaded_module_types_sha256` change with the build path. Compare instead:
+
+```sh
+(cd bench/corpus/reports && ../compare_replay.sh NEW upstream-648b2a9)
+```
+
+`differing_report_keys` must list only `beams` (and, with a tool later
+than `41f56c3`, `artifacts`), with identical ledgers, findings, gates and
+fingerprints. The path-independent compiler identity is
+`toolchain.identity` in provenance files written by the current
+`provenance.sh` (`identity.exs`: `code_digest`, `exck_digest`); check it
+against `../../toolchain/upstream-1.21-648b2a9.md`. The committed provenance
+files predate that field.
 
 The runs used Erlang/OTP 28.5.0.1 (`ASDF_ERLANG_VERSION=28.5.0.1`), one
 corpus at a time. The reports were produced with the clean-clone build of

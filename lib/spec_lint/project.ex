@@ -26,7 +26,10 @@ defmodule SpecLint.Project do
   module the build lists has no `.beam` file in the ebin
   (`missing_modules/1`). It reports `{:error, :module_mismatch}` when a
   BEAM file's embedded module differs from its filename, and
-  `{:error, :invalid_beam}` when a file cannot be decoded as a BEAM. The build's
+  `{:error, :invalid_beam}` when a file cannot be decoded as a BEAM. BEAM
+  files are decoded from their contents (`SpecLint.Beam.chunks/3`), so a
+  corrupt file under a path longer than 255 characters is reported like
+  any other, not a crash. The build's
   module list comes from:
 
     * for a project from `current/0`, the Elixir compiler's manifest
@@ -52,6 +55,7 @@ defmodule SpecLint.Project do
   """
 
   alias Mix.Compilers.Elixir, as: ElixirCompiler
+  alias SpecLint.Beam
 
   @typedoc """
   One owned application: its ebin directory and, for a Mix project, the
@@ -224,7 +228,7 @@ defmodule SpecLint.Project do
   def mismatched_modules(project) do
     for {app, path} <- beams(project),
         expected = Path.basename(path, ".beam"),
-        {:ok, {found, _info}} <- [:beam_lib.chunks(String.to_charlist(path), [:exports])],
+        {:ok, {found, _info}} <- [Beam.chunks(path, [:exports])],
         Atom.to_string(found) != expected,
         do: %{app: app, path: path, expected: expected, found: found}
   end
@@ -233,7 +237,7 @@ defmodule SpecLint.Project do
   @spec invalid_beams(t()) :: [invalid()]
   def invalid_beams(project) do
     for {app, path} <- beams(project),
-        {:error, :beam_lib, reason} <- [:beam_lib.chunks(String.to_charlist(path), [:exports])],
+        {:error, :beam_lib, reason} <- [Beam.chunks(path, [:exports])],
         do: %{app: app, path: path, reason: reason}
   end
 

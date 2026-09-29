@@ -74,6 +74,34 @@ For comparison, the fork build `c24c235` (`~/elixir`) has `code_digest`
 `exck_digest` `80f75ead4439f7cbf958b3fe8b94577dce636a01826aec0fd9cfce26394b22a2`
 (its build date is its own commit time, so the System module differs too).
 
+### Pinned compiler modules
+
+`identity.exs` covers the whole build and changes with the OTP patch
+release (with OTP 28.0, 14 modules such as `Kernel` and `:elixir_compiler`
+compile differently; `exck_digest` stays the same). The adapter pins a
+narrower set at run time: the checker, debug info, typespec and manifest
+modules (`SpecLint.Compiler.BuildIdentity`), whose digests are the same
+with OTP 28.0, 28.3.1 and 28.5.0.1, in any build directory, and do not
+include the build date. `pinned_digests.exs` prints them for the running
+build in the form of `SpecLint.Compiler.V121.qualified_builds/0`:
+
+```sh
+/path/to/elixir-648b2a9/bin/elixir bench/corpus/toolchain/pinned_digests.exs
+# 14 modules, build digest cce56065b5670aa6e086839b1465dd22bbee4f964bae2673843a50e4a6856cce
+```
+
+The fork build `c24c235` gives build digest
+`ae7d8dc230f53eebfc55d8370437127221b8f4caeba74f6e3ebcf4fc05c1e947`, the
+same for `~/elixir` and for a fresh `build_elixir.sh` build of the commit
+(`ELIXIR_REPO=~/elixir`). Preflight fails (`:compiler_identity`, exit 2 in
+CI) for a build of a qualified revision whose pinned modules differ, such
+as `c24c235` with the row 19 fix reverted (`Module.Types.Expr` differs).
+
+The test suite does not depend on where the checkout is: BEAM files are
+decoded from their contents, because `beam_lib` turns a file name into an
+atom when it reports an error and a path over 255 characters then raises
+`system_limit` (a coverage test builds such a path).
+
 ## Using it
 
 Select the build by putting it first on `PATH`, and keep its build
@@ -93,7 +121,15 @@ mix dialyzer
 With asdf, `ASDF_ELIXIR_VERSION=path:/path/to/elixir-648b2a9` selects it
 as well. The consumer integration tests start `mix` in fixture projects;
 `SpecLint.ProjectFixture` clears `MIX_BUILD_PATH` for them, so the fixtures
-build into their own directories with the compiler on `PATH`.
+build into their own directories with the compiler on `PATH`. With
+`SPEC_LINT_OTHER_ELIXIR` set to the `bin` directory of the other qualified
+build, `test/integration/build_record_test.exs` also compiles a fixture
+with one build and lints it with the other, in both directions.
+
+`mix spec_lint` and `mix spec_lint.baseline` recompile the project with
+`--force` when its BEAM files were not recorded as produced by the running
+build (`SpecLint.BuildRecord`), so a project switched between the two
+builds is rebuilt, not analysed with the other build's stored signatures.
 
 ## Corpora under the upstream compiler
 

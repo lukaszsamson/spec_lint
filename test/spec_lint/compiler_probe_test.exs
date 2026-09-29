@@ -3,17 +3,28 @@ defmodule SpecLint.CompilerProbeTest do
   # adapter depends on is probed, and a missing or changed internal fails
   # preflight, which makes a CI run incomplete (exit 2). Each test swaps one
   # internal for a stub that delegates to the real module except for the
-  # simulated change.
+  # simulated change; failed/1 checks the probe named in the failure and
+  # that a CI run with that preflight is incomplete with exit 2.
   use ExUnit.Case, async: false
 
   import SpecLint.TestHelpers
 
   alias Module.Types.Descr
   alias SpecLint.{Compiler, Config, Project, Run}
-  alias SpecLint.Compiler.V121
+  alias SpecLint.Compiler.{BuildIdentity, V121}
   alias SpecLint.Fixtures.Compare
 
   @moduletag :tmp_dir
+
+  # A one-module project for failed/1's CI run.
+  setup %{tmp_dir: dir} do
+    ebin = Path.join(dir, "ebin")
+    File.mkdir_p!(ebin)
+    File.cp!(beam_path(Compare), Path.join(ebin, "#{Compare}.beam"))
+    project = Project.from_ebins([{:fx, ebin}], dir)
+    Process.put(:probe_project, project)
+    %{project: project}
+  end
 
   test "every probe passes on the running compiler" do
     internals = V121.internals()
@@ -24,6 +35,21 @@ defmodule SpecLint.CompilerProbeTest do
 
     assert {:ok, capabilities} = V121.preflight(internals)
     assert capabilities.adapter_id == "#{System.version()}+#{System.build_info()[:revision]}"
+
+    revision = String.slice(System.build_info()[:revision], 0, 7)
+    recorded = Map.fetch!(V121.qualified_builds(), revision)
+    assert capabilities.build_digest == BuildIdentity.combined(recorded)
+    assert {:ok, ^recorded} = BuildIdentity.running_digests()
+  end
+
+  test "every qualified revision has recorded build digests of the same modules" do
+    builds = V121.qualified_builds()
+    assert Enum.sort(Map.keys(builds)) == Enum.sort(V121.qualified_revisions())
+    [modules | others] = for {_revision, digests} <- builds, do: Enum.sort(Map.keys(digests))
+    assert Enum.all?(others, &(&1 == modules))
+    assert "Elixir.Module.Types.Expr" in modules
+    assert "elixir_overridable" in modules
+    assert Enum.all?(modules, &BuildIdentity.pinned?/1)
   end
 
   test "the qualified revisions are the fork revision and upstream 648b2a9" do
@@ -41,6 +67,62 @@ defmodule SpecLint.CompilerProbeTest do
 
     assert V121.preflight(internals) ==
              {:error, {:missing_compiler_modules, [SpecLint.NoSuchDescr]}}
+  end
+
+  describe "compiler identity" do
+    # A build of a qualified revision whose checker code differs (the
+    # reviewer's reproduction: c24c235 with the for-into fix reverted
+    # reports revision c24c235 and passed every other probe).
+    setup %{tmp_dir: dir} do
+      ebins =
+        for {ebin, index} <- Enum.with_index(BuildIdentity.running_ebins()) do
+          copy = Path.join([dir, "build", "app#{index}", "ebin"])
+          File.mkdir_p!(copy)
+
+          for path <- Path.wildcard(Path.join(ebin, "*.beam")),
+              BuildIdentity.pinned?(Path.basename(path, ".beam")),
+              do: File.cp!(path, Path.join(copy, Path.basename(path)))
+
+          copy
+        end
+
+      %{ebins: ebins}
+    end
+
+    test "an unchanged copy of the running build passes", %{ebins: ebins} do
+      assert V121.probe(:compiler_identity, %{V121.internals() | build_ebins: ebins}) == :ok
+    end
+
+    test "a changed checker module", %{ebins: ebins} do
+      {:ok, _module, stub} =
+        :compile.forms(
+          [{:attribute, 1, :module, :"Elixir.Module.Types.Expr"}, {:attribute, 1, :export, []}],
+          [:binary]
+        )
+
+      [elixir_ebin | _] = ebins
+      File.write!(Path.join(elixir_ebin, "Elixir.Module.Types.Expr.beam"), stub)
+      revision = String.slice(System.build_info()[:revision], 0, 7)
+
+      assert failed(build_ebins: ebins) ==
+               {:compiler_identity, {:build_differs, revision, ["Elixir.Module.Types.Expr"]}}
+    end
+
+    test "a missing pinned module", %{ebins: ebins} do
+      [elixir_ebin | _] = ebins
+      File.rm!(Path.join(elixir_ebin, "elixir_overridable.beam"))
+
+      assert {:compiler_identity, {:build_differs, _revision, ["elixir_overridable"]}} =
+               failed(build_ebins: ebins)
+    end
+
+    test "a digest does not depend on the directory the build is in", %{ebins: [elixir_ebin | _]} do
+      [running | _] = BuildIdentity.running_ebins()
+      beam = "Elixir.Module.Types.Descr.beam"
+
+      assert BuildIdentity.module_digest(Path.join(elixir_ebin, beam)) ==
+               BuildIdentity.module_digest(Path.join(running, beam))
+    end
   end
 
   describe "Module.Types.Descr" do
@@ -127,6 +209,161 @@ defmodule SpecLint.CompilerProbeTest do
     end
   end
 
+  describe "Module.Types.Descr: unfold/1 and recursive nodes (audit row 8)" do
+    test "unfold/1 no longer expands term()" do
+      stub =
+        stub(Descr,
+          drop: [unfold: 1],
+          body:
+            quote do
+              def unfold(:term), do: %{}
+              def unfold(other), do: Descr.unfold(other)
+            end
+        )
+
+      assert failed(descr: stub) == {:descr_encoding, {:checks_failed, [:unfold]}}
+    end
+
+    test "a changed recursive node layout" do
+      stub =
+        stub(Descr,
+          drop: [recursive: 1],
+          body:
+            quote do
+              def recursive(equations),
+                do: Map.new(Descr.recursive(equations), fn {k, node} -> {k, %{node: node}} end)
+            end
+        )
+
+      assert failed(descr: stub) == {:descr_encoding, {:checks_failed, [:recursive_node]}}
+    end
+  end
+
+  describe "Module.Types.Descr: other encodings and semantics" do
+    test "atoms no longer stored as a union set" do
+      stub =
+        stub(Descr,
+          drop: [atom: 1],
+          body:
+            quote do
+              def atom(atoms),
+                do: Descr.opt_difference(Descr.atom(), Descr.atom([:__none__ | atoms]))
+            end
+        )
+
+      assert {:descr_encoding, {:checks_failed, failed}} = failed(descr: stub)
+      assert :atom_union in failed
+    end
+
+    test "dynamic no longer a :dynamic field" do
+      stub =
+        stub(Descr,
+          drop: [dynamic: 1],
+          body:
+            quote do
+              def dynamic(descr), do: %{gradual: Descr.dynamic(descr)}
+            end
+        )
+
+      assert {:descr_encoding, {:checks_failed, failed}} = failed(descr: stub)
+      assert :dynamic in failed
+    end
+
+    test "changed gradual bounds" do
+      stub =
+        stub(Descr,
+          drop: [lower_bound: 1],
+          body:
+            quote do
+              def lower_bound(descr), do: Descr.upper_bound(descr)
+            end
+        )
+
+      assert failed(descr: stub) == {:descr_semantics, {:checks_failed, [:gradual_bounds]}}
+    end
+
+    test "changed domain keys" do
+      stub =
+        stub(Descr,
+          drop: [to_domain_keys: 1],
+          body:
+            quote do
+              def to_domain_keys(descr), do: Descr.to_domain_keys(descr) -- [:integer]
+            end
+        )
+
+      assert failed(descr: stub) == {:descr_semantics, {:checks_failed, [:domain_keys]}}
+    end
+
+    test "changed atom_fetch/1" do
+      stub =
+        stub(Descr,
+          drop: [atom_fetch: 1],
+          body:
+            quote do
+              def atom_fetch(descr) do
+                case Descr.atom_fetch(descr) do
+                  {:finite, atoms} -> {:finite, Enum.map(atoms, &to_string/1)}
+                  other -> other
+                end
+              end
+            end
+        )
+
+      assert failed(descr: stub) == {:descr_semantics, {:checks_failed, [:atom_fetch]}}
+    end
+  end
+
+  describe ":elixir_erl debug info (the :elixir_v1 contract SpecLint.Beam reads)" do
+    test "missing debug_info/4" do
+      stub = stub(:elixir_erl, drop: [debug_info: 4])
+      assert failed(erl: stub) == {:debug_info, {:missing_functions, [{stub, :debug_info, 4}]}}
+    end
+
+    test "overridable defaults no longer marked from_super: false" do
+      stub = debug_info_stub(quote(do: fn meta -> Keyword.delete(meta, :from_super) end))
+      assert failed(erl: stub) == {:debug_info, {:checks_failed, [:from_super]}}
+    end
+
+    test "generated definitions no longer marked" do
+      stub = debug_info_stub(quote(do: fn meta -> Keyword.delete(meta, :generated) end))
+      assert failed(erl: stub) == {:debug_info, {:checks_failed, [:generated]}}
+    end
+
+    test "a definition line under another key" do
+      stub =
+        debug_info_stub(
+          quote do
+            fn meta -> [{:location, Keyword.get(meta, :line)} | Keyword.delete(meta, :line)] end
+          end
+        )
+
+      assert failed(erl: stub) == {:debug_info, {:checks_failed, [:line]}}
+    end
+
+    test "a changed definition tuple" do
+      stub =
+        stub(:elixir_erl,
+          drop: [debug_info: 4],
+          body:
+            quote do
+              def debug_info(kind, module, data, opts) do
+                with {:ok, map} <- :elixir_erl.debug_info(kind, module, data, opts) do
+                  {:ok,
+                   %{
+                     map
+                     | definitions: for({fa, k, m, c} <- map.definitions, do: {fa, k, m, c, []})
+                   }}
+                end
+              end
+            end
+        )
+
+      assert {:debug_info, {:checks_failed, failed}} = failed(erl: stub)
+      assert :definitions in failed
+    end
+  end
+
   describe ":elixir_erl.checker_version/0" do
     test "missing" do
       assert failed(erl: stub(:elixir_erl, drop: [checker_version: 0])) ==
@@ -171,6 +408,41 @@ defmodule SpecLint.CompilerProbeTest do
     test "exports as a map", %{tmp_dir: dir} do
       sample = sample_chunk(dir, &Map.new/1)
       assert failed(exck_sample: sample) == {:checker_chunk, :malformed_sample_chunk}
+    end
+
+    test "another chunk version in the sample", %{tmp_dir: dir} do
+      path =
+        rebuild_beam(Compare, dir, fn chunks ->
+          {~c"ExCk", bytes} = List.keyfind(chunks, ~c"ExCk", 0)
+          {_version, contents} = :erlang.binary_to_term(bytes)
+          bytes = :erlang.term_to_binary({:elixir_checker_v11, contents})
+          List.keyreplace(chunks, ~c"ExCk", 0, {~c"ExCk", bytes})
+        end)
+
+      assert failed(exck_sample: path) ==
+               {:checker_chunk,
+                {:checker_version_mismatch, :elixir_checker_v11, :elixir_checker_v10}}
+    end
+
+    test "an export key that is no longer {name, arity}", %{tmp_dir: dir} do
+      sample =
+        sample_chunk(dir, fn exports ->
+          for {{f, a}, info} <- exports, do: {{f, a, :def}, info}
+        end)
+
+      assert failed(exck_sample: sample) == {:checker_chunk, :export_shape_changed}
+    end
+
+    test "signatures the decoder does not read", %{tmp_dir: dir} do
+      # The same function listed twice: the decoder keeps one entry per
+      # function, so it no longer accounts for every stored signature.
+      sample =
+        sample_chunk(dir, fn exports ->
+          signed = Enum.find(exports, &match?({_, %{sig: {_, _, _}}}, &1))
+          exports ++ [signed]
+        end)
+
+      assert failed(exck_sample: sample) == {:checker_chunk, :decoder_disagrees}
     end
 
     test "no chunk", %{tmp_dir: dir} do
@@ -271,6 +543,23 @@ defmodule SpecLint.CompilerProbeTest do
       assert failed(types: stub) == {:pattern_checker, {:unexpected_diagnostics, []}}
     end
 
+    test "a checker that no longer reports an unused private clause" do
+      stub =
+        stub(Module.Types,
+          drop: [warnings: 6],
+          body:
+            quote do
+              def warnings(module, file, attrs, defs, no_warn_undefined, cache) do
+                for {Module.Types.Pattern, _, _} = warning <-
+                      Module.Types.warnings(module, file, attrs, defs, no_warn_undefined, cache),
+                    do: warning
+              end
+            end
+        )
+
+      assert failed(types: stub) == {:pattern_checker, {:unexpected_diagnostics, [{{:g, 1}, 2}]}}
+    end
+
     test "a changed pattern entry point arity" do
       stub = stub(Module.Types.Pattern, drop: [of_head: 8])
 
@@ -299,6 +588,45 @@ defmodule SpecLint.CompilerProbeTest do
         )
 
       assert {:typespec_kinds, {:type_kinds_changed, _}} = failed(typespec: stub)
+    end
+  end
+
+  describe "Code.Typespec.fetch_specs/1 and spec_to_quoted/2" do
+    test "fetch_specs/1 missing" do
+      stub = stub(Code.Typespec, drop: [fetch_specs: 1])
+
+      assert failed(typespec: stub) ==
+               {:typespec_kinds, {:missing_functions, [{stub, :fetch_specs, 1}]}}
+    end
+
+    test "a changed spec shape" do
+      stub =
+        stub(Code.Typespec,
+          drop: [fetch_specs: 1],
+          body:
+            quote do
+              def fetch_specs(module) do
+                with {:ok, specs} <- Code.Typespec.fetch_specs(module),
+                     do: {:ok, for({fa, [spec]} <- specs, do: {fa, spec})}
+              end
+            end
+        )
+
+      assert {:typespec_kinds, {:spec_shape_changed, _}} = failed(typespec: stub)
+    end
+
+    test "a changed quoted spec" do
+      stub =
+        stub(Code.Typespec,
+          drop: [spec_to_quoted: 2],
+          body:
+            quote do
+              def spec_to_quoted(name, spec),
+                do: {:when, [], [Code.Typespec.spec_to_quoted(name, spec), []]}
+            end
+        )
+
+      assert {:typespec_kinds, {:spec_to_quoted_changed, _}} = failed(typespec: stub)
     end
   end
 
@@ -339,13 +667,6 @@ defmodule SpecLint.CompilerProbeTest do
   end
 
   describe "end to end" do
-    setup %{tmp_dir: dir} do
-      ebin = Path.join(dir, "ebin")
-      File.mkdir_p!(ebin)
-      File.cp!(beam_path(Compare), Path.join(ebin, "#{Compare}.beam"))
-      %{project: Project.from_ebins([{:fx, ebin}], dir)}
-    end
-
     test "a failed probe makes a CI run incomplete (exit 2) and reports it locally",
          %{project: project} do
       stub = stub(Module.Types, drop: [warnings: 6])
@@ -398,14 +719,49 @@ defmodule SpecLint.CompilerProbeTest do
     def preflight, do: V121.preflight(%{V121.internals() | apply: NoApply})
   end
 
-  # The first failing probe, as {probe, detail}.
+  # The first failing probe, as {probe, detail}. A CI run of the one-module
+  # project with that preflight is incomplete and exits 2, naming the probe.
   defp failed(overrides) do
     internals = Map.merge(V121.internals(), Map.new(overrides))
 
     case V121.preflight(internals) do
-      {:error, {:capability_probe_failed, probe, detail}} -> {probe, detail}
-      other -> flunk("expected a failed probe, got #{inspect(other)}")
+      {:error, {:capability_probe_failed, probe, detail}} = preflight ->
+        project = Process.get(:probe_project)
+        config = %Config{baseline: "missing.json"}
+        assert {:ok, run} = Run.execute(project, config, ci: true, preflight: preflight)
+        assert run.exit_code == 2
+        assert run.completion == :incomplete
+        assert [reason] = run.completion_reasons
+        assert reason =~ "capability_probe_failed"
+        assert reason =~ Atom.to_string(probe)
+        {probe, detail}
+
+      other ->
+        flunk("expected a failed probe, got #{inspect(other)}")
     end
+  end
+
+  # :elixir_erl whose :elixir_v1 debug info has every definition's
+  # metadata passed through the quoted one-argument function `fun`.
+  defp debug_info_stub(fun) do
+    stub(:elixir_erl,
+      drop: [debug_info: 4],
+      body:
+        quote do
+          def debug_info(kind, module, data, opts) do
+            with {:ok, map} <- :elixir_erl.debug_info(kind, module, data, opts) do
+              fun = unquote(fun)
+
+              {:ok,
+               %{
+                 map
+                 | definitions:
+                     for({fa, k, meta, c} <- map.definitions, do: {fa, k, fun.(meta), c})
+               }}
+            end
+          end
+        end
+    )
   end
 
   # A module delegating every exported function of `real` to it, except the

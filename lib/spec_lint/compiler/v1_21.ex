@@ -10,15 +10,31 @@ defmodule SpecLint.Compiler.V121 do
   `apply_infer/2` change between revisions without a chunk version bump.
   The audit behind each revision is in `bench/corpus/toolchain/`.
 
-  Preflight does not trust the revision alone: it runs one capability probe
-  per compiler internal SpecLint depends on (`capability_probes/0`), and
-  any probe that fails makes preflight fail, so a build whose internals
-  changed is reported as unsupported (exit 2 in CI), never analysed with a
-  stale copy. `preflight/1` takes the internals to probe, so tests can
+  Preflight does not trust the revision alone. `System.build_info()`
+  derives it from `git rev-parse HEAD`, which a modified checkout of a
+  qualified commit also reports, so the first probe, `:compiler_identity`,
+  compares the code of the pinned compiler modules
+  (`SpecLint.Compiler.BuildIdentity`) with the digests recorded for the
+  revision when it was qualified (`qualified_builds/0`). Then one
+  capability probe per compiler internal SpecLint depends on
+  (`capability_probes/0`) checks its interface and behaviour. Any probe
+  that fails makes preflight fail, so a build whose internals changed is
+  reported as unsupported (exit 2 in CI), never analysed with a stale
+  copy. `preflight/1` takes the internals to probe, so tests can
   substitute a missing or changed one.
 
   This is the only module in SpecLint that calls `Module.Types`,
-  `Module.Types.Descr`, `Module.ParallelChecker` or `:elixir_erl`.
+  `Module.Types.Descr`, `Module.ParallelChecker`, `:elixir_erl` or
+  `Mix.Compilers.Elixir` by name. Other modules reach two internals
+  indirectly, and the probes cover both: `SpecLint.Beam` decodes debug
+  info through the backend each BEAM names (`:elixir_erl` for Elixir
+  modules; the `:debug_info` probe), and `SpecLint.Beam`,
+  `SpecLint.TypeCache` and `SpecLint.Rule` use `Code.Typespec`
+  (`fetch_specs/1`, `fetch_types/1`, `spec_to_quoted/2`; the
+  `:typespec_kinds` probe). `SpecLint.Project` reads the compile manifest
+  through `Mix.Compilers.Elixir.read_manifest/1` (the `:compile_manifest`
+  probe).
+
   `apply_infer/2` is a line-by-line copy of the private
   `Module.Types.Apply.apply_infer/2` of the qualified revisions (identical
   in both), including its clause cutoff; differential tests and the
@@ -29,6 +45,7 @@ defmodule SpecLint.Compiler.V121 do
   @behaviour SpecLint.Compiler
 
   alias Module.Types.Descr
+  alias SpecLint.Compiler.BuildIdentity
 
   # Mirrors Module.Types.Apply @max_clauses.
   @max_clauses 16
@@ -38,6 +55,66 @@ defmodule SpecLint.Compiler.V121 do
   # which the apply_infer/2 copy, the Descr encodings and every other
   # internal were qualified (bench/corpus/toolchain/audit-648b2a9.md).
   @qualified_revisions ["c24c235", "648b2a9"]
+
+  # Per qualified revision, the code digests of the pinned compiler modules
+  # (SpecLint.Compiler.BuildIdentity), printed by
+  # bench/corpus/toolchain/pinned_digests.exs on the qualified build. They
+  # do not depend on the build directory, the build date or the OTP 28
+  # patch release (checked with 28.0, 28.3.1 and 28.5.0.1).
+  @qualified_builds %{
+    "c24c235" => %{
+      "Elixir.Code.Typespec" =>
+        "d6dd8c60af8e4d3599ef28c1c14e38c8baa2f8794ffb2952adf06f546dfed06f",
+      "Elixir.Mix.Compilers.Elixir" =>
+        "7f01011ee452d0cac06eaa0552d51095071618bc8e6e1b79906cd628e91b4b9c",
+      "Elixir.Module.ParallelChecker" =>
+        "55375aa973552ad8eba5c3e3064a9ee9c85079dd82d31d167f06dfecab716d6c",
+      "Elixir.Module.Types" => "d14dea66c1d0a916d7299e56e2488fd6e2360606d608a2c9def43032c3fe1980",
+      "Elixir.Module.Types.Apply" =>
+        "0b5223def6854e4bd656431bc8b21551797509d6943e80296ae68a1cc44f6510",
+      "Elixir.Module.Types.Descr" =>
+        "ebf450ef3659653899af125bd8e41f24bdaa824971c15e546f135421ff03c817",
+      "Elixir.Module.Types.Expr" =>
+        "7240ffc26464d3adf60fec08366cdee9ed889f13658c6ef1cd0116855a502124",
+      "Elixir.Module.Types.Helpers" =>
+        "44657cd37cac8e2867987dfcad29cdc052ff247a7e0006fe2132b09e28620821",
+      "Elixir.Module.Types.Of" =>
+        "91c42c28367e1bb0b7965487cacd55ce85e71a49dcb820a729cf5fe1f92721e9",
+      "Elixir.Module.Types.Pattern" =>
+        "bc2052f074028743066220d54b0cea2dadccda4da0b21c31732c1c5524a1a4fa",
+      "Elixir.Module.Types.Traverse" =>
+        "57f39298439f71163f98321f21a51442f5d5ba56254181af9026ffbc5845d8b4",
+      "elixir_def" => "2102e3fe40685a630cf2dcba979ffda4037faed7c5552a0afbf6cbc383689239",
+      "elixir_erl" => "d47039dda4443fe734ec1fac8628fb35fee4c51ebc46824b11d6061d7d85537d",
+      "elixir_overridable" => "395f60f7b9f57faea7e1bf2a5ad84286d2a0db09a27c2e8b65505f28de70e79a"
+    },
+    "648b2a9" => %{
+      "Elixir.Code.Typespec" =>
+        "d6dd8c60af8e4d3599ef28c1c14e38c8baa2f8794ffb2952adf06f546dfed06f",
+      "Elixir.Mix.Compilers.Elixir" =>
+        "7f01011ee452d0cac06eaa0552d51095071618bc8e6e1b79906cd628e91b4b9c",
+      "Elixir.Module.ParallelChecker" =>
+        "55375aa973552ad8eba5c3e3064a9ee9c85079dd82d31d167f06dfecab716d6c",
+      "Elixir.Module.Types" => "d14dea66c1d0a916d7299e56e2488fd6e2360606d608a2c9def43032c3fe1980",
+      "Elixir.Module.Types.Apply" =>
+        "3ed319aab521246c3463a7bb65e8764c5854595360021aa7b0367f44994e2165",
+      "Elixir.Module.Types.Descr" =>
+        "ebf450ef3659653899af125bd8e41f24bdaa824971c15e546f135421ff03c817",
+      "Elixir.Module.Types.Expr" =>
+        "60ac61b00d8a1e2c7dade0d9c63baead252584c1466477e9267d8532cef12113",
+      "Elixir.Module.Types.Helpers" =>
+        "44657cd37cac8e2867987dfcad29cdc052ff247a7e0006fe2132b09e28620821",
+      "Elixir.Module.Types.Of" =>
+        "91c42c28367e1bb0b7965487cacd55ce85e71a49dcb820a729cf5fe1f92721e9",
+      "Elixir.Module.Types.Pattern" =>
+        "bc2052f074028743066220d54b0cea2dadccda4da0b21c31732c1c5524a1a4fa",
+      "Elixir.Module.Types.Traverse" =>
+        "57f39298439f71163f98321f21a51442f5d5ba56254181af9026ffbc5845d8b4",
+      "elixir_def" => "2102e3fe40685a630cf2dcba979ffda4037faed7c5552a0afbf6cbc383689239",
+      "elixir_erl" => "d47039dda4443fe734ec1fac8628fb35fee4c51ebc46824b11d6061d7d85537d",
+      "elixir_overridable" => "395f60f7b9f57faea7e1bf2a5ad84286d2a0db09a27c2e8b65505f28de70e79a"
+    }
+  }
 
   @key_kinds [
     :atom,
@@ -109,15 +186,18 @@ defmodule SpecLint.Compiler.V121 do
     atom_fetch: 1,
     to_domain_keys: 1,
     bdd_to_dnf: 1,
-    unfold: 1
+    unfold: 1,
+    recursive: 1
   ]
 
   @typedoc """
   The compiler internals `preflight/1` probes, by role: `Module.Types.Descr`,
   `Module.Types.Apply`, `Module.Types`, `Module.Types.Pattern`,
   `Module.ParallelChecker`, `:elixir_erl`, `Code.Typespec`,
-  `Mix.Compilers.Elixir`, and a BEAM file whose `ExCk` chunk is decoded as
-  a sample (`exck_sample`). `internals/0` gives the running compiler's.
+  `Mix.Compilers.Elixir`, a BEAM file whose `ExCk` chunk is decoded as
+  a sample (`exck_sample`), and the ebin directories holding the pinned
+  compiler modules (`build_ebins`). `internals/0` gives the running
+  compiler's.
   """
   @type internals :: %{
           descr: module(),
@@ -128,27 +208,32 @@ defmodule SpecLint.Compiler.V121 do
           erl: module(),
           typespec: module(),
           manifest: module(),
-          exck_sample: String.t()
+          exck_sample: String.t(),
+          build_ebins: [String.t()]
         }
 
   @typedoc "A capability probe, one per audited compiler internal."
   @type probe ::
-          :descr_exports
+          :compiler_identity
+          | :descr_exports
           | :descr_encoding
           | :descr_semantics
           | :checker_version
           | :checker_chunk
+          | :debug_info
           | :apply_infer
           | :pattern_checker
           | :typespec_kinds
           | :compile_manifest
 
   @probes [
+    :compiler_identity,
     :descr_exports,
     :descr_encoding,
     :descr_semantics,
     :checker_version,
     :checker_chunk,
+    :debug_info,
     :apply_infer,
     :pattern_checker,
     :typespec_kinds,
@@ -173,13 +258,15 @@ defmodule SpecLint.Compiler.V121 do
 
     with :ok <- check_build(version, revision),
          :ok <- check_loaded(internals),
-         :ok <- run_probes(internals) do
+         :ok <- run_probes(internals),
+         {:ok, digests} <- build_digests(internals) do
       {:ok,
        %{
          adapter: __MODULE__,
          adapter_id: "#{version}+#{revision}",
          elixir_version: version,
          revision: revision,
+         build_digest: BuildIdentity.combined(digests),
          otp_release: System.otp_release(),
          checker_version: @checker_version,
          max_clauses: @max_clauses,
@@ -202,8 +289,21 @@ defmodule SpecLint.Compiler.V121 do
       erl: :elixir_erl,
       typespec: Code.Typespec,
       manifest: Mix.Compilers.Elixir,
-      exck_sample: beam_path(Keyword)
+      exck_sample: beam_path(Keyword),
+      build_ebins: BuildIdentity.running_ebins()
     }
+  end
+
+  defp build_digests(%{build_ebins: ebins}) do
+    result =
+      if ebins == BuildIdentity.running_ebins(),
+        do: BuildIdentity.running_digests(),
+        else: BuildIdentity.digests(ebins)
+
+    case result do
+      {:ok, digests} -> {:ok, digests}
+      {:error, reason} -> {:error, {:capability_probe_failed, :compiler_identity, reason}}
+    end
   end
 
   defp beam_path(module) do
@@ -220,6 +320,13 @@ defmodule SpecLint.Compiler.V121 do
   @doc "The Elixir revisions (short commit SHAs) this adapter is qualified for."
   @spec qualified_revisions() :: [String.t(), ...]
   def qualified_revisions, do: @qualified_revisions
+
+  @doc """
+  Per qualified revision, the code digests of the pinned compiler modules
+  (`SpecLint.Compiler.BuildIdentity`) of its qualified build.
+  """
+  @spec qualified_builds() :: %{String.t() => BuildIdentity.digests()}
+  def qualified_builds, do: @qualified_builds
 
   @doc """
   Checks an Elixir version and build revision against this adapter's
@@ -282,6 +389,10 @@ defmodule SpecLint.Compiler.V121 do
   detail}` saying what is missing or changed. Never raises: an exception
   or exit inside the probe is a failure.
 
+    * `:compiler_identity` - the pinned compiler modules in `build_ebins`
+      have the code digests recorded for the running revision
+      (`qualified_builds/0`); the detail names every module that differs,
+      is missing or is extra.
     * `:descr_exports` - every `Module.Types.Descr` function the adapter
       calls is exported with the arity it calls.
     * `:descr_encoding` - the term layout the adapter reads directly
@@ -296,27 +407,57 @@ defmodule SpecLint.Compiler.V121 do
     * `:checker_chunk` - the `ExCk` chunk of `exck_sample` has the shape
       the decoder reads: `{version, %{exports: [{{f, a}, %{sig: sig}}],
       mode: mode}}` with clause signatures of the right arity.
+    * `:debug_info` - a small `use GenServer` module, compiled in memory
+      and unloaded again, has a `:debug_info_v1` chunk with the
+      `:elixir_erl` backend, and `debug_info(:elixir_v1, ...)` of the
+      `erl` internal returns what `SpecLint.Beam` reads: `definitions` as
+      `{{name, arity}, kind, meta, clauses}` with four-element clauses, a
+      binary `file`, an `attributes` list, the `:line` of a definition,
+      `generated: true` on a definition whose name was generated, and
+      `from_super: false` on an overridable default that was not
+      overridden (and no `:from_super` on one that was).
     * `:apply_infer` - this adapter's copy of `apply_infer/2` agrees with
       `Module.Types.Apply.remote_apply/7` (through `Module.Types.stack/7`
       and `context/0`) on fixed clause sets: clause selection, no applicable
       clause, and both sides of the 16-clause cutoff.
     * `:pattern_checker` - `Module.Types.warnings/6` and the checker cache
-      exist, `Module.Types.Pattern.of_head/8` and `of_guard/5` exist, and
-      a clause whose guard contradicts its pattern is reported (and a live
-      one is not).
+      exist, `Module.Types.Pattern.of_head/8` and `of_guard/5` exist, a
+      clause whose guard contradicts its pattern is reported (and a live
+      one is not), and so is a private clause no caller can reach (the
+      `{Module.Types, {:unused_clause, kind, fun_arity}, location}`
+      diagnostic).
     * `:typespec_kinds` - `Code.Typespec.fetch_types/1` returns the kinds
       `:type`, `:typep`, `:opaque` and (OTP 28 and later) `:nominal`, in
-      the `{kind, {name, ast, args}}` form the translator reads.
+      the `{kind, {name, ast, args}}` form the translator reads;
+      `fetch_specs/1` returns `{:ok, [{{name, arity}, [spec]}]}` and
+      `spec_to_quoted/2` turns such a spec into a `::` expression.
     * `:compile_manifest` - `Mix.Compilers.Elixir.read_manifest/1` exists
       and returns the `{[], []}` sentinel for an unreadable manifest.
   """
   @spec probe(probe(), internals()) :: :ok | {:error, term()}
   def probe(probe, internals) when probe in @probes do
+    # function_exported?/3 does not load modules.
+    for {_role, module} <- internals, is_atom(module), do: _ = Code.ensure_loaded(module)
     run_probe(probe, internals)
   rescue
     error -> {:error, {:raised, Exception.message(error)}}
   catch
     kind, reason -> {:error, {kind, reason}}
+  end
+
+  defp run_probe(:compiler_identity, %{build_ebins: ebins}) do
+    revision = String.slice(System.build_info()[:revision] || "", 0, 7)
+
+    with {:ok, recorded} <- Map.fetch(@qualified_builds, revision),
+         {:ok, found} <- BuildIdentity.digests(ebins) do
+      case BuildIdentity.differing(recorded, found) do
+        [] -> :ok
+        modules -> {:error, {:build_differs, revision, modules}}
+      end
+    else
+      :error -> {:error, {:no_recorded_build, revision}}
+      {:error, reason} -> {:error, {:unreadable_build, reason}}
+    end
   end
 
   defp run_probe(:descr_exports, %{descr: descr}) do
@@ -339,10 +480,16 @@ defmodule SpecLint.Compiler.V121 do
   end
 
   defp run_probe(:checker_chunk, %{exck_sample: path}) do
-    case :beam_lib.chunks(String.to_charlist(path), [~c"ExCk"]) do
+    case SpecLint.Beam.chunks(path, [~c"ExCk"]) do
       {:ok, {_module, [{~c"ExCk", bytes}]}} -> check_chunk_shape(bytes)
       {:error, :beam_lib, reason} -> {:error, {:no_sample_chunk, reason}}
     end
+  end
+
+  defp run_probe(:debug_info, %{erl: erl}) do
+    if function_exported?(erl, :debug_info, 4),
+      do: check_debug_info(erl),
+      else: {:error, {:missing_functions, [{erl, :debug_info, 4}]}}
   end
 
   defp run_probe(:apply_infer, %{apply: apply, types: types} = internals) do
@@ -370,9 +517,16 @@ defmodule SpecLint.Compiler.V121 do
   end
 
   defp run_probe(:typespec_kinds, %{typespec: typespec}) do
-    if function_exported?(typespec, :fetch_types, 1),
-      do: check_typespec_kinds(typespec),
-      else: {:error, {:missing_functions, [{typespec, :fetch_types, 1}]}}
+    required = [
+      {typespec, :fetch_types, 1},
+      {typespec, :fetch_specs, 1},
+      {typespec, :spec_to_quoted, 2}
+    ]
+
+    case Enum.reject(required, fn {m, f, a} -> function_exported?(m, f, a) end) do
+      [] -> check_typespecs(typespec)
+      missing -> {:error, {:missing_functions, missing}}
+    end
   end
 
   defp run_probe(:compile_manifest, %{manifest: manifest}) do
@@ -419,8 +573,27 @@ defmodule SpecLint.Compiler.V121 do
       dynamic: d.dynamic(int) == %{dynamic: int},
       term: d.term() == :term,
       none: d.none() == %{},
-      unfold: d.unfold(int) == int
+      # unfold/1 expands term() and recursive nodes, and is the identity
+      # on every other type.
+      unfold: d.unfold(int) == int and d.equal?(d.unfold(d.term()), d.term()),
+      recursive_node: recursive_node?(d)
     ]
+  end
+
+  # Recursive type nodes are {reference, state, generator} (canonical_term/2
+  # and unfold_node/1 match that layout) and unfold to their generator's
+  # result.
+  defp recursive_node?(d) do
+    int = d.integer()
+
+    case d.recursive(%{t: fn _recur -> int end}) do
+      %{t: {id, state, generator} = node}
+      when is_reference(id) and is_map(state) and is_function(generator, 1) ->
+        d.equal?(d.unfold(node), int)
+
+      _other ->
+        false
+    end
   end
 
   defp atom_set(%{atom: {_tag, set}}), do: set |> :sets.to_list() |> Enum.sort()
@@ -606,6 +779,9 @@ defmodule SpecLint.Compiler.V121 do
   #     def g(:b = x) when is_integer(x), do: x   # line 2: dead clause
   #     def g(y), do: y
   #     def h(x) when is_atom(x), do: x           # line 4: live
+  #     def k, do: priv(1)
+  #     defp priv(x) when is_integer(x), do: x
+  #     defp priv(:never), do: :never             # line 7: unused clause
   #
   @probe_definitions [
     {{:g, 1}, :def, [line: 2],
@@ -621,29 +797,148 @@ defmodule SpecLint.Compiler.V121 do
        {[line: 4], [{:x, [version: 0, line: 4], nil}],
         [{{:., [line: 4], [:erlang, :is_atom]}, [line: 4], [{:x, [version: 0, line: 4], nil}]}],
         {:x, [version: 0, line: 4], nil}}
+     ]},
+    {{:k, 0}, :def, [line: 5], [{[line: 5], [], [], {:priv, [line: 5], [1]}}]},
+    {{:priv, 1}, :defp, [line: 6],
+     [
+       {[line: 6], [{:x, [version: 0, line: 6], nil}],
+        [
+          {{:., [line: 6], [:erlang, :is_integer]}, [line: 6], [{:x, [version: 0, line: 6], nil}]}
+        ], {:x, [version: 0, line: 6], nil}},
+       {[line: 7], [:never], [], :never}
      ]}
   ]
 
   defp check_pattern_diagnostics(internals) do
     case run_checker(internals, SpecLintProbe, "nofile", [], @probe_definitions) do
-      {:ok, [{{:g, 1}, 2}]} -> :ok
+      {:ok, [{{:g, 1}, 2}, {{:priv, 1}, 7}]} -> :ok
       {:ok, other} -> {:error, {:unexpected_diagnostics, other}}
       {:error, reason} -> {:error, reason}
     end
   end
 
-  # An Erlang module with one type of each kind, compiled in memory (never
-  # loaded); fetch_types/1 reads its debug info. `:nominal` exists from
-  # OTP 28 on.
-  defp check_typespec_kinds(typespec) do
-    nominal? = String.to_integer(System.otp_release()) >= 28
-    expected = if nominal?, do: [:nominal, :opaque, :type, :typep], else: [:opaque, :type, :typep]
+  # A module using `GenServer` with a user override (handle_call/3), the
+  # untouched defaults (child_spec/1, ...) and a definition whose name is
+  # marked generated, compiled in memory under a fresh name and unloaded
+  # again. Line 4 is init/1. Debug info is asked for explicitly: the
+  # `:debug_info` compiler option may be off in the running VM.
+  defp check_debug_info(erl) do
+    name = Module.concat(SpecLintDebugInfoProbe, "P#{System.unique_integer([:positive])}")
 
-    case typespec.fetch_types(typespec_probe_binary(nominal?)) do
-      {:ok, fetched} -> check_fetched_types(fetched, expected)
-      other -> {:error, {:fetch_types_failed, other}}
+    source = """
+    defmodule #{inspect(name)} do
+      @compile {:debug_info, true}
+      use GenServer
+      def init(state), do: {:ok, state}
+      def handle_call(message, _from, state), do: {:reply, message, state}
+      def generated_fun(x), do: x
+    end
+    """
+
+    quoted =
+      source
+      |> Code.string_to_quoted!()
+      |> Macro.prewalk(fn
+        {:generated_fun, meta, args} when is_list(args) ->
+          {:generated_fun, [generated: true] ++ meta, args}
+
+        other ->
+          other
+      end)
+
+    try do
+      [{^name, binary}] = Code.compile_quoted(quoted, "nofile")
+      check_debug_info_chunk(erl, name, binary)
+    after
+      :code.delete(name)
+      :code.purge(name)
     end
   end
+
+  defp check_debug_info_chunk(erl, name, binary) do
+    case :beam_lib.chunks(binary, [:debug_info]) do
+      {:ok, {^name, [debug_info: {:debug_info_v1, :elixir_erl, data}]}} ->
+        case erl.debug_info(:elixir_v1, name, data, []) do
+          {:ok, %{definitions: definitions} = map} when is_list(definitions) ->
+            failed_checks(debug_info_checks(definitions, map))
+
+          other ->
+            {:error, {:unexpected_debug_info, other}}
+        end
+
+      {:ok, {^name, [debug_info: other]}} ->
+        {:error, {:unexpected_debug_info_chunk, elem(other, 0), elem(other, 1)}}
+
+      {:error, :beam_lib, reason} ->
+        {:error, {:no_debug_info, reason}}
+    end
+  end
+
+  defp debug_info_checks(definitions, map) do
+    meta = fn fun_arity ->
+      case List.keyfind(definitions, fun_arity, 0) do
+        {_, _kind, meta, _clauses} when is_list(meta) -> meta
+        _other -> []
+      end
+    end
+
+    [
+      definitions: Enum.all?(definitions, &definition?/1),
+      file: is_binary(Map.get(map, :file)),
+      attributes: is_list(Map.get(map, :attributes)),
+      line: Keyword.get(meta.({:init, 1}), :line) == 4,
+      generated:
+        Keyword.get(meta.({:generated_fun, 1}), :generated) == true and
+          not Keyword.has_key?(meta.({:init, 1}), :generated),
+      from_super:
+        Keyword.get(meta.({:child_spec, 1}), :from_super) == false and
+          meta.({:handle_call, 3}) != [] and
+          not Keyword.has_key?(meta.({:handle_call, 3}), :from_super)
+    ]
+  end
+
+  defp definition?({{name, arity}, kind, meta, clauses})
+       when is_atom(name) and is_integer(arity) and is_list(meta) and is_list(clauses) and
+              kind in [:def, :defp, :defmacro, :defmacrop],
+       do: Enum.all?(clauses, &clause?/1)
+
+  defp definition?(_definition), do: false
+
+  defp clause?({meta, args, guards, _body}),
+    do: is_list(meta) and is_list(args) and is_list(guards)
+
+  defp clause?(_clause), do: false
+
+  # An Erlang module with one type of each kind and one spec, compiled in
+  # memory (never loaded); fetch_types/1 and fetch_specs/1 read its debug
+  # info. `:nominal` exists from OTP 28 on.
+  defp check_typespecs(typespec) do
+    nominal? = String.to_integer(System.otp_release()) >= 28
+    expected = if nominal?, do: [:nominal, :opaque, :type, :typep], else: [:opaque, :type, :typep]
+    binary = typespec_probe_binary(nominal?)
+
+    with {:ok, fetched} <- fetch(typespec, :fetch_types, binary),
+         :ok <- check_fetched_types(fetched, expected),
+         {:ok, specs} <- fetch(typespec, :fetch_specs, binary) do
+      check_fetched_specs(typespec, specs)
+    end
+  end
+
+  defp fetch(typespec, function, binary) do
+    case apply(typespec, function, [binary]) do
+      {:ok, list} when is_list(list) -> {:ok, list}
+      other -> {:error, {:"#{function}_failed", other}}
+    end
+  end
+
+  defp check_fetched_specs(typespec, [{{:f, 0}, [spec]}]) do
+    case typespec.spec_to_quoted(:f, spec) do
+      {:"::", _, [{:f, _, []}, {:integer, _, []}]} -> :ok
+      other -> {:error, {:spec_to_quoted_changed, other}}
+    end
+  end
+
+  defp check_fetched_specs(_typespec, other), do: {:error, {:spec_shape_changed, other}}
 
   defp typespec_probe_binary(nominal?) do
     types =
@@ -651,16 +946,22 @@ defmodule SpecLint.Compiler.V121 do
         if(nominal?, do: [n: {:nominal, :binary}], else: [])
 
     exported = for {name, _} <- types, name != :p, do: {name, 0}
+    spec = {:type, 1, :fun, [{:type, 1, :product, []}, {:type, 1, :integer, []}]}
 
     forms =
       [
         {:attribute, 1, :module, :spec_lint_typespec_probe},
+        {:attribute, 1, :export, [f: 0]},
         {:attribute, 1, :export_type, exported}
         | for(
             {name, {kind, builtin}} <- types,
             do: {:attribute, 1, kind, {name, {:type, 1, builtin, []}, []}}
           )
-      ]
+      ] ++
+        [
+          {:attribute, 1, :spec, {{:f, 0}, [spec]}},
+          {:function, 1, :f, 0, [{:clause, 1, [], [], [{:integer, 1, 1}]}]}
+        ]
 
     {:ok, _module, binary} = :compile.forms(forms, [:binary, :debug_info, :return_errors])
     binary

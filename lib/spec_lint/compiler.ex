@@ -54,6 +54,7 @@ defmodule SpecLint.Compiler do
           adapter_id: String.t(),
           elixir_version: String.t(),
           revision: String.t() | nil,
+          build_digest: String.t() | nil,
           otp_release: String.t(),
           checker_version: atom(),
           max_clauses: pos_integer(),

@@ -26,16 +26,40 @@ asserted by `test/spec_lint/omissions_test.exs`.
 
 ## Corpora
 
-| Corpus | What | Revision |
-| --- | --- | --- |
-| `stdlib` | `lib/{elixir,eex,ex_unit,iex,logger,mix}/ebin` of the Elixir checkout | `c24c235` (`c24c23538`) |
-| `jason` | v1.4.5 | `4ede42858eb19f80ec9e863aab52df466eab8608` |
-| `decimal` | | `92a28e6b9a103f2b52a22b3f772f7a2a34b7b1d5` |
-| `nimble_options` | | `825c05837f236c612c6ac2855735ec6cf7f2be69` |
-| `mime` | | `23dcc1593ccc49648e33b9ed3c03bd516795f6d9` |
-| `plug` | | `73404f851852a00ffb2014be95d4598900fa77b8` |
-| `ecto` | | `94d69279c517347ff0962b138f4ccd0556486ae2` |
-| `fixtures` | the project's own fixture modules (`SpecLint.ExperimentFixtures`, `SpecLint.Fixtures.*`, `SpecLint.OmissionFixtures`), not a pinned external revision | this repository's HEAD |
+| Corpus | What | Repository | Revision |
+| --- | --- | --- | --- |
+| `stdlib` | `lib/{elixir,eex,ex_unit,iex,logger,mix}/ebin` of the Elixir checkout | see "Component" above | `c24c235` (`c24c23538`) |
+| `jason` | v1.4.5 | `https://github.com/michalmuskala/jason` | `4ede42858eb19f80ec9e863aab52df466eab8608` |
+| `decimal` | | `https://github.com/ericmj/decimal` | `92a28e6b9a103f2b52a22b3f772f7a2a34b7b1d5` |
+| `nimble_options` | | `https://github.com/dashbitco/nimble_options` | `825c05837f236c612c6ac2855735ec6cf7f2be69` |
+| `mime` | | `https://github.com/elixir-plug/mime` | `23dcc1593ccc49648e33b9ed3c03bd516795f6d9` |
+| `plug` | | `https://github.com/elixir-plug/plug` | `73404f851852a00ffb2014be95d4598900fa77b8` |
+| `ecto` | | `https://github.com/elixir-ecto/ecto` | `94d69279c517347ff0962b138f4ccd0556486ae2` |
+| `fixtures` | the project's own fixture modules (`SpecLint.ExperimentFixtures`, `SpecLint.Fixtures.*`, `SpecLint.OmissionFixtures`), not a pinned external revision | this repository | HEAD |
+
+The expansion cohort of `expansion.json` (revisions there) comes from:
+
+| Corpus | Repository |
+| --- | --- |
+| `req` | `https://github.com/wojtekmach/req` |
+| `broadway` | `https://github.com/elixir-broadway/broadway` |
+| `oban` | `https://github.com/sorentwo/oban` |
+| `phoenix_live_view` | `https://github.com/phoenixframework/phoenix_live_view` |
+| `ash` | `https://github.com/ash-project/ash` |
+| `nx` | `https://github.com/elixir-nx/nx` (the `nx` subdirectory) |
+| `absinthe` | `https://github.com/absinthe-graphql/absinthe` |
+| `tesla` | `https://github.com/elixir-tesla/tesla` |
+
+The URLs are the `origin` remotes of the checkouts the reports were made
+from. They are not in `expansion.json` or `toolchain/upstream-648b2a9.json`
+because those files are provenance inputs: their SHA-256 is recorded in
+the committed provenance files. To make a checkout, with the qualified
+toolchain on `PATH` (dependencies must be fetched and compiled under it,
+as `toolchain/compile_corpora.sh` requires):
+
+    git clone https://github.com/michalmuskala/jason $OSS/jason
+    git -C $OSS/jason checkout --detach 4ede42858eb19f80ec9e863aab52df466eab8608
+    (cd $OSS/jason && MIX_ENV=test mix deps.get)
 
 The revisions are the output of `git -C <checkout> rev-parse HEAD` in the
 checkouts used for every number in EXPERIMENTS.md. The libraries were
@@ -108,8 +132,14 @@ scripts were last run under `/bin/bash` 3.2.57.
 The script warns when a checkout is not at the pinned revision. Reports are
 normalised: machine paths become `$OSS`, `$ELIXIR`, `$SPEC_LINT` and `$TMP`,
 keys are sorted and the wall-clock `totals.runtime_ms` is removed, so two runs
-of the same code produce byte-identical files and `git diff` on `reports/`
-shows only real changes.
+of the same code from the same directories produce byte-identical files and
+`git diff` on `reports/` shows only real changes. From other directories
+(another machine, a fresh clone) they do not: BEAM files record the
+directory they were built in, so the `beams` md5 values of some modules, the
+provenance artifact hashes and `loaded_module_types_sha256` differ. Use
+`compare_replay.sh` there; `differing_report_keys` should be only `beams`.
+The path-independent compiler identity is `toolchain.identity` in the
+provenance files (`toolchain/identity.exs`).
 
 ## Reports
 

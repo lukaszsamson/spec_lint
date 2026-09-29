@@ -13,8 +13,10 @@ defmodule Mix.Tasks.SpecLint do
       mix spec_lint --format json > spec-lint.json
 
   The task parses its options first, then compiles the project with
-  `Mix.Task.run("compile")`. It never starts the application, and its
-  analysis never invokes project functions (compilation runs macros).
+  `Mix.Task.run("compile")` (see `compile!/0`: with `--force` when the
+  build was not produced by the running compiler). It never starts the
+  application, and its analysis never invokes project functions
+  (compilation runs macros).
   With `--format json` and no `--output`, standard output carries only the
   JSON report: compiler progress and the summary line go to standard error.
 
@@ -45,15 +47,16 @@ defmodule Mix.Tasks.SpecLint do
   (with `--ci` or `--warnings-as-errors`); `2` invalid options or
   configuration (including an explicit baseline path that does not exist),
   compilation failure, a missing build directory for an owned application
-  or one missing BEAM files its build lists, unsupported compiler or
-  backend in CI, or an incomplete run. An existing but empty build
+  or one missing BEAM files its build lists, BEAM files produced by another
+  compiler build, unsupported compiler or backend in CI, or an incomplete
+  run. An existing but empty build
   directory is a project with zero specs: exit 0, and the report says "0
   specs checked".
   """
 
   use Mix.Task
 
-  alias SpecLint.{CLI, Config, Explain, Project, Report, Run}
+  alias SpecLint.{BuildRecord, CLI, Compiler, Config, Explain, Project, Report, Run}
   alias SpecLint.Report.Json
 
   @impl true
@@ -88,16 +91,72 @@ defmodule Mix.Tasks.SpecLint do
   Compiles the project with `Mix.Task.run("compile")`, returning errors
   instead of exiting, and turns a compilation failure into exit status 2
   (the compiler output has already been printed).
+
+  Two builds of the same Elixir version (the qualified `1.21.0-dev`
+  revisions) do not make Mix recompile, so the BEAM files may come from
+  another compiler build than the running one. When the running compiler
+  is supported, the compile is forced (`--force`) unless the
+  `SpecLint.BuildRecord` of every owned application says the running
+  build produced its current BEAM files, and a new record is written
+  afterwards.
   """
   @spec compile!() :: :ok
   def compile! do
-    case Mix.Task.run("compile", ["--return-errors"]) do
+    capabilities =
+      case Compiler.preflight_once() do
+        {:ok, capabilities} -> capabilities
+        {:error, _reason} -> nil
+      end
+
+    force? = capabilities != nil and stale_build?(Project.current(), capabilities)
+    args = if force?, do: ["--force", "--return-errors"], else: ["--return-errors"]
+
+    case Mix.Task.run("compile", args) do
       {:error, _diagnostics} ->
         Mix.raise("compilation failed; spec_lint needs a compiled project", exit_status: 2)
 
       _ ->
+        if capabilities, do: record_build!(Project.current(), capabilities)
         :ok
     end
+  end
+
+  defp stale_build?(project, capabilities) do
+    stale =
+      for app <- project.apps,
+          (status = BuildRecord.status(app, capabilities)) != :verified,
+          do: {app, status}
+
+    for {app, status} <- stale, File.dir?(app.ebin) do
+      reason =
+        case status do
+          :unrecorded -> "no record of the compiler build that produced it"
+          mismatch -> BuildRecord.describe(mismatch)
+        end
+
+      Mix.shell().info(
+        "spec_lint: recompiling #{app.app} with #{capabilities.adapter_id}: #{reason}"
+      )
+    end
+
+    stale != []
+  end
+
+  defp record_build!(project, capabilities) do
+    for app <- project.apps, File.dir?(app.ebin) do
+      case BuildRecord.write(app, capabilities) do
+        :ok ->
+          :ok
+
+        {:error, reason} ->
+          Mix.raise(
+            "cannot write #{BuildRecord.path(app)}: #{:file.format_error(reason)}",
+            exit_status: 2
+          )
+      end
+    end
+
+    :ok
   end
 
   @doc """

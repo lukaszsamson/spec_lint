@@ -6,8 +6,17 @@
 # SPEC_LINT_COMPILER_REPO -> $COMPILER, SPEC_LINT_CORPUS_BUILD -> $BUILD,
 # SPEC_LINT_RAW_DIR -> $TMP and the
 # tool repository -> $SPEC_LINT, each in its given and its canonical
-# (symlink-resolved) spelling. Identity is carried by the sha256 values,
-# which never depend on these paths.
+# (symlink-resolved) spelling.
+#
+# Not every hash is path independent. BEAM files record the directory they
+# were built in (debug info, and literals of `use` macros quoted with
+# `location: :keep`), so the artifact sha256 values and
+# loaded_module_types_sha256 (a raw file hash), like the `beams` md5
+# values of the reports, change when the same revision is built in another
+# directory. The path-independent identity of the compiler is
+# toolchain.identity (bench/corpus/toolchain/identity.exs: code_digest and
+# exck_digest); that of a report is everything but `beams`, which
+# compare_replay.sh checks.
 set -euo pipefail
 
 if [ "$#" -lt 5 ]; then
@@ -59,6 +68,9 @@ if [ ! -f "$compiler_beam" ]; then
   exit 2
 fi
 compiler_beam_hash="$(hash_file "$compiler_beam")"
+here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+compiler_identity="$("$elixir_bin" "$here/toolchain/identity.exs" |
+  jq -cS '{revision, code_digest, exck_digest, modules, otp_version}')"
 artifact_rows='[]'
 for ebin in "$@"; do
   [ -d "$ebin" ] || { echo "missing ebin: $ebin" >&2; exit 2; }
@@ -100,6 +112,7 @@ jq -nS --arg name "$name" --arg source_revision "$source_revision" \
   --argjson compiler "$compiler_rows" \
   --arg tool_sources "$tool_sources" --arg compiler_beam "$compiler_beam" \
   --arg compiler_beam_hash "$compiler_beam_hash" --arg manifest_hash "$manifest_hash" \
+  --argjson compiler_identity "$compiler_identity" \
   --arg elixir "$("$elixir_bin" --version | tail -1)" \
   '{schema: "spec_lint.corpus_provenance/1", corpus: $name,
     source: {revision: $source_revision, dirty: $source_dirty,
@@ -108,6 +121,7 @@ jq -nS --arg name "$name" --arg source_revision "$source_revision" \
            lockfile_sha256: (if $tool_lock == "null" then null else $tool_lock end),
            source_sha256: $tool_sources},
     toolchain: {elixir: $elixir, compiler: $compiler,
+      identity: $compiler_identity,
       loaded_module_types_beam: $compiler_beam,
       loaded_module_types_sha256: $compiler_beam_hash},
     corpus_manifest_sha256: (if $manifest_hash == "null" then null else $manifest_hash end),

@@ -503,6 +503,46 @@ Inference behaviour that no internal probe can see (such as the `for ...
 into:` narrowing of `648b2a9`, audit row 19) is pinned per revision by tests
 and listed in the support matrix.
 
+**Compiler identity (Milestone 2 review).** The revision alone does not
+identify a build: Elixir takes it from `git rev-parse HEAD`, so a modified
+checkout of a qualified commit reports it too (a `c24c235` build with the
+row 19 fix reverted passed every probe and gated a correct spec under the
+`c24c235` adapter id). The first probe, `:compiler_identity`, compares the
+code of the pinned compiler modules (`SpecLint.Compiler.BuildIdentity`:
+`Module.Types` and `Module.Types.*`, `Module.ParallelChecker`,
+`:elixir_erl`, `:elixir_def`, `:elixir_overridable`, `Code.Typespec`,
+`Mix.Compilers.Elixir`) with the digests recorded per revision
+(`qualified_builds/0`, audit row 24). Digests leave debug info out and
+normalise the build root in literals, so they do not depend on the build
+directory, date or OTP 28 patch release; they do depend on the Erlang
+compiler, which is why the whole build (where `Kernel` differs between OTP
+28.0 and 28.5) is not pinned. Expansion modules are outside the pinned set.
+The combined digest is `build_digest` in the capabilities and the report.
+A `:debug_info` probe covers the `:elixir_v1` debug info contract
+`SpecLint.Beam` reads (definition tuples, `:line`, `:generated`,
+`from_super: false`; audit row 23), and the `:typespec_kinds` probe also
+covers `Code.Typespec.fetch_specs/1` and `spec_to_quoted/2`.
+
+**Artifacts from another build (Milestone 2 review).** Both qualified
+revisions write checker chunk v10 and report `1.21.0-dev`, and Mix
+recompiles only when the version changes, so after switching compilers a
+project keeps the other build's BEAM files, and their stored signatures
+were analysed under the running adapter's id (a CI gate passed, or failed,
+with the other compiler's verdict). The adapter decision is now per
+artifact as well as per VM: `mix spec_lint` and `mix spec_lint.baseline`
+write a `SpecLint.BuildRecord` per owned application
+(`_build/ENV/lib/APP/.mix/spec_lint.build`: adapter id, build digest and
+the SHA-256 of every BEAM file) after compiling, and compile with `--force`
+unless the record names the running build and every BEAM file matches it.
+`SpecLint.Run` refuses an application whose record names another build or
+whose BEAM files were added or changed since (an incomplete build, exit 2);
+an application without a record (an explicit ebin, as in the corpus
+runner) is analysed and reported as `unrecorded`. Dependencies are not
+recorded: Mix does not recompile them across the two builds, and their
+chunks feed the signatures the running compiler infers for the project.
+Reports carry, per BEAM, the digest of the decoded `ExCk` chunk next to
+the `beam_lib` MD5, which leaves that chunk out.
+
 **Decision:** direct chunk reading from Fable for signatures; the
 `Module.ParallelChecker` cache is started only for body analysis and for
 the pattern and guard re-check behind `clause_reachable`
@@ -957,6 +997,21 @@ These notes record choices the text above left open.
   error (exit 2, `SpecLint.Project.check_build_paths/1` returns
   `{:error, :missing_build_path}`). An existing ebin with no module is a
   project with zero specs: exit 0, reported as "0 specs checked".
+- **Deep build paths (Milestone 2 review).** BEAM files are decoded from
+  their contents (`SpecLint.Beam.chunks/3`), never by file name:
+  `beam_lib` turns the name into an atom when it reports an error, and a
+  corrupt BEAM under a path over 255 characters crashed the run with
+  `system_limit` (exit 1, the gating-findings code) instead of reporting
+  an incomplete build (exit 2).
+- **Artifacts of another compiler build (Milestone 2 review).** A BEAM
+  file whose `SpecLint.BuildRecord` names another build, or that was added
+  or changed after the record, is an incomplete build (exit 2), like a
+  missing or corrupt one (section 5.2). The Mix tasks recompile with
+  `--force` before that can happen. A BEAM file deleted after the record
+  is not a record mismatch: it stays a missing BEAM (exit 2), which a
+  silent recompile would hide. The report's `artifacts` object gives the
+  build digest and the applications whose artifacts are recorded or
+  unrecorded, and every `beams` entry an `exck` digest.
 
 ## 10. Qualification and tests
 

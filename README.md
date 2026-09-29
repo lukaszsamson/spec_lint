@@ -22,10 +22,18 @@ revisions, so each release supports specific compiler builds:
 
 Both on Erlang/OTP 28. On any other compiler, `mix spec_lint` reports
 "unsupported compiler". In CI mode (`--ci`) that exits with status 2. The
-revision alone does not qualify a build: preflight also probes every
-compiler internal SpecLint uses, and a missing or changed one is reported
-the same way. `bench/corpus/toolchain/build_elixir.sh` builds a qualified
-upstream revision from a clean clone.
+revision alone does not qualify a build: preflight also compares the code
+of the checker modules with the qualified build's (a patched checkout of a
+qualified commit is unsupported) and probes every compiler internal
+SpecLint uses; a missing or changed one is reported the same way.
+`bench/corpus/toolchain/build_elixir.sh` builds a qualified upstream
+revision from a clean clone.
+
+Both revisions are `1.21.0-dev`, so Mix does not recompile a project when
+you switch between them. `mix spec_lint` records which build produced the
+project's BEAM files (`_build/ENV/lib/APP/.mix/spec_lint.build`) and
+recompiles with `--force` when that is not the running build, including the
+first time it runs on a project it did not compile itself.
 
 Baselines record the adapter id, so switching between the two revisions is
 an adapter change: a baseline written under the other one is not applied,
@@ -87,7 +95,7 @@ go to standard error, so standard output is only the JSON report.
 | --- | --- |
 | 0 | Accepted. Without `--ci` or `--warnings-as-errors`, findings never fail the run. |
 | 1 | New gated findings, or a coverage violation. |
-| 2 | Invalid options or configuration (including a configuration file that raises, throws or exits, an invalid baseline file, and an explicitly given baseline path that does not exist), compilation failure, a missing build directory (ebin) for an owned application or one that lost BEAM files its build lists, unreadable module inventory for an owned Mix app, corrupt BEAM files or a filename/module mismatch, unsupported compiler or checker chunk (in CI) or backend, a filter that matches nothing, or an incomplete run (an internal failure while analysing a module). |
+| 2 | Invalid options or configuration (including a configuration file that raises, throws or exits, an invalid baseline file, and an explicitly given baseline path that does not exist), compilation failure, a missing build directory (ebin) for an owned application or one that lost BEAM files its build lists, unreadable module inventory for an owned Mix app, corrupt BEAM files or a filename/module mismatch, BEAM files recorded as produced by another compiler build or changed since, unsupported compiler or checker chunk (in CI) or backend, a filter that matches nothing, or an incomplete run (an internal failure while analysing a module). |
 
 ## Rules
 

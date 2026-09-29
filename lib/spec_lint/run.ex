@@ -29,6 +29,8 @@ defmodule SpecLint.Run do
   alias SpecLint.{
     Analysis,
     Baseline,
+    Beam,
+    BuildRecord,
     Compiler,
     Config,
     Coverage,
@@ -67,7 +69,8 @@ defmodule SpecLint.Run do
           excluded: [Analysis.result()],
           evidence: Coverage.evidence_map(),
           reachability: %{optional(mfa()) => Reachability.result()},
-          beams: [{String.t(), String.t(), String.t() | nil}],
+          beams: [{String.t(), String.t(), String.t() | nil, String.t() | nil}],
+          artifacts: [{atom(), BuildRecord.status()}],
           issues: [Issue.t()],
           inventory: [Coverage.entry()],
           ledger: map(),
@@ -93,6 +96,7 @@ defmodule SpecLint.Run do
             evidence: %{},
             reachability: %{},
             beams: [],
+            artifacts: [],
             issues: [],
             inventory: [],
             ledger: %{},
@@ -126,9 +130,10 @@ defmodule SpecLint.Run do
   Runs SpecLint over `project` with `config`. Returns `{:error, message}`
   for configuration errors found before analysis (exit code 2), including
   a missing ebin directory of an owned application, an ebin missing BEAM
-  files its build lists (`SpecLint.Project.check_build_paths/1`), and an
-  explicitly configured baseline file that does not exist
-  (`SpecLint.Config`), otherwise the finished run.
+  files its build lists (`SpecLint.Project.check_build_paths/1`), BEAM
+  files whose `SpecLint.BuildRecord` names another compiler build or that
+  changed after it was written, and an explicitly configured baseline file
+  that does not exist (`SpecLint.Config`), otherwise the finished run.
   """
   @spec execute(Project.t(), Config.t(), [option()]) :: {:ok, t()} | {:error, String.t()}
   def execute(%Project{} = project, %Config{} = config, opts \\ []) do
@@ -154,15 +159,20 @@ defmodule SpecLint.Run do
          {:ok, baseline} <- load_baseline(project, config) do
       run = %{run | project: project, rules: rules, baseline: baseline}
 
-      case Keyword.get_lazy(opts, :preflight, &Compiler.preflight_once/0) do
-        {:ok, capabilities} ->
-          {:ok, analyse(%{run | capabilities: capabilities}, beams, opts)}
-
-        {:error, reason} ->
-          {:ok, unsupported_compiler(run, reason)}
-      end
+      opts
+      |> Keyword.get_lazy(:preflight, &Compiler.preflight_once/0)
+      |> preflighted(run, beams, opts)
     end
   end
+
+  defp preflighted({:ok, capabilities}, run, beams, opts) do
+    with {:ok, artifacts} <- check_artifacts(run.project, capabilities) do
+      {:ok, analyse(%{run | capabilities: capabilities, artifacts: artifacts}, beams, opts)}
+    end
+  end
+
+  defp preflighted({:error, reason}, run, _beams, _opts),
+    do: {:ok, unsupported_compiler(run, reason)}
 
   # Standard library modules the stages after the analysis use (messages,
   # module names, the reachability processes). See `preload/0`.
@@ -283,6 +293,29 @@ defmodule SpecLint.Run do
     end
   end
 
+  # BEAM files that SpecLint's build record attributes to another compiler
+  # build, or that changed after the record was written, would be analysed
+  # under the wrong adapter: an incomplete build (exit 2), never a verdict.
+  defp check_artifacts(project, capabilities) do
+    statuses = BuildRecord.statuses(project, capabilities)
+
+    case for({app, {:mismatch, _} = status} <- statuses, do: {app, status}) do
+      [] ->
+        {:ok, statuses}
+
+      mismatches ->
+        apps =
+          Enum.map_join(mismatches, "; ", fn {app, status} ->
+            "#{app}: #{BuildRecord.describe(status)}"
+          end)
+
+        {:error,
+         "incomplete build: BEAM files not produced by the running compiler " <>
+           "(#{capabilities.adapter_id}): #{apps}; recompile with mix compile --force " <>
+           "(mix spec_lint does this itself)"}
+    end
+  end
+
   defp beams(project, []), do: {:ok, Project.beams(project)}
 
   defp beams(project, modules) do
@@ -332,7 +365,7 @@ defmodule SpecLint.Run do
     # holds every analysed module, and on a large project (Absinthe: a heap
     # of about 4 GB) the garbage collections that reading hundreds of files
     # triggers cost minutes (Milestone 1 profile).
-    md5s = Map.new(beams, fn {_app, path} -> {path, beam_md5(path)} end)
+    identities = Map.new(beams, fn {_app, path} -> {path, Beam.identity(path)} end)
     cache = TypeCache.new()
 
     {results, failures} =
@@ -361,7 +394,7 @@ defmodule SpecLint.Run do
         evidence: evidence,
         reachability:
           if(sl001_selected?(run), do: Reachability.check(modules, evidence), else: %{}),
-        beams: beam_list(run.project, results, md5s)
+        beams: beam_list(run.project, results, identities)
     }
 
     finish(run, failures, opts)
@@ -392,21 +425,14 @@ defmodule SpecLint.Run do
     end
   end
 
-  defp beam_list(project, results, md5s) do
+  defp beam_list(project, results, identities) do
     results
     |> Enum.map(fn result ->
-      md5 = Map.get_lazy(md5s, result.path, fn -> beam_md5(result.path) end)
+      {md5, exck} = Map.get_lazy(identities, result.path, fn -> Beam.identity(result.path) end)
       name = if result.module, do: inspect(result.module), else: Path.basename(result.path)
-      {name, Project.relative(project, result.path), md5}
+      {name, Project.relative(project, result.path), md5, exck}
     end)
     |> Enum.sort()
-  end
-
-  defp beam_md5(path) do
-    case :beam_lib.md5(String.to_charlist(path)) do
-      {:ok, {_module, md5}} -> Base.encode16(md5, case: :lower)
-      {:error, :beam_lib, _reason} -> nil
-    end
   end
 
   defp finish(run, failures, opts) do

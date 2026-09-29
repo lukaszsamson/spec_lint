@@ -5,6 +5,91 @@ Date 2026-09-29. `DESIGN.md` is the authoritative design,
 Phase 4 follows the review of the Phase 3 implementation at `0cc9c50`;
 previous results below are historical and are superseded where noted.
 
+## Milestones 1 and 2 delivered (2026-09-29)
+
+Both milestones of the six-milestone plan (`NEXT_STEPS.md`, "Milestones")
+are delivered and reviewed; M3 (the 1.20 adapter) is next.
+
+| | Before | After |
+| --- | --- | --- |
+| Absinthe `Run.execute/3`, no rules | 576-684 s (606 s re-measured) | 60.6-66.8 s, median 62.9 s (five runs) |
+| Absinthe `Run.execute/3`, default rules | | 62.5-64.4 s |
+| Absinthe product run (`run_on_ebin.exs --ci --format json`) | 345 s (Phase 3) | 73-75 s |
+| Absinthe JSON rendering | 1-78 s (Milestone 1) | 0.13-0.17 s |
+| Types printed by `Run.execute/3` | most of the run | 0 |
+
+- **M1 exit criteria.** Coverage, classifications and gate decisions are
+  preserved on all fifteen corpora (4,204 compared slices, 63 findings, 9
+  gates, every exit code). Fingerprints were unchanged by Milestone 1; the
+  review's correctness fixes (union member order, shadowed required map
+  keys) changed 13 of 63, including all seven gated Absinthe findings, with
+  the baseline migration documented. **The 60-second Absinthe target is not
+  met** (60.6-66.8 s); the remaining cost is translation and garbage
+  collection of about 3.3 GB of retained bounds.
+- **M2 exit criteria.** A clean machine builds 648b2a9 from GitHub and
+  qualifies it without the fork. Differences from `c24c235`: the fifteen
+  corpus reports are identical except the adapter id and 40 BEAM md5
+  values (build paths, the build date, the two changed compiler modules,
+  nondeterministic compilation); 3 of 3,926 stdlib stored signatures
+  differ with no report change; and the `for ... into:` narrowing of
+  648b2a9 gates a correct spec (audit row 19, `UPSTREAM_BUGS.txt` item 11),
+  in none of the corpora.
+
+### Milestone 2 review: twelve findings, all resolved
+
+- **High: artifacts of the other build.** Both qualified builds are
+  `1.21.0-dev` with chunk v10, so Mix kept the other build's BEAM files and
+  `mix spec_lint --ci` reported that build's verdict under the running
+  adapter id (a gate passed or failed wrongly). The Mix tasks now write a
+  `SpecLint.BuildRecord` per owned application (adapter id, build digest,
+  SHA-256 of every BEAM) and recompile with `--force` unless it names the
+  running build and the BEAM files match; `SpecLint.Run` refuses a
+  mismatched record (exit 2). Reports add a per-BEAM `exck` digest (the
+  `beam_lib` MD5 leaves the checker chunk out) and an `artifacts` object.
+  An integration test compiles with one build and lints with the other, in
+  both directions (`SPEC_LINT_OTHER_ELIXIR`), and gets the native verdict
+  each time. Dependencies are not recorded (DESIGN.md 5.2).
+- **High: a modified build of a qualified SHA.** Preflight now pins the
+  code of 14 compiler modules per revision (`:compiler_identity`,
+  `SpecLint.Compiler.BuildIdentity`): the reviewer's `c24c235` build with
+  the row 19 fix reverted, and the body experiment build, now fail
+  preflight (`Module.Types.Expr`, `Module.Types`). The digests are the same
+  for builds in other directories and with OTP 28.0, 28.3.1 and 28.5.0.1.
+- **Medium: corrupt BEAM under a deep path.** `beam_lib` makes an atom of
+  a file name when it reports an error, so a path over 255 characters
+  crashed the run (exit 1, the gating code) instead of exit 2. BEAM files
+  are decoded from their contents (`SpecLint.Beam.chunks/3`); a test uses
+  a path over 255 characters.
+- **Medium: debug info unaudited.** New `:debug_info` probe and audit row
+  23 (definition tuples, `:line`, `:generated`, `from_super: false`); the
+  adapter's moduledoc no longer claims to be the only caller of
+  `:elixir_erl`.
+- **Low, all done:** `failed/1` in the probe tests now also checks that a
+  CI run exits 2, for every probe test (the earlier claim was true for 2 of
+  27), and stubs were added for untested sub-checks; the `:pattern_checker`
+  probe covers the `:unused_clause` diagnostic; row 8 is corrected
+  (`unfold/1` expands `term()`) and recursive nodes are probed; row 1's
+  count is corrected (42 pairs and 37 names then, 43 and 38 with
+  `recursive/1`); row 18 and the `:typespec_kinds` probe cover
+  `fetch_specs/1` and `spec_to_quoted/2`; the replay README says the
+  reports were produced from the uncommitted tree whose `source_sha256`
+  matches `41f56c3` (checked on a clean clone) and how to verify a
+  regeneration with `compare_replay.sh`; `provenance.sh` records the
+  path-independent `identity.exs` digests and no longer claims its hashes
+  are path independent; the corpus README lists repository URLs and a
+  checkout snippet (the manifests are unchanged: their hashes are in the
+  committed provenance).
+
+Preflight now runs eleven probes; the audit has 25 rows. Validation under
+both `c24c235` and `648b2a9`: 401 tests (including the cross-compiler
+test), strict Credo (70 checks), formatting, Dialyzer (0 errors) and the
+self-check (`mix spec_lint --ci`: 303 slices, exit 0). The extra work per
+run (the build record check and the `ExCk` digest per BEAM, before the
+analysis) costs no measurable time on Absinthe: one
+`bench/absinthe_profile.exs` run with the default rules after the review
+changes took 61.6 s for `Run.execute/3` (9 findings, exit 1, complete),
+below the earlier 62.5-64.4 s.
+
 ## Milestone 2: upstream Elixir 648b2a9 qualified
 
 The compiler adapter is qualified for unmodified upstream Elixir
@@ -20,7 +105,7 @@ audit and replay are in `bench/corpus/toolchain/` and
   fresh clone from GitHub, built under `env -i` with only OTP 28.5.0.1 on
   `PATH`, has the same identity as a worktree build of the same commit.
 - **Audit** (`audit-648b2a9.md`, 22 rows, each with a probe or test on both
-  builds). The two revisions share `25fa6682c`; the internals SpecLint reads
+  builds; 25 after the review above). The two revisions share `25fa6682c`; the internals SpecLint reads
   are unchanged (same source blobs, same BEAM md5 for `Descr`, `Module.Types`,
   `Pattern`, `ParallelChecker`, `:elixir_erl`, `Code.Typespec`,
   `Mix.Compilers.Elixir`; the `apply_infer/2` source and `@max_clauses 16`
@@ -45,7 +130,9 @@ audit and replay are in `bench/corpus/toolchain/` and
   covariant functions, a new chunk version, a renamed chunk key, a raised
   cutoff, another diagnostic tag, a lost typespec kind, a changed manifest
   sentinel, a raising probe) and check that preflight fails naming the
-  probe, and that a CI run is then incomplete with exit 2.
+  probe, and that a CI run is then incomplete with exit 2. *Corrected by
+  the review: only two of them checked the exit code; all probe tests do
+  now, and preflight runs eleven probes (above).*
 - **Tests under upstream.** The whole suite (368 tests, including the
   consumer, umbrella and build integration projects run through the Mix
   task) passes under both compilers, with the upstream build of the

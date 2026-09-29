@@ -1,3 +1,113 @@
+# Milestones (plan of 2026-09-29)
+
+The six milestones below replace the numbered lists further down, which are
+kept as history. Performance, compiler compatibility and evidence policy
+stay in separate changes. Exit criteria are copied from the plan.
+
+## M1. Remove printing from analysis on the existing compiler: done, one criterion not met
+
+*Done when:* Absinthe completes under 60 seconds under recorded
+conditions; all fifteen corpora preserve coverage, classifications, gate
+decisions and existing fingerprints; quality gates pass; independent review
+checks that rendering no longer affects classification.
+
+Delivered in `e4fc0c7` and the review fixes `63618c2` (STATUS.md,
+"Milestone 1" and "Milestone 1 review"). Classification works on `Descr`
+terms and prints nothing; rendering runs in a separate process. Absinthe:
+`Run.execute/3` went from 576-684 s to 60.6-66.8 s without rules (median
+62.9 s) and 62.5-64.4 s with the default rules; the product run from 345 s
+(Phase 3) to 73-75 s. **The 60-second target is not met** (the remaining
+cost is translation and garbage collection of about 3.3 GB of retained
+bounds; sharing translated named types across slices is the next lever).
+Coverage, classifications and gates are preserved on all fifteen corpora.
+Fingerprints were preserved by Milestone 1 itself; the review's two
+correctness fixes (union member order, shadowed map keys) changed 13, with
+the migration documented (regenerate baselines). The independent review
+checked that rendering no longer affects classification, and tests pin it
+(a stub adapter that cannot print gives identical classifications and runs).
+
+## M2. Qualify upstream 1.21 at `648b2a9`: done
+
+*Done when:* a clean CI machine can reproduce the build and qualification
+without your fork. Record every difference from `c24c235`; identical
+results are an expectation to test, not a prerequisite to force.
+
+Delivered in `41f56c3` and the Milestone 2 review (STATUS.md). A fresh
+clone builds and qualifies without the fork; the audit
+(`bench/corpus/toolchain/audit-648b2a9.md`, 25 rows) records every
+difference, including the `for ... into:` soundness defect of 648b2a9 (row
+19). The review closed the remaining reproducibility gaps: a corrupt BEAM
+under a deep checkout path, provenance that named the wrong tool revision
+or path-dependent hashes, missing repository URLs, and two high findings
+(artifacts of the other build analysed under the running adapter; a
+modified build of a qualified SHA passing preflight).
+
+## M3. Add and qualify the 1.20 adapter: next
+
+Keep descriptor construction, inspection and application differences inside
+the adapter. Run the same behavioral tests, then rebuild the corpus using
+1.20 and produce separate reports and baselines.
+
+*Done when:* both compiler versions pass their own qualification,
+cross-version artifacts fail closed, and omission classifications are
+pinned per adapter. Adapter selection must consider the running compiler
+and artifact compatibility, not the artifact's chunk alone.
+
+Defer 1.19 until measurements show enough useful coverage to justify
+maintaining it. Do not advertise it as supported yet.
+
+Starting points from M2: `SpecLint.BuildRecord` already ties each owned
+application's BEAM files to the build that produced them and forces a
+recompile otherwise; dependencies are not covered yet (Mix recompiles them
+only when the Elixir version changes, which it does between 1.20 and 1.21,
+but not between two 1.21 builds). Adapter selection is still read from
+configuration (`SpecLint.Compiler.adapter/0`), not chosen per running
+compiler.
+
+## M4. Investigate source-clause mapping
+
+Start with a diagnostic experiment, separately from production gating.
+Exercise merged clauses, omitted raising clauses, guards, defaults, macros
+and generated definitions. Identify compiler invariants that justify the
+mapping; agreement across the corpus alone does not prove exactness.
+
+*Done when:* supported mappings are justified and tested, and ambiguous
+cases retain conservative function-wide blocking. Mapping and guard
+feasibility still do not establish normal return. This milestone should not
+block an explicitly documented experimental release if it proves
+impractical.
+
+## M5. Freeze the evaluation and run the release campaign
+
+Freeze executable witnesses, omission-family identities, the recall
+denominator and holdout-selection procedure now. Audit the proposed "six
+witnessed Ash misses" against the witness records before counting them.
+Do not count the seven Absinthe gates as seven independent omission
+families.
+
+During qualification, count struct-default violations separately without
+changing their policy. Re-run all known gates and independently attempt to
+refute every new or changed gate.
+
+*Done when:* both supported adapters meet correctness and runtime budgets,
+installation and upgrade workflows pass, and the README publishes the
+support matrix, unknown-obligation counts and gating limitations.
+
+For resource failures, require **no successful result**. Caught analysis
+failures can exit 2; an externally killed or OOM-terminated VM cannot
+reliably promise that exact exit code.
+
+## M6. Move inference work upstream (submission preparation)
+
+Stop extending the local helper source transform. Prepare the helper and
+collection counterexamples, recheck the `list_tl` finding on upstream, and
+include the printer profile. Submission is a separate authorized action.
+
+Resume local inference experiments only around an upstream mechanism that
+can be qualified against the frozen evaluation. The `for ... into:`
+narrowing of 648b2a9 (`UPSTREAM_BUGS.txt` item 11, audit row 19) belongs in
+the same package.
+
 # Current next steps after Phase 4
 
 Phase 4 delivery and validation are recorded in `PHASE_4_PLAN.md` and

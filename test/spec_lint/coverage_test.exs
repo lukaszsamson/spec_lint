@@ -448,6 +448,39 @@ defmodule SpecLint.CoverageTest do
       assert message =~ "ebin/Elixir.LostFx.beam"
     end
 
+    test "a corrupt or misplaced BEAM under a path over 255 characters is reported, not a crash",
+         %{tmp_dir: tmp_dir} do
+      # beam_lib turns a file name into an atom when it reports an error,
+      # which raises system_limit for a name over 255 characters: a deep
+      # checkout (common on CI runners) turned an incomplete build (exit 2)
+      # into a crash (exit 1, the gating-findings code). Files are now
+      # decoded from their contents.
+      deep = Path.join([tmp_dir | List.duplicate(String.duplicate("d", 60), 4)])
+      ebin = Path.join(deep, "ebin")
+      File.mkdir_p!(ebin)
+      project = Project.from_ebins([{:fx, ebin}], tmp_dir)
+      config = %Config{baseline: "baseline.json"}
+
+      beam = Path.join(ebin, "Elixir.LostFx.beam")
+      assert byte_size(beam) > 255
+      File.write!(beam, "not a BEAM")
+
+      assert Project.check_build_paths(project) == {:error, :invalid_beam}
+      assert [%{path: ^beam, reason: {:not_a_beam_file, ^beam}}] = Project.invalid_beams(project)
+      assert {:error, message} = Run.execute(project, config, ci: true)
+      assert message =~ "unreadable or invalid BEAM file"
+      assert SpecLint.Beam.identity(beam) == {nil, nil}
+
+      [{DeepOtherFx, binary}] =
+        Code.compile_string("defmodule DeepOtherFx do; def value, do: :ok; end")
+
+      File.write!(beam, binary)
+      assert Project.check_build_paths(project) == {:error, :module_mismatch}
+      assert [%{path: ^beam, found: DeepOtherFx}] = Project.mismatched_modules(project)
+      assert {:error, message} = Run.execute(project, config, ci: true)
+      assert message =~ "BEAM filename and embedded module disagree"
+    end
+
     test "only the selected applications are checked", %{tmp_dir: tmp_dir} do
       present = Path.join(tmp_dir, "a/ebin")
       File.mkdir_p!(present)
