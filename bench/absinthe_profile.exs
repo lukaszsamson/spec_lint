@@ -22,7 +22,11 @@ root = List.first(args) || "/tmp/spec-lint-expansion/absinthe"
 for dir <- Path.wildcard(Path.join(root, "_build/test/lib/*/ebin")), do: Code.prepend_path(dir)
 ebin = Path.join(root, "_build/test/lib/absinthe/ebin")
 
-printers = [{SpecLint.Compiler.V121, :to_string, 1}, {Module.Types.Descr, :to_quoted_string, 2}]
+printers = [
+  {SpecLint.Compiler.running_adapter(), :to_string, 1},
+  {Module.Types.Descr, :to_quoted_string, 2}
+]
+
 # Call counting only applies to loaded modules.
 Enum.each(printers, fn {module, _, _} -> Code.ensure_loaded!(module) end)
 

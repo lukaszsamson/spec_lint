@@ -122,4 +122,11 @@ defmodule SpecLint.TestHelpers do
   @doc false
   @spec loss_kinds([map()]) :: [atom()]
   def loss_kinds(losses), do: losses |> Enum.map(& &1.kind) |> Enum.uniq() |> Enum.sort()
+
+  @doc """
+  The adapter of the running compiler (`SpecLint.Compiler.running_adapter/0`),
+  for tests whose expectations are pinned per adapter.
+  """
+  @spec adapter() :: module()
+  def adapter, do: SpecLint.Compiler.running_adapter()
 end

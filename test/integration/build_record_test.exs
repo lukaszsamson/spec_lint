@@ -7,12 +7,15 @@ defmodule SpecLint.Integration.BuildRecordTest do
   # 0 where the running build gates, and the reverse).
   #
   # The cross-compiler test runs only when SPEC_LINT_OTHER_ELIXIR names the
-  # bin directory of the other qualified build.
+  # bin directory of another qualified compiler: the other 1.21 build
+  # (Milestone 2), or the other compiler line, 1.20.4 under 1.21 and the
+  # reverse (Milestone 3).
   use ExUnit.Case, async: false
 
   @moduletag :integration
   @moduletag timeout: 600_000
 
+  alias SpecLint.{Config, Project, Run}
   alias SpecLint.ProjectFixture, as: Fixture
 
   # Audit row 19: correct under c24c235, gated (SL003) under 648b2a9, whose
@@ -89,27 +92,15 @@ defmodule SpecLint.Integration.BuildRecordTest do
 
   @tag :cross_compiler
   test "a build compiled by the other qualified compiler is rebuilt before it is analysed",
-       %{dir: dir} do
+       %{dir: dir, record: record} do
     case System.get_env("SPEC_LINT_OTHER_ELIXIR") do
       nil ->
         :ok
 
       other_bin ->
-        other = fn args ->
-          System.cmd(Path.join(other_bin, "mix"), args,
-            cd: dir,
-            env: Fixture.env([{"PATH", other_bin <> ":" <> System.get_env("PATH")}]),
-            stderr_to_stdout: true
-          )
-        end
-
-        {other_version, 0} =
-          System.cmd(Path.join(other_bin, "elixir"), [
-            "-e",
-            "IO.write(System.build_info()[:revision])"
-          ])
-
-        refute String.starts_with?(other_version, running_revision())
+        other = other_compiler(other_bin, dir)
+        {other_id, other_checker} = other_identity(other_bin)
+        refute String.ends_with?(other_id, "+" <> running_revision())
 
         # (a) compiled by the other build, linted by this one.
         {_output, 0} = other.(["compile"])
@@ -124,14 +115,78 @@ defmodule SpecLint.Integration.BuildRecordTest do
 
         assert output =~ "recompiling consumer", output
         other_json = dir |> Path.join("other.json") |> File.read!() |> JSON.decode!()
-        assert other_json["adapter"] == "1.21.0-dev+" <> String.slice(other_version, 0, 7)
+        assert other_json["adapter"] == other_id
+        assert other_json["checker_version"] == other_checker
         assert other_status == if(other_json["findings"] == [], do: 0, else: 1)
         refute other_json["artifacts"]["build_digest"] == json["artifacts"]["build_digest"]
+        assert JSON.decode!(File.read!(record))["adapter"] == other_id
+
+        # (c) the other build's recorded artifacts, analysed without the
+        # Mix task's recompilation (SpecLint.Run on the build directory):
+        # refused, exit 2, naming the other compiler.
+        assert {:error, message} = run_in_place(dir)
+        assert message =~ "BEAM files not produced by the running compiler (#{adapter_id()})"
+
+        if other_checker == running_checker() do
+          assert message =~ "consumer: compiled by another compiler build (#{other_id}"
+        else
+          assert message =~
+                   "consumer: compiled by another compiler line (#{other_id}, checker " <>
+                     "#{other_checker}"
+        end
+
+        # (d) the same artifacts without a record (a plain `mix compile` by
+        # the other compiler): another compiler line's chunks fail closed
+        # (exit 2); another build of the same line cannot be told apart
+        # without the record (DESIGN.md 5.2).
+        File.rm!(record)
+
+        if other_checker != running_checker() do
+          assert {:ok, run} = run_in_place(dir)
+          assert run.exit_code == 2
+          assert run.completion == :incomplete
+          assert [reason] = run.completion_reasons
+
+          assert reason =~
+                   "unsupported checker chunk in IntoProbe: version :#{other_checker}, " <>
+                     "the running checker writes :#{running_checker()}"
+        end
 
         {status, json, output} = Fixture.lint(dir)
         assert output =~ "recompiling consumer", output
         assert_native_verdict(status, json, output)
     end
+  end
+
+  defp other_compiler(other_bin, dir) do
+    fn args ->
+      System.cmd(Path.join(other_bin, "mix"), args,
+        cd: dir,
+        env: Fixture.env([{"PATH", other_bin <> ":" <> System.get_env("PATH")}]),
+        stderr_to_stdout: true
+      )
+    end
+  end
+
+  # The other compiler's adapter id and checker chunk version.
+  defp other_identity(other_bin) do
+    {output, 0} =
+      System.cmd(Path.join(other_bin, "elixir"), [
+        "-e",
+        ~S|IO.write("#{System.version()}+#{System.build_info()[:revision]} | <>
+          ~S|#{:elixir_erl.checker_version()}")|
+      ])
+
+    [id, checker] = String.split(output, " ")
+    {id, checker}
+  end
+
+  # SpecLint.Run on the consumer's build directory in this VM, without the
+  # Mix task (so without its recompilation).
+  defp run_in_place(dir) do
+    ebin = Path.join(dir, "_build/dev/lib/consumer/ebin")
+    project = Project.from_ebins([{:consumer, ebin}], dir)
+    Run.execute(project, %Config{baseline: Path.join(dir, "none.json")}, ci: true)
   end
 
   # The verdict the running build gives on a build it compiled itself
@@ -147,10 +202,16 @@ defmodule SpecLint.Integration.BuildRecordTest do
       "648b2a9" ->
         assert status == 1, output
         assert [%{"rule" => "SL003", "blocking" => true}] = json["findings"]
+
+      # Elixir 1.20.4 (Milestone 3): no narrowing, as on c24c235.
+      "759443e" ->
+        assert status == 0, output
+        assert json["findings"] == []
     end
   end
 
   defp running_revision, do: String.slice(System.build_info()[:revision], 0, 7)
+  defp running_checker, do: Atom.to_string(:elixir_erl.checker_version())
   defp adapter_id, do: "#{System.version()}+#{running_revision()}"
   defp read(record), do: record |> File.read!() |> JSON.decode!()
 end

@@ -3,7 +3,8 @@ defmodule SpecLint.BuildRecordTest do
   # qualified builds of 1.21.0-dev share the checker chunk version and
   # System.version(), so Mix keeps the other build's artifacts and SpecLint
   # analysed them under the running adapter's id. The build record ties an
-  # application's artifacts to the build that produced them.
+  # application's artifacts to the build that produced them; since Milestone
+  # 3 also to the compiler line (1.20 or 1.21).
   use ExUnit.Case, async: true
 
   import SpecLint.TestHelpers
@@ -63,6 +64,47 @@ defmodule SpecLint.BuildRecordTest do
     # Only the build digest differs: a modified build of the same revision.
     assert :ok = BuildRecord.write(app, %{capabilities | build_digest: "fedcba9876543210"})
     assert {:error, _message} = run(project)
+  end
+
+  test "a build recorded by another compiler line is an incomplete build (exit 2)",
+       %{project: project, app: app, capabilities: capabilities} do
+    # Milestone 3: a 1.21 artifact under 1.20 and the reverse. The record
+    # names the other line's checker chunk version and adapter.
+    [other_adapter] = Compiler.adapters() -- [capabilities.adapter]
+
+    other = %{
+      capabilities
+      | adapter: other_adapter,
+        adapter_id: "other-line+0000000",
+        elixir_version: "other-line",
+        checker_version: other_adapter.qualified_checker_version(),
+        build_digest: "0123456789abcdef"
+    }
+
+    assert :ok = BuildRecord.write(app, other)
+    checker = Atom.to_string(other_adapter.qualified_checker_version())
+    module = inspect(other_adapter)
+
+    assert BuildRecord.status(app, capabilities) ==
+             {:mismatch, {:other_compiler, "other-line+0000000", checker, module}}
+
+    assert {:error, message} = run(project)
+    assert message =~ "incomplete build: BEAM files not produced by the running compiler"
+    assert message =~ "(#{capabilities.adapter_id})"
+
+    assert message =~
+             "fx: compiled by another compiler line (other-line+0000000, checker #{checker}"
+
+    assert message =~ "adapter #{module}), whose artifacts the running adapter cannot read"
+
+    # A record written before Milestone 3 (no checker version or adapter
+    # module) naming another adapter id is another build.
+    record = BuildRecord.path(app) |> File.read!() |> JSON.decode!()
+    legacy = Map.drop(record, ["checker_version", "adapter_module", "elixir"])
+    File.write!(BuildRecord.path(app), JSON.encode!(legacy))
+
+    assert {:mismatch, {:other_build, "other-line+0000000", "0123456789abcdef"}} =
+             BuildRecord.status(app, capabilities)
   end
 
   test "a BEAM file added or changed after the record is a mismatch, a deleted one is not",

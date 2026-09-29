@@ -6,18 +6,28 @@ defmodule SpecLint.Compiler do
   this module: decoding the `ExCk` checker chunk, every
   `Module.Types.Descr` operation, and a copy of the checker's application rule
   for inferred signatures (`Module.Types.Apply.apply_infer/2`). All of those
-  are `@moduledoc false` in Elixir and change between development revisions,
-  so one adapter module exists per qualified compiler revision (see
-  `SpecLint.Compiler.V121`) and the rest of SpecLint never touches compiler
-  modules directly.
+  are `@moduledoc false` in Elixir and change between releases and
+  development revisions, so one adapter module exists per qualified compiler
+  line (`SpecLint.Compiler.V121` for the 1.21 development builds,
+  `SpecLint.Compiler.V120` for 1.20.4) and the rest of SpecLint never
+  touches compiler modules directly.
 
   This module defines the adapter behaviour and a facade that delegates to
-  the adapter returned by `adapter/0`. The adapter is read at runtime, on
-  every call, from the `:compiler_adapter` setting of the `:spec_lint`
-  application and defaults to `SpecLint.Compiler.V121`; `preflight/0` checks
-  that it is qualified for the running compiler. Descr values are treated
-  as opaque terms outside the adapter; printed forms are presentation only.
+  the adapter returned by `adapter/0`. The adapter is chosen for the running
+  compiler (`select_adapter/2`: its `System.version()` and the checker chunk
+  version `:elixir_erl` writes) unless the `:compiler_adapter` setting of the
+  `:spec_lint` application names one (tests use it to inject faults).
+  `preflight/0` then checks that the adapter is qualified for the running
+  build (revision, compiler identity, capability probes); a compiler no
+  adapter covers fails preflight with `{:unsupported_elixir, version,
+  checker_version, supported}`. Which build produced the analysed BEAM
+  files is checked per application by `SpecLint.BuildRecord`, so artifacts
+  of another compiler (another line or another build of the same line) are
+  never analysed under the running adapter. Descr values are treated as
+  opaque terms outside the adapter; printed forms are presentation only.
   """
+
+  alias SpecLint.Compiler.Qualification
 
   @typedoc "A `Module.Types.Descr` type. Opaque outside the adapter."
   @type descr :: :term | map()
@@ -59,6 +69,7 @@ defmodule SpecLint.Compiler do
           checker_version: atom(),
           max_clauses: pos_integer(),
           signatures: boolean(),
+          recursive_types: boolean(),
           body_hook: boolean()
         }
 
@@ -252,19 +263,106 @@ defmodule SpecLint.Compiler do
   @callback pattern_diagnostics(module(), String.t() | nil, keyword(), [tuple()]) ::
               {:ok, [pattern_diagnostic()]} | {:error, term()}
 
-  @default_adapter SpecLint.Compiler.V121
+  @adapters [SpecLint.Compiler.V121, SpecLint.Compiler.V120]
+
+  @doc "The adapters, newest compiler line first."
+  @spec adapters() :: [SpecLint.Compiler.V121 | SpecLint.Compiler.V120, ...]
+  def adapters, do: @adapters
 
   @doc """
   The adapter module in use: the `:compiler_adapter` setting of the
-  `:spec_lint` application, defaulting to the adapter for the qualified
-  revision. `preflight/0` checks that it matches the running compiler.
+  `:spec_lint` application when set, otherwise the adapter for the running
+  compiler (`running_adapter/0`). `preflight/0` checks that it is
+  qualified for the running build.
   """
   @spec adapter() :: module()
-  def adapter, do: Application.get_env(:spec_lint, :compiler_adapter, @default_adapter)
+  def adapter do
+    case Application.get_env(:spec_lint, :compiler_adapter) do
+      nil -> running_adapter()
+      adapter -> adapter
+    end
+  end
 
-  @doc "See `c:preflight/0`."
+  @doc """
+  The adapter `select_adapter/2` chooses for the running compiler,
+  memoised for the life of the VM. When no adapter covers it, the newest
+  adapter is returned so that type operations have an implementation, but
+  `preflight/0` fails and no analysis runs.
+  """
+  @spec running_adapter() :: module()
+  def running_adapter do
+    case running_selection() do
+      {:ok, adapter} -> adapter
+      {:error, _reason} -> hd(@adapters)
+    end
+  end
+
+  defp running_selection do
+    key = {__MODULE__, :running_selection}
+
+    case :persistent_term.get(key, nil) do
+      nil ->
+        selection =
+          select_adapter(System.version(), Qualification.running_checker_version())
+
+        :persistent_term.put(key, selection)
+        selection
+
+      selection ->
+        selection
+    end
+  end
+
+  @doc """
+  The adapter for a compiler of `version` that writes `checker_version`
+  chunks: the one whose version requirement the version matches and whose
+  qualified checker version it writes. Revisions and builds are checked
+  later, by the adapter's preflight, so that an unqualified build of a
+  supported line is reported as such.
+  """
+  @spec select_adapter(String.t(), atom()) ::
+          {:ok, module()}
+          | {:error, {:unsupported_elixir, String.t(), atom(), [String.t()]}}
+  def select_adapter(version, checker_version) do
+    found =
+      Enum.find(@adapters, fn adapter ->
+        Qualification.version_matches?(version, adapter.version_requirement()) and
+          adapter.qualified_checker_version() == checker_version
+      end)
+
+    case found do
+      nil -> {:error, {:unsupported_elixir, version, checker_version, supported()}}
+      adapter -> {:ok, adapter}
+    end
+  end
+
+  @doc """
+  The supported compilers, one line per adapter: its version requirement,
+  checker chunk version and qualified revisions.
+  """
+  @spec supported() :: [String.t()]
+  def supported do
+    for adapter <- @adapters do
+      "Elixir #{adapter.version_requirement()} (#{adapter.qualified_checker_version()}, " <>
+        "revisions #{Enum.join(adapter.qualified_revisions(), ", ")})"
+    end
+  end
+
+  @doc """
+  Preflight of `adapter/0` (`c:preflight/0`). Without a configured adapter
+  and with no adapter for the running compiler, fails with
+  `{:unsupported_elixir, version, checker_version, supported}`.
+  """
   @spec preflight() :: {:ok, capabilities()} | {:error, term()}
-  def preflight, do: adapter().preflight()
+  def preflight do
+    case Application.get_env(:spec_lint, :compiler_adapter) do
+      nil ->
+        with {:ok, adapter} <- running_selection(), do: adapter.preflight()
+
+      adapter ->
+        adapter.preflight()
+    end
+  end
 
   @doc """
   `preflight/0` of the current adapter, memoised per adapter for the life of
@@ -272,12 +370,11 @@ defmodule SpecLint.Compiler do
   """
   @spec preflight_once() :: {:ok, capabilities()} | {:error, term()}
   def preflight_once do
-    adapter = adapter()
-    key = {__MODULE__, :preflight, adapter}
+    key = {__MODULE__, :preflight, adapter()}
 
     case :persistent_term.get(key, nil) do
       nil ->
-        result = adapter.preflight()
+        result = preflight()
         :persistent_term.put(key, result)
         result
 

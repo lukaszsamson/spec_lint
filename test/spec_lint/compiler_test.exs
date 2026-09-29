@@ -1,9 +1,11 @@
 defmodule SpecLint.CompilerTest do
   use ExUnit.Case, async: true
 
+  import SpecLint.TestHelpers, only: [adapter: 0]
+
   alias Module.Types.Apply
   alias SpecLint.Compiler, as: C
-  alias SpecLint.Compiler.V121
+  alias SpecLint.Compiler.{V120, V121}
 
   @pool_size 14
 
@@ -17,8 +19,50 @@ defmodule SpecLint.CompilerTest do
     assert capabilities.adapter_id == "#{System.version()}+#{capabilities.revision}"
   end
 
+  describe "adapter selection (Milestone 3)" do
+    test "the running compiler selects its adapter" do
+      assert C.adapter() == adapter()
+      assert {:ok, capabilities} = C.preflight()
+      assert capabilities.adapter == adapter()
+
+      assert C.select_adapter(System.version(), :elixir_erl.checker_version()) ==
+               {:ok, adapter()}
+    end
+
+    test "by Elixir version and checker chunk version" do
+      assert C.select_adapter("1.21.0-dev", :elixir_checker_v10) == {:ok, V121}
+      assert C.select_adapter("1.20.4", :elixir_checker_v8) == {:ok, V120}
+
+      # The version decides the line, the chunk version must agree with it.
+      for {version, checker} <- [
+            {"1.21.0-dev", :elixir_checker_v8},
+            {"1.20.4", :elixir_checker_v10},
+            {"1.20.3", :elixir_checker_v8},
+            {"1.19.4", :elixir_checker_v7},
+            {"1.22.0-dev", :elixir_checker_v10}
+          ] do
+        assert {:error, {:unsupported_elixir, ^version, ^checker, supported}} =
+                 C.select_adapter(version, checker)
+
+        assert supported == C.supported()
+      end
+
+      assert C.supported() == [
+               "Elixir ~> 1.21.0-dev (elixir_checker_v10, revisions c24c235, 648b2a9)",
+               "Elixir ~> 1.20.4 (elixir_checker_v8, revisions 759443e)"
+             ]
+    end
+
+    test "each adapter reports its recursive type capability" do
+      assert V121.recursive_types?()
+      refute V120.recursive_types?()
+      assert {:ok, %{recursive_types: recursive?}} = C.preflight()
+      assert recursive? == adapter().recursive_types?()
+    end
+  end
+
   test "preflight pins the qualified Elixir revisions" do
-    assert V121.check_build(System.version(), System.build_info()[:revision]) == :ok
+    assert adapter().check_build(System.version(), System.build_info()[:revision]) == :ok
     qualified = V121.qualified_revisions()
 
     assert V121.check_build("1.21.0-dev", "deadbee") ==
@@ -28,6 +72,17 @@ defmodule SpecLint.CompilerTest do
              {:error, {:unqualified_revision, nil, qualified}}
 
     assert {:error, {:unsupported_elixir, "1.20.0", _}} = V121.check_build("1.20.0", "c24c235")
+
+    assert V120.check_build("1.20.4", "759443e") == :ok
+    assert V120.check_build("1.20.4", "759443e72") == :ok
+
+    assert V120.check_build("1.20.4", "c24c235") ==
+             {:error, {:unqualified_revision, "c24c235", ["759443e"]}}
+
+    assert {:error, {:unsupported_elixir, "1.20.3", _}} = V120.check_build("1.20.3", "759443e")
+
+    assert {:error, {:unsupported_elixir, "1.21.0-dev", _}} =
+             V120.check_build("1.21.0-dev", "759443e")
   end
 
   test "preflight loads Module.Types before probing the body hook" do
@@ -35,7 +90,7 @@ defmodule SpecLint.CompilerTest do
     # nothing has loaded Module.Types yet.
     script = """
     false = :erlang.module_loaded(Module.Types)
-    {:ok, caps} = SpecLint.Compiler.V121.preflight()
+    {:ok, caps} = SpecLint.Compiler.running_adapter().preflight()
     true = :erlang.module_loaded(Module.Types)
     true = caps.body_hook == function_exported?(Module.Types, :warnings, 7)
     IO.write("ok")
@@ -122,11 +177,25 @@ defmodule SpecLint.CompilerTest do
       assert is_list(elem(C.canonical(b), 1))
     end
 
+    @tag adapter: V121
     test "is plain data: no functions or references" do
       node = {make_ref(), %{}, fn _recur -> C.atom([:leaf]) end}
       canonical = C.canonical(%{tuple: node})
       refute contains?(canonical, &(is_function(&1) or is_reference(&1)))
       assert contains?(canonical, &(&1 == :recursive_node))
+    end
+
+    # 1.20 has no recursive nodes (audit-1.20.4.md): a term of that shape
+    # is not one, and the canonical form is still plain data.
+    @tag adapter: V120
+    test "is plain data on a line without recursive nodes" do
+      node = {make_ref(), %{}, fn _recur -> C.atom([:leaf]) end}
+      refute V120.recursive_node?(node)
+      canonical = C.canonical(%{tuple: node})
+      refute contains?(canonical, &(is_function(&1) or is_reference(&1)))
+      refute contains?(canonical, &(&1 == :recursive_node))
+      assert contains?(canonical, &(&1 == :function))
+      assert contains?(canonical, &(&1 == :reference))
     end
   end
 

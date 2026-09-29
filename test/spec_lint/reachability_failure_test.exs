@@ -10,7 +10,7 @@ defmodule SpecLint.ReachabilityFailureTest do
   @moduletag :tmp_dir
 
   # Fault injection at the real adapter boundary: all type and comparison
-  # operations still use the qualified compiler adapter.
+  # operations still use the running compiler's qualified adapter.
   defmodule FailedCheckAdapter do
     @behaviour SpecLint.Compiler
 
@@ -20,7 +20,7 @@ defmodule SpecLint.ReachabilityFailureTest do
 
       @impl true
       def unquote(name)(unquote_splicing(args)),
-        do: apply(SpecLint.Compiler.V121, unquote(name), [unquote_splicing(args)])
+        do: apply(SpecLint.Compiler.running_adapter(), unquote(name), [unquote_splicing(args)])
     end
 
     @impl true

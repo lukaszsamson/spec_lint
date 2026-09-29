@@ -13,16 +13,21 @@ defmodule SpecLint.BuildRecord do
   The record is a small JSON file next to Mix's own manifests,
   `<app build dir>/.mix/spec_lint.build`, written by the Mix tasks after
   they compile. It holds the adapter id and build digest of the compiler
-  that ran (`SpecLint.Compiler.capabilities/0`), and the SHA-256 of every
-  BEAM file in the ebin at that moment. An application's artifacts are:
+  that ran (`SpecLint.Compiler.capabilities/0`), since Milestone 3 also its
+  Elixir version, checker chunk version and adapter module, and the SHA-256
+  of every BEAM file in the ebin at that moment. An application's
+  artifacts are:
 
     * `:verified` - the record names the running build and every BEAM file
       is as recorded;
     * `:unrecorded` - there is no record (a build SpecLint's tasks did not
       make, such as an explicit ebin given to `bench/run_on_ebin.exs`);
-    * `{:mismatch, reason}` - the record names another build, a BEAM file
-      was added or changed since it was written (something else compiled
-      it), or the record cannot be read. A recorded BEAM file that is gone
+    * `{:mismatch, reason}` - the record names another compiler line
+      (`{:other_compiler, ...}`: another checker chunk version or adapter,
+      such as a 1.21 build under 1.20; the running adapter cannot read its
+      artifacts at all), another build of the running line
+      (`{:other_build, ...}`), a BEAM file was added or changed since it was
+      written (something else compiled it), or the record cannot be read. A recorded BEAM file that is gone
       is not a mismatch here: `SpecLint.Project` reports deleted BEAM files
       as an incomplete build, which a recompile must not hide.
 
@@ -42,7 +47,8 @@ defmodule SpecLint.BuildRecord do
 
   @typedoc "Why a record does not match the running build and the ebin."
   @type mismatch ::
-          {:other_build, String.t() | nil, String.t() | nil}
+          {:other_compiler, String.t() | nil, String.t(), String.t() | nil}
+          | {:other_build, String.t() | nil, String.t() | nil}
           | {:changed_beams, [String.t()]}
           | :invalid_record
 
@@ -59,6 +65,9 @@ defmodule SpecLint.BuildRecord do
     record = %{
       "version" => @version,
       "adapter" => capabilities.adapter_id,
+      "adapter_module" => inspect(capabilities.adapter),
+      "elixir" => capabilities.elixir_version,
+      "checker_version" => Atom.to_string(capabilities.checker_version),
       "build_digest" => Map.get(capabilities, :build_digest),
       "beams" => beams(app)
     }
@@ -92,6 +101,12 @@ defmodule SpecLint.BuildRecord do
 
   @doc "A one-line explanation of a `{:mismatch, reason}` status."
   @spec describe({:mismatch, mismatch()}) :: String.t()
+  def describe({:mismatch, {:other_compiler, adapter, checker_version, adapter_module}}),
+    do:
+      "compiled by another compiler line (#{adapter || "unknown"}, checker " <>
+        "#{checker_version}, adapter #{adapter_module || "unknown"}), whose artifacts " <>
+        "the running adapter cannot read"
+
   def describe({:mismatch, {:other_build, adapter, digest}}),
     do: "compiled by another compiler build (#{adapter || "unknown"}, build #{short(digest)})"
 
@@ -128,16 +143,31 @@ defmodule SpecLint.BuildRecord do
       record["adapter"] == capabilities.adapter_id and
         record["build_digest"] == Map.get(capabilities, :build_digest)
 
-    if same_build? do
-      found = beams(app)
+    cond do
+      same_build? ->
+        case changed(record["beams"], beams(app)) do
+          [] -> :verified
+          files -> {:mismatch, {:changed_beams, files}}
+        end
 
-      case changed(record["beams"], found) do
-        [] -> :verified
-        files -> {:mismatch, {:changed_beams, files}}
-      end
-    else
-      {:mismatch, {:other_build, record["adapter"], record["build_digest"]}}
+      other_line?(record, capabilities) ->
+        {:mismatch,
+         {:other_compiler, record["adapter"], record["checker_version"], record["adapter_module"]}}
+
+      true ->
+        {:mismatch, {:other_build, record["adapter"], record["build_digest"]}}
     end
+  end
+
+  # Another compiler line: the record names another checker chunk version
+  # or adapter. Records written before Milestone 3 name neither; they are
+  # another build (both qualified builds then were one line).
+  defp other_line?(record, capabilities) do
+    checker = record["checker_version"]
+    module = record["adapter_module"]
+
+    (is_binary(checker) and checker != Atom.to_string(capabilities.checker_version)) or
+      (is_binary(module) and module != inspect(capabilities.adapter))
   end
 
   # BEAM files present now that were not recorded or differ from the

@@ -5,14 +5,20 @@ defmodule SpecLint.CompilerProbeTest do
   # internal for a stub that delegates to the real module except for the
   # simulated change; failed/1 checks the probe named in the failure and
   # that a CI run with that preflight is incomplete with exit 2.
+  #
+  # The probes run through the running compiler's adapter (@adapter). The
+  # Descr stubs that depend on a compiler line's encoding are pinned per
+  # adapter (`@tag adapter: ...`, Milestone 3); the others run on both.
   use ExUnit.Case, async: false
 
   import SpecLint.TestHelpers
 
   alias Module.Types.Descr
   alias SpecLint.{Compiler, Config, Project, Run}
-  alias SpecLint.Compiler.{BuildIdentity, V121}
+  alias SpecLint.Compiler.{BuildIdentity, V120, V121}
   alias SpecLint.Fixtures.Compare
+
+  @adapter Compiler.running_adapter()
 
   @moduletag :tmp_dir
 
@@ -27,29 +33,55 @@ defmodule SpecLint.CompilerProbeTest do
   end
 
   test "every probe passes on the running compiler" do
-    internals = V121.internals()
+    internals = @adapter.internals()
 
-    for probe <- V121.capability_probes() do
-      assert V121.probe(probe, internals) == :ok, "probe #{probe}"
+    for probe <- @adapter.capability_probes() do
+      assert @adapter.probe(probe, internals) == :ok, "probe #{probe}"
     end
 
-    assert {:ok, capabilities} = V121.preflight(internals)
+    assert {:ok, capabilities} = @adapter.preflight(internals)
     assert capabilities.adapter_id == "#{System.version()}+#{System.build_info()[:revision]}"
 
     revision = String.slice(System.build_info()[:revision], 0, 7)
-    recorded = Map.fetch!(V121.qualified_builds(), revision)
+    recorded = Map.fetch!(@adapter.qualified_builds(), revision)
     assert capabilities.build_digest == BuildIdentity.combined(recorded)
     assert {:ok, ^recorded} = BuildIdentity.running_digests()
   end
 
   test "every qualified revision has recorded build digests of the same modules" do
-    builds = V121.qualified_builds()
-    assert Enum.sort(Map.keys(builds)) == Enum.sort(V121.qualified_revisions())
-    [modules | others] = for {_revision, digests} <- builds, do: Enum.sort(Map.keys(digests))
+    [modules | others] =
+      for adapter <- Compiler.adapters() do
+        builds = adapter.qualified_builds()
+        assert Enum.sort(Map.keys(builds)) == Enum.sort(adapter.qualified_revisions())
+        for {_revision, digests} <- builds, do: Enum.sort(Map.keys(digests))
+      end
+      |> Enum.concat()
+
     assert Enum.all?(others, &(&1 == modules))
     assert "Elixir.Module.Types.Expr" in modules
     assert "elixir_overridable" in modules
     assert Enum.all?(modules, &BuildIdentity.pinned?/1)
+  end
+
+  test "the 1.20 adapter is qualified for the 1.20.4 release only" do
+    assert V120.qualified_revisions() == ["759443e"]
+    assert V120.version_requirement() == "~> 1.20.4"
+    assert V120.qualified_checker_version() == :elixir_checker_v8
+    assert V121.qualified_checker_version() == :elixir_checker_v10
+    assert V120.max_clauses() == V121.max_clauses()
+  end
+
+  test "a configured adapter takes precedence over the selection" do
+    other = Enum.find(Compiler.adapters(), &(&1 != @adapter))
+    Application.put_env(:spec_lint, :compiler_adapter, other)
+
+    try do
+      assert Compiler.adapter() == other
+      assert Compiler.running_adapter() == @adapter
+      assert {:error, {:unsupported_elixir, _version, _requirement}} = Compiler.preflight()
+    after
+      Application.delete_env(:spec_lint, :compiler_adapter)
+    end
   end
 
   test "the qualified revisions are the fork revision and upstream 648b2a9" do
@@ -63,9 +95,9 @@ defmodule SpecLint.CompilerProbeTest do
   end
 
   test "a missing internal module fails preflight" do
-    internals = %{V121.internals() | descr: SpecLint.NoSuchDescr}
+    internals = %{@adapter.internals() | descr: SpecLint.NoSuchDescr}
 
-    assert V121.preflight(internals) ==
+    assert @adapter.preflight(internals) ==
              {:error, {:missing_compiler_modules, [SpecLint.NoSuchDescr]}}
   end
 
@@ -90,7 +122,8 @@ defmodule SpecLint.CompilerProbeTest do
     end
 
     test "an unchanged copy of the running build passes", %{ebins: ebins} do
-      assert V121.probe(:compiler_identity, %{V121.internals() | build_ebins: ebins}) == :ok
+      assert @adapter.probe(:compiler_identity, %{@adapter.internals() | build_ebins: ebins}) ==
+               :ok
     end
 
     test "a changed checker module", %{ebins: ebins} do
@@ -133,6 +166,7 @@ defmodule SpecLint.CompilerProbeTest do
                {:descr_exports, {:missing_descr_functions, [bdd_to_dnf: 1]}}
     end
 
+    @tag adapter: V121
     test "a changed map field encoding (the optional flag)" do
       stub =
         stub(Descr,
@@ -177,7 +211,9 @@ defmodule SpecLint.CompilerProbeTest do
             end
         )
 
-      assert failed(descr: stub) == {:descr_encoding, {:checks_failed, [:bitmap]}}
+      # On 1.20 term() is also expanded from the bits (audit-1.20.4.md).
+      failed = if @adapter == V120, do: [:bitmap, :term_expansion], else: [:bitmap]
+      assert failed(descr: stub) == {:descr_encoding, {:checks_failed, failed}}
     end
 
     test "changed semantics: covariant functions" do
@@ -209,7 +245,103 @@ defmodule SpecLint.CompilerProbeTest do
     end
   end
 
+  describe "Module.Types.Descr on 1.20: map fields and domains" do
+    @describetag adapter: V120
+
+    test "a changed map field encoding (the not_set() marker)" do
+      stub =
+        stub(Descr,
+          drop: [if_set: 1],
+          body:
+            quote do
+              def if_set(type), do: Map.delete(Descr.if_set(type), :optional)
+            end
+        )
+
+      assert {:descr_encoding, {:checks_failed, failed}} = failed(descr: stub)
+      assert :optional_marker in failed
+      assert :closed_map in failed
+    end
+
+    test "a changed optional flag on fields" do
+      stub =
+        stub(Descr,
+          drop: [closed_map: 1],
+          body:
+            quote do
+              def closed_map(pairs) do
+                Descr.closed_map(
+                  Enum.map(pairs, fn
+                    {key, %{optional: 1} = value} when is_atom(key) ->
+                      {key, Map.delete(value, :optional)}
+
+                    {key, value} when is_atom(key) ->
+                      {key, Descr.if_set(value)}
+
+                    other ->
+                      other
+                  end)
+                )
+              end
+            end
+        )
+
+      assert {:descr_encoding, {:checks_failed, failed}} = failed(descr: stub)
+      assert :closed_map in failed
+    end
+
+    test "the bitstring key domain renamed" do
+      stub =
+        stub(Descr,
+          drop: [to_domain_keys: 1],
+          body:
+            quote do
+              def to_domain_keys(descr) do
+                for key <- Descr.to_domain_keys(descr),
+                    do: if(key == :bitstring, do: :bitstring_no_binary, else: key)
+              end
+            end
+        )
+
+      assert failed(descr: stub) == {:descr_encoding, {:checks_failed, [:bitstring_domain]}}
+    end
+  end
+
+  describe "Module.Types.Descr on 1.20: term() and recursive nodes" do
+    @describetag adapter: V120
+
+    test "term() is no longer the union of its kinds' top types" do
+      stub =
+        stub(Descr,
+          drop: [non_empty_list: 2],
+          body:
+            quote do
+              def non_empty_list(:term, :term),
+                do: Descr.non_empty_list(Descr.integer(), Descr.empty_list())
+
+              def non_empty_list(element, tail), do: Descr.non_empty_list(element, tail)
+            end
+        )
+
+      assert failed(descr: stub) == {:descr_encoding, {:checks_failed, [:term_expansion]}}
+    end
+
+    test "recursive nodes appear" do
+      stub =
+        stub(Descr,
+          body:
+            quote do
+              def recursive(equations), do: equations
+            end
+        )
+
+      assert failed(descr: stub) == {:descr_encoding, {:checks_failed, [:no_recursive_nodes]}}
+    end
+  end
+
   describe "Module.Types.Descr: unfold/1 and recursive nodes (audit row 8)" do
+    @describetag adapter: V121
+
     test "unfold/1 no longer expands term()" do
       stub =
         stub(Descr,
@@ -247,7 +379,7 @@ defmodule SpecLint.CompilerProbeTest do
           body:
             quote do
               def atom(atoms),
-                do: Descr.opt_difference(Descr.atom(), Descr.atom([:__none__ | atoms]))
+                do: SpecLint.Compiler.difference(Descr.atom(), Descr.atom([:__none__ | atoms]))
             end
         )
 
@@ -382,7 +514,8 @@ defmodule SpecLint.CompilerProbeTest do
 
       assert failed(erl: stub) ==
                {:checker_version,
-                {:unsupported_checker_version, :elixir_checker_v11, :elixir_checker_v10}}
+                {:unsupported_checker_version, :elixir_checker_v11,
+                 @adapter.qualified_checker_version()}}
     end
   end
 
@@ -421,7 +554,8 @@ defmodule SpecLint.CompilerProbeTest do
 
       assert failed(exck_sample: path) ==
                {:checker_chunk,
-                {:checker_version_mismatch, :elixir_checker_v11, :elixir_checker_v10}}
+                {:checker_version_mismatch, :elixir_checker_v11,
+                 @adapter.qualified_checker_version()}}
     end
 
     test "an export key that is no longer {name, arity}", %{tmp_dir: dir} do
@@ -474,7 +608,7 @@ defmodule SpecLint.CompilerProbeTest do
                     {[return | acc], context}
                   end)
 
-                {used |> Enum.reduce(&Descr.opt_union/2) |> Descr.dynamic(), context}
+                {used |> Enum.reduce(&SpecLint.Compiler.union/2) |> Descr.dynamic(), context}
               end
 
               def remote_apply(info, mod, fun, args, expr, stack, context),
@@ -569,6 +703,8 @@ defmodule SpecLint.CompilerProbeTest do
   end
 
   describe "Code.Typespec.fetch_types/1" do
+    # 1.21 reports OTP 28 -nominal types as :nominal.
+    @tag adapter: V121
     test "a kind no longer reported" do
       stub =
         stub(Code.Typespec,
@@ -588,6 +724,32 @@ defmodule SpecLint.CompilerProbeTest do
         )
 
       assert {:typespec_kinds, {:type_kinds_changed, _}} = failed(typespec: stub)
+    end
+
+    # 1.20.4 leaves -nominal types out (audit-1.20.4.md row 18): one that
+    # starts reporting them fails the probe.
+    @tag adapter: V120
+    test "nominal types no longer left out" do
+      stub =
+        stub(Code.Typespec,
+          drop: [fetch_types: 1],
+          body:
+            quote do
+              def fetch_types(module) do
+                with {:ok, types} <- Code.Typespec.fetch_types(module),
+                     do: {:ok, [{:nominal, {:n, {:type, 1, :binary, []}, []}} | types]}
+              end
+            end
+        )
+
+      assert {:typespec_kinds, {:type_kinds_changed, kinds}} = failed(typespec: stub)
+      assert :nominal in kinds
+    end
+
+    @tag adapter: V120
+    test "the running Code.Typespec leaves nominal types out" do
+      refute V120.nominal_types?()
+      assert @adapter.probe(:typespec_kinds, @adapter.internals()) == :ok
     end
   end
 
@@ -670,7 +832,7 @@ defmodule SpecLint.CompilerProbeTest do
     test "a failed probe makes a CI run incomplete (exit 2) and reports it locally",
          %{project: project} do
       stub = stub(Module.Types, drop: [warnings: 6])
-      preflight = V121.preflight(%{V121.internals() | types: stub})
+      preflight = @adapter.preflight(%{@adapter.internals() | types: stub})
       assert {:error, {:capability_probe_failed, :pattern_checker, _}} = preflight
 
       config = %Config{baseline: "missing.json"}
@@ -712,19 +874,21 @@ defmodule SpecLint.CompilerProbeTest do
     @moduledoc false
     # The qualified adapter probing a compiler whose Module.Types.Apply lost
     # remote_apply/7. Only preflight/0 is reached: the run stops there.
-    alias SpecLint.Compiler.V121
     alias SpecLint.CompilerProbeTest.NoApply
 
     @spec preflight() :: {:ok, SpecLint.Compiler.capabilities()} | {:error, term()}
-    def preflight, do: V121.preflight(%{V121.internals() | apply: NoApply})
+    def preflight do
+      adapter = SpecLint.Compiler.running_adapter()
+      adapter.preflight(%{adapter.internals() | apply: NoApply})
+    end
   end
 
   # The first failing probe, as {probe, detail}. A CI run of the one-module
   # project with that preflight is incomplete and exits 2, naming the probe.
   defp failed(overrides) do
-    internals = Map.merge(V121.internals(), Map.new(overrides))
+    internals = Map.merge(@adapter.internals(), Map.new(overrides))
 
-    case V121.preflight(internals) do
+    case @adapter.preflight(internals) do
       {:error, {:capability_probe_failed, probe, detail}} = preflight ->
         project = Process.get(:probe_project)
         config = %Config{baseline: "missing.json"}

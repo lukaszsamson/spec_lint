@@ -18,44 +18,58 @@ defmodule SpecLint.OmissionsTest do
   import SpecLint.TestHelpers
 
   alias SpecLint.{Analysis, Compiler, Config, Evidence, Issue}
+  alias SpecLint.Compiler.{V120, V121}
   alias SpecLint.OmissionFixtures.{Cases, Changeset, ClauseLocal, Conn, Num, Page}
 
-  # {fixture, original MFA, current class, current class with
-  #  require_static_return: true, top_only reason?, desired class}
+  # {fixture, original MFA, per adapter {current class, current class with
+  #  require_static_return: true}, top_only reason?, desired class}
+  #
+  # Classes are pinned per compiler adapter (Milestone 3): V121 is Elixir
+  # 1.21 (c24c235 and 648b2a9), V120 is Elixir 1.20.4. The nine are the same
+  # on both.
   @omissions [
     # Decimal.compare/2: the error/4 macro expands to dynamic(), so the union
     # is top-only. Desired: clause_conflict (the NaN clauses return the struct).
-    {{:compare, 2}, "Decimal.compare/2", :unknown, :unknown, true, :clause_conflict},
+    {{:compare, 2}, "Decimal.compare/2",
+     %{V121 => {:unknown, :unknown}, V120 => {:unknown, :unknown}}, true, :clause_conflict},
     # Decimal.cmp/2: the same, by delegation to compare/2.
-    {{:cmp, 2}, "Decimal.cmp/2", :unknown, :unknown, true, :clause_conflict},
+    {{:cmp, 2}, "Decimal.cmp/2", %{V121 => {:unknown, :unknown}, V120 => {:unknown, :unknown}},
+     true, :clause_conflict},
     # Plug.Conn.Query.decode/4: Map.new/1 of a keyword gives atom keys, the
     # spec argument is too wide. Top-only. Desired: structured_possible.
-    {{:decode, 2}, "Plug.Conn.Query.decode/4", :unknown, :unknown, true, :structured_possible},
+    {{:decode, 2}, "Plug.Conn.Query.decode/4",
+     %{V121 => {:unknown, :unknown}, V120 => {:unknown, :unknown}}, true, :structured_possible},
     # Plug.Conn.merge_private/2: struct minus struct negation component, no
     # counted component. Desired: structured_possible.
-    {{:merge_private, 2}, "Plug.Conn.merge_private/2", :unknown, :unknown, false,
-     :structured_possible},
+    {{:merge_private, 2}, "Plug.Conn.merge_private/2",
+     %{V121 => {:unknown, :unknown}, V120 => {:unknown, :unknown}}, false, :structured_possible},
     # Ecto.Changeset.apply_action/2: {:ok, nil}; the only evidence is a
     # subtraction payload (F1). Desired: structured_possible.
-    {{:apply_action, 2}, "Ecto.Changeset.apply_action/2", :unknown, :unknown, false,
-     :structured_possible},
+    {{:apply_action, 2}, "Ecto.Changeset.apply_action/2",
+     %{V121 => {:unknown, :unknown}, V120 => {:unknown, :unknown}}, false, :structured_possible},
     # Ecto.Query.Builder.Join.escape/3: stale spec, 5-tuples for 4. The
     # clauses escape the spec domain (unguarded parameters). Desired:
     # clause_conflict.
-    {{:join_escape, 3}, "Ecto.Query.Builder.Join.escape/3", :possible_domain_escape,
-     :possible_domain_escape, true, :clause_conflict},
+    {{:join_escape, 3}, "Ecto.Query.Builder.Join.escape/3",
+     %{
+       V121 => {:possible_domain_escape, :possible_domain_escape},
+       V120 => {:possible_domain_escape, :possible_domain_escape}
+     }, true, :clause_conflict},
     # Ecto.Query.Builder.quoted_type/2: stale spec (:atom, {:tuple, _}, as
     # pairs). Clauses escape the domain. Desired: clause_conflict.
-    {{:quoted_type, 2}, "Ecto.Query.Builder.quoted_type/2", :possible_domain_escape,
-     :possible_domain_escape, false, :clause_conflict},
+    {{:quoted_type, 2}, "Ecto.Query.Builder.quoted_type/2",
+     %{
+       V121 => {:possible_domain_escape, :possible_domain_escape},
+       V120 => {:possible_domain_escape, :possible_domain_escape}
+     }, false, :clause_conflict},
     # Ecto.Repo.Assoc.query/4: Enum.map with a spec'd fun, top-only.
     # Desired: structured_possible.
-    {{:assoc_query, 4}, "Ecto.Repo.Assoc.query/4", :unknown, :unknown, true,
-     :structured_possible},
+    {{:assoc_query, 4}, "Ecto.Repo.Assoc.query/4",
+     %{V121 => {:unknown, :unknown}, V120 => {:unknown, :unknown}}, true, :structured_possible},
     # Ecto.Repo.Preloader.query/7: Enum.map with an untyped fun, top-only.
     # Desired: structured_possible.
-    {{:preloader_query, 7}, "Ecto.Repo.Preloader.query/7", :unknown, :unknown, true,
-     :structured_possible}
+    {{:preloader_query, 7}, "Ecto.Repo.Preloader.query/7",
+     %{V121 => {:unknown, :unknown}, V120 => {:unknown, :unknown}}, true, :structured_possible}
   ]
 
   @warning_classes [:clause_conflict, :structured_possible]
@@ -66,21 +80,21 @@ defmodule SpecLint.OmissionsTest do
     %{functions: Map.new(result.functions, &{&1.mfa, &1})}
   end
 
-  for {{name, arity}, original, current, current_static, top_only?, desired} <- @omissions do
+  for {{name, arity}, original, classes, top_only?, desired} <- @omissions do
     @fixture {Cases, name, arity}
-    @current current
-    @current_static current_static
+    @classes classes
     @top_only top_only?
     @desired desired
 
-    test "#{name}/#{arity} (#{original}) is currently #{current}", %{functions: functions} do
+    test "#{name}/#{arity} (#{original}) has its pinned class", %{functions: functions} do
       function = Map.fetch!(functions, @fixture)
       assert function.status == :compared
+      {current, current_static} = Map.fetch!(@classes, adapter())
 
-      assert Evidence.classify_function(function.slices) == @current
+      assert Evidence.classify_function(function.slices) == current
 
       assert Evidence.classify_function(function.slices, require_static_return: true) ==
-               @current_static
+               current_static
 
       assert Enum.any?(function.slices, fn slice ->
                :top_only in Evidence.classify(slice.relations).reasons
@@ -88,14 +102,17 @@ defmodule SpecLint.OmissionsTest do
 
       # Ground truth: this is a real omission, so a warning class is desired.
       assert @desired in @warning_classes
-      refute @current in @warning_classes
+      refute current in @warning_classes
     end
   end
 
   test "every fixture function has a recorded class", %{functions: functions} do
+    for {_fixture, _original, classes, _top_only, _desired} <- @omissions,
+        do: assert(Enum.sort(Map.keys(classes)) == Enum.sort(Compiler.adapters()))
+
     assert functions |> Map.keys() |> Enum.sort() ==
              @omissions
-             |> Enum.map(fn {{name, arity}, _, _, _, _, _} -> {Cases, name, arity} end)
+             |> Enum.map(fn {{name, arity}, _, _, _, _} -> {Cases, name, arity} end)
              |> Enum.sort()
   end
 
@@ -133,14 +150,23 @@ defmodule SpecLint.OmissionsTest do
   # reproduced by SpecLint.OmissionFixtures.ClauseLocal (the clause-local
   # qualification experiment, bench/corpus/clause_local_qualification.md).
   # Unlike the nine above, both are clause_conflict today.
-  # {fixture, original MFA, class, class with require_static_return: true,
-  #  SL001 gate without the flag, SL001 gate with clause_local_qualification}
+  # {fixture, original MFA, per adapter {class, class with
+  #  require_static_return: true, SL001 gate without the flag, SL001 gate
+  #  with clause_local_qualification}}; the same on both adapters.
   @clause_local [
     # Ash.Page.page_opts/1: blocked by the arrow inside page() without the
     # flag; its (false or nil) clause is contained in the spec lower bound.
-    {{:page_opts, 1}, "Ash.Page.page_opts/1", :clause_conflict, :possible_gradual, false, true},
+    {{:page_opts, 1}, "Ash.Page.page_opts/1",
+     %{
+       V121 => {:clause_conflict, :possible_gradual, false, true},
+       V120 => {:clause_conflict, :possible_gradual, false, true}
+     }},
     # Oban.Registry.via/3: exact translation, gates either way.
-    {{:via, 3}, "Oban.Registry.via/3", :clause_conflict, :possible_gradual, true, true}
+    {{:via, 3}, "Oban.Registry.via/3",
+     %{
+       V121 => {:clause_conflict, :possible_gradual, true, true},
+       V120 => {:clause_conflict, :possible_gradual, true, true}
+     }}
   ]
 
   describe "clause-local stand-ins" do
@@ -150,22 +176,20 @@ defmodule SpecLint.OmissionsTest do
       %{functions: Map.new(result.functions, &{&1.mfa, &1})}
     end
 
-    for {{name, arity}, original, class, static, gate_off, gate_on} <- @clause_local do
+    for {{name, arity}, original, classes} <- @clause_local do
       @fixture {ClauseLocal, name, arity}
-      @class class
-      @static static
-      @gate_off gate_off
-      @gate_on gate_on
+      @classes classes
 
-      test "#{name}/#{arity} (#{original}) is #{class}, gated #{gate_off}/#{gate_on}", %{
+      test "#{name}/#{arity} (#{original}) has its pinned class and gates", %{
         functions: functions
       } do
         function = Map.fetch!(functions, @fixture)
         assert function.status == :compared
-        assert Evidence.classify_function(function.slices) == @class
-        assert Evidence.classify_function(function.slices, require_static_return: true) == @static
+        {class, static, gate_off, gate_on} = Map.fetch!(@classes, adapter())
+        assert Evidence.classify_function(function.slices) == class
+        assert Evidence.classify_function(function.slices, require_static_return: true) == static
 
-        for {flag, gate} <- [{false, @gate_off}, {true, @gate_on}] do
+        for {flag, gate} <- [{false, gate_off}, {true, gate_on}] do
           config = %Config{baseline: "tmp/none.json", clause_local_qualification: flag}
           run = run!([ClauseLocal], [], config)
 
@@ -178,9 +202,12 @@ defmodule SpecLint.OmissionsTest do
     end
 
     test "every clause-local stand-in has a recorded class", %{functions: functions} do
+      for {_fixture, _original, classes} <- @clause_local,
+          do: assert(Enum.sort(Map.keys(classes)) == Enum.sort(Compiler.adapters()))
+
       assert functions |> Map.keys() |> Enum.sort() ==
                @clause_local
-               |> Enum.map(fn {{name, arity}, _, _, _, _, _} -> {ClauseLocal, name, arity} end)
+               |> Enum.map(fn {{name, arity}, _, _} -> {ClauseLocal, name, arity} end)
                |> Enum.sort()
     end
   end

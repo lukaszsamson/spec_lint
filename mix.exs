@@ -5,7 +5,7 @@ defmodule SpecLint.MixProject do
     [
       app: :spec_lint,
       version: "0.1.0",
-      elixir: "~> 1.21-dev",
+      elixir: "~> 1.20.4 or ~> 1.21-dev",
       start_permanent: Mix.env() == :prod,
       elixirc_paths: elixirc_paths(Mix.env()),
       deps: deps(),

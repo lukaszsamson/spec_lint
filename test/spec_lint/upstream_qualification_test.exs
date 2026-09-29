@@ -17,9 +17,10 @@ defmodule SpecLint.UpstreamQualificationTest do
 
   describe "for-comprehension into: a bitstring-or-list collectable (audit row 19)" do
     # c24c235 carries the fork fix "Fix incorrect narrowing in mixed type for
-    # into"; upstream 648b2a9 does not. Upstream narrows a variable used as
-    # the comprehension body to bitstring(), although the list path accepts
-    # any element, and stores that narrowed domain in the checker chunk.
+    # into"; upstream 648b2a9 does not (1.20.4 does not narrow either).
+    # Upstream narrows a variable used as the comprehension body to
+    # bitstring(), although the list path accepts any element, and stores
+    # that narrowed domain in the checker chunk.
     @source """
     defmodule IntoProbe do
       @spec f(boolean(), atom()) :: atom()
@@ -66,6 +67,13 @@ defmodule SpecLint.UpstreamQualificationTest do
           assert Compiler.equal?(value, Compiler.bitstring())
           assert [%Issue{rule: "SL003", gate: true}] = run.issues
           assert run.exit_code == 1
+
+        "759443e" ->
+          # Elixir 1.20.4 (Milestone 3, audit-1.20.4.md row 19): no
+          # narrowing, as on the fork revision.
+          assert Compiler.equal?(value, Compiler.term())
+          assert run.issues == []
+          assert run.exit_code == 0
       end
     end
   end

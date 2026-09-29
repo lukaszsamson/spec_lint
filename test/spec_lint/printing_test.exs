@@ -10,7 +10,7 @@ defmodule SpecLint.PrintingTest do
   alias SpecLint.Report.{Console, Json}
 
   # Classification must not depend on printing (Milestone 1): this adapter
-  # is the qualified one except that it cannot print. Fingerprints still use
+  # is the running compiler's qualified one except that it cannot print. Fingerprints still use
   # the structural canonical form (DESIGN 9.1).
   defmodule NoPrintAdapter do
     @moduledoc false
@@ -22,7 +22,7 @@ defmodule SpecLint.PrintingTest do
 
       @impl true
       def unquote(name)(unquote_splicing(args)),
-        do: apply(SpecLint.Compiler.V121, unquote(name), [unquote_splicing(args)])
+        do: apply(SpecLint.Compiler.running_adapter(), unquote(name), [unquote_splicing(args)])
     end
 
     @impl true
@@ -31,11 +31,17 @@ defmodule SpecLint.PrintingTest do
 
   # The printer as it was before Milestone 1, which printed the direct and
   # the complement form in full and kept the shorter one. The current
-  # adapter must print exactly the same strings.
+  # adapter must print exactly the same strings. Set operations and the
+  # expansion of term() and recursive nodes are the running adapter's
+  # (Milestone 3: 1.20 has union/2 where 1.21 has opt_union/2, and no
+  # public unfold/1).
   defmodule ReferencePrinter do
     @moduledoc false
 
     alias Module.Types.Descr
+
+    defp ops, do: SpecLint.Compiler.running_adapter()
+    defp intersection(left, right), do: ops().intersection(left, right)
 
     @spec to_string(term()) :: String.t()
     def to_string(descr) do
@@ -49,7 +55,7 @@ defmodule SpecLint.PrintingTest do
     defp quoted(descr), do: Descr.to_quoted_string(descr, skip_dynamic_for_indivisible: false)
 
     defp canonical_or_complement(descr) do
-      complement = Descr.opt_difference(Descr.term(), descr)
+      complement = ops().difference(Descr.term(), descr)
 
       if Descr.empty?(complement) do
         "term()"
@@ -61,7 +67,7 @@ defmodule SpecLint.PrintingTest do
     end
 
     defp normal_form_string(descr) do
-      static = descr |> unfold_node() |> Descr.unfold()
+      static = ops().expand(descr)
       rest = Map.drop(static, [:tuple, :map])
       rest_string = if Descr.empty?(rest), do: [], else: [quoted(rest)]
 
@@ -79,9 +85,6 @@ defmodule SpecLint.PrintingTest do
       end
     end
 
-    defp unfold_node({_id, _state, _generator} = node), do: Descr.unfold(node)
-    defp unfold_node(descr), do: descr
-
     defp parenthesise(string) do
       if String.contains?(string, [" or ", " and "]), do: "(" <> string <> ")", else: string
     end
@@ -92,9 +95,9 @@ defmodule SpecLint.PrintingTest do
 
     defp line(kind, {pos, negs}) do
       positives = if pos == [], do: [top_literal(kind)], else: pos
-      pos_descr = positives |> Enum.map(&%{kind => &1}) |> Enum.reduce(&Descr.opt_intersection/2)
+      pos_descr = positives |> Enum.map(&%{kind => &1}) |> Enum.reduce(&intersection/2)
       live = Enum.reject(negs, &Descr.disjoint?(pos_descr, %{kind => &1}))
-      line = Enum.reduce(live, pos_descr, &Descr.opt_difference(&2, %{kind => &1}))
+      line = Enum.reduce(live, pos_descr, &ops().difference(&2, %{kind => &1}))
 
       if Descr.empty?(line) do
         []
@@ -196,6 +199,9 @@ defmodule SpecLint.PrintingTest do
 
   describe "printing budget" do
     test "a run prints no type; rendering its findings stays within the budget" do
+      # Preflight (memoised per VM) runs the printer option probe; the first
+      # test of a VM to run it must not count it as the run's printing.
+      assert {:ok, _capabilities} = C.preflight_once()
       {run, execute_calls} = counting(fn -> run!(@fixture_modules) end)
       assert run.issues != []
       assert execute_calls == %{adapter: 0, descr: 0}
@@ -292,7 +298,7 @@ defmodule SpecLint.PrintingTest do
   # Counts, in every process, calls of the adapter's printer and of the
   # compiler's own printer while `fun` runs.
   defp counting(fun) do
-    adapter = {SpecLint.Compiler.V121, :to_string, 1}
+    adapter = {SpecLint.Compiler.running_adapter(), :to_string, 1}
     descr = {Descr, :to_quoted_string, 2}
     mfas = [adapter, descr]
 

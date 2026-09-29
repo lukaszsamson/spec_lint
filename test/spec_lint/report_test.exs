@@ -13,13 +13,15 @@ defmodule SpecLint.ReportTest do
   test "the JSON envelope is versioned and carries provenance" do
     run = run!([Compare], ci: true)
     envelope = Json.envelope(run)
+    adapter_id = "#{System.version()}+#{System.build_info()[:revision]}"
+    checker_version = Atom.to_string(adapter().qualified_checker_version())
 
     assert %{
              "schema" => "spec_lint/report",
              "schema_version" => 1,
              "tool" => %{"name" => "spec_lint", "version" => "0.1.0"},
-             "adapter" => "1.21.0-dev+" <> _,
-             "checker_version" => "elixir_checker_v10",
+             "adapter" => ^adapter_id,
+             "checker_version" => ^checker_version,
              "config" => %{"digest" => "sha256:" <> _, "profile" => "review", "ci" => true},
              "scope" => %{"partial" => true, "module_filters" => ["SpecLint.Fixtures.Compare"]},
              "capabilities" => %{"signatures" => true, "bodies" => false},

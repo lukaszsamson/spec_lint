@@ -347,8 +347,9 @@ defmodule SpecLint.ClauseLocalTest do
 
     defmodule SpecLint.ClauseLocalProbe.Index do
       @moduledoc false
-      # Source clause 0 always raises, so the checker drops it: source
-      # clause 1 is stored, and reported, as stored clause 0.
+      # Source clause 0 always raises. The 1.21 checker drops it: source
+      # clause 1 is stored, and reported, as stored clause 0. 1.20.4 keeps
+      # it as (:a) -> none(), so source clause 1 is stored clause 1.
       @spec idx(:a | :b | :c | (pos_integer() -> atom())) :: :ok
       def idx(:a), do: raise(ArgumentError, "no :a")
       def idx(:b), do: {:error, :b}
@@ -394,11 +395,17 @@ defmodule SpecLint.ClauseLocalTest do
     test "the reported clause is the stored signature clause", %{ebin: ebin, probe_on: on} do
       index = SpecLint.ClauseLocalProbe.Index
       assert [issue] = sl001(on, {index, :idx, 1})
-      assert %Issue{evidence: :clause_conflict, clause: 0, gate: true} = issue
 
-      assert {"stored signature clause", "#0 (:b) -> {:error, :b}"} in Issue.rendered_details(
-               issue
-             )
+      # Pinned per adapter (Milestone 3): 1.20.4 stores the raising source
+      # clause as (:a) -> none(), 1.21 drops it.
+      {stored, label} =
+        case adapter() do
+          SpecLint.Compiler.V121 -> {0, "#0 (:b) -> {:error, :b}"}
+          SpecLint.Compiler.V120 -> {1, "#1 (:b) -> {:error, :b}"}
+        end
+
+      assert %Issue{evidence: :clause_conflict, clause: ^stored, gate: true} = issue
+      assert {"stored signature clause", label} in Issue.rendered_details(issue)
 
       refute Map.has_key?(issue.data, :pattern_diagnostic_lines)
 
@@ -478,12 +485,24 @@ defmodule SpecLint.ClauseLocalTest do
       {:ok, run} = Run.execute(project, %{config | baseline: "none.json"}, ci: true)
       module = SpecLint.ClauseLocalProbe.Compound
 
-      for name <- [:direct, :macro_guard] do
+      for {name, line} <- [direct: 7, macro_guard: 11] do
         assert [issue] = sl001(run, {module, name, 1})
         refute issue.gate
         assert :clause_reachable in Issue.blocked(issue)
-        assert issue.data.guard_feasibility == "unproven"
-        assert run.reachability[{module, name, 1}] == {:ok, {:guard_unproven, []}}
+
+        # Pinned per adapter (Milestone 3): the 1.21 checker does not see
+        # the contradiction, so the guard witness search blocks it; the
+        # 1.20.4 checker reports it ("this guard will never succeed").
+        case adapter() do
+          SpecLint.Compiler.V121 ->
+            assert issue.data.guard_feasibility == "unproven"
+            assert run.reachability[{module, name, 1}] == {:ok, {:guard_unproven, []}}
+
+          SpecLint.Compiler.V120 ->
+            assert issue.data.pattern_diagnostic_lines == [line]
+            refute Map.has_key?(issue.data, :guard_feasibility)
+            assert run.reachability[{module, name, 1}] == {:ok, [line]}
+        end
       end
 
       for name <- [:single, :single_macro] do
