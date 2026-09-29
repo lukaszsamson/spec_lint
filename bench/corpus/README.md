@@ -390,3 +390,36 @@ tool (`reports/elixir-1.20.4/c24c235/`), their comparison
 release is checked against), `SPEC_LINT_BASELINE_DIR` and
 `SPEC_LINT_WRITE_BASELINE_DIR`; `toolchain/elixir-1.20.4.json` is the
 replay manifest.
+
+
+## Release campaign tooling (Milestone 5)
+
+- **Stale outputs.** `run.sh` removes a corpus's earlier outputs in the
+  output directory (report, `.gz`, provenance, logs, resources) before it
+  runs the corpus, so an interrupted or killed run cannot leave an earlier
+  run's report in place.
+- **Resources.** The product run is wrapped in `/usr/bin/time -l` (macOS;
+  `-v` with GNU time). `NAME.resources.json` records its wall time
+  (`real`), the maximum resident set size of the process tree it waited for
+  (the product VM), the macOS peak memory footprint, the method and the
+  platform. These files are measurements, not deterministic output.
+- **Budgets.** `budgets.json` holds a wall-time (`wall_s`) and peak-RSS
+  (`max_rss_mb`) budget per corpus; `SPEC_LINT_BUDGETS` selects another
+  file (`none` disables the check). A corpus over either budget fails the
+  runner with exit 2 after all named corpora ran, keeping its report and
+  recording `budget.within: false` in its resources file.
+- **`compare_replay.sh`** fails closed: a report that is missing (including
+  a corpus with only its provenance, or one present in a baseline
+  directory), unreadable (truncated, not JSON) or not `complete` is listed
+  in `incomplete`, makes `all_unchanged` false and exits 2 after the
+  summary is printed.
+- **`gate_diff.sh NEW BASE`** lists every gated finding of NEW as `new`,
+  `changed` (with the differing keys) or `unchanged` against BASE, and
+  BASE's gates that NEW lacks as `removed`: the input of the refutation
+  phase (`reports/release-1/gates.json`).
+- **`../evaluation/struct_defaults.exs`** tags the findings whose extra
+  return is a struct whose only violation is a default-`nil` field (the
+  definition is in the script), per adapter, without changing any finding
+  or policy.
+
+The release campaign itself is `reports/release-1/` (see its README).

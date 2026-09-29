@@ -107,6 +107,19 @@ defmodule SpecLint.RunTest do
     end
   end
 
+  test "an internal failure after the per-module analysis is an error (exit 2), not a run" do
+    # Fault injection: a configuration struct built without the coverage
+    # floor (Config.load never produces one) raises in the coverage stage,
+    # after every module was analysed.
+    config = %Config{@config | coverage: %{fail_on_regression: true}}
+
+    for ci <- [false, true] do
+      assert {:error, message} = Run.execute(project(), config, ci: ci, modules: [Compare])
+
+      assert message =~ "internal failure: key :floor not found"
+    end
+  end
+
   test "exclude globs move modules out of scope" do
     config = %Config{@config | exclude: ["test/support/**"]}
     run = run!([Compare], [], config)

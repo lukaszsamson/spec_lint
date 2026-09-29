@@ -4,6 +4,8 @@ defmodule SpecLint.CorpusReportTest do
   @moduletag :tmp_dir
   @script Path.expand("../../bench/corpus/normalise_report.sh", __DIR__)
   @runner Path.expand("../../bench/corpus/run.sh", __DIR__)
+  @compare Path.expand("../../bench/corpus/compare_replay.sh", __DIR__)
+  @gate_diff Path.expand("../../bench/corpus/gate_diff.sh", __DIR__)
 
   test "large product reports retain the real ledger and completion plus full compressed JSON", %{
     tmp_dir: dir
@@ -164,6 +166,213 @@ defmodule SpecLint.CorpusReportTest do
     assert message =~ "unexpected revision for fake"
   end
 
+  test "corpus runner measures the product run and fails when a budget is exceeded", %{
+    tmp_dir: dir
+  } do
+    {_checkout, revision, bin} = setup_mock_corpus(dir)
+    manifest = Path.join(dir, "manifest.json")
+    out = Path.join(dir, "reports")
+    File.write!(manifest, JSON.encode!(%{"fake" => %{"revision" => revision}}))
+    budgets = Path.join(dir, "budgets.json")
+
+    env =
+      [
+        {"MOCK_COMPLETION", "complete"},
+        {"MOCK_EXIT", "0"},
+        {"SPEC_LINT_BUDGETS", budgets}
+        | corpus_env(dir, manifest, out, bin)
+      ]
+
+    File.write!(
+      budgets,
+      JSON.encode!(%{"corpora" => %{"fake" => %{"wall_s" => 600, "max_rss_mb" => 100_000}}})
+    )
+
+    assert {_, 0} = System.cmd("bash", [@runner, "fake"], env: env, stderr_to_stdout: true)
+    resources = out |> Path.join("fake.resources.json") |> File.read!() |> JSON.decode!()
+    assert resources["schema"] == "spec_lint.corpus_resources/1"
+    assert is_number(resources["wall_s"])
+    assert resources["max_rss_bytes"] > 0
+    assert resources["method"] =~ "/usr/bin/time"
+    assert resources["budget"] == %{"wall_s" => 600, "max_rss_mb" => 100_000, "within" => true}
+
+    # Every process has a resident set: a zero memory budget is exceeded.
+    File.write!(
+      budgets,
+      JSON.encode!(%{"corpora" => %{"fake" => %{"wall_s" => 600, "max_rss_mb" => 0}}})
+    )
+
+    assert {message, 2} = System.cmd("bash", [@runner, "fake"], env: env, stderr_to_stdout: true)
+    assert message =~ "budget exceeded for fake"
+    assert message =~ "resource budgets exceeded: fake"
+    assert File.exists?(Path.join(out, "fake.spec_lint.json"))
+    resources = out |> Path.join("fake.resources.json") |> File.read!() |> JSON.decode!()
+    assert resources["budget"]["within"] == false
+
+    # A corpus without a budget is measured, not checked.
+    File.write!(budgets, JSON.encode!(%{"corpora" => %{}}))
+    assert {_, 0} = System.cmd("bash", [@runner, "fake"], env: env, stderr_to_stdout: true)
+    resources = out |> Path.join("fake.resources.json") |> File.read!() |> JSON.decode!()
+    assert resources["budget"] == nil
+  end
+
+  test "corpus runner removes an earlier run's outputs before running a corpus", %{tmp_dir: dir} do
+    {_checkout, _revision, bin} = setup_mock_corpus(dir)
+    manifest = Path.join(dir, "manifest.json")
+    out = Path.join(dir, "reports")
+    File.mkdir_p!(out)
+    File.write!(manifest, JSON.encode!(%{"fake" => %{"revision" => String.duplicate("0", 40)}}))
+
+    earlier = ~w(fake.spec_lint.json fake.provenance.json fake.resources.json fake.json)
+    for file <- earlier, do: File.write!(Path.join(out, file), "{}")
+
+    {message, 2} =
+      System.cmd("bash", [@runner, "fake"],
+        env: corpus_env(dir, manifest, out, bin),
+        stderr_to_stdout: true
+      )
+
+    assert message =~ "unexpected revision for fake"
+    for file <- earlier, do: refute(File.exists?(Path.join(out, file)), file)
+  end
+
+  test "compare_replay.sh treats a missing, truncated or incomplete report as a failure", %{
+    tmp_dir: dir
+  } do
+    base = Path.join(dir, "base")
+    new = Path.join(dir, "new")
+    File.mkdir_p!(base)
+    File.mkdir_p!(new)
+
+    report = fn status, code ->
+      JSON.encode!(%{
+        "completion" => %{"status" => status, "exit_code" => code},
+        "ledger" => %{"slices" => %{"compared" => 1}},
+        "findings" => []
+      })
+    end
+
+    for name <- ~w(a b c d),
+        do: File.write!(Path.join(base, "#{name}.spec_lint.json"), report.("complete", 0))
+
+    File.write!(Path.join(new, "a.spec_lint.json"), report.("complete", 0))
+
+    compare = fn ->
+      {output, status} = System.cmd("bash", quiet([@compare, new, base]))
+      {JSON.decode!(output), status}
+    end
+
+    # b and c are missing (c has only its provenance), d is truncated.
+    File.write!(Path.join(new, "c.provenance.json"), "{}")
+    File.write!(Path.join(new, "d.spec_lint.json"), binary_part(report.("complete", 0), 0, 30))
+    {summary, 2} = compare.()
+    statuses = Map.new(summary["corpora"], &{&1["corpus"], &1["status"]})
+
+    assert statuses == %{
+             "a" => "complete",
+             "b" => "missing",
+             "c" => "missing",
+             "d" => "unreadable"
+           }
+
+    assert summary["incomplete"] == ~w(b c d)
+    refute summary["all_unchanged"]
+
+    # A complete set is compared; an incomplete run is not.
+    for name <- ~w(b c d),
+        do: File.write!(Path.join(new, "#{name}.spec_lint.json"), report.("complete", 0))
+
+    assert {%{"all_unchanged" => true, "incomplete" => []}, 0} = compare.()
+
+    File.write!(Path.join(new, "b.spec_lint.json"), report.("incomplete", 2))
+    {summary, 2} = compare.()
+    assert summary["incomplete"] == ["b"]
+    refute summary["all_unchanged"]
+
+    # A corpus named only by the environment is expected too.
+    File.write!(Path.join(new, "b.spec_lint.json"), report.("complete", 0))
+
+    {output, 2} =
+      System.cmd("bash", quiet([@compare, new, base]), env: [{"SPEC_LINT_EXPECTED_CORPORA", "e"}])
+
+    assert JSON.decode!(output)["incomplete"] == ["e"]
+  end
+
+  test "gate_diff.sh marks gates new, changed, unchanged or removed", %{tmp_dir: dir} do
+    base = Path.join(dir, "base")
+    new = Path.join(dir, "new")
+    File.mkdir_p!(base)
+    File.mkdir_p!(new)
+
+    gate = fn subject, fingerprint, extra ->
+      Map.merge(
+        %{
+          "subject" => subject,
+          "rule" => "SL001",
+          "evidence" => "clause_conflict",
+          "slice" => 0,
+          "clause" => 1,
+          "line" => 3,
+          "gate" => true,
+          "fingerprint" => fingerprint,
+          "details" => [["spec", subject]],
+          "data" => %{}
+        },
+        extra
+      )
+    end
+
+    report = fn findings ->
+      JSON.encode!(%{
+        "adapter" => "a",
+        "completion" => %{"status" => "complete", "exit_code" => 1},
+        "ledger" => %{},
+        "findings" => findings
+      })
+    end
+
+    File.write!(
+      Path.join(base, "c.spec_lint.json"),
+      report.([
+        gate.("M.same/1", "f1", %{}),
+        gate.("M.moved/1", "f2", %{}),
+        gate.("M.gone/1", "f3", %{}),
+        gate.("M.data/1", "f4", %{})
+      ])
+    )
+
+    File.write!(
+      Path.join(new, "c.spec_lint.json"),
+      report.([
+        gate.("M.same/1", "f1", %{"details" => [["spec", "reprinted"]]}),
+        gate.("M.moved/1", "f9", %{}),
+        gate.("M.fresh/1", "f5", %{}),
+        gate.("M.data/1", "f4", %{"data" => %{"source_clause" => 1}}),
+        gate.("M.info/1", "f6", %{"gate" => false})
+      ])
+    )
+
+    {output, 0} = System.cmd("bash", [@gate_diff, new, base])
+    diff = JSON.decode!(output)
+    statuses = Map.new(diff["gates"], &{&1["subject"], {&1["status"], &1["changes"]}})
+
+    assert statuses == %{
+             "M.same/1" => {"unchanged", []},
+             "M.moved/1" => {"changed", ["fingerprint"]},
+             "M.data/1" => {"changed", ["data"]},
+             "M.fresh/1" => {"new", nil},
+             "M.gone/1" => {"removed", nil}
+           }
+
+    assert diff["counts"] == %{"changed" => 2, "new" => 1, "removed" => 1, "unchanged" => 1}
+
+    File.write!(Path.join(new, "c.spec_lint.json"), "{")
+    assert {_, 2} = System.cmd("bash", quiet([@gate_diff, new, base]))
+  end
+
+  # bash arguments that run a script with its standard error discarded.
+  defp quiet(argv), do: ["-c", ~s(exec 2>/dev/null; exec bash "$@"), "bash" | argv]
+
   defp setup_mock_corpus(dir) do
     checkout = Path.join([dir, "oss", "fake"])
     ebin = Path.join(checkout, "_build/test/lib/fake/ebin")
@@ -201,10 +410,10 @@ defmodule SpecLint.CorpusReportTest do
     JSON
           exit 0 ;;
         --output)
-          cat >"$2" <<'JSON'
-    {"adapter":"adapter","checker_version":"checker","findings":[],"ledger":{},"completion":{"status":"incomplete","exit_code":2}}
+          cat >"$2" <<JSON
+    {"adapter":"adapter","checker_version":"checker","findings":[],"ledger":{},"completion":{"status":"${MOCK_COMPLETION:-incomplete}","exit_code":${MOCK_EXIT:-2}}}
     JSON
-          exit 2 ;;
+          exit "${MOCK_EXIT:-2}" ;;
       esac
       shift
     done

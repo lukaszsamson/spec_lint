@@ -40,6 +40,20 @@
 # NAME.json.gz and writes a schema-checked summary to NAME.json. Per-corpus
 # NAME.provenance.json records source, toolchain and compiled artifact hashes.
 #
+# Before a corpus runs, its earlier outputs in the output directory are
+# removed, so a run that is interrupted or killed leaves no report of an
+# earlier run that could be read as this run's (compare_replay.sh reports
+# the corpus as missing).
+#
+# Resources (Milestone 5): the product run is measured with /usr/bin/time
+# (-l on macOS, -v with GNU time): wall time and the peak resident set size
+# of its VM, written with the method to NAME.resources.json (not
+# deterministic; not part of the normalised reports). SPEC_LINT_BUDGETS
+# (default bench/corpus/budgets.json; "none" disables the check) holds a
+# wall-time and peak-RSS budget per corpus. A corpus with a budget that
+# exceeds either one fails the runner (exit 2) after every named corpus has
+# run; its report is kept, and NAME.resources.json records the verdict.
+#
 # Runs under bash 3.2 (the macOS system bash) and later: no associative
 # arrays, and empty arrays are expanded with ${a[@]+"${a[@]}"} (set -u).
 set -euo pipefail
@@ -55,6 +69,20 @@ raw="$(mktemp -d)"
 trap 'rm -rf "$raw"' EXIT
 
 command -v jq >/dev/null || { echo "jq is required" >&2; exit 2; }
+budgets="${SPEC_LINT_BUDGETS:-$root/bench/corpus/budgets.json}"
+if [ "$budgets" != none ] && [ -f "$budgets" ]; then
+  jq -e '(.corpora | type == "object") and all(.corpora[];
+    (.wall_s | type == "number") and (.max_rss_mb | type == "number"))' "$budgets" >/dev/null ||
+    { echo "invalid budgets file: $budgets" >&2; exit 2; }
+else
+  budgets=none
+fi
+time_tool=/usr/bin/time
+case "$(uname -s)" in
+  Darwin) time_flag=-l ;;
+  *) time_flag=-v ;;
+esac
+budget_failures=()
 if [ -n "$manifest" ]; then
   jq -e 'type == "object" and all(.[]; (.revision | type == "string") and
     (.app == null or (.app | type == "string")) and
@@ -160,8 +188,53 @@ select_corpus() {
   esac
 }
 
+# resources NAME TIME_OUTPUT STATUS -> writes $out/NAME.resources.json and
+# records a budget failure.
+resources() {
+  local name="$1" measured="$2" wall rss footprint budget verdict
+  if [ "$time_flag" = -l ]; then
+    wall="$(awk '/ real / {print $1; exit}' "$measured")"
+    rss="$(awk '/maximum resident set size/ {print $1; exit}' "$measured")"
+    footprint="$(awk '/peak memory footprint/ {print $1; exit}' "$measured")"
+  else
+    wall="$(awk -F': ' '/Elapsed \(wall clock\)/ {n = split($2, p, ":"); s = 0;
+      for (i = 1; i <= n; i++) s = s * 60 + p[i]; print s; exit}' "$measured")"
+    rss="$(awk -F': ' '/Maximum resident set size/ {print $2 * 1024; exit}' "$measured")"
+    footprint=""
+  fi
+  if [ -z "$wall" ] || [ -z "$rss" ]; then
+    echo "cannot read the resource measurement of $name" >&2
+    cat "$measured" >&2
+    exit 2
+  fi
+  budget=null
+  if [ "$budgets" != none ]; then
+    budget="$(jq -c --arg name "$name" '.corpora[$name] // null' "$budgets")"
+  fi
+  verdict="$(jq -n --argjson wall "$wall" --argjson rss "$rss" --argjson budget "$budget" '
+    if $budget == null then null
+    else {wall_s: $budget.wall_s, max_rss_mb: $budget.max_rss_mb,
+          within: ($wall <= $budget.wall_s and $rss <= $budget.max_rss_mb * 1048576)}
+    end')"
+  jq -nS --arg corpus "$name" --argjson wall "$wall" --argjson rss "$rss" \
+    --arg footprint "$footprint" --argjson budget "$verdict" \
+    --arg method "$time_tool $time_flag around the product run (mix run bench/run_on_ebin.exs); wall is its real time, max_rss_bytes the maximum resident set size of the process tree it waited for (the product VM)" \
+    --arg platform "$(uname -sm)" \
+    '{schema: "spec_lint.corpus_resources/1", corpus: $corpus, method: $method,
+      platform: $platform, wall_s: $wall, max_rss_bytes: $rss,
+      peak_footprint_bytes: (if $footprint == "" then null else ($footprint | tonumber) end),
+      budget: $budget}' >"$out/$name.resources.json"
+  if [ "$verdict" != null ] && [ "$(jq -r .within <<<"$verdict")" != true ]; then
+    echo "budget exceeded for $name: ${wall} s, $((rss / 1048576)) MB (budget $(jq -r '"\(.wall_s) s, \(.max_rss_mb) MB"' <<<"$verdict"))" >&2
+    budget_failures+=("$name")
+  fi
+}
+
 for name in "${corpora[@]}"; do
   echo "== $name" >&2
+  rm -f "$out/$name.provenance.json" "$out/$name.spec_lint.json" "$out/$name.spec_lint.json.gz" \
+    "$out/$name.spec_lint.log" "$out/$name.resources.json" "$out/$name.experiment.log"
+  if [ "$product_only" != 1 ]; then rm -f "$out/$name.json" "$out/$name.json.gz"; fi
   select_corpus "$name"
   for e in "${ebins[@]}"; do
     [ -d "$e" ] || { echo "missing corpus ebin: $e" >&2; exit 2; }
@@ -197,8 +270,10 @@ for name in "${corpora[@]}"; do
     if [ -n "${SPEC_LINT_BASELINE_DIR:-}" ] && [ -f "$SPEC_LINT_BASELINE_DIR/$name.json" ]; then
       baseline_args=(--baseline "$SPEC_LINT_BASELINE_DIR/$name.json")
     fi
+    [ -x "$time_tool" ] || { echo "$time_tool is required to measure the product run" >&2; exit 2; }
     set +e
-    MIX_ENV=test mix run bench/run_on_ebin.exs -- "${args[@]}" ${cp_args[@]+"${cp_args[@]}"} \
+    MIX_ENV=test "$time_tool" "$time_flag" -o "$raw/$name.time" \
+      mix run bench/run_on_ebin.exs -- "${args[@]}" ${cp_args[@]+"${cp_args[@]}"} \
       --root "$project_root" --ci --format json --output "$raw/$name.spec_lint.json" \
       ${baseline_args[@]+"${baseline_args[@]}"} \
       ${product_args[@]+"${product_args[@]}"} >"$raw/$name.run.log" 2>&1
@@ -210,6 +285,7 @@ for name in "${corpora[@]}"; do
       exit 2
     fi
     echo "   mix spec_lint --ci equivalent exited $status" >&2
+    resources "$name" "$raw/$name.time"
     SPEC_LINT_ROOT="$root" SPEC_LINT_RAW_DIR="$raw" \
       bench/corpus/normalise_report.sh "$raw/$name.spec_lint.json" "$out/$name.spec_lint.json"
     completion="$(jq -r '.completion.status' "$out/$name.spec_lint.json")"
@@ -233,3 +309,8 @@ for name in "${corpora[@]}"; do
     fi
   fi
 done
+
+if [ "${#budget_failures[@]}" -gt 0 ]; then
+  echo "resource budgets exceeded: ${budget_failures[*]} (budgets: $budgets)" >&2
+  exit 2
+fi

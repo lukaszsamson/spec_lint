@@ -133,7 +133,11 @@ defmodule SpecLint.Run do
   files its build lists (`SpecLint.Project.check_build_paths/1`), BEAM
   files whose `SpecLint.BuildRecord` names another compiler build or that
   changed after it was written, and an explicitly configured baseline file
-  that does not exist (`SpecLint.Config`), otherwise the finished run.
+  that does not exist (`SpecLint.Config`), and an internal failure after the
+  per-module analysis (an exception or throw in the evidence, reachability,
+  rule, coverage or baseline stages, which leaves no run to report; a
+  failure analysing one module instead makes the run `:incomplete`),
+  otherwise the finished run.
   """
   @spec execute(Project.t(), Config.t(), [option()]) :: {:ok, t()} | {:error, String.t()}
   def execute(%Project{} = project, %Config{} = config, opts \\ []) do
@@ -167,12 +171,32 @@ defmodule SpecLint.Run do
 
   defp preflighted({:ok, capabilities}, run, beams, opts) do
     with {:ok, artifacts} <- check_artifacts(run.project, capabilities) do
-      {:ok, analyse(%{run | capabilities: capabilities, artifacts: artifacts}, beams, opts)}
+      guarded(fn ->
+        analyse(%{run | capabilities: capabilities, artifacts: artifacts}, beams, opts)
+      end)
     end
   end
 
   defp preflighted({:error, reason}, run, _beams, _opts),
     do: {:ok, unsupported_compiler(run, reason)}
+
+  # A failure analysing one module is caught in `analyse_module/3` and makes
+  # the run incomplete. An exception or throw in the stages after it
+  # (evidence, reachability, rules, coverage, baseline decisions) leaves no
+  # run to report: it is an internal failure, returned as an error, so the
+  # Mix tasks exit 2 and write no report that could be read as complete
+  # (Milestone 5, "resource failures").
+  defp guarded(analysis) do
+    {:ok, analysis.()}
+  rescue
+    error ->
+      {:error, "internal failure: " <> Exception.message(error) <> location(__STACKTRACE__)}
+  catch
+    :throw, value -> {:error, "internal failure: uncaught throw " <> inspect(value)}
+  end
+
+  defp location([entry | _]), do: " (" <> Exception.format_stacktrace_entry(entry) <> ")"
+  defp location([]), do: ""
 
   # Standard library modules the stages after the analysis use (messages,
   # module names, the reachability processes). See `preload/0`.

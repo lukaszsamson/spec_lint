@@ -956,7 +956,12 @@ JSON output is versioned independently of compiler structures and includes
 tool, adapter, Elixir and OTP versions, checker chunk version, BEAM hashes,
 config digest, scope, capabilities, findings, ledger, baseline decisions and
 completion status. Sorted deterministically, written atomically, and byte
-identical across two runs on the same inputs.
+identical across two runs on the same inputs. A report already at the
+output path is removed when the run starts, and an internal failure after
+the per-module analysis (or while rendering) writes none and exits 2, so a
+failed or killed run leaves no report that reads as complete. A VM killed
+from outside cannot promise exit 2; CI treats a missing report, or one
+that is not `complete`, as a failure (Milestone 5, "resource failures").
 
 ### 9.1 Implementation notes (Phase 1 product)
 

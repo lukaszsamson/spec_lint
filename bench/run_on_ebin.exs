@@ -36,10 +36,26 @@ defmodule SpecLint.RunOnEbin do
     Enum.each(code_paths ++ ebins, &Code.prepend_path/1)
 
     cli = ok!(CLI.parse(rest))
+    # As mix spec_lint: a report left at --output by an earlier run is
+    # removed first, so a run that ends without writing one leaves none.
+    if cli.output && !cli.explain, do: remove_previous(cli.output)
     run = execute(cli, own, ebins, root)
 
-    report(run, cli, own[:write_baseline])
+    try do
+      report(run, cli, own[:write_baseline])
+    rescue
+      error -> fail("internal failure: " <> Exception.message(error))
+    end
+
     System.halt(run.exit_code)
+  end
+
+  defp remove_previous(path) do
+    case File.rm(path) do
+      :ok -> :ok
+      {:error, :enoent} -> :ok
+      {:error, reason} -> fail("cannot remove #{path}: #{:file.format_error(reason)}")
+    end
   end
 
   defp execute(cli, own, ebins, root) do

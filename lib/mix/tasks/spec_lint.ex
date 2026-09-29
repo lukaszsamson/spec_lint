@@ -49,9 +49,17 @@ defmodule Mix.Tasks.SpecLint do
   compilation failure, a missing build directory for an owned application
   or one missing BEAM files its build lists, BEAM files produced by another
   compiler build, dependencies compiled by another compiler line,
-  unsupported compiler or backend in CI, or an incomplete run. An existing but empty build
+  unsupported compiler or backend in CI, an incomplete run, or an internal
+  failure (no report is written then). An existing but empty build
   directory is a project with zero specs: exit 0, and the report says "0
   specs checked".
+
+  With `--output`, a file already at that path is removed before the run
+  starts and the new report is written atomically at the end, so a run
+  that fails before its report, or a VM killed from outside, leaves no
+  report there. A VM killed from outside (a signal, the out-of-memory
+  killer) cannot exit 2; CI must treat a missing report, or one whose
+  `completion.status` is not `complete`, as a failure.
   """
 
   use Mix.Task
@@ -63,6 +71,7 @@ defmodule Mix.Tasks.SpecLint do
   @spec run([String.t()]) :: :ok
   def run(argv) do
     cli = ok!(CLI.parse(argv))
+    if cli.explain == nil, do: remove_previous_report!(cli.output)
 
     if cli.format == :json and cli.output == nil and cli.explain == nil,
       do: SpecLint.StderrShell.with_shell(&compile!/0),
@@ -246,7 +255,7 @@ defmodule Mix.Tasks.SpecLint do
   end
 
   defp explain(run, mfa) do
-    case Explain.render(run, mfa) do
+    case internal!(fn -> Explain.render(run, mfa) end) do
       {:ok, text} ->
         Mix.shell().info(IO.iodata_to_binary(text))
         halt(if(run.exit_code == 2, do: 2, else: 0))
@@ -259,12 +268,12 @@ defmodule Mix.Tasks.SpecLint do
   defp report(run, cli) do
     case cli.format do
       :console ->
-        text = Report.render(run, :console)
+        text = internal!(fn -> Report.render(run, :console) end)
         :ok = write_output!(cli.output, text)
         Mix.shell().info(text)
 
       :json ->
-        json = Report.render(run, :json)
+        json = internal!(fn -> Report.render(run, :json) end)
 
         if cli.output do
           :ok = write_output!(cli.output, json)
@@ -291,6 +300,40 @@ defmodule Mix.Tasks.SpecLint do
 
   defp ok!({:ok, value}), do: value
   defp ok!({:error, message}), do: Mix.raise(message, exit_status: 2)
+
+  # A report file left by an earlier run is removed before this one starts,
+  # so a run that ends without writing one (exit 2 before the report, or a
+  # VM killed from outside) leaves no complete report at the path. The
+  # report itself is written atomically (`Json.write_atomic/2`).
+  defp remove_previous_report!(nil), do: :ok
+
+  defp remove_previous_report!(path) do
+    case File.rm(path) do
+      :ok ->
+        :ok
+
+      {:error, :enoent} ->
+        :ok
+
+      {:error, reason} ->
+        Mix.raise(
+          "cannot remove the previous report #{path}: #{:file.format_error(reason)}",
+          exit_status: 2
+        )
+    end
+  end
+
+  # An exception while rendering is an internal failure (exit 2), never the
+  # exit status 1 Mix gives an uncaught exception, which CI reads as findings.
+  defp internal!(fun) do
+    fun.()
+  rescue
+    error in Mix.Error ->
+      reraise error, __STACKTRACE__
+
+    error ->
+      Mix.raise("internal failure: " <> Exception.message(error), exit_status: 2)
+  end
 
   defp write_output!(nil, _data), do: :ok
 

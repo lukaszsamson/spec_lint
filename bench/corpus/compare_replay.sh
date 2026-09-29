@@ -10,6 +10,16 @@
 # the colon (all corpora of NEW_DIR when none are named); later arguments
 # override earlier ones. Runs under bash 3.2 and later.
 #
+# A new report that is missing, unreadable (truncated, not JSON) or not
+# `complete` is an incomplete result, never a comparison: its entry has
+# `status` "missing", "unreadable" or its completion status, `all_unchanged`
+# is false, the corpus is listed in `incomplete`, and the script exits 2
+# after printing the summary. The corpora expected in NEW_DIR are those with
+# a report or a provenance file there (run.sh writes the provenance first;
+# not `fixtures`, which has no product report),
+# every corpus of a BASE_DIR given without a list, the corpora named in the
+# lists, and SPEC_LINT_EXPECTED_CORPORA (whitespace-separated), if set.
+#
 # Milestone 1 (bench/corpus/reports/m1/summary.json), from reports/:
 #     ../compare_replay.sh m1 phase4 expansion/clause_local/on:absinthe
 set -euo pipefail
@@ -28,13 +38,51 @@ base_for() {
 }
 
 bases=("$@")
+
+# Expected corpora, one per line, sorted and unique.
+expected_corpora() {
+  local f spec dir names
+  for f in "$new"/*.spec_lint.json "$new"/*.provenance.json; do
+    [ -e "$f" ] || continue
+    f="$(basename "$f")"
+    # The fixtures corpus has an experiment report only (run.sh).
+    [ "${f%%.*}" = fixtures ] || echo "${f%%.*}"
+  done
+  for spec in "${bases[@]}"; do
+    dir="${spec%%:*}"; names=""
+    [ "$spec" != "$dir" ] && names="${spec#*:}"
+    if [ -n "$names" ]; then
+      echo "$names" | tr ',' '\n'
+    else
+      for f in "$dir"/*.spec_lint.json; do
+        [ -e "$f" ] && basename "$f" .spec_lint.json
+      done
+    fi
+  done
+  for f in ${SPEC_LINT_EXPECTED_CORPORA:-}; do echo "$f"; done
+}
+
+readable() {
+  jq -e 'type == "object" and (.completion.status | type == "string") and
+    (.completion.exit_code | type == "number") and (.ledger | type == "object") and
+    (.findings | type == "array")' "$1" >/dev/null 2>&1
+}
+
 entries="[]"
-for report in "$new"/*.spec_lint.json; do
-  corpus="$(basename "$report" .spec_lint.json)"
+for corpus in $(expected_corpora | grep -v '^$' | LC_ALL=C sort -u); do
+  report="$new/$corpus.spec_lint.json"
   base_dir="$(base_for "$corpus")"
   base="$base_dir/$corpus.spec_lint.json"
-  if [ ! -f "$base" ]; then
-    entry="$(jq -n --arg c "$corpus" '{corpus: $c, baseline: null}')"
+  if [ ! -f "$report" ]; then
+    entry="$(jq -n --arg c "$corpus" --arg b "$base_dir" \
+      '{corpus: $c, baseline: (if $b == "" then null else $b end), status: "missing"}')"
+  elif ! readable "$report"; then
+    entry="$(jq -n --arg c "$corpus" --arg b "$base_dir" \
+      '{corpus: $c, baseline: (if $b == "" then null else $b end), status: "unreadable"}')"
+  elif [ ! -f "$base" ] || ! readable "$base"; then
+    entry="$(jq -n --arg c "$corpus" --slurpfile n "$report" \
+      '{corpus: $c, baseline: null, status: $n[0].completion.status,
+        completion: $n[0].completion.status, exit_code: $n[0].completion.exit_code}')"
   else
     entry="$(jq -n --arg c "$corpus" --arg b "$base_dir" \
       --slurpfile n "$report" --slurpfile o "$base" '
@@ -42,7 +90,7 @@ for report in "$new"/*.spec_lint.json; do
       def fps(r): [r.findings[] | .fingerprint] | sort;
       def nodetails(r): [r.findings[] | del(.details)];
       $n[0] as $n | $o[0] as $o |
-      {corpus: $c, baseline: $b,
+      {corpus: $c, baseline: $b, status: $n.completion.status,
        completion: $n.completion.status, previous_completion: $o.completion.status,
        exit_code: $n.completion.exit_code, previous_exit_code: $o.completion.exit_code,
        compared_slices: $n.ledger.slices.compared,
@@ -62,6 +110,13 @@ jq -n --argjson e "$entries" '{schema: "spec_lint.m1_replay/1", corpora: $e,
   totals: {compared_slices: ([$e[].compared_slices // 0] | add),
            findings: ([$e[].findings // 0] | add), gates: ([$e[].gates // 0] | add),
            previous_gates: ([$e[].previous_gates // 0] | add)},
-  all_unchanged: ([$e[] | .ledger_unchanged and .findings_unchanged and .fingerprints_unchanged
+  incomplete: [$e[] | select(.status != "complete") | .corpus],
+  all_unchanged: ([$e[] | .status == "complete" and .baseline != null
+                   and .ledger_unchanged and .findings_unchanged and .fingerprints_unchanged
                    and .added_gates == [] and .removed_gates == []
                    and .exit_code == .previous_exit_code] | all)}'
+if jq -e 'any(.[]; .status != "complete")' <<<"$entries" >/dev/null; then
+  echo "incomplete results: $(jq -r '[.[] | select(.status != "complete") |
+    "\(.corpus) (\(.status))"] | join(", ")' <<<"$entries")" >&2
+  exit 2
+fi
