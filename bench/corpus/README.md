@@ -375,3 +375,18 @@ the internals audit `audit-648b2a9.md`. `reports/upstream-648b2a9/` holds
 the fifteen-corpus replay under the upstream compiler, compared with
 `reports/m1_review/`; see its README.
 
+
+## Elixir 1.20.4 qualification (Milestone 3)
+
+`toolchain/audit-1.20.4.md` audits every compiler internal the adapters
+read on Elixir 1.20.4 against 1.21 (35 rows, each probed;
+`toolchain/audit_probe.exs` prints them on any build). The replay is
+`reports/elixir-1.20.4/` (see its README): the fifteen corpora compiled
+with 1.20.4 into separate build paths and analysed by
+`SpecLint.Compiler.V120`, the same corpora under `c24c235` with the same
+tool (`reports/elixir-1.20.4/c24c235/`), their comparison
+(`toolchain/compare_lines.sh`) and per-adapter baselines. `run.sh` gained
+`SPEC_LINT_STDLIB_SOURCE` (a checkout the stdlib corpus of an installed
+release is checked against), `SPEC_LINT_BASELINE_DIR` and
+`SPEC_LINT_WRITE_BASELINE_DIR`; `toolchain/elixir-1.20.4.json` is the
+replay manifest.

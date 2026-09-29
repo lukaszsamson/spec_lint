@@ -93,10 +93,20 @@ catch-all (its stored domain is wider than the spec's, `domain_escape`, and
 its `{:ok, _}` payload is gradual, `payload_gradual`); the stand-in models the
 one clause SpecLint does report.
 
+## Classes per compiler adapter (Milestone 3)
+
+The classes are pinned per adapter in `test/spec_lint/omissions_test.exs`
+(`V121` for Elixir 1.21 at `c24c235` and `648b2a9`, `V120` for 1.20.4).
+All eleven reproducers have the same class on both lines, with and without
+`require_static_return`, and the same top-only reasons; the table is in
+`../reports/elixir-1.20.4/README.md`. Gating recall on the nine is 0 of 9
+on both.
+
 ## Adding or changing a reproducer
 
 1. Edit `SpecLint.OmissionFixtures.Cases`. Keep the spec and the
    inference-defeating construct; keep the module free of compiler warnings.
-2. Run `mix test test/spec_lint/omissions_test.exs`. A changed class is the
-   signal; update the `@omissions` table in the test and the table above.
+2. Run `mix test test/spec_lint/omissions_test.exs` under each supported
+   compiler. A changed class is the signal; update the `@omissions` table in
+   the test (the class of each adapter) and the table above.
 3. `bench/corpus/run.sh fixtures` refreshes `reports/fixtures.json`.

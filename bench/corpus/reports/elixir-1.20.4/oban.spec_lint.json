@@ -1,0 +1,2324 @@
+{
+  "adapter": "1.20.4+759443e",
+  "artifacts": {
+    "build_digest": "ab40621dc4c1ee7ce26ad192bb3ab0dd65c434816cd2dfb247faff3446e85766",
+    "recorded": [],
+    "unrecorded": [
+      "oban"
+    ]
+  },
+  "baseline": {
+    "applied": false,
+    "baselined": 0,
+    "expired": 0,
+    "gate_changed": [],
+    "new": 2,
+    "path": ".spec_lint_baseline.json",
+    "pending_reconciliation": [],
+    "reason": "missing",
+    "stale_findings": [],
+    "stale_inventory": []
+  },
+  "beams": [
+    {
+      "exck": "dbec01aceda604fc1e856e085b11b7f6b06c5874ea44999a7380f54fbc1461c4",
+      "md5": "6360f5b49618ac83007721453fb89c14",
+      "module": "Inspect.Oban.Cron.Expression",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Inspect.Oban.Cron.Expression.beam"
+    },
+    {
+      "exck": "d58cb60200eb2fe678f5816c0c61f151803ab6df88c923dc0ea148299eec3262",
+      "md5": "7562607ca19e9d0d8309d2fa98c9adf2",
+      "module": "Mix.Tasks.Oban.Install",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Mix.Tasks.Oban.Install.beam"
+    },
+    {
+      "exck": "74953bfed07343c24f751aa909f2159db612b3f9250b08c7762f27f811d4cbd4",
+      "md5": "98856a0481ad2821079292f67328361c",
+      "module": "Mix.Tasks.Oban.Install.Docs",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Mix.Tasks.Oban.Install.Docs.beam"
+    },
+    {
+      "exck": "cfc90a28a6831dcf09e4e8f735faea83a9df2483e168c17603bfe8df5ca072b5",
+      "md5": "a04fbe437e85aa81a15773d034bb4782",
+      "module": "Oban",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.beam"
+    },
+    {
+      "exck": "4938a4d68cbdb91641c3eba274d77a02b0f31f1c929e2821b3cb0a356bf7609c",
+      "md5": "cbf0f867a238859a33301054653f4a2d",
+      "module": "Oban.Application",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.Application.beam"
+    },
+    {
+      "exck": "1c79272654ffd04a6e8cc6c821be392a82152fa9fc200431f209e72affe6e316",
+      "md5": "3252f8f65bb4b2fb13203f92dc2a1540",
+      "module": "Oban.Backoff",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.Backoff.beam"
+    },
+    {
+      "exck": "65f5535a26471d2b0ca0ea1e9187f6adc9fd03d3f998f887f8b3504b7c386c1b",
+      "md5": "2c9573bbb78af0d051d899b224ffe674",
+      "module": "Oban.Case",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.Case.beam"
+    },
+    {
+      "exck": "d76dd52327326a0248d5fe641e050e03d4790dcd4cfe4ba067d74e1873bd7219",
+      "md5": "abdcdb155a9004b2ab15a6e860f84bc0",
+      "module": "Oban.Config",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.Config.beam"
+    },
+    {
+      "exck": "30e4531acfde593979b2a4fa842e52bf88fda0bb2f3dc95364c8cf85c771ae2c",
+      "md5": "ec5f31c7f408b2e61b11a028f0dffc3d",
+      "module": "Oban.CrashError",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.CrashError.beam"
+    },
+    {
+      "exck": "490f6f10616a170da6bbecab1c82d5b128454f119ae3595791827c436ef39904",
+      "md5": "b40fa4ab35a69a8a474cffbf041f34c8",
+      "module": "Oban.Cron",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.Cron.beam"
+    },
+    {
+      "exck": "2ee29d3a2ede26e67eadbda326365b496d7b497ebf934ee9519f42b3f60c9085",
+      "md5": "15cc4e9520d78a06290eb5e193981444",
+      "module": "Oban.Cron.Expression",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.Cron.Expression.beam"
+    },
+    {
+      "exck": "df5a7a5198fd371934165e5c5588324b4ecbd38ecd93be9525ae8968525dda03",
+      "md5": "af373a84a1bd21120e4e989e78e56a79",
+      "module": "Oban.Engine",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.Engine.beam"
+    },
+    {
+      "exck": "7397a76dff93d5ea0be67ca1cf81acbf5c199136bbe469e892dc50b6c9f9c7f9",
+      "md5": "33fe4832494cdec2575f1122c9d57428",
+      "module": "Oban.Engines.Basic",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.Engines.Basic.beam"
+    },
+    {
+      "exck": "0e83948d31a114ab52a68004fb644e2ef99453e045a44aa02a910a0aa1810d98",
+      "md5": "32c0bfeb3cf1d8c904fbb37787d02668",
+      "module": "Oban.Engines.Dolphin",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.Engines.Dolphin.beam"
+    },
+    {
+      "exck": "413cbd5644f586bb06fae50b7c7126db7c9e4b49cc451a903690342bbacf4022",
+      "md5": "2bf951cdd07ac9472c311ff90a6c3d83",
+      "module": "Oban.Engines.Inline",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.Engines.Inline.beam"
+    },
+    {
+      "exck": "acc30a245b551e4777805f18c31789ac358ac7222ddb8e4d6822a9829ff33b04",
+      "md5": "74aa36a1175223ed558afc9cae6372e9",
+      "module": "Oban.Engines.Lite",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.Engines.Lite.beam"
+    },
+    {
+      "exck": "722a99a1081306643aa7eb109da57ec94ffb86a604edc5272b9200667c3ee97e",
+      "md5": "24a51c09dd4f2d3e029a35333adf4ea9",
+      "module": "Oban.Errors",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.Errors.beam"
+    },
+    {
+      "exck": "2b5bc5da0ca81673b9b92e95e558ab88c43656a6e35948ae2c3dad0498cba113",
+      "md5": "46bc10af7f745803a41392f789f024b4",
+      "module": "Oban.Harbor",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.Harbor.beam"
+    },
+    {
+      "exck": "f02dd543a718248af85aa9a23b93ac02da0607bf06e241e6f52681c3e670b63a",
+      "md5": "1ca797c2d43bda940e5e8c97a149acbe",
+      "module": "Oban.Integration.Worker",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.Integration.Worker.beam"
+    },
+    {
+      "exck": "6ce2dbca2979c4091e8ae2019e42a33f7c87a1167b69041e115bd8f38bb52f51",
+      "md5": "9dc0c329485025510a5c21c81826918b",
+      "module": "Oban.JSON",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.JSON.beam"
+    },
+    {
+      "exck": "4f10098187ca1eecbee8a4aae5190827fbb634e65e3db72785a5ccc03583b2fc",
+      "md5": "e4b6146bbd69efc1f67cbdf47d787903",
+      "module": "Oban.Job",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.Job.beam"
+    },
+    {
+      "exck": "1999b01094d4d468f70488306ae34b75c370b0b3b2b85bfd5fcc33e6fcd54093",
+      "md5": "40758c076ac6e4acc34c2767ac5d050f",
+      "module": "Oban.Midwife",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.Midwife.beam"
+    },
+    {
+      "exck": "3d3bc1e6c00b8c78edfc267c4c02aec4d388f1b6d6441a0d871afceed13eccbe",
+      "md5": "4abe240c314fe314e2875d95ac83c776",
+      "module": "Oban.Migration",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.Migration.beam"
+    },
+    {
+      "exck": "9de2bdbac45c1a4aead17e65ed8877ec6c52f184753618de25c7223ed6611c2e",
+      "md5": "bb356625f0851839b9bc487e826e3b87",
+      "module": "Oban.Migrations",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.Migrations.beam"
+    },
+    {
+      "exck": "c6c1544ca3220f0152e8f9c6b4ba09f7f5c92f77aeb33eaa9a5cd279007f99ef",
+      "md5": "ad3e7520c4beacbfaca67d046fc2fa40",
+      "module": "Oban.Migrations.MyXQL",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.Migrations.MyXQL.beam"
+    },
+    {
+      "exck": "62931fad3915bfacbb984ea692daa0e37aa73b62153d56d4d95bd5c1468effe6",
+      "md5": "cfe5c781e522a124113a59d901d92237",
+      "module": "Oban.Migrations.Postgres",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.Migrations.Postgres.beam"
+    },
+    {
+      "exck": "e19057ad721f638173060bd5d202e345f06cafeb5e437fb69edb90e3a9ba9c1c",
+      "md5": "9a0d454893de7c0c3e6c0a4937435c7d",
+      "module": "Oban.Migrations.Postgres.V01",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.Migrations.Postgres.V01.beam"
+    },
+    {
+      "exck": "8ca99552ee601b9fdf6fe03de91d8727d4053fe58baccc3eab1ebd2e8343bed3",
+      "md5": "5578dfcc6d1ce9b08ae08002cbfe9939",
+      "module": "Oban.Migrations.Postgres.V02",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.Migrations.Postgres.V02.beam"
+    },
+    {
+      "exck": "fe06396da3ce6012153141d2a89bceeaaff9ca29ed9b95d76c5a52e4a69768d5",
+      "md5": "95c3a0b1711cb03a8c304b48fd954c0b",
+      "module": "Oban.Migrations.Postgres.V03",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.Migrations.Postgres.V03.beam"
+    },
+    {
+      "exck": "02ca075c0deb9bdb6510fe57134a910c1747e5c19784dece834e110f520cd1fa",
+      "md5": "5cf2f49819dd6ab3567a8f5d32aba99a",
+      "module": "Oban.Migrations.Postgres.V04",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.Migrations.Postgres.V04.beam"
+    },
+    {
+      "exck": "5fa529919c79a65dcc63b2eceb953b16d96d78a81f450adef34c2dca0bb7939d",
+      "md5": "8fa8f1ace6472fc1caffeb61f2cec91d",
+      "module": "Oban.Migrations.Postgres.V05",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.Migrations.Postgres.V05.beam"
+    },
+    {
+      "exck": "8b987a0a838f7cef185ebb73f91d012205bfd1867dde2290b84bc6c340aa1b41",
+      "md5": "05aba98f8ec1fa95ed72b948a61e0d5d",
+      "module": "Oban.Migrations.Postgres.V06",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.Migrations.Postgres.V06.beam"
+    },
+    {
+      "exck": "f4d8a4e959e18846e676c604c035f6adad7469a7a399e354ebc496a594cf0ddf",
+      "md5": "cba1891c8eddbfdd568fee3e67cf1c50",
+      "module": "Oban.Migrations.Postgres.V07",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.Migrations.Postgres.V07.beam"
+    },
+    {
+      "exck": "b5415e26ae5c4fd2a34455931a946acb116323fbb9c20ec84f9d6dd5eb5d4eab",
+      "md5": "a00ec23b52c489e974918393a4f0b9c6",
+      "module": "Oban.Migrations.Postgres.V08",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.Migrations.Postgres.V08.beam"
+    },
+    {
+      "exck": "8ca99552ee601b9fdf6fe03de91d8727d4053fe58baccc3eab1ebd2e8343bed3",
+      "md5": "09101b9da53ed83f98a5a2ea2e46e24d",
+      "module": "Oban.Migrations.Postgres.V09",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.Migrations.Postgres.V09.beam"
+    },
+    {
+      "exck": "f4d8a4e959e18846e676c604c035f6adad7469a7a399e354ebc496a594cf0ddf",
+      "md5": "144836602870b269a5aef63dad0e01ef",
+      "module": "Oban.Migrations.Postgres.V10",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.Migrations.Postgres.V10.beam"
+    },
+    {
+      "exck": "8f5a10c86eca979ba2cf4c777c66ced7ebd5de2272a0b72a531415c66a12c7b3",
+      "md5": "bfee6ea4c9205830522555ba3565b862",
+      "module": "Oban.Migrations.Postgres.V11",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.Migrations.Postgres.V11.beam"
+    },
+    {
+      "exck": "44f3a646ca478719a4383901b654ed709832bf831d62cacfe8cff335030b20be",
+      "md5": "60dba3fdc472e5af92c8a98a7a4fbb00",
+      "module": "Oban.Migrations.Postgres.V12",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.Migrations.Postgres.V12.beam"
+    },
+    {
+      "exck": "f4d8a4e959e18846e676c604c035f6adad7469a7a399e354ebc496a594cf0ddf",
+      "md5": "bd64a1c2f5327051fba7c3a6b51575b3",
+      "module": "Oban.Migrations.Postgres.V13",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.Migrations.Postgres.V13.beam"
+    },
+    {
+      "exck": "02ca075c0deb9bdb6510fe57134a910c1747e5c19784dece834e110f520cd1fa",
+      "md5": "d8fa605a3dda5e52f7e0251aa361db51",
+      "module": "Oban.Migrations.Postgres.V14",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.Migrations.Postgres.V14.beam"
+    },
+    {
+      "exck": "c6c1544ca3220f0152e8f9c6b4ba09f7f5c92f77aeb33eaa9a5cd279007f99ef",
+      "md5": "53bf2e61590ee297d30b732c13e9dd8d",
+      "module": "Oban.Migrations.SQLite",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.Migrations.SQLite.beam"
+    },
+    {
+      "exck": "806834f92ffcfcad668dc252a836a97130238af7437900792291f320fc4f1cf3",
+      "md5": "0a08817eaca85aa5b6fa639c0a0b1c29",
+      "module": "Oban.Notifier",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.Notifier.beam"
+    },
+    {
+      "exck": "b4d779b3695ffd5956ca5c0f11cb554a8b975d5547e9ffd93f1d3b715b0eee1e",
+      "md5": "36b5dfbdf9b2a99e6ee5509c10195649",
+      "module": "Oban.Notifiers.Isolated",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.Notifiers.Isolated.beam"
+    },
+    {
+      "exck": "5e522ad5c3fb198080e69856a149caa8a1e5bd082d173f06730220a40955a436",
+      "md5": "cfcac22209cd1b227e0c68330b5f14df",
+      "module": "Oban.Notifiers.PG",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.Notifiers.PG.beam"
+    },
+    {
+      "exck": "8c6ae904623b259324760694147faf5afd53daf7fd6f0965485e6c756ccf05bb",
+      "md5": "8cfd7c3173e151b9c93c135b7a14329f",
+      "module": "Oban.Notifiers.Postgres",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.Notifiers.Postgres.beam"
+    },
+    {
+      "exck": "2b5bc5da0ca81673b9b92e95e558ab88c43656a6e35948ae2c3dad0498cba113",
+      "md5": "73a5653252b56dc3b5198f8c74417039",
+      "module": "Oban.Nursery",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.Nursery.beam"
+    },
+    {
+      "exck": "9c36f5f7a44f1b6282ab6d52b8b8db3d6e217194c9b76ae42e76f563c7fd43e6",
+      "md5": "8bb7f4a0f62481161d576a6e3ffdf66e",
+      "module": "Oban.Peer",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.Peer.beam"
+    },
+    {
+      "exck": "13391debd9e0cf7a8720316c4d4f82db277bca02608e8be86ab0370937b109e2",
+      "md5": "520c7db364a7156fb485369c6eaba981",
+      "module": "Oban.Peers.Database",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.Peers.Database.beam"
+    },
+    {
+      "exck": "c0b1f053c18a4943cd23865c27dfa6788666c78722aba369952f9d886e68e415",
+      "md5": "5f7f08b2e3d73a6a3f42ccbd2a50c7e4",
+      "module": "Oban.Peers.Global",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.Peers.Global.beam"
+    },
+    {
+      "exck": "dc49accdc5beb858e9aecb3ee70093fbfe41625dd99d076defb4ec81c980ee91",
+      "md5": "9c0404040c4902486cabf29283e76ae4",
+      "module": "Oban.Peers.Isolated",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.Peers.Isolated.beam"
+    },
+    {
+      "exck": "7210da88acde460d10f656f54cd55b6e6d1c3f67f3a3faa30ba7c00aae319df5",
+      "md5": "e30dec1d6bc72869a650f901cb83d9fd",
+      "module": "Oban.PerformError",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.PerformError.beam"
+    },
+    {
+      "exck": "efe29577353793edee78e0a5587188114992f0b32c45152c89bca50ff1d7d0b8",
+      "md5": "999b94b60e4ddf44355ac055dd4965f0",
+      "module": "Oban.Period",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.Period.beam"
+    },
+    {
+      "exck": "413724b5bf55f3f6b104b645904c684b1f141af62fc5c3f5ac3cb574d0b28e71",
+      "md5": "6298fd68ab092ade3545216fb65a7d7d",
+      "module": "Oban.Plugin",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.Plugin.beam"
+    },
+    {
+      "exck": "959ad2d8734a17090f29f5236fe47952003df3dc44d5d08466aa1ef7d39b621c",
+      "md5": "f7f3ffdff72d0577fd9be05de122cc33",
+      "module": "Oban.Plugins.Cron",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.Plugins.Cron.beam"
+    },
+    {
+      "exck": "5058574281d8b35a92d7d55d5fdc4131ec76ec3840dced70bc067f032cf97a09",
+      "md5": "96a1ba2a244769e304129b2969cd8074",
+      "module": "Oban.Plugins.Gossip",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.Plugins.Gossip.beam"
+    },
+    {
+      "exck": "d77577d2adcf3707891f0f956c3770e7f5ab378ade51481de67a6bf8707e34e2",
+      "md5": "8cf1c5354696fcafe809146e66e7a7d8",
+      "module": "Oban.Plugins.Lifeline",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.Plugins.Lifeline.beam"
+    },
+    {
+      "exck": "4d21c4f99349118f35f0d94d578e4c2529e071e30f81cc237a54d95308b60f4f",
+      "md5": "537f012c6d67bf4831f1391844c81877",
+      "module": "Oban.Plugins.Pruner",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.Plugins.Pruner.beam"
+    },
+    {
+      "exck": "2da2b753dea5bf3f83893e65197209e5d8b7412337e498073059584b7b38420b",
+      "md5": "61d7f915fbb3f33862eb1d3583984ca8",
+      "module": "Oban.Plugins.Reindexer",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.Plugins.Reindexer.beam"
+    },
+    {
+      "exck": "5058574281d8b35a92d7d55d5fdc4131ec76ec3840dced70bc067f032cf97a09",
+      "md5": "72c3aa69d09b730513c0326c19303b47",
+      "module": "Oban.Plugins.Repeater",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.Plugins.Repeater.beam"
+    },
+    {
+      "exck": "6bfa3cbc4858dd64c213c7596980515663300d7d9bc8171b0e2e9ceefdf5e6bd",
+      "md5": "2d268ab2c5aa5f15691c69ace6abeb9d",
+      "module": "Oban.Queue.Drainer",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.Queue.Drainer.beam"
+    },
+    {
+      "exck": "993214b60df6d76a48500c2585fcf097936d31e8977ef2d37ad2d86e68fdea1a",
+      "md5": "66efd16f8e8af8440396f70229fa3f6a",
+      "module": "Oban.Queue.Executor",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.Queue.Executor.beam"
+    },
+    {
+      "exck": "d9288a8daeb7c0ff1618cdf349c6d8bd8cd5dd1802119781ad166956c9b96c64",
+      "md5": "beea8e9a462b3ec1fa880bad34ab1828",
+      "module": "Oban.Queue.Producer",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.Queue.Producer.beam"
+    },
+    {
+      "exck": "2b5bc5da0ca81673b9b92e95e558ab88c43656a6e35948ae2c3dad0498cba113",
+      "md5": "8eff47ac09d19542173333fc3b411f48",
+      "module": "Oban.Queue.Supervisor",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.Queue.Supervisor.beam"
+    },
+    {
+      "exck": "e60844a4ee3100d5a4f6ad87f64ec9d265f3ea8bb1eeeedd710802bffc70fe40",
+      "md5": "62a182ac5130f4cb5ca0b9746463a7ac",
+      "module": "Oban.Queue.Watchman",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.Queue.Watchman.beam"
+    },
+    {
+      "exck": "c4b68bd860999860d70a635c823bfd542167d4e1b0a9d3112bc9bfdd4a099bad",
+      "md5": "78222d1220b55034039503ea1acac3f6",
+      "module": "Oban.Registry",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.Registry.beam"
+    },
+    {
+      "exck": "89e704b40c56de574fdc38b1450fa51997e3b7d9bc2637befd75041b3398f148",
+      "md5": "d195c585a54c8646f2dde554886c5927",
+      "module": "Oban.Repo",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.Repo.beam"
+    },
+    {
+      "exck": "6353023321620ebb393107bfed124d30c7161b1dd129227564404cd28e47f936",
+      "md5": "a75df1796566d27b78ca69f7befeffcb",
+      "module": "Oban.Sonar",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.Sonar.beam"
+    },
+    {
+      "exck": "35f116f7bdcc9d964f6dcf9aaee2c053186da1f824f1447a5e493ae8978864f2",
+      "md5": "b6e901ecb7d6eeca2121ef18ebfe18ee",
+      "module": "Oban.Stager",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.Stager.beam"
+    },
+    {
+      "exck": "e8bfde4e4a7532621bb8b2b862ea6edeedb277a8dcc418d3ccc5f287ce243070",
+      "md5": "53606c68ff92fb055190481f4ee25ebe",
+      "module": "Oban.Telemetry",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.Telemetry.beam"
+    },
+    {
+      "exck": "f13dcdc1142b9c36e43560113200f5b249cdf0a6e88348be307f84c5fc4443b2",
+      "md5": "c813594b2f04821effbcf76ee458a119",
+      "module": "Oban.TelemetryHandler",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.TelemetryHandler.beam"
+    },
+    {
+      "exck": "399312cbe0a558545c22dafa8b29b70ec85f97aea85b6a95df89ad92030e48be",
+      "md5": "4b905cc8bdf2a3e04d3cd06b57a40141",
+      "module": "Oban.Test.DolphinRepo",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.Test.DolphinRepo.beam"
+    },
+    {
+      "exck": "7572f2eb05ea0b149642dd530cbae6aa6e9d27122d424168fb393519c31370fd",
+      "md5": "fe3acb87f932a54688ddb94e66d39c7e",
+      "module": "Oban.Test.DynamicRepo",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.Test.DynamicRepo.beam"
+    },
+    {
+      "exck": "4a5a54fed5f063510382b76aafc969389b7da16a4d9c98d5805a4f379efd18e3",
+      "md5": "655d26cfc97b53380012099275ed8cc8",
+      "module": "Oban.Test.Exercise",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.Test.Exercise.beam"
+    },
+    {
+      "exck": "e42742ff5d6afdedb4d0fc34c94dfe5fa3d768f5bfa779ac77b201f212ad8374",
+      "md5": "0c0111c976ea238dab1212139191cc96",
+      "module": "Oban.Test.Exercise.Used",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.Test.Exercise.Used.beam"
+    },
+    {
+      "exck": "45ede004c2dc9021a63e7012bd54bd79f038b896a822848fdb0b4d44404bcf9a",
+      "md5": "7cdc740cfa979344d7070dcae7027750",
+      "module": "Oban.Test.LiteRepo",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.Test.LiteRepo.beam"
+    },
+    {
+      "exck": "50171ed3b48d27e9325425850a293ed982f9d83c61025d7f8781a1296f3a768a",
+      "md5": "dd347f859876d71a8eb1551fe7569ff0",
+      "module": "Oban.Test.Repo",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.Test.Repo.beam"
+    },
+    {
+      "exck": "f2dd03b496f89caca56c084db226fc344f288127d71900e1eaaf1c50f4681d26",
+      "md5": "fc949c432ab342c89a6f81ecdedf9910",
+      "module": "Oban.Test.UnboxedRepo",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.Test.UnboxedRepo.beam"
+    },
+    {
+      "exck": "b60cc9afa777728e785c28fea33325cfb95e321431b0871e136d5f5099a127bd",
+      "md5": "62ffde760f17c066a1213f7af8d6de94",
+      "module": "Oban.Testing",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.Testing.beam"
+    },
+    {
+      "exck": "eabb43b2b1dc63804aaaa64e254c131dfa7df2d35d8e3a9996188b42acd52853",
+      "md5": "f702b9f5781a71be239d63a47e83259a",
+      "module": "Oban.TimeoutError",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.TimeoutError.beam"
+    },
+    {
+      "exck": "9cf34e9d5880a033e34717689a0d7efa736279de0f5bea1ad2e3275795cfa5b6",
+      "md5": "f7a87971f5e9f55f16fc461d717b4726",
+      "module": "Oban.Validation",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.Validation.beam"
+    },
+    {
+      "exck": "9678a9d7fb4290be6db528266999d8f3fc394de4c6d5510b63b9cf512eec538e",
+      "md5": "a42c392424e9c08f5c4be659810e9ec7",
+      "module": "Oban.Worker",
+      "path": "$BUILD/oban/lib/oban/ebin/Elixir.Oban.Worker.beam"
+    }
+  ],
+  "capabilities": {
+    "bodies": false,
+    "body_hook": false,
+    "signatures": true
+  },
+  "checker_version": "elixir_checker_v8",
+  "completion": {
+    "blocking": 1,
+    "coverage_violations": [],
+    "exit_code": 1,
+    "reasons": [],
+    "status": "complete"
+  },
+  "config": {
+    "ci": true,
+    "clause_local_qualification": true,
+    "digest": "sha256:c95f1857e0a209121d5e3fc51e45212b3fbc95f647f4b53df9d4adc6b5dcf423",
+    "expand_opaque": false,
+    "profile": "review",
+    "require_static_return": false,
+    "rules": [
+      [
+        "SL001",
+        "warning"
+      ],
+      [
+        "SL002",
+        "warning"
+      ],
+      [
+        "SL003",
+        "warning"
+      ],
+      [
+        "SL006",
+        "warning"
+      ],
+      [
+        "SL008",
+        "warning"
+      ]
+    ],
+    "warnings_as_errors": false
+  },
+  "elixir": "1.20.4",
+  "findings": [
+    {
+      "baseline": "new",
+      "blocking": false,
+      "clause": null,
+      "data": {
+        "reasons": [
+          ":top_only",
+          ":return_inexact"
+        ]
+      },
+      "details": [
+        [
+          "spec",
+          "to_seconds(t()) :: pos_integer()"
+        ],
+        [
+          "inferred extra",
+          "float()"
+        ],
+        [
+          "slice",
+          "(integer() or {integer(),\n :day or :days or :hour or :hours or :minute or :minutes or :second or :seconds or :week or :weeks})"
+        ],
+        [
+          "evidence",
+          "possible_domain_escape (signature backend, translation approximate: integer_refinement_erased)"
+        ]
+      ],
+      "evidence": "possible_domain_escape",
+      "file": "$OSS/oban/lib/oban/period.ex",
+      "fingerprint": "sha256:67a484cf541a047244858effcf99e168f09669d628c9148fda33ebd03a78f1a1",
+      "gate": false,
+      "line": 85,
+      "message": "Possible missing alternative; some contributing clauses accept inputs outside the spec.",
+      "module": "Oban.Period",
+      "name": "possible_missing_return",
+      "prerequisites": [
+        [
+          "no_unsupported_loss",
+          "met"
+        ],
+        [
+          "no_overlap",
+          "met"
+        ],
+        [
+          "no_arrow_in_return",
+          "met"
+        ],
+        [
+          "no_arrow_polarity_argument",
+          "met"
+        ],
+        [
+          "structured_possible",
+          "blocked"
+        ]
+      ],
+      "rule": "SL002",
+      "severity": "warning",
+      "slice": 0,
+      "subject": "Oban.Period.to_seconds/1"
+    },
+    {
+      "baseline": "new",
+      "blocking": true,
+      "clause": 1,
+      "data": {
+        "qualification": "clause_local",
+        "superseded_prerequisites": [
+          [
+            "no_arrow_in_return",
+            "met"
+          ],
+          [
+            "no_arrow_polarity_argument",
+            "met"
+          ]
+        ]
+      },
+      "details": [
+        [
+          "spec",
+          "via(Oban.name(), role(), value()) :: {:via, Registry, {Oban.Registry, key()}}"
+        ],
+        [
+          "stored signature clause",
+          "#1 (term(), term(), not nil) -> dynamic({:via, Registry, {Oban.Registry, term(), not nil}})"
+        ],
+        [
+          "slice",
+          "(term(), term(), term())"
+        ],
+        [
+          "evidence",
+          "clause_conflict (signature backend, clause contained in the spec lower bound, translation exact)"
+        ]
+      ],
+      "evidence": "clause_conflict",
+      "file": "$OSS/oban/lib/oban/registry.ex",
+      "fingerprint": "sha256:517ab74f0b8034ae2264161f3a441f7fd6f1b86c0ab705bd29b682940fd44ee2",
+      "gate": true,
+      "line": 123,
+      "message": "the clause matching this domain returns only values outside the spec",
+      "module": "Oban.Registry",
+      "name": "return_conflict",
+      "prerequisites": [
+        [
+          "no_unsupported_loss",
+          "met"
+        ],
+        [
+          "no_overlap",
+          "met"
+        ],
+        [
+          "clause_contained_in_lo",
+          "met"
+        ],
+        [
+          "clause_reachable",
+          "unchecked"
+        ]
+      ],
+      "rule": "SL001",
+      "severity": "warning",
+      "slice": 0,
+      "subject": "Oban.Registry.via/3"
+    }
+  ],
+  "ledger": {
+    "bodies": {
+      "completed": 0,
+      "requested": false
+    },
+    "entries": [
+      {
+        "class": "unknown",
+        "mfa": "Oban.all_jobs/2",
+        "module": "Oban",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "none",
+        "mfa": "Oban.cancel_all_jobs/2",
+        "module": "Oban",
+        "notes": [],
+        "obligation": "compatible_after_approximation",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": null
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.cancel_job/2",
+        "module": "Oban",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.check_all_queues/1",
+        "module": "Oban",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.check_queue/2",
+        "module": "Oban",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.child_spec/1",
+        "module": "Oban",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.config/1",
+        "module": "Oban",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "none",
+        "mfa": "Oban.delete_all_jobs/2",
+        "module": "Oban",
+        "notes": [],
+        "obligation": "compatible_after_approximation",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": null
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.delete_job/2",
+        "module": "Oban",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.drain_queue/2",
+        "module": "Oban",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.insert!/2",
+        "module": "Oban",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.insert!/2",
+        "module": "Oban",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 1,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.insert!/3",
+        "module": "Oban",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.insert/3",
+        "module": "Oban",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.insert/3",
+        "module": "Oban",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 1,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.insert/5",
+        "module": "Oban",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.insert_all/3",
+        "module": "Oban",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.insert_all/5",
+        "module": "Oban",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.pause_all_queues/2",
+        "module": "Oban",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "exact",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.pause_queue/2",
+        "module": "Oban",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "exact",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.resume_all_queues/2",
+        "module": "Oban",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "exact",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.resume_queue/2",
+        "module": "Oban",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "exact",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "none",
+        "mfa": "Oban.retry_all_jobs/2",
+        "module": "Oban",
+        "notes": [],
+        "obligation": "compatible_after_approximation",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": null
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.retry_job/2",
+        "module": "Oban",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.scale_queue/2",
+        "module": "Oban",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.start_link/1",
+        "module": "Oban",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.start_queue/2",
+        "module": "Oban",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "exact",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.stop_queue/2",
+        "module": "Oban",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "exact",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.update_job/3",
+        "module": "Oban",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.whereis/1",
+        "module": "Oban",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "exact",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "none",
+        "mfa": "Oban.Backoff.exponential/2",
+        "module": "Oban.Backoff",
+        "notes": [],
+        "obligation": "established",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": null
+      },
+      {
+        "class": "none",
+        "mfa": "Oban.Backoff.jitter/2",
+        "module": "Oban.Backoff",
+        "notes": [],
+        "obligation": "established",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": null
+      },
+      {
+        "class": "none",
+        "mfa": "Oban.Backoff.with_retry/2",
+        "module": "Oban.Backoff",
+        "notes": [],
+        "obligation": "established",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": null
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Config.get_engine/1",
+        "module": "Oban.Config",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "none",
+        "mfa": "Oban.Config.match_ident?/2",
+        "module": "Oban.Config",
+        "notes": [],
+        "obligation": "established",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": null
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Config.new/1",
+        "module": "Oban.Config",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "no_counted_component"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Config.node_name/1",
+        "module": "Oban.Config",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "exact",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "none",
+        "mfa": "Oban.Config.to_ident/1",
+        "module": "Oban.Config",
+        "notes": [],
+        "obligation": "established",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": null
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Config.validate/1",
+        "module": "Oban.Config",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Cron.interval_to_next_minute/1",
+        "module": "Oban.Cron",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "none",
+        "mfa": "Oban.Cron.schedule_interval/4",
+        "module": "Oban.Cron",
+        "notes": [],
+        "obligation": "established",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "exact",
+        "unknown_reason": null
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Cron.Expression.last_at/2",
+        "module": "Oban.Cron.Expression",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Cron.Expression.next_at/2",
+        "module": "Oban.Cron.Expression",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Cron.Expression.now?/2",
+        "module": "Oban.Cron.Expression",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Cron.Expression.parse!/1",
+        "module": "Oban.Cron.Expression",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "exact",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Cron.Expression.parse/1",
+        "module": "Oban.Cron.Expression",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "exact",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Harbor.child_spec/1",
+        "module": "Oban.Harbor",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "no_counted_component"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Harbor.start_link/1",
+        "module": "Oban.Harbor",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Job.cast_period/1",
+        "module": "Oban.Job",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Job.new/2",
+        "module": "Oban.Job",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "no_counted_component"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Job.query/1",
+        "module": "Oban.Job",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "exact",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Job.to_map/1",
+        "module": "Oban.Job",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Job.update/2",
+        "module": "Oban.Job",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "no_counted_component"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Midwife.start_link/1",
+        "module": "Oban.Midwife",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "exact",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Midwife.start_queue/2",
+        "module": "Oban.Midwife",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Midwife.stop_queue/2",
+        "module": "Oban.Midwife",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Notifier.child_spec/1",
+        "module": "Oban.Notifier",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "no_counted_component"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Notifier.listen/2",
+        "module": "Oban.Notifier",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Notifier.notify/3",
+        "module": "Oban.Notifier",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "none",
+        "mfa": "Oban.Notifier.relay/4",
+        "module": "Oban.Notifier",
+        "notes": [],
+        "obligation": "established",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": null
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Notifier.status/1",
+        "module": "Oban.Notifier",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Notifier.unlisten/2",
+        "module": "Oban.Notifier",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Nursery.child_spec/1",
+        "module": "Oban.Nursery",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "no_counted_component"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Nursery.start_link/1",
+        "module": "Oban.Nursery",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Peer.child_spec/1",
+        "module": "Oban.Peer",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "no_counted_component"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Peer.get_leader/2",
+        "module": "Oban.Peer",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Peer.leader?/2",
+        "module": "Oban.Peer",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "possible_domain_escape",
+        "mfa": "Oban.Period.to_seconds/1",
+        "module": "Oban.Period",
+        "notes": [],
+        "obligation": "possible_mismatch",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": null
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Plugins.Cron.child_spec/1",
+        "module": "Oban.Plugins.Cron",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Plugins.Cron.parse/1",
+        "module": "Oban.Plugins.Cron",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "exact",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Plugins.Cron.start_link/1",
+        "module": "Oban.Plugins.Cron",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Plugins.Lifeline.child_spec/1",
+        "module": "Oban.Plugins.Lifeline",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Plugins.Lifeline.start_link/1",
+        "module": "Oban.Plugins.Lifeline",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Plugins.Pruner.child_spec/1",
+        "module": "Oban.Plugins.Pruner",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Plugins.Pruner.start_link/1",
+        "module": "Oban.Plugins.Pruner",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Plugins.Reindexer.child_spec/1",
+        "module": "Oban.Plugins.Reindexer",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Plugins.Reindexer.start_link/1",
+        "module": "Oban.Plugins.Reindexer",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Queue.Executor.ack_event/1",
+        "module": "Oban.Queue.Executor",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Queue.Executor.call/1",
+        "module": "Oban.Queue.Executor",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Queue.Executor.cancel_timeout/1",
+        "module": "Oban.Queue.Executor",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "no_counted_component"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Queue.Executor.emit_event/1",
+        "module": "Oban.Queue.Executor",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "no_counted_component"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Queue.Executor.new/3",
+        "module": "Oban.Queue.Executor",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "no_counted_component"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Queue.Executor.normalize_state/1",
+        "module": "Oban.Queue.Executor",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Queue.Executor.perform/1",
+        "module": "Oban.Queue.Executor",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "near_top"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Queue.Executor.record_finished/1",
+        "module": "Oban.Queue.Executor",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "no_counted_component"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Queue.Executor.record_started/1",
+        "module": "Oban.Queue.Executor",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "no_counted_component"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Queue.Executor.record_unsaved/1",
+        "module": "Oban.Queue.Executor",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Queue.Executor.report_finished/1",
+        "module": "Oban.Queue.Executor",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "no_counted_component"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Queue.Executor.reraise_unsafe/1",
+        "module": "Oban.Queue.Executor",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "near_top"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Queue.Executor.resolve_worker/1",
+        "module": "Oban.Queue.Executor",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "no_counted_component"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Queue.Executor.set_label/1",
+        "module": "Oban.Queue.Executor",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Queue.Executor.start_timeout/1",
+        "module": "Oban.Queue.Executor",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "near_top"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Queue.Producer.check/1",
+        "module": "Oban.Queue.Producer",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Queue.Producer.shutdown/1",
+        "module": "Oban.Queue.Producer",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "exact",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Queue.Producer.start_link/1",
+        "module": "Oban.Queue.Producer",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "exact",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Queue.Supervisor.child_spec/1",
+        "module": "Oban.Queue.Supervisor",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "no_counted_component"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Queue.Supervisor.start_link/1",
+        "module": "Oban.Queue.Supervisor",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "exact",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Queue.Watchman.child_spec/1",
+        "module": "Oban.Queue.Watchman",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "no_counted_component"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Queue.Watchman.start_link/1",
+        "module": "Oban.Queue.Watchman",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "exact",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Registry.config/1",
+        "module": "Oban.Registry",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Registry.lookup/2",
+        "module": "Oban.Registry",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "exact",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Registry.select/1",
+        "module": "Oban.Registry",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "exact",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "clause_conflict",
+        "mfa": "Oban.Registry.via/3",
+        "module": "Oban.Registry",
+        "notes": [],
+        "obligation": "possible_mismatch",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "exact",
+        "unknown_reason": null
+      },
+      {
+        "class": "none",
+        "mfa": "Oban.Registry.whereis/2",
+        "module": "Oban.Registry",
+        "notes": [],
+        "obligation": "established",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "exact",
+        "unknown_reason": null
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Sonar.start_link/1",
+        "module": "Oban.Sonar",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "exact",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Stager.start_link/1",
+        "module": "Oban.Stager",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Telemetry.attach_default_logger/1",
+        "module": "Oban.Telemetry",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "exact",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Telemetry.detach_default_logger/1",
+        "module": "Oban.Telemetry",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "exact",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "none",
+        "mfa": "Oban.Telemetry.handle_event/4",
+        "module": "Oban.Telemetry",
+        "notes": [],
+        "obligation": "established",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "exact",
+        "unknown_reason": null
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Test.DolphinRepo.rollback/1",
+        "module": "Oban.Test.DolphinRepo",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "exact",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Test.DynamicRepo.rollback/1",
+        "module": "Oban.Test.DynamicRepo",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "exact",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Test.LiteRepo.rollback/1",
+        "module": "Oban.Test.LiteRepo",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "exact",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Test.Repo.rollback/1",
+        "module": "Oban.Test.Repo",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "exact",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Test.UnboxedRepo.rollback/1",
+        "module": "Oban.Test.UnboxedRepo",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "exact",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Testing.all_enqueued/1",
+        "module": "Oban.Testing",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Testing.all_enqueued/2",
+        "module": "Oban.Testing",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Testing.assert_enqueued/1",
+        "module": "Oban.Testing",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "exact",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Testing.assert_enqueued/2",
+        "module": "Oban.Testing",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "exact",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Testing.assert_enqueued/2",
+        "module": "Oban.Testing",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 1,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Testing.build_job/3",
+        "module": "Oban.Testing",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Testing.perform_job/2",
+        "module": "Oban.Testing",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Testing.perform_job/3",
+        "module": "Oban.Testing",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Testing.refute_enqueued/1",
+        "module": "Oban.Testing",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "exact",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Testing.refute_enqueued/2",
+        "module": "Oban.Testing",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "none",
+        "mfa": "Oban.Testing.with_testing_mode/2",
+        "module": "Oban.Testing",
+        "notes": [],
+        "obligation": "established",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "exact",
+        "unknown_reason": null
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Validation.validate!/2",
+        "module": "Oban.Validation",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "exact",
+        "unknown_reason": "near_top"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Validation.validate_schema!/2",
+        "module": "Oban.Validation",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "exact",
+        "unknown_reason": "near_top"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Validation.validate_schema/2",
+        "module": "Oban.Validation",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "exact",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Worker.from_string/1",
+        "module": "Oban.Worker",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "exact",
+        "unknown_reason": "no_counted_component"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Oban.Worker.to_string/1",
+        "module": "Oban.Worker",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "exact",
+        "unknown_reason": "top_only"
+      }
+    ],
+    "functions": {
+      "compared": 127,
+      "found": 127,
+      "unavailable": 0,
+      "unsupported": 0
+    },
+    "lost_analysis": {},
+    "modules": {
+      "analysed": 81,
+      "discovered": 81,
+      "out_of_scope": {
+        "erlang_module": 0,
+        "excluded": 0
+      },
+      "unavailable": {}
+    },
+    "obligations": {
+      "compatible_after_approximation": 3,
+      "established": 10,
+      "possible_mismatch": 2,
+      "unknown": 115
+    },
+    "obligations_unknown_by_reason": {
+      "near_top": 5,
+      "no_counted_component": 17,
+      "top_only": 93
+    },
+    "signatures": {
+      "available": 127,
+      "unavailable": {}
+    },
+    "slices": {
+      "approximate": 90,
+      "compared": 130,
+      "exact": 40,
+      "expanded": 0,
+      "found": 130,
+      "loss_kinds": {
+        "arrow_polarity": 35,
+        "integer_refinement_erased": 89,
+        "map_key_widened": 11,
+        "recursive_cutoff": 11
+      },
+      "unavailable": {},
+      "unsupported": {}
+    },
+    "specs_out_of_scope": {
+      "generated": 36
+    }
+  },
+  "otp": "28",
+  "project": {
+    "mix_env": null,
+    "mix_target": null,
+    "umbrella": false
+  },
+  "schema": "spec_lint/report",
+  "schema_version": 1,
+  "scope": {
+    "app_filters": [],
+    "apps": [
+      "oban"
+    ],
+    "exclude": [],
+    "module_filters": [],
+    "partial": false
+  },
+  "tool": {
+    "name": "spec_lint",
+    "version": "0.1.0"
+  }
+}

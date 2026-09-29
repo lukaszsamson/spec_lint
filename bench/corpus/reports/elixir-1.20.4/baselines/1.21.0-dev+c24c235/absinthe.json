@@ -1,0 +1,3758 @@
+{
+  "adapter": "1.21.0-dev+c24c235",
+  "findings": [
+    {
+      "adapter": "1.21.0-dev+c24c235",
+      "blocked": [],
+      "clause": 1,
+      "evidence": "clause_conflict",
+      "expires": null,
+      "fingerprint": "sha256:f0917dc8074530a76751ef66c717b72812eeca92fb88256a2b18479d10d419a2",
+      "mfa": "Absinthe.Blueprint.Input.parse/1",
+      "name": "return_conflict",
+      "owner": null,
+      "reason": null,
+      "rule": "SL001",
+      "slice": 0
+    },
+    {
+      "adapter": "1.21.0-dev+c24c235",
+      "blocked": [],
+      "clause": 2,
+      "evidence": "clause_conflict",
+      "expires": null,
+      "fingerprint": "sha256:acbbb69c878b065d0845faf3cd562c18d14d311e494da42c3907963b31f46a96",
+      "mfa": "Absinthe.Blueprint.Input.parse/1",
+      "name": "return_conflict",
+      "owner": null,
+      "reason": null,
+      "rule": "SL001",
+      "slice": 0
+    },
+    {
+      "adapter": "1.21.0-dev+c24c235",
+      "blocked": [],
+      "clause": 3,
+      "evidence": "clause_conflict",
+      "expires": null,
+      "fingerprint": "sha256:9e06666ff934efde0669a28cf7f3782fd609e50d307300634c2058a0fe938222",
+      "mfa": "Absinthe.Blueprint.Input.parse/1",
+      "name": "return_conflict",
+      "owner": null,
+      "reason": null,
+      "rule": "SL001",
+      "slice": 0
+    },
+    {
+      "adapter": "1.21.0-dev+c24c235",
+      "blocked": [],
+      "clause": 4,
+      "evidence": "clause_conflict",
+      "expires": null,
+      "fingerprint": "sha256:bd77235f7deeae2b6f62a9a4e004df9f0c260b1e940b4a900481a86861f3c3fc",
+      "mfa": "Absinthe.Blueprint.Input.parse/1",
+      "name": "return_conflict",
+      "owner": null,
+      "reason": null,
+      "rule": "SL001",
+      "slice": 0
+    },
+    {
+      "adapter": "1.21.0-dev+c24c235",
+      "blocked": [],
+      "clause": 5,
+      "evidence": "clause_conflict",
+      "expires": null,
+      "fingerprint": "sha256:5eda241626ddbcfd99add7b8abe3df7b7c806cd0e00329b024890e4a8ecf9b4e",
+      "mfa": "Absinthe.Blueprint.Input.parse/1",
+      "name": "return_conflict",
+      "owner": null,
+      "reason": null,
+      "rule": "SL001",
+      "slice": 0
+    },
+    {
+      "adapter": "1.21.0-dev+c24c235",
+      "blocked": [],
+      "clause": 6,
+      "evidence": "clause_conflict",
+      "expires": null,
+      "fingerprint": "sha256:c96e7379395b0ed28648db69a662aa231faff648d446ef0f91ee6366340ff2f1",
+      "mfa": "Absinthe.Blueprint.Input.parse/1",
+      "name": "return_conflict",
+      "owner": null,
+      "reason": null,
+      "rule": "SL001",
+      "slice": 0
+    },
+    {
+      "adapter": "1.21.0-dev+c24c235",
+      "blocked": [],
+      "clause": 7,
+      "evidence": "clause_conflict",
+      "expires": null,
+      "fingerprint": "sha256:1d3a6590b33bbb4b0f69d1e4cee69f88946905c50d60d14a0e07ff33fd3653c2",
+      "mfa": "Absinthe.Blueprint.Input.parse/1",
+      "name": "return_conflict",
+      "owner": null,
+      "reason": null,
+      "rule": "SL001",
+      "slice": 0
+    },
+    {
+      "adapter": "1.21.0-dev+c24c235",
+      "blocked": ["no_arrow_polarity_argument", "structured_possible"],
+      "clause": null,
+      "evidence": "possible_domain_escape",
+      "expires": null,
+      "fingerprint": "sha256:f354794f50a997c945acce1ae5c4688fa92fe17f1608c3fdc469aa853cd79038",
+      "mfa": "Absinthe.Phase.Init.run/2",
+      "name": "possible_missing_return",
+      "owner": null,
+      "reason": null,
+      "rule": "SL002",
+      "slice": 0
+    },
+    {
+      "adapter": "1.21.0-dev+c24c235",
+      "blocked": ["structured_possible"],
+      "clause": null,
+      "evidence": "possible_domain_escape",
+      "expires": null,
+      "fingerprint": "sha256:b0eb796a72e6aad7351bf76afac214b7bf38788eb20037a07d52263713b72d54",
+      "mfa": "Absinthe.Subscription.PipelineSerializer.pack/1",
+      "name": "possible_missing_return",
+      "owner": null,
+      "reason": null,
+      "rule": "SL002",
+      "slice": 0
+    }
+  ],
+  "inventory": [
+    {
+      "mfa": "Absinthe.run!/3",
+      "module": "Absinthe",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.run/3",
+      "module": "Absinthe",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Blueprint.current_operation/1",
+      "module": "Absinthe.Blueprint",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Blueprint.flagged?/2",
+      "module": "Absinthe.Blueprint",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Blueprint.fragment/2",
+      "module": "Absinthe.Blueprint",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Blueprint.put_flag/3",
+      "module": "Absinthe.Blueprint",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Blueprint.update_current/2",
+      "module": "Absinthe.Blueprint",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Blueprint.Directive.expand/2",
+      "module": "Absinthe.Blueprint.Directive",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Blueprint.Directive.placement/1",
+      "module": "Absinthe.Blueprint.Directive",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Blueprint.Document.Fragment.Named.to_use/1",
+      "module": "Absinthe.Blueprint.Document.Fragment.Named",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Blueprint.Document.Operation.uses?/2",
+      "module": "Absinthe.Blueprint.Document.Operation",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Blueprint.Input.inspect/1",
+      "module": "Absinthe.Blueprint.Input",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Blueprint.Input.parse/1",
+      "module": "Absinthe.Blueprint.Input",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Blueprint.Input.Argument.value_map/1",
+      "module": "Absinthe.Blueprint.Input.Argument",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Blueprint.Input.List.wrap/2",
+      "module": "Absinthe.Blueprint.Input.List",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Blueprint.Input.Value.valid?/1",
+      "module": "Absinthe.Blueprint.Input.Value",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Blueprint.Input.Variable.to_use/1",
+      "module": "Absinthe.Blueprint.Input.Variable",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Blueprint.Schema.lookup_directive/2",
+      "module": "Absinthe.Blueprint.Schema",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Blueprint.Schema.lookup_type/2",
+      "module": "Absinthe.Blueprint.Schema",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Blueprint.SourceLocation.at/1",
+      "module": "Absinthe.Blueprint.SourceLocation",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Blueprint.SourceLocation.at/2",
+      "module": "Absinthe.Blueprint.SourceLocation",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Blueprint.Transform.postwalk/2",
+      "module": "Absinthe.Blueprint.Transform",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Blueprint.Transform.postwalk/3",
+      "module": "Absinthe.Blueprint.Transform",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Blueprint.Transform.prewalk/2",
+      "module": "Absinthe.Blueprint.Transform",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Blueprint.Transform.prewalk/3",
+      "module": "Absinthe.Blueprint.Transform",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Blueprint.Transform.walk/4",
+      "module": "Absinthe.Blueprint.Transform",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Blueprint.TypeReference.unwrap/1",
+      "module": "Absinthe.Blueprint.TypeReference",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Fixtures.ColorSchema.WithTypeSystemDirective.expand_deprecate/2",
+      "module": "Absinthe.Fixtures.ColorSchema.WithTypeSystemDirective",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Introspection.type?/1",
+      "module": "Absinthe.Introspection",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "exact"
+    },
+    {
+      "mfa": "Absinthe.Language.unwrap/1",
+      "module": "Absinthe.Language",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Language.Document.fragments_by_name/1",
+      "module": "Absinthe.Language.Document",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Language.Document.get_operation/2",
+      "module": "Absinthe.Language.Document",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Lexer.do_tokenize/1",
+      "module": "Absinthe.Lexer",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Lexer.do_tokenize/2",
+      "module": "Absinthe.Lexer",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Lexer.tokenize/2",
+      "module": "Absinthe.Lexer",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Logger.document/1",
+      "module": "Absinthe.Logger",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "exact"
+    },
+    {
+      "mfa": "Absinthe.Logger.filter_variables/1",
+      "module": "Absinthe.Logger",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "exact"
+    },
+    {
+      "mfa": "Absinthe.Logger.filter_variables/2",
+      "module": "Absinthe.Logger",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "exact"
+    },
+    {
+      "mfa": "Absinthe.Logger.log_run/2",
+      "module": "Absinthe.Logger",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "exact"
+    },
+    {
+      "mfa": "Absinthe.Middleware.Async.async/1",
+      "module": "Absinthe.Middleware.Async",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Middleware.Batch.async/1",
+      "module": "Absinthe.Middleware.Batch",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.put_error/2",
+      "module": "Absinthe.Phase",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Blueprint.flag_invalid/1",
+      "module": "Absinthe.Phase.Blueprint",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Blueprint.flag_invalid/2",
+      "module": "Absinthe.Phase.Blueprint",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Blueprint.flag_invalid/3",
+      "module": "Absinthe.Phase.Blueprint",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Blueprint.run/2",
+      "module": "Absinthe.Phase.Blueprint",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Debug.flag_invalid/1",
+      "module": "Absinthe.Phase.Debug",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Debug.flag_invalid/2",
+      "module": "Absinthe.Phase.Debug",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Debug.flag_invalid/3",
+      "module": "Absinthe.Phase.Debug",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Debug.run/2",
+      "module": "Absinthe.Phase.Debug",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Arguments.CoerceEnums.flag_invalid/1",
+      "module": "Absinthe.Phase.Document.Arguments.CoerceEnums",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Arguments.CoerceEnums.flag_invalid/2",
+      "module": "Absinthe.Phase.Document.Arguments.CoerceEnums",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Arguments.CoerceEnums.flag_invalid/3",
+      "module": "Absinthe.Phase.Document.Arguments.CoerceEnums",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Arguments.CoerceEnums.run/2",
+      "module": "Absinthe.Phase.Document.Arguments.CoerceEnums",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Arguments.CoerceLists.flag_invalid/1",
+      "module": "Absinthe.Phase.Document.Arguments.CoerceLists",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Arguments.CoerceLists.flag_invalid/2",
+      "module": "Absinthe.Phase.Document.Arguments.CoerceLists",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Arguments.CoerceLists.flag_invalid/3",
+      "module": "Absinthe.Phase.Document.Arguments.CoerceLists",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Arguments.CoerceLists.run/2",
+      "module": "Absinthe.Phase.Document.Arguments.CoerceLists",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Arguments.Data.flag_invalid/1",
+      "module": "Absinthe.Phase.Document.Arguments.Data",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Arguments.Data.flag_invalid/2",
+      "module": "Absinthe.Phase.Document.Arguments.Data",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Arguments.Data.flag_invalid/3",
+      "module": "Absinthe.Phase.Document.Arguments.Data",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Arguments.FlagInvalid.flag_invalid/1",
+      "module": "Absinthe.Phase.Document.Arguments.FlagInvalid",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Arguments.FlagInvalid.flag_invalid/2",
+      "module": "Absinthe.Phase.Document.Arguments.FlagInvalid",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Arguments.FlagInvalid.flag_invalid/3",
+      "module": "Absinthe.Phase.Document.Arguments.FlagInvalid",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Arguments.FlagInvalid.run/2",
+      "module": "Absinthe.Phase.Document.Arguments.FlagInvalid",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Arguments.Normalize.flag_invalid/1",
+      "module": "Absinthe.Phase.Document.Arguments.Normalize",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Arguments.Normalize.flag_invalid/2",
+      "module": "Absinthe.Phase.Document.Arguments.Normalize",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Arguments.Normalize.flag_invalid/3",
+      "module": "Absinthe.Phase.Document.Arguments.Normalize",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Arguments.Normalize.run/2",
+      "module": "Absinthe.Phase.Document.Arguments.Normalize",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Arguments.Parse.flag_invalid/1",
+      "module": "Absinthe.Phase.Document.Arguments.Parse",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Arguments.Parse.flag_invalid/2",
+      "module": "Absinthe.Phase.Document.Arguments.Parse",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Arguments.Parse.flag_invalid/3",
+      "module": "Absinthe.Phase.Document.Arguments.Parse",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Arguments.VariableTypesMatch.flag_invalid/1",
+      "module": "Absinthe.Phase.Document.Arguments.VariableTypesMatch",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Arguments.VariableTypesMatch.flag_invalid/2",
+      "module": "Absinthe.Phase.Document.Arguments.VariableTypesMatch",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Arguments.VariableTypesMatch.flag_invalid/3",
+      "module": "Absinthe.Phase.Document.Arguments.VariableTypesMatch",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Complexity.Analysis.flag_invalid/1",
+      "module": "Absinthe.Phase.Document.Complexity.Analysis",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Complexity.Analysis.flag_invalid/2",
+      "module": "Absinthe.Phase.Document.Complexity.Analysis",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Complexity.Analysis.flag_invalid/3",
+      "module": "Absinthe.Phase.Document.Complexity.Analysis",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Complexity.Analysis.run/2",
+      "module": "Absinthe.Phase.Document.Complexity.Analysis",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Complexity.Result.flag_invalid/1",
+      "module": "Absinthe.Phase.Document.Complexity.Result",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Complexity.Result.flag_invalid/2",
+      "module": "Absinthe.Phase.Document.Complexity.Result",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Complexity.Result.flag_invalid/3",
+      "module": "Absinthe.Phase.Document.Complexity.Result",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Complexity.Result.run/2",
+      "module": "Absinthe.Phase.Document.Complexity.Result",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Context.flag_invalid/1",
+      "module": "Absinthe.Phase.Document.Context",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Context.flag_invalid/2",
+      "module": "Absinthe.Phase.Document.Context",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Context.flag_invalid/3",
+      "module": "Absinthe.Phase.Document.Context",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Context.run/2",
+      "module": "Absinthe.Phase.Document.Context",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.CurrentOperation.flag_invalid/1",
+      "module": "Absinthe.Phase.Document.CurrentOperation",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.CurrentOperation.flag_invalid/2",
+      "module": "Absinthe.Phase.Document.CurrentOperation",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.CurrentOperation.flag_invalid/3",
+      "module": "Absinthe.Phase.Document.CurrentOperation",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.CurrentOperation.run/2",
+      "module": "Absinthe.Phase.Document.CurrentOperation",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Directives.flag_invalid/1",
+      "module": "Absinthe.Phase.Document.Directives",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Directives.flag_invalid/2",
+      "module": "Absinthe.Phase.Document.Directives",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Directives.flag_invalid/3",
+      "module": "Absinthe.Phase.Document.Directives",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Directives.run/2",
+      "module": "Absinthe.Phase.Document.Directives",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Execution.Resolution.flag_invalid/1",
+      "module": "Absinthe.Phase.Document.Execution.Resolution",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Execution.Resolution.flag_invalid/2",
+      "module": "Absinthe.Phase.Document.Execution.Resolution",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Execution.Resolution.flag_invalid/3",
+      "module": "Absinthe.Phase.Document.Execution.Resolution",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Execution.Resolution.run/2",
+      "module": "Absinthe.Phase.Document.Execution.Resolution",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.MissingLiterals.flag_invalid/1",
+      "module": "Absinthe.Phase.Document.MissingLiterals",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.MissingLiterals.flag_invalid/2",
+      "module": "Absinthe.Phase.Document.MissingLiterals",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.MissingLiterals.flag_invalid/3",
+      "module": "Absinthe.Phase.Document.MissingLiterals",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.MissingLiterals.run/2",
+      "module": "Absinthe.Phase.Document.MissingLiterals",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.MissingVariables.flag_invalid/1",
+      "module": "Absinthe.Phase.Document.MissingVariables",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.MissingVariables.flag_invalid/2",
+      "module": "Absinthe.Phase.Document.MissingVariables",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.MissingVariables.flag_invalid/3",
+      "module": "Absinthe.Phase.Document.MissingVariables",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.MissingVariables.run/2",
+      "module": "Absinthe.Phase.Document.MissingVariables",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Result.flag_invalid/1",
+      "module": "Absinthe.Phase.Document.Result",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Result.flag_invalid/2",
+      "module": "Absinthe.Phase.Document.Result",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Result.flag_invalid/3",
+      "module": "Absinthe.Phase.Document.Result",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Result.run/2",
+      "module": "Absinthe.Phase.Document.Result",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Uses.flag_invalid/1",
+      "module": "Absinthe.Phase.Document.Uses",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Uses.flag_invalid/2",
+      "module": "Absinthe.Phase.Document.Uses",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Uses.flag_invalid/3",
+      "module": "Absinthe.Phase.Document.Uses",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Uses.run/2",
+      "module": "Absinthe.Phase.Document.Uses",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.ArgumentsOfCorrectType.flag_invalid/1",
+      "module": "Absinthe.Phase.Document.Validation.ArgumentsOfCorrectType",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.ArgumentsOfCorrectType.flag_invalid/2",
+      "module": "Absinthe.Phase.Document.Validation.ArgumentsOfCorrectType",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.ArgumentsOfCorrectType.flag_invalid/3",
+      "module": "Absinthe.Phase.Document.Validation.ArgumentsOfCorrectType",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.ArgumentsOfCorrectType.run/2",
+      "module": "Absinthe.Phase.Document.Validation.ArgumentsOfCorrectType",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.ExecutableDefinitions.flag_invalid/1",
+      "module": "Absinthe.Phase.Document.Validation.ExecutableDefinitions",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.ExecutableDefinitions.flag_invalid/2",
+      "module": "Absinthe.Phase.Document.Validation.ExecutableDefinitions",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.ExecutableDefinitions.flag_invalid/3",
+      "module": "Absinthe.Phase.Document.Validation.ExecutableDefinitions",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.ExecutableDefinitions.run/2",
+      "module": "Absinthe.Phase.Document.Validation.ExecutableDefinitions",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.FieldsOnCorrectType.error_message/4",
+      "module": "Absinthe.Phase.Document.Validation.FieldsOnCorrectType",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "exact"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.FieldsOnCorrectType.flag_invalid/1",
+      "module": "Absinthe.Phase.Document.Validation.FieldsOnCorrectType",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.FieldsOnCorrectType.flag_invalid/2",
+      "module": "Absinthe.Phase.Document.Validation.FieldsOnCorrectType",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.FieldsOnCorrectType.flag_invalid/3",
+      "module": "Absinthe.Phase.Document.Validation.FieldsOnCorrectType",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.FieldsOnCorrectType.run/2",
+      "module": "Absinthe.Phase.Document.Validation.FieldsOnCorrectType",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.KnownArgumentNames.directive_error_message/2",
+      "module": "Absinthe.Phase.Document.Validation.KnownArgumentNames",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "exact"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.KnownArgumentNames.field_error_message/3",
+      "module": "Absinthe.Phase.Document.Validation.KnownArgumentNames",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "exact"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.KnownArgumentNames.flag_invalid/1",
+      "module": "Absinthe.Phase.Document.Validation.KnownArgumentNames",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.KnownArgumentNames.flag_invalid/2",
+      "module": "Absinthe.Phase.Document.Validation.KnownArgumentNames",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.KnownArgumentNames.flag_invalid/3",
+      "module": "Absinthe.Phase.Document.Validation.KnownArgumentNames",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.KnownArgumentNames.run/2",
+      "module": "Absinthe.Phase.Document.Validation.KnownArgumentNames",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.KnownDirectives.flag_invalid/1",
+      "module": "Absinthe.Phase.Document.Validation.KnownDirectives",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.KnownDirectives.flag_invalid/2",
+      "module": "Absinthe.Phase.Document.Validation.KnownDirectives",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.KnownDirectives.flag_invalid/3",
+      "module": "Absinthe.Phase.Document.Validation.KnownDirectives",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.KnownDirectives.run/2",
+      "module": "Absinthe.Phase.Document.Validation.KnownDirectives",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.KnownFragmentNames.flag_invalid/1",
+      "module": "Absinthe.Phase.Document.Validation.KnownFragmentNames",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.KnownFragmentNames.flag_invalid/2",
+      "module": "Absinthe.Phase.Document.Validation.KnownFragmentNames",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.KnownFragmentNames.flag_invalid/3",
+      "module": "Absinthe.Phase.Document.Validation.KnownFragmentNames",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.KnownFragmentNames.run/2",
+      "module": "Absinthe.Phase.Document.Validation.KnownFragmentNames",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.LoneAnonymousOperation.flag_invalid/1",
+      "module": "Absinthe.Phase.Document.Validation.LoneAnonymousOperation",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.LoneAnonymousOperation.flag_invalid/2",
+      "module": "Absinthe.Phase.Document.Validation.LoneAnonymousOperation",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.LoneAnonymousOperation.flag_invalid/3",
+      "module": "Absinthe.Phase.Document.Validation.LoneAnonymousOperation",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.LoneAnonymousOperation.run/2",
+      "module": "Absinthe.Phase.Document.Validation.LoneAnonymousOperation",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.NoFragmentCycles.do_run/2",
+      "module": "Absinthe.Phase.Document.Validation.NoFragmentCycles",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.NoFragmentCycles.error_message/2",
+      "module": "Absinthe.Phase.Document.Validation.NoFragmentCycles",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "exact"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.NoFragmentCycles.flag_invalid/1",
+      "module": "Absinthe.Phase.Document.Validation.NoFragmentCycles",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.NoFragmentCycles.flag_invalid/2",
+      "module": "Absinthe.Phase.Document.Validation.NoFragmentCycles",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.NoFragmentCycles.flag_invalid/3",
+      "module": "Absinthe.Phase.Document.Validation.NoFragmentCycles",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.NoFragmentCycles.run/2",
+      "module": "Absinthe.Phase.Document.Validation.NoFragmentCycles",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.NoUndefinedVariables.error_message/2",
+      "module": "Absinthe.Phase.Document.Validation.NoUndefinedVariables",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "exact"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.NoUndefinedVariables.flag_invalid/1",
+      "module": "Absinthe.Phase.Document.Validation.NoUndefinedVariables",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.NoUndefinedVariables.flag_invalid/2",
+      "module": "Absinthe.Phase.Document.Validation.NoUndefinedVariables",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.NoUndefinedVariables.flag_invalid/3",
+      "module": "Absinthe.Phase.Document.Validation.NoUndefinedVariables",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.NoUndefinedVariables.run/2",
+      "module": "Absinthe.Phase.Document.Validation.NoUndefinedVariables",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.NoUnusedFragments.error_message/1",
+      "module": "Absinthe.Phase.Document.Validation.NoUnusedFragments",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "exact"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.NoUnusedFragments.flag_invalid/1",
+      "module": "Absinthe.Phase.Document.Validation.NoUnusedFragments",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.NoUnusedFragments.flag_invalid/2",
+      "module": "Absinthe.Phase.Document.Validation.NoUnusedFragments",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.NoUnusedFragments.flag_invalid/3",
+      "module": "Absinthe.Phase.Document.Validation.NoUnusedFragments",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.NoUnusedFragments.run/2",
+      "module": "Absinthe.Phase.Document.Validation.NoUnusedFragments",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.NoUnusedVariables.error_message/2",
+      "module": "Absinthe.Phase.Document.Validation.NoUnusedVariables",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "exact"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.NoUnusedVariables.flag_invalid/1",
+      "module": "Absinthe.Phase.Document.Validation.NoUnusedVariables",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.NoUnusedVariables.flag_invalid/2",
+      "module": "Absinthe.Phase.Document.Validation.NoUnusedVariables",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.NoUnusedVariables.flag_invalid/3",
+      "module": "Absinthe.Phase.Document.Validation.NoUnusedVariables",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.NoUnusedVariables.run/2",
+      "module": "Absinthe.Phase.Document.Validation.NoUnusedVariables",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.OneOfDirective.flag_invalid/1",
+      "module": "Absinthe.Phase.Document.Validation.OneOfDirective",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.OneOfDirective.flag_invalid/2",
+      "module": "Absinthe.Phase.Document.Validation.OneOfDirective",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.OneOfDirective.flag_invalid/3",
+      "module": "Absinthe.Phase.Document.Validation.OneOfDirective",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.OnlyOneSubscription.flag_invalid/1",
+      "module": "Absinthe.Phase.Document.Validation.OnlyOneSubscription",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.OnlyOneSubscription.flag_invalid/2",
+      "module": "Absinthe.Phase.Document.Validation.OnlyOneSubscription",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.OnlyOneSubscription.flag_invalid/3",
+      "module": "Absinthe.Phase.Document.Validation.OnlyOneSubscription",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.OnlyOneSubscription.run/2",
+      "module": "Absinthe.Phase.Document.Validation.OnlyOneSubscription",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.ProvidedAnOperation.error_message/0",
+      "module": "Absinthe.Phase.Document.Validation.ProvidedAnOperation",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "exact"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.ProvidedAnOperation.flag_invalid/1",
+      "module": "Absinthe.Phase.Document.Validation.ProvidedAnOperation",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.ProvidedAnOperation.flag_invalid/2",
+      "module": "Absinthe.Phase.Document.Validation.ProvidedAnOperation",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.ProvidedAnOperation.flag_invalid/3",
+      "module": "Absinthe.Phase.Document.Validation.ProvidedAnOperation",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.ProvidedAnOperation.run/2",
+      "module": "Absinthe.Phase.Document.Validation.ProvidedAnOperation",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.ProvidedNonNullArguments.error_message/2",
+      "module": "Absinthe.Phase.Document.Validation.ProvidedNonNullArguments",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "exact"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.ProvidedNonNullArguments.flag_invalid/1",
+      "module": "Absinthe.Phase.Document.Validation.ProvidedNonNullArguments",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.ProvidedNonNullArguments.flag_invalid/2",
+      "module": "Absinthe.Phase.Document.Validation.ProvidedNonNullArguments",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.ProvidedNonNullArguments.flag_invalid/3",
+      "module": "Absinthe.Phase.Document.Validation.ProvidedNonNullArguments",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.ProvidedNonNullArguments.run/2",
+      "module": "Absinthe.Phase.Document.Validation.ProvidedNonNullArguments",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.ProvidedNonNullVariables.error_message/1",
+      "module": "Absinthe.Phase.Document.Validation.ProvidedNonNullVariables",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "exact"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.ProvidedNonNullVariables.flag_invalid/1",
+      "module": "Absinthe.Phase.Document.Validation.ProvidedNonNullVariables",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.ProvidedNonNullVariables.flag_invalid/2",
+      "module": "Absinthe.Phase.Document.Validation.ProvidedNonNullVariables",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.ProvidedNonNullVariables.flag_invalid/3",
+      "module": "Absinthe.Phase.Document.Validation.ProvidedNonNullVariables",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.ProvidedNonNullVariables.run/2",
+      "module": "Absinthe.Phase.Document.Validation.ProvidedNonNullVariables",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.RepeatableDirectives.flag_invalid/1",
+      "module": "Absinthe.Phase.Document.Validation.RepeatableDirectives",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.RepeatableDirectives.flag_invalid/2",
+      "module": "Absinthe.Phase.Document.Validation.RepeatableDirectives",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.RepeatableDirectives.flag_invalid/3",
+      "module": "Absinthe.Phase.Document.Validation.RepeatableDirectives",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.RepeatableDirectives.run/2",
+      "module": "Absinthe.Phase.Document.Validation.RepeatableDirectives",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.Result.do_run/2",
+      "module": "Absinthe.Phase.Document.Validation.Result",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.Result.flag_invalid/1",
+      "module": "Absinthe.Phase.Document.Validation.Result",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.Result.flag_invalid/2",
+      "module": "Absinthe.Phase.Document.Validation.Result",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.Result.flag_invalid/3",
+      "module": "Absinthe.Phase.Document.Validation.Result",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.Result.run/2",
+      "module": "Absinthe.Phase.Document.Validation.Result",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.ScalarLeafs.flag_invalid/1",
+      "module": "Absinthe.Phase.Document.Validation.ScalarLeafs",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.ScalarLeafs.flag_invalid/2",
+      "module": "Absinthe.Phase.Document.Validation.ScalarLeafs",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.ScalarLeafs.flag_invalid/3",
+      "module": "Absinthe.Phase.Document.Validation.ScalarLeafs",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.ScalarLeafs.no_subselection_allowed_message/2",
+      "module": "Absinthe.Phase.Document.Validation.ScalarLeafs",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "exact"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.ScalarLeafs.required_subselection_message/2",
+      "module": "Absinthe.Phase.Document.Validation.ScalarLeafs",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "exact"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.ScalarLeafs.run/2",
+      "module": "Absinthe.Phase.Document.Validation.ScalarLeafs",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.SelectedCurrentOperation.flag_invalid/1",
+      "module": "Absinthe.Phase.Document.Validation.SelectedCurrentOperation",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.SelectedCurrentOperation.flag_invalid/2",
+      "module": "Absinthe.Phase.Document.Validation.SelectedCurrentOperation",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.SelectedCurrentOperation.flag_invalid/3",
+      "module": "Absinthe.Phase.Document.Validation.SelectedCurrentOperation",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.SelectedCurrentOperation.run/2",
+      "module": "Absinthe.Phase.Document.Validation.SelectedCurrentOperation",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.UniqueArgumentNames.error_message/0",
+      "module": "Absinthe.Phase.Document.Validation.UniqueArgumentNames",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "exact"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.UniqueArgumentNames.flag_invalid/1",
+      "module": "Absinthe.Phase.Document.Validation.UniqueArgumentNames",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.UniqueArgumentNames.flag_invalid/2",
+      "module": "Absinthe.Phase.Document.Validation.UniqueArgumentNames",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.UniqueArgumentNames.flag_invalid/3",
+      "module": "Absinthe.Phase.Document.Validation.UniqueArgumentNames",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.UniqueArgumentNames.run/2",
+      "module": "Absinthe.Phase.Document.Validation.UniqueArgumentNames",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.UniqueFragmentNames.error_message/1",
+      "module": "Absinthe.Phase.Document.Validation.UniqueFragmentNames",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "exact"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.UniqueFragmentNames.flag_invalid/1",
+      "module": "Absinthe.Phase.Document.Validation.UniqueFragmentNames",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.UniqueFragmentNames.flag_invalid/2",
+      "module": "Absinthe.Phase.Document.Validation.UniqueFragmentNames",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.UniqueFragmentNames.flag_invalid/3",
+      "module": "Absinthe.Phase.Document.Validation.UniqueFragmentNames",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.UniqueFragmentNames.run/2",
+      "module": "Absinthe.Phase.Document.Validation.UniqueFragmentNames",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.UniqueInputFieldNames.error_message/0",
+      "module": "Absinthe.Phase.Document.Validation.UniqueInputFieldNames",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "exact"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.UniqueInputFieldNames.flag_invalid/1",
+      "module": "Absinthe.Phase.Document.Validation.UniqueInputFieldNames",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.UniqueInputFieldNames.flag_invalid/2",
+      "module": "Absinthe.Phase.Document.Validation.UniqueInputFieldNames",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.UniqueInputFieldNames.flag_invalid/3",
+      "module": "Absinthe.Phase.Document.Validation.UniqueInputFieldNames",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.UniqueInputFieldNames.run/2",
+      "module": "Absinthe.Phase.Document.Validation.UniqueInputFieldNames",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.UniqueOperationNames.error_message/1",
+      "module": "Absinthe.Phase.Document.Validation.UniqueOperationNames",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "exact"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.UniqueOperationNames.flag_invalid/1",
+      "module": "Absinthe.Phase.Document.Validation.UniqueOperationNames",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.UniqueOperationNames.flag_invalid/2",
+      "module": "Absinthe.Phase.Document.Validation.UniqueOperationNames",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.UniqueOperationNames.flag_invalid/3",
+      "module": "Absinthe.Phase.Document.Validation.UniqueOperationNames",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.UniqueOperationNames.run/2",
+      "module": "Absinthe.Phase.Document.Validation.UniqueOperationNames",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.UniqueVariableNames.error_message/1",
+      "module": "Absinthe.Phase.Document.Validation.UniqueVariableNames",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "exact"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.UniqueVariableNames.flag_invalid/1",
+      "module": "Absinthe.Phase.Document.Validation.UniqueVariableNames",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.UniqueVariableNames.flag_invalid/2",
+      "module": "Absinthe.Phase.Document.Validation.UniqueVariableNames",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.UniqueVariableNames.flag_invalid/3",
+      "module": "Absinthe.Phase.Document.Validation.UniqueVariableNames",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.UniqueVariableNames.run/2",
+      "module": "Absinthe.Phase.Document.Validation.UniqueVariableNames",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.VariablesAreInputTypes.error_message/2",
+      "module": "Absinthe.Phase.Document.Validation.VariablesAreInputTypes",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "exact"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.VariablesAreInputTypes.flag_invalid/1",
+      "module": "Absinthe.Phase.Document.Validation.VariablesAreInputTypes",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.VariablesAreInputTypes.flag_invalid/2",
+      "module": "Absinthe.Phase.Document.Validation.VariablesAreInputTypes",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.VariablesAreInputTypes.flag_invalid/3",
+      "module": "Absinthe.Phase.Document.Validation.VariablesAreInputTypes",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Validation.VariablesAreInputTypes.run/2",
+      "module": "Absinthe.Phase.Document.Validation.VariablesAreInputTypes",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Variables.flag_invalid/1",
+      "module": "Absinthe.Phase.Document.Variables",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Variables.flag_invalid/2",
+      "module": "Absinthe.Phase.Document.Variables",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Variables.flag_invalid/3",
+      "module": "Absinthe.Phase.Document.Variables",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Document.Variables.run/2",
+      "module": "Absinthe.Phase.Document.Variables",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Init.flag_invalid/1",
+      "module": "Absinthe.Phase.Init",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Init.flag_invalid/2",
+      "module": "Absinthe.Phase.Init",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Init.flag_invalid/3",
+      "module": "Absinthe.Phase.Init",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Init.run/2",
+      "module": "Absinthe.Phase.Init",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Parse.flag_invalid/1",
+      "module": "Absinthe.Phase.Parse",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Parse.flag_invalid/2",
+      "module": "Absinthe.Phase.Parse",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Parse.flag_invalid/3",
+      "module": "Absinthe.Phase.Parse",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Parse.run/2",
+      "module": "Absinthe.Phase.Parse",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "exact"
+    },
+    {
+      "mfa": "Absinthe.Phase.Parse.tokenize/2",
+      "module": "Absinthe.Phase.Parse",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "exact"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.flag_invalid/1",
+      "module": "Absinthe.Phase.Schema",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.flag_invalid/2",
+      "module": "Absinthe.Phase.Schema",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.flag_invalid/3",
+      "module": "Absinthe.Phase.Schema",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.run/2",
+      "module": "Absinthe.Phase.Schema",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.ApplyDeclaration.flag_invalid/1",
+      "module": "Absinthe.Phase.Schema.ApplyDeclaration",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.ApplyDeclaration.flag_invalid/2",
+      "module": "Absinthe.Phase.Schema.ApplyDeclaration",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.ApplyDeclaration.flag_invalid/3",
+      "module": "Absinthe.Phase.Schema.ApplyDeclaration",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.ApplyTypeExtensions.run/2",
+      "module": "Absinthe.Phase.Schema.ApplyTypeExtensions",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.Arguments.Data.flag_invalid/1",
+      "module": "Absinthe.Phase.Schema.Arguments.Data",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.Arguments.Data.flag_invalid/2",
+      "module": "Absinthe.Phase.Schema.Arguments.Data",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.Arguments.Data.flag_invalid/3",
+      "module": "Absinthe.Phase.Schema.Arguments.Data",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.Arguments.Normalize.flag_invalid/1",
+      "module": "Absinthe.Phase.Schema.Arguments.Normalize",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.Arguments.Normalize.flag_invalid/2",
+      "module": "Absinthe.Phase.Schema.Arguments.Normalize",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.Arguments.Normalize.flag_invalid/3",
+      "module": "Absinthe.Phase.Schema.Arguments.Normalize",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.Arguments.Normalize.run/2",
+      "module": "Absinthe.Phase.Schema.Arguments.Normalize",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.Arguments.Parse.flag_invalid/1",
+      "module": "Absinthe.Phase.Schema.Arguments.Parse",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.Arguments.Parse.flag_invalid/2",
+      "module": "Absinthe.Phase.Schema.Arguments.Parse",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.Arguments.Parse.flag_invalid/3",
+      "module": "Absinthe.Phase.Schema.Arguments.Parse",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.DirectiveImports.flag_invalid/1",
+      "module": "Absinthe.Phase.Schema.DirectiveImports",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.DirectiveImports.flag_invalid/2",
+      "module": "Absinthe.Phase.Schema.DirectiveImports",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.DirectiveImports.flag_invalid/3",
+      "module": "Absinthe.Phase.Schema.DirectiveImports",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.Directives.flag_invalid/1",
+      "module": "Absinthe.Phase.Schema.Directives",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.Directives.flag_invalid/2",
+      "module": "Absinthe.Phase.Schema.Directives",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.Directives.flag_invalid/3",
+      "module": "Absinthe.Phase.Schema.Directives",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.Directives.run/2",
+      "module": "Absinthe.Phase.Schema.Directives",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.FieldImports.flag_invalid/1",
+      "module": "Absinthe.Phase.Schema.FieldImports",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.FieldImports.flag_invalid/2",
+      "module": "Absinthe.Phase.Schema.FieldImports",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.FieldImports.flag_invalid/3",
+      "module": "Absinthe.Phase.Schema.FieldImports",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.Hydrate.flag_invalid/1",
+      "module": "Absinthe.Phase.Schema.Hydrate",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.Hydrate.flag_invalid/2",
+      "module": "Absinthe.Phase.Schema.Hydrate",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.Hydrate.flag_invalid/3",
+      "module": "Absinthe.Phase.Schema.Hydrate",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.ImportPrototypeDirectives.run/2",
+      "module": "Absinthe.Phase.Schema.ImportPrototypeDirectives",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.InlineFunctions.flag_invalid/1",
+      "module": "Absinthe.Phase.Schema.InlineFunctions",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.InlineFunctions.flag_invalid/2",
+      "module": "Absinthe.Phase.Schema.InlineFunctions",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.InlineFunctions.flag_invalid/3",
+      "module": "Absinthe.Phase.Schema.InlineFunctions",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.Introspection.flag_invalid/1",
+      "module": "Absinthe.Phase.Schema.Introspection",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.Introspection.flag_invalid/2",
+      "module": "Absinthe.Phase.Schema.Introspection",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.Introspection.flag_invalid/3",
+      "module": "Absinthe.Phase.Schema.Introspection",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.MarkReferenced.flag_invalid/1",
+      "module": "Absinthe.Phase.Schema.MarkReferenced",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.MarkReferenced.flag_invalid/2",
+      "module": "Absinthe.Phase.Schema.MarkReferenced",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.MarkReferenced.flag_invalid/3",
+      "module": "Absinthe.Phase.Schema.MarkReferenced",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.ReformatDescriptions.flag_invalid/1",
+      "module": "Absinthe.Phase.Schema.ReformatDescriptions",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.ReformatDescriptions.flag_invalid/2",
+      "module": "Absinthe.Phase.Schema.ReformatDescriptions",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.ReformatDescriptions.flag_invalid/3",
+      "module": "Absinthe.Phase.Schema.ReformatDescriptions",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.ReformatDescriptions.run/2",
+      "module": "Absinthe.Phase.Schema.ReformatDescriptions",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.RegisterTriggers.flag_invalid/1",
+      "module": "Absinthe.Phase.Schema.RegisterTriggers",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.RegisterTriggers.flag_invalid/2",
+      "module": "Absinthe.Phase.Schema.RegisterTriggers",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.RegisterTriggers.flag_invalid/3",
+      "module": "Absinthe.Phase.Schema.RegisterTriggers",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.SpecCompliantInt.run/2",
+      "module": "Absinthe.Phase.Schema.SpecCompliantInt",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.TypeExtensionImports.flag_invalid/1",
+      "module": "Absinthe.Phase.Schema.TypeExtensionImports",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.TypeExtensionImports.flag_invalid/2",
+      "module": "Absinthe.Phase.Schema.TypeExtensionImports",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.TypeExtensionImports.flag_invalid/3",
+      "module": "Absinthe.Phase.Schema.TypeExtensionImports",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.TypeImports.flag_invalid/1",
+      "module": "Absinthe.Phase.Schema.TypeImports",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.TypeImports.flag_invalid/2",
+      "module": "Absinthe.Phase.Schema.TypeImports",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.TypeImports.flag_invalid/3",
+      "module": "Absinthe.Phase.Schema.TypeImports",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.Validation.DefaultEnumValuePresent.flag_invalid/1",
+      "module": "Absinthe.Phase.Schema.Validation.DefaultEnumValuePresent",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.Validation.DefaultEnumValuePresent.flag_invalid/2",
+      "module": "Absinthe.Phase.Schema.Validation.DefaultEnumValuePresent",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.Validation.DefaultEnumValuePresent.flag_invalid/3",
+      "module": "Absinthe.Phase.Schema.Validation.DefaultEnumValuePresent",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.Validation.DirectivesMustBeValid.flag_invalid/1",
+      "module": "Absinthe.Phase.Schema.Validation.DirectivesMustBeValid",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.Validation.DirectivesMustBeValid.flag_invalid/2",
+      "module": "Absinthe.Phase.Schema.Validation.DirectivesMustBeValid",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.Validation.DirectivesMustBeValid.flag_invalid/3",
+      "module": "Absinthe.Phase.Schema.Validation.DirectivesMustBeValid",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.Validation.InputOutputTypesCorrectlyPlaced.flag_invalid/1",
+      "module": "Absinthe.Phase.Schema.Validation.InputOutputTypesCorrectlyPlaced",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.Validation.InputOutputTypesCorrectlyPlaced.flag_invalid/2",
+      "module": "Absinthe.Phase.Schema.Validation.InputOutputTypesCorrectlyPlaced",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.Validation.InputOutputTypesCorrectlyPlaced.flag_invalid/3",
+      "module": "Absinthe.Phase.Schema.Validation.InputOutputTypesCorrectlyPlaced",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.Validation.InterfacesMustResolveTypes.flag_invalid/1",
+      "module": "Absinthe.Phase.Schema.Validation.InterfacesMustResolveTypes",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.Validation.InterfacesMustResolveTypes.flag_invalid/2",
+      "module": "Absinthe.Phase.Schema.Validation.InterfacesMustResolveTypes",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.Validation.InterfacesMustResolveTypes.flag_invalid/3",
+      "module": "Absinthe.Phase.Schema.Validation.InterfacesMustResolveTypes",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.Validation.KnownDirectives.flag_invalid/1",
+      "module": "Absinthe.Phase.Schema.Validation.KnownDirectives",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.Validation.KnownDirectives.flag_invalid/2",
+      "module": "Absinthe.Phase.Schema.Validation.KnownDirectives",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.Validation.KnownDirectives.flag_invalid/3",
+      "module": "Absinthe.Phase.Schema.Validation.KnownDirectives",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.Validation.KnownDirectives.run/2",
+      "module": "Absinthe.Phase.Schema.Validation.KnownDirectives",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.Validation.NamesMustBeValid.flag_invalid/1",
+      "module": "Absinthe.Phase.Schema.Validation.NamesMustBeValid",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.Validation.NamesMustBeValid.flag_invalid/2",
+      "module": "Absinthe.Phase.Schema.Validation.NamesMustBeValid",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.Validation.NamesMustBeValid.flag_invalid/3",
+      "module": "Absinthe.Phase.Schema.Validation.NamesMustBeValid",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.Validation.NoCircularFieldImports.flag_invalid/1",
+      "module": "Absinthe.Phase.Schema.Validation.NoCircularFieldImports",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.Validation.NoCircularFieldImports.flag_invalid/2",
+      "module": "Absinthe.Phase.Schema.Validation.NoCircularFieldImports",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.Validation.NoCircularFieldImports.flag_invalid/3",
+      "module": "Absinthe.Phase.Schema.Validation.NoCircularFieldImports",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.Validation.NoInterfaceCycles.flag_invalid/1",
+      "module": "Absinthe.Phase.Schema.Validation.NoInterfaceCycles",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.Validation.NoInterfaceCycles.flag_invalid/2",
+      "module": "Absinthe.Phase.Schema.Validation.NoInterfaceCycles",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.Validation.NoInterfaceCycles.flag_invalid/3",
+      "module": "Absinthe.Phase.Schema.Validation.NoInterfaceCycles",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.Validation.ObjectInterfacesMustBeValid.flag_invalid/1",
+      "module": "Absinthe.Phase.Schema.Validation.ObjectInterfacesMustBeValid",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.Validation.ObjectInterfacesMustBeValid.flag_invalid/2",
+      "module": "Absinthe.Phase.Schema.Validation.ObjectInterfacesMustBeValid",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.Validation.ObjectInterfacesMustBeValid.flag_invalid/3",
+      "module": "Absinthe.Phase.Schema.Validation.ObjectInterfacesMustBeValid",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.Validation.ObjectMustDefineFields.flag_invalid/1",
+      "module": "Absinthe.Phase.Schema.Validation.ObjectMustDefineFields",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.Validation.ObjectMustDefineFields.flag_invalid/2",
+      "module": "Absinthe.Phase.Schema.Validation.ObjectMustDefineFields",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.Validation.ObjectMustDefineFields.flag_invalid/3",
+      "module": "Absinthe.Phase.Schema.Validation.ObjectMustDefineFields",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.Validation.ObjectMustImplementInterfaces.flag_invalid/1",
+      "module": "Absinthe.Phase.Schema.Validation.ObjectMustImplementInterfaces",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.Validation.ObjectMustImplementInterfaces.flag_invalid/2",
+      "module": "Absinthe.Phase.Schema.Validation.ObjectMustImplementInterfaces",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.Validation.ObjectMustImplementInterfaces.flag_invalid/3",
+      "module": "Absinthe.Phase.Schema.Validation.ObjectMustImplementInterfaces",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.Validation.OneOfDirective.flag_invalid/1",
+      "module": "Absinthe.Phase.Schema.Validation.OneOfDirective",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.Validation.OneOfDirective.flag_invalid/2",
+      "module": "Absinthe.Phase.Schema.Validation.OneOfDirective",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.Validation.OneOfDirective.flag_invalid/3",
+      "module": "Absinthe.Phase.Schema.Validation.OneOfDirective",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.Validation.QueryTypeMustBeObject.flag_invalid/1",
+      "module": "Absinthe.Phase.Schema.Validation.QueryTypeMustBeObject",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.Validation.QueryTypeMustBeObject.flag_invalid/2",
+      "module": "Absinthe.Phase.Schema.Validation.QueryTypeMustBeObject",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.Validation.QueryTypeMustBeObject.flag_invalid/3",
+      "module": "Absinthe.Phase.Schema.Validation.QueryTypeMustBeObject",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.Validation.Result.flag_invalid/1",
+      "module": "Absinthe.Phase.Schema.Validation.Result",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.Validation.Result.flag_invalid/2",
+      "module": "Absinthe.Phase.Schema.Validation.Result",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.Validation.Result.flag_invalid/3",
+      "module": "Absinthe.Phase.Schema.Validation.Result",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.Validation.Result.run/2",
+      "module": "Absinthe.Phase.Schema.Validation.Result",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.Validation.TypeNamesAreReserved.flag_invalid/1",
+      "module": "Absinthe.Phase.Schema.Validation.TypeNamesAreReserved",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.Validation.TypeNamesAreReserved.flag_invalid/2",
+      "module": "Absinthe.Phase.Schema.Validation.TypeNamesAreReserved",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.Validation.TypeNamesAreReserved.flag_invalid/3",
+      "module": "Absinthe.Phase.Schema.Validation.TypeNamesAreReserved",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.Validation.TypeNamesAreUnique.flag_invalid/1",
+      "module": "Absinthe.Phase.Schema.Validation.TypeNamesAreUnique",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.Validation.TypeNamesAreUnique.flag_invalid/2",
+      "module": "Absinthe.Phase.Schema.Validation.TypeNamesAreUnique",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.Validation.TypeNamesAreUnique.flag_invalid/3",
+      "module": "Absinthe.Phase.Schema.Validation.TypeNamesAreUnique",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.Validation.TypeReferencesExist.flag_invalid/1",
+      "module": "Absinthe.Phase.Schema.Validation.TypeReferencesExist",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.Validation.TypeReferencesExist.flag_invalid/2",
+      "module": "Absinthe.Phase.Schema.Validation.TypeReferencesExist",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Schema.Validation.TypeReferencesExist.flag_invalid/3",
+      "module": "Absinthe.Phase.Schema.Validation.TypeReferencesExist",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Subscription.Result.run/2",
+      "module": "Absinthe.Phase.Subscription.Result",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Subscription.SubscribeSelf.flag_invalid/1",
+      "module": "Absinthe.Phase.Subscription.SubscribeSelf",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Subscription.SubscribeSelf.flag_invalid/2",
+      "module": "Absinthe.Phase.Subscription.SubscribeSelf",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Subscription.SubscribeSelf.flag_invalid/3",
+      "module": "Absinthe.Phase.Subscription.SubscribeSelf",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Subscription.SubscribeSelf.run/2",
+      "module": "Absinthe.Phase.Subscription.SubscribeSelf",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "exact"
+    },
+    {
+      "mfa": "Absinthe.Phase.Telemetry.flag_invalid/1",
+      "module": "Absinthe.Phase.Telemetry",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Telemetry.flag_invalid/2",
+      "module": "Absinthe.Phase.Telemetry",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Telemetry.flag_invalid/3",
+      "module": "Absinthe.Phase.Telemetry",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Validation.KnownTypeNames.flag_invalid/1",
+      "module": "Absinthe.Phase.Validation.KnownTypeNames",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Validation.KnownTypeNames.flag_invalid/2",
+      "module": "Absinthe.Phase.Validation.KnownTypeNames",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Validation.KnownTypeNames.flag_invalid/3",
+      "module": "Absinthe.Phase.Validation.KnownTypeNames",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Phase.Validation.KnownTypeNames.run/2",
+      "module": "Absinthe.Phase.Validation.KnownTypeNames",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Pipeline.before/2",
+      "module": "Absinthe.Pipeline",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "exact"
+    },
+    {
+      "mfa": "Absinthe.Pipeline.for_document/1",
+      "module": "Absinthe.Pipeline",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "exact"
+    },
+    {
+      "mfa": "Absinthe.Pipeline.for_document/2",
+      "module": "Absinthe.Pipeline",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "exact"
+    },
+    {
+      "mfa": "Absinthe.Pipeline.for_schema/1",
+      "module": "Absinthe.Pipeline",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "exact"
+    },
+    {
+      "mfa": "Absinthe.Pipeline.for_schema/2",
+      "module": "Absinthe.Pipeline",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "exact"
+    },
+    {
+      "mfa": "Absinthe.Pipeline.from/2",
+      "module": "Absinthe.Pipeline",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "exact"
+    },
+    {
+      "mfa": "Absinthe.Pipeline.insert_after/3",
+      "module": "Absinthe.Pipeline",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "exact"
+    },
+    {
+      "mfa": "Absinthe.Pipeline.insert_before/3",
+      "module": "Absinthe.Pipeline",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "exact"
+    },
+    {
+      "mfa": "Absinthe.Pipeline.reject/2",
+      "module": "Absinthe.Pipeline",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "exact"
+    },
+    {
+      "mfa": "Absinthe.Pipeline.replace/3",
+      "module": "Absinthe.Pipeline",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "exact"
+    },
+    {
+      "mfa": "Absinthe.Pipeline.run/2",
+      "module": "Absinthe.Pipeline",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "exact"
+    },
+    {
+      "mfa": "Absinthe.Pipeline.run_phase/3",
+      "module": "Absinthe.Pipeline",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "exact"
+    },
+    {
+      "mfa": "Absinthe.Pipeline.upto/2",
+      "module": "Absinthe.Pipeline",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "exact"
+    },
+    {
+      "mfa": "Absinthe.Pipeline.without/2",
+      "module": "Absinthe.Pipeline",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "exact"
+    },
+    {
+      "mfa": "Absinthe.Resolution.Helpers.async/1",
+      "module": "Absinthe.Resolution.Helpers",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "exact"
+    },
+    {
+      "mfa": "Absinthe.Resolution.Helpers.async/2",
+      "module": "Absinthe.Resolution.Helpers",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Resolution.Helpers.batch/3",
+      "module": "Absinthe.Resolution.Helpers",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Resolution.Helpers.batch/4",
+      "module": "Absinthe.Resolution.Helpers",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Resolution.Helpers.dataloader/1",
+      "module": "Absinthe.Resolution.Helpers",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Resolution.Helpers.dataloader/2",
+      "module": "Absinthe.Resolution.Helpers",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Resolution.Helpers.dataloader/2",
+      "module": "Absinthe.Resolution.Helpers",
+      "reason": null,
+      "slice": 1,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Resolution.Helpers.dataloader/3",
+      "module": "Absinthe.Resolution.Helpers",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Schema.apply_modifiers/2",
+      "module": "Absinthe.Schema",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "exact"
+    },
+    {
+      "mfa": "Absinthe.Schema.concrete_types/2",
+      "module": "Absinthe.Schema",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Schema.directives/1",
+      "module": "Absinthe.Schema",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Schema.implementors/2",
+      "module": "Absinthe.Schema",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Schema.introspect/2",
+      "module": "Absinthe.Schema",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Schema.introspection_types/1",
+      "module": "Absinthe.Schema",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Schema.referenced_types/1",
+      "module": "Absinthe.Schema",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Schema.to_sdl/1",
+      "module": "Absinthe.Schema",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "exact"
+    },
+    {
+      "mfa": "Absinthe.Schema.types/1",
+      "module": "Absinthe.Schema",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Schema.used_types/1",
+      "module": "Absinthe.Schema",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Schema.Notation.SDL.parse/4",
+      "module": "Absinthe.Schema.Notation.SDL",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Schema.Prototype.expand_deprecate/2",
+      "module": "Absinthe.Schema.Prototype",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Subscription.child_spec/1",
+      "module": "Absinthe.Subscription",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Subscription.publish/3",
+      "module": "Absinthe.Subscription",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Subscription.start_link/1",
+      "module": "Absinthe.Subscription",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Subscription.Local.publish_mutation/3",
+      "module": "Absinthe.Subscription.Local",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "exact"
+    },
+    {
+      "mfa": "Absinthe.Subscription.PipelineSerializer.pack/1",
+      "module": "Absinthe.Subscription.PipelineSerializer",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Subscription.PipelineSerializer.unpack/1",
+      "module": "Absinthe.Subscription.PipelineSerializer",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Subscription.Supervisor.start_link/1",
+      "module": "Absinthe.Subscription.Supervisor",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Type.abstract?/1",
+      "module": "Absinthe.Type",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "exact"
+    },
+    {
+      "mfa": "Absinthe.Type.composite_type?/1",
+      "module": "Absinthe.Type",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "exact"
+    },
+    {
+      "mfa": "Absinthe.Type.deprecated?/1",
+      "module": "Absinthe.Type",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Type.expand/2",
+      "module": "Absinthe.Type",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Type.fielded?/1",
+      "module": "Absinthe.Type",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "exact"
+    },
+    {
+      "mfa": "Absinthe.Type.input_type?/1",
+      "module": "Absinthe.Type",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "exact"
+    },
+    {
+      "mfa": "Absinthe.Type.introspection?/1",
+      "module": "Absinthe.Type",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Type.leaf_type?/1",
+      "module": "Absinthe.Type",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "exact"
+    },
+    {
+      "mfa": "Absinthe.Type.meta/1",
+      "module": "Absinthe.Type",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Type.meta/2",
+      "module": "Absinthe.Type",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Type.name/1",
+      "module": "Absinthe.Type",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Type.name/2",
+      "module": "Absinthe.Type",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Type.named?/1",
+      "module": "Absinthe.Type",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Type.named_type/1",
+      "module": "Absinthe.Type",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Type.non_null?/1",
+      "module": "Absinthe.Type",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Type.nullable/1",
+      "module": "Absinthe.Type",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Type.object_type?/1",
+      "module": "Absinthe.Type",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "exact"
+    },
+    {
+      "mfa": "Absinthe.Type.output_type?/1",
+      "module": "Absinthe.Type",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "exact"
+    },
+    {
+      "mfa": "Absinthe.Type.resolve_type/2",
+      "module": "Absinthe.Type",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Type.type?/1",
+      "module": "Absinthe.Type",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "exact"
+    },
+    {
+      "mfa": "Absinthe.Type.unwrap/1",
+      "module": "Absinthe.Type",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Type.unwrap_non_null/1",
+      "module": "Absinthe.Type",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Type.unwrap_non_null/1",
+      "module": "Absinthe.Type",
+      "reason": null,
+      "slice": 1,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Type.value_type/2",
+      "module": "Absinthe.Type",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Type.wrapped?/1",
+      "module": "Absinthe.Type",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Type.Custom.Decimal.parse/1",
+      "module": "Absinthe.Type.Custom.Decimal",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Type.Directive.on?/2",
+      "module": "Absinthe.Type.Directive",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Type.Enum.parse/2",
+      "module": "Absinthe.Type.Enum",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Type.Enum.serialize/2",
+      "module": "Absinthe.Type.Enum",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Type.Interface.member?/2",
+      "module": "Absinthe.Type.Interface",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Type.Interface.resolve_type/3",
+      "module": "Absinthe.Type.Interface",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Type.Interface.type_resolvable?/2",
+      "module": "Absinthe.Type.Interface",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Type.Object.field/2",
+      "module": "Absinthe.Type.Object",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Type.Union.member?/2",
+      "module": "Absinthe.Type.Union",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Type.Union.resolve_type/3",
+      "module": "Absinthe.Type.Union",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Absinthe.Utils.camelize/2",
+      "module": "Absinthe.Utils",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "exact"
+    },
+    {
+      "mfa": "Absinthe.Utils.escapable?/1",
+      "module": "Absinthe.Utils",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "exact"
+    },
+    {
+      "mfa": "Absinthe.Utils.Suggestion.sort_list/3",
+      "module": "Absinthe.Utils.Suggestion",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "exact"
+    },
+    {
+      "mfa": "Mix.Tasks.Absinthe.Schema.Json.generate_schema/1",
+      "module": "Mix.Tasks.Absinthe.Schema.Json",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "exact"
+    },
+    {
+      "mfa": "Mix.Tasks.Absinthe.Schema.Json.parse_options/1",
+      "module": "Mix.Tasks.Absinthe.Schema.Json",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "exact"
+    },
+    {
+      "mfa": "Mix.Tasks.Absinthe.Schema.Json.run/1",
+      "module": "Mix.Tasks.Absinthe.Schema.Json",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "exact"
+    }
+  ],
+  "version": 1
+}

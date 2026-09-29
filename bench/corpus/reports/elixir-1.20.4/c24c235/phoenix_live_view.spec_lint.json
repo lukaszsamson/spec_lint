@@ -1,0 +1,1428 @@
+{
+  "adapter": "1.21.0-dev+c24c235",
+  "artifacts": {
+    "build_digest": "ae7d8dc230f53eebfc55d8370437127221b8f4caeba74f6e3ebcf4fc05c1e947",
+    "recorded": [],
+    "unrecorded": [
+      "phoenix_live_view"
+    ]
+  },
+  "baseline": {
+    "applied": false,
+    "baselined": 0,
+    "expired": 0,
+    "gate_changed": [],
+    "new": 0,
+    "path": ".spec_lint_baseline.json",
+    "pending_reconciliation": [],
+    "reason": "missing",
+    "stale_findings": [],
+    "stale_inventory": []
+  },
+  "beams": [
+    {
+      "exck": "0a11eb4cb019b22005945f6453c31ea2d48f97097251b3140d2836bb331558e8",
+      "md5": "42772cacd7beaa0de58470e92534fca7",
+      "module": "Enumerable.Phoenix.LiveView.LiveStream",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Enumerable.Phoenix.LiveView.LiveStream.beam"
+    },
+    {
+      "exck": "84e9ff2dc98b0c4375c594e242e9790591ae15841b80e7706a45cfcf756270e1",
+      "md5": "9d62db4de4096c4dbbc2890a9db94344",
+      "module": "Inspect.Phoenix.LiveView.Socket",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Inspect.Phoenix.LiveView.Socket.beam"
+    },
+    {
+      "exck": "494ab1f9ad7e613fefd1f5d2ffd5712eccfdbe01542ff0e7b2bf34dc3907993a",
+      "md5": "ec0a749b5a8da86843acbf3107db3f96",
+      "module": "Inspect.Phoenix.LiveView.Socket.AssignsNotInSocket",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Inspect.Phoenix.LiveView.Socket.AssignsNotInSocket.beam"
+    },
+    {
+      "exck": "8e0a189b5c465d593490cad4084d42c316de80f99c8999be56fb87361420ccc0",
+      "md5": "c56cb73f1eac9cc11ffa485c5109ffeb",
+      "module": "Inspect.Phoenix.LiveView.UploadConfig",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Inspect.Phoenix.LiveView.UploadConfig.beam"
+    },
+    {
+      "exck": "6f7c36c37c46b7e163c4ecfab642d721284fd570f2456fec3d4a031c1c879fc5",
+      "md5": "6fdf6bed75d26367d7c56282f8839c9f",
+      "module": "Inspect.Phoenix.LiveViewTest.Element",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Inspect.Phoenix.LiveViewTest.Element.beam"
+    },
+    {
+      "exck": "49debb336328f42d10efeb8e4d139aa632766107697a755214c24a86570f06e1",
+      "md5": "c849b2d249cf3972318400006de4ee22",
+      "module": "Inspect.Phoenix.LiveViewTest.Upload",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Inspect.Phoenix.LiveViewTest.Upload.beam"
+    },
+    {
+      "exck": "315f711ce70398d7a2a6f6ffcbd0e116f143cda8f05cea192359c713ec32094f",
+      "md5": "70eaae3b0c78e3117595abdf1719608c",
+      "module": "Inspect.Phoenix.LiveViewTest.View",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Inspect.Phoenix.LiveViewTest.View.beam"
+    },
+    {
+      "exck": "2040aab5322aec417a23ee5ff83510491be40eda461e6f174ade7cfb8f429d35",
+      "md5": "0e5d1715ee71b8a370b0edca1d6da36f",
+      "module": "Mix.Tasks.Compile.PhoenixLiveView",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Mix.Tasks.Compile.PhoenixLiveView.beam"
+    },
+    {
+      "exck": "095f6a0560589be06930103d085d84b811b7d2f5ae2b0d5f67010bbc34e2d975",
+      "md5": "e09166c397ba25e99d39b180c15d3f58",
+      "module": "Mix.Tasks.PhoenixLiveView.Upgrade",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Mix.Tasks.PhoenixLiveView.Upgrade.beam"
+    },
+    {
+      "exck": "500dfad5d7ed176d3e3a1d654a9248ba54744f6a18b157680743cebdfe360679",
+      "md5": "25342e052e171a1d387ba7d463002c50",
+      "module": "Phoenix.Component",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.Component.beam"
+    },
+    {
+      "exck": "84dde7f9937233af388068dfe828dc680da6f965c415975a1cfe53e96bc1057f",
+      "md5": "b406d6a9ce4fb671a460cefa5be46c82",
+      "module": "Phoenix.Component.Declarative",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.Component.Declarative.beam"
+    },
+    {
+      "exck": "7f488f12a8dd9b741cb9b6b7af3b821a9edbaaa0511df915e64270986eb1fb6d",
+      "md5": "6fb04a45a7dd9d45dc4ed9aea15cb04e",
+      "module": "Phoenix.Component.MacroComponent",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.Component.MacroComponent.beam"
+    },
+    {
+      "exck": "51b55b7e3cf6db4a3c970f22447945a6d844a5fd5801081c366ed31042e4b2e2",
+      "md5": "1b2af3af8e9766499aa154e9431a5423",
+      "module": "Phoenix.HTML.Safe.Phoenix.LiveComponent.CID",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.HTML.Safe.Phoenix.LiveComponent.CID.beam"
+    },
+    {
+      "exck": "919c8248bf082d8414e9cb4f2bd54c53cc32e1e7390689e073bdedfb2114b79c",
+      "md5": "56fe3eb584acf7e5b139385b1818f4b0",
+      "module": "Phoenix.HTML.Safe.Phoenix.LiveView.Component",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.HTML.Safe.Phoenix.LiveView.Component.beam"
+    },
+    {
+      "exck": "daf7bdcae7db779a25ae581d51a70c0b9772d8fa7dd246e4f9e040a9c7c5e513",
+      "md5": "bba0bcdae28d9ca19cfa98cafa244cd2",
+      "module": "Phoenix.HTML.Safe.Phoenix.LiveView.Comprehension",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.HTML.Safe.Phoenix.LiveView.Comprehension.beam"
+    },
+    {
+      "exck": "c7af5cd4a5bb26db1668c154efb089f58b9d8c88abed55f3b3455e99dde213e1",
+      "md5": "7f8ec57469235d024516122bb82f4c30",
+      "module": "Phoenix.HTML.Safe.Phoenix.LiveView.JS",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.HTML.Safe.Phoenix.LiveView.JS.beam"
+    },
+    {
+      "exck": "564645c2781059f801484f012637f0f19330403e84ef8ce8fe70a0c004a94336",
+      "md5": "ddc767de5dbaf25c4f3da12768c838f4",
+      "module": "Phoenix.HTML.Safe.Phoenix.LiveView.Rendered",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.HTML.Safe.Phoenix.LiveView.Rendered.beam"
+    },
+    {
+      "exck": "5be8876bf88ec0bcf0195bb67ba35f5e3eb6b181c0eb55b17661f055a51f4505",
+      "md5": "dd2cb2292b88d2ebc564e6d11e899c4e",
+      "module": "Phoenix.LiveComponent",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveComponent.beam"
+    },
+    {
+      "exck": "89c6fa00058cd1a9bf1d4c79a3953f3fab48bb5118571c89bab3e2d9d3f0740d",
+      "md5": "04a870a6b4de57c58a05ac8f2ed0ef0e",
+      "module": "Phoenix.LiveComponent.CID",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveComponent.CID.beam"
+    },
+    {
+      "exck": "eed9d980561ca4e501eee9fd8676c6e8fa2bad5e26ab1d3bbc072763abe90144",
+      "md5": "cb0812d1be89e7ecd48dbe2454ed122e",
+      "module": "Phoenix.LiveView",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveView.beam"
+    },
+    {
+      "exck": "f7856a4e3afb9c157ac1dec5b2277769d52e6d3407d9fa34c5313760209a1cc7",
+      "md5": "db89e017a8d507ebe9a5af8b80649bec",
+      "module": "Phoenix.LiveView.Application",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveView.Application.beam"
+    },
+    {
+      "exck": "c801b0ef8b5cb8ca1dd2513e06281bc9096d4e62692b7c7896c05c1063f50665",
+      "md5": "b4bfbca1d7a5fa9df3bbbe240f086244",
+      "module": "Phoenix.LiveView.Async",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveView.Async.beam"
+    },
+    {
+      "exck": "0c76879183c06f183d9b0fcf60411f81158f371647a3170a9eb919ab30ff2fa5",
+      "md5": "77a6fdd02fb73afbdf76fcc4be53135c",
+      "module": "Phoenix.LiveView.AsyncResult",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveView.AsyncResult.beam"
+    },
+    {
+      "exck": "5e1d43e33dced5000609491773b809bafa03f60c3689801da47cb065c3c1685b",
+      "md5": "dd84f06ca7509380d2ca0aa9132e091d",
+      "module": "Phoenix.LiveView.Channel",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveView.Channel.beam"
+    },
+    {
+      "exck": "845eb62aa6eed76a30034b9582a24dfc471a38cb579ef609c3224beed55dbeeb",
+      "md5": "0f5c08bf38e4a31c0f6ae492d526803b",
+      "module": "Phoenix.LiveView.ColocatedHook",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveView.ColocatedHook.beam"
+    },
+    {
+      "exck": "003532e7a0cdf982b30a1d890bde2c30af1ce837f7491646a085aa396071efe3",
+      "md5": "a06f1f9c9c4aff81bde6dfa19cba73cf",
+      "module": "Phoenix.LiveView.ColocatedJS",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveView.ColocatedJS.beam"
+    },
+    {
+      "exck": "3f82e748603e121028ac1251308111570d9e1b2ced1f929f439144599990d308",
+      "md5": "b09955c52cdc87a222e9145b9457e8e5",
+      "module": "Phoenix.LiveView.Component",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveView.Component.beam"
+    },
+    {
+      "exck": "f8c51771449d9cc24a9e77ab9bb5c28c00512ee8528628d5cbd8e4dfbd8c3d72",
+      "md5": "cbdea10215448680ca4d5424702653e2",
+      "module": "Phoenix.LiveView.Comprehension",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveView.Comprehension.beam"
+    },
+    {
+      "exck": "190ac563501b105999f3461ca404e5a25ea5a4c07d83b5adc782383b561314e4",
+      "md5": "03738e57062f9b1f385a9bc86d5d9f79",
+      "module": "Phoenix.LiveView.Controller",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveView.Controller.beam"
+    },
+    {
+      "exck": "8563d08a5b455282c2848181e30cf6e285466b0fbb70862d8f789c9717e4175d",
+      "md5": "b9b799937e1a544df3050594dfb28354",
+      "module": "Phoenix.LiveView.Debug",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveView.Debug.beam"
+    },
+    {
+      "exck": "fd861844b626f260d42cac13546d54b06118715afd8aff87ddd2b6df596654c2",
+      "md5": "ee094ecd2fe0e1e5e50ce699b03bb4f4",
+      "module": "Phoenix.LiveView.Diff",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveView.Diff.beam"
+    },
+    {
+      "exck": "ea426878126e0dcfc05098ae780274fcfc4a3fc72def23b3c700c300dd42684a",
+      "md5": "dd74a13f0e8b3a00bd8bcecd04fc449c",
+      "module": "Phoenix.LiveView.Engine",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveView.Engine.beam"
+    },
+    {
+      "exck": "b31cc0d93f80ba57feabcbb472d86c4c6b9d8c5fa3c0178295614f44dd1ddea3",
+      "md5": "8ca6e8ab4b49358ccac45ce0dd6b0da1",
+      "module": "Phoenix.LiveView.HTMLAlgebra",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveView.HTMLAlgebra.beam"
+    },
+    {
+      "exck": "dd1ea0af0880a8f00c7fb2832ff33a1490e06d3f4709fde0c9e51709fd2f6320",
+      "md5": "ad89e293e90d8166ba9e72e9647873cf",
+      "module": "Phoenix.LiveView.HTMLEngine",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveView.HTMLEngine.beam"
+    },
+    {
+      "exck": "a44724912b246f6349a4f5a30690e850e50d20dd8388fe50387df1a2dfb9664c",
+      "md5": "1650b81f6ba20e92ba6afc823cc40ab8",
+      "module": "Phoenix.LiveView.HTMLFormatter",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveView.HTMLFormatter.beam"
+    },
+    {
+      "exck": "bd6c23fae005d75fd5cd822ff311a29ab9bb27b2f36cca75511060adea210528",
+      "md5": "a3856ea6052c9d248a3fb3e91efe431f",
+      "module": "Phoenix.LiveView.Helpers",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveView.Helpers.beam"
+    },
+    {
+      "exck": "1328cd2982e738852d1666cc8c3ff1af29d30a967e76f69310c3c4ec7284c71b",
+      "md5": "ff944dfff97dc11914456e805577cec3",
+      "module": "Phoenix.LiveView.Igniter.UpgradeTo1_1",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveView.Igniter.UpgradeTo1_1.beam"
+    },
+    {
+      "exck": "922105d9cf212f039ab87a9b15ec0ffb262f266bf6bdcbfebd973ca053d2151f",
+      "md5": "7f5021e18bf039cf5dac2a1bc5726379",
+      "module": "Phoenix.LiveView.JS",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveView.JS.beam"
+    },
+    {
+      "exck": "80751a973354ab58ed06f22350e759288f907e738bd12814af5d1476173ac0a9",
+      "md5": "8b7cbb58b745d1771f07a2d11381e7f4",
+      "module": "Phoenix.LiveView.Lifecycle",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveView.Lifecycle.beam"
+    },
+    {
+      "exck": "1536843af356e3b29c034a654558d416eb34a89970d3a3f793b3739c20671be4",
+      "md5": "766a55cb5c3ac3b0825e7f40a7bac663",
+      "module": "Phoenix.LiveView.LiveStream",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveView.LiveStream.beam"
+    },
+    {
+      "exck": "0b68f0d040360719346e80940ec1482b1e049d7e6355a02381ef94013f2249ae",
+      "md5": "455f26d3f557c53505d2997e807dab5d",
+      "module": "Phoenix.LiveView.Logger",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveView.Logger.beam"
+    },
+    {
+      "exck": "f3dd526cf55da09beb2805ff9c4898457d99c37545db7ce5f27acf3a3d7502e1",
+      "md5": "fda087a99219feca56e499948ea8d30c",
+      "module": "Phoenix.LiveView.Plug",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveView.Plug.beam"
+    },
+    {
+      "exck": "c16f5c1bea6ec1f116622495b825475c60d96a481914e5da8e634c931ce93c7e",
+      "md5": "45107c96c2ecfc96f607fd2bddf6cb1c",
+      "module": "Phoenix.LiveView.ReloadError",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveView.ReloadError.beam"
+    },
+    {
+      "exck": "e1dd6edccaaf41217163cb66079005e2d26d211c54cd63f34a573803da1eb2e2",
+      "md5": "aed75a043c7750d10e504298d3ac1ed7",
+      "module": "Phoenix.LiveView.Rendered",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveView.Rendered.beam"
+    },
+    {
+      "exck": "1f28bc3c9935afe4e2768fa37715f7d28ebe7330fc47c0b9084b2a93df4946fb",
+      "md5": "c63f40db15a139f5ece52962b94e2dba",
+      "module": "Phoenix.LiveView.Renderer",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveView.Renderer.beam"
+    },
+    {
+      "exck": "fec3e85a61f4ec33415c0d263ce44541feac9a30fa8a07aa4ce1429a904e7bf0",
+      "md5": "22e4e26fb45d880b6a350d8279c6c955",
+      "module": "Phoenix.LiveView.Route",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveView.Route.beam"
+    },
+    {
+      "exck": "beef1b5b039fab46a079f3de830af447a5efbf6d8e9cddb4efd13e715a7035ea",
+      "md5": "792268caba1492b46793dc1a11049f83",
+      "module": "Phoenix.LiveView.Router",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveView.Router.beam"
+    },
+    {
+      "exck": "ad3260038bbba43d13eb80c1344ba9b65b2040746ca9cec842419b36c3b04c7f",
+      "md5": "eb52a439bf6eaa4cf7bf287ee4f55f54",
+      "module": "Phoenix.LiveView.Session",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveView.Session.beam"
+    },
+    {
+      "exck": "227788137c7e649a63897261b5b74350633ec0fd7230f741e7cf2e3246252bc6",
+      "md5": "b6b1b95eb2270d32204d54267d622373",
+      "module": "Phoenix.LiveView.Socket",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveView.Socket.beam"
+    },
+    {
+      "exck": "9359b7b316a3736cf42443d913d02df1e95bb14cac7a7c5a7e22d4616b544d05",
+      "md5": "2059b36bbcb2e578ca88e6a81e4b90f0",
+      "module": "Phoenix.LiveView.Socket.AssignsNotInSocket",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveView.Socket.AssignsNotInSocket.beam"
+    },
+    {
+      "exck": "2386b6252a7d5cf6285844fff7eea1e135b7aa19cc37752c532d758e2c945539",
+      "md5": "62e763335fe8c0401d33353de3318903",
+      "module": "Phoenix.LiveView.Static",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveView.Static.beam"
+    },
+    {
+      "exck": "a18c30e3c0c8bd5ed4bd9bc0234a7e036f647d418bcf1f86ee77fd0f3378ec92",
+      "md5": "869ca9b3fe8e38f68e1aeb4599e276f8",
+      "module": "Phoenix.LiveView.TagEngine",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveView.TagEngine.beam"
+    },
+    {
+      "exck": "2cfb181a6bf84c427efdc5df2239a4dbaae772d5d8d576429443d280e34cd905",
+      "md5": "09c61ad764536fb9c394a47eb652e207",
+      "module": "Phoenix.LiveView.TelemetryTestHelpers",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveView.TelemetryTestHelpers.beam"
+    },
+    {
+      "exck": "d1c2d587d4c06f8bd49077ae670ddc1f5ccf1c668771ad2d53ca626cf41465ed",
+      "md5": "c2da1db6ddbc896fcb0c51263a560cdc",
+      "module": "Phoenix.LiveView.Tokenizer",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveView.Tokenizer.beam"
+    },
+    {
+      "exck": "5a2bffe7a373c37133896cdc94b8f6ff10ddd30dc8c892a5ed93055cf640e662",
+      "md5": "a8797dc8dba60d04f71152a61002ceef",
+      "module": "Phoenix.LiveView.Tokenizer.ParseError",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveView.Tokenizer.ParseError.beam"
+    },
+    {
+      "exck": "5732d716e7b909471a75c15dfffc2fd20c4c61dba02f69eb3dbcfcf3ae38750d",
+      "md5": "d5a44f557dc8086f11a5a68668c371ce",
+      "module": "Phoenix.LiveView.Upload",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveView.Upload.beam"
+    },
+    {
+      "exck": "86032030ffcc62c6a45a5e74759040a4c38241d1614c0e9ab1700cf848c2b1d6",
+      "md5": "4287373543afc3f899a693547ecfb753",
+      "module": "Phoenix.LiveView.UploadChannel",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveView.UploadChannel.beam"
+    },
+    {
+      "exck": "690b794ca3a2ccadc7a1e9bc97a6d0d2010663cc73af2c6c4c593babfaaf1983",
+      "md5": "7339cdebb8c0e4e41cd804646c5a7cab",
+      "module": "Phoenix.LiveView.UploadConfig",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveView.UploadConfig.beam"
+    },
+    {
+      "exck": "3032b3f87db2cef64f549e3b79b84bb8ce70a09db6248d3b61f3bb2f726b2ad8",
+      "md5": "21404609d8b366c4c0a9284da5d0578c",
+      "module": "Phoenix.LiveView.UploadEntry",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveView.UploadEntry.beam"
+    },
+    {
+      "exck": "c8a9d56d547de315575d95c1bb4daad6f5068b0c7bc143c3287c1755ac894279",
+      "md5": "bbdb0bab077a25d41a8794a766543e13",
+      "module": "Phoenix.LiveView.UploadTmpFileWriter",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveView.UploadTmpFileWriter.beam"
+    },
+    {
+      "exck": "5be8876bf88ec0bcf0195bb67ba35f5e3eb6b181c0eb55b17661f055a51f4505",
+      "md5": "7053a7cad1cad8eb86fecaacf8c3036a",
+      "module": "Phoenix.LiveView.UploadWriter",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveView.UploadWriter.beam"
+    },
+    {
+      "exck": "8830bbf9153ac5efe89eec57dfd39fd024b1b18d608d1f17a0a38c1ebe8bc6e8",
+      "md5": "63351ddd2b0cabef7e41b48bdd7f0280",
+      "module": "Phoenix.LiveView.Utils",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveView.Utils.beam"
+    },
+    {
+      "exck": "f0229a88023720e9ca0248e9d00c8125a2d2f8aaf6f8de166ac3550e92575d40",
+      "md5": "bab3c32e4ed56912ecf658487f7c9b97",
+      "module": "Phoenix.LiveViewTest",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.beam"
+    },
+    {
+      "exck": "cb5735eec2079e005e5db07c36f4cb6d9339c6de66e98f965bf5efb8164b624e",
+      "md5": "252d5d9fceaa33a85564a9321dfd9ce8",
+      "module": "Phoenix.LiveViewTest.ClientProxy",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.ClientProxy.beam"
+    },
+    {
+      "exck": "ed0bd1c6f1b55789324f0aec808b2388b66d8c4c0eefdbe2c8cae720456ed118",
+      "md5": "dbc6754fde6bcce26b93e66cfab5ec25",
+      "module": "Phoenix.LiveViewTest.DOM",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.DOM.beam"
+    },
+    {
+      "exck": "21f814cbc29e0b724a3394c6c3628b396dd3f333e6fdd011720a4594536e62ba",
+      "md5": "6dcd783e927b972217005c1ab36ad661",
+      "module": "Phoenix.LiveViewTest.Diff",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Diff.beam"
+    },
+    {
+      "exck": "3659fa5ba5f02d1cca20972e6796f459a4c7db301c5feb2f945fdf289e79c2e4",
+      "md5": "82cf8db83368bb56b7a6cc59a6d9024f",
+      "module": "Phoenix.LiveViewTest.Element",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Element.beam"
+    },
+    {
+      "exck": "78dbba1a3a3f35a54e303869c80e1353d176daffeb781f604ffbd614ce3466c9",
+      "md5": "754135b631435e8e8a9e830db955be61",
+      "module": "Phoenix.LiveViewTest.Support.ActionLive",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.ActionLive.beam"
+    },
+    {
+      "exck": "d1c57be2a491bba899ab3c0a0c03a1a38e8b353d69fdbe7ea941e56268e89299",
+      "md5": "d3261bf15aa744fa9dbe24b1b9584d3b",
+      "module": "Phoenix.LiveViewTest.Support.AssignAsyncLive",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.AssignAsyncLive.beam"
+    },
+    {
+      "exck": "2e8dbdafc7b032b122e9a84237739105cbb43f22414b794def51a9d3c6d0be2b",
+      "md5": "5b155758cd2d8c85e19bdb821d4e3bfe",
+      "module": "Phoenix.LiveViewTest.Support.AssignAsyncLive.LC",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.AssignAsyncLive.LC.beam"
+    },
+    {
+      "exck": "21106290fa91e0035634fbfba8c4a3314d3e6ab2d2bf3bf057793a7071a63037",
+      "md5": "9fba4271ca8ff776ba1394c7cf628efa",
+      "module": "Phoenix.LiveViewTest.Support.AssignsLayoutView",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.AssignsLayoutView.beam"
+    },
+    {
+      "exck": "bbe740f4c1df07c4913f4a353ea2ce6dd2c85c34d7b2d9999ba5c01bfb488f8a",
+      "md5": "e5cd23f09ae92a70406867a256ca29c3",
+      "module": "Phoenix.LiveViewTest.Support.AssignsNotInSocketLive",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.AssignsNotInSocketLive.beam"
+    },
+    {
+      "exck": "ca633811ff4f4d664ac34ba4a139ffcd3a9bb1f8aac436ea34d307840043b2fc",
+      "md5": "bafae272753f208c6e0fdc95bc13f98e",
+      "module": "Phoenix.LiveViewTest.Support.ChildLive",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.ChildLive.beam"
+    },
+    {
+      "exck": "d4680b710cbefc3d573139512391478d541052d9c863670f8b4f8e5014e4f70d",
+      "md5": "67908242c483d93e9be20aed7ce47c50",
+      "module": "Phoenix.LiveViewTest.Support.CidsDestroyedLive",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.CidsDestroyedLive.beam"
+    },
+    {
+      "exck": "f8766230f8560ee407dc4858dbba3b821fe3d2e6a1e17a418193ed575598822b",
+      "md5": "8639fcfc4ddbe6fd6e1907f0ae4658bf",
+      "module": "Phoenix.LiveViewTest.Support.CidsDestroyedLive.Button",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.CidsDestroyedLive.Button.beam"
+    },
+    {
+      "exck": "76605ad8cf0dfe6080a6ac88b65f2914c343ea3176ea8e66b207312b85e37e1b",
+      "md5": "596ddf72566199431e760f3ab969bbeb",
+      "module": "Phoenix.LiveViewTest.Support.ClassListLive",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.ClassListLive.beam"
+    },
+    {
+      "exck": "832fd1db04f874602b18778042e0f8e667f0f37106bc78668f872c9b8c22ea3c",
+      "md5": "f1f026281374c8a1d91b6b8376e5a9fe",
+      "module": "Phoenix.LiveViewTest.Support.ClockControlsLive",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.ClockControlsLive.beam"
+    },
+    {
+      "exck": "f147e4f90baccab206bc541a30a6fadb245070bbcd5c332c7c0d728c2826df18",
+      "md5": "ce0b89c2e7ac5b1b12ea66901e649920",
+      "module": "Phoenix.LiveViewTest.Support.ClockLive",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.ClockLive.beam"
+    },
+    {
+      "exck": "7886f16e3aed68953b9111cf23af42c3e9060c9550efdb92fba772d268c6d7c6",
+      "md5": "c21e0b247eb5912ea454661ff2b5cb24",
+      "module": "Phoenix.LiveViewTest.Support.CollocatedComponent",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.CollocatedComponent.beam"
+    },
+    {
+      "exck": "b72581e158399ad155b94862649578278e70eeda8c12f2ac299e224bbb621466",
+      "md5": "07d5d279b65c97bfeff9d4fbc6e39569",
+      "module": "Phoenix.LiveViewTest.Support.CollocatedLive",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.CollocatedLive.beam"
+    },
+    {
+      "exck": "e21e5d94248b4cb50c377f24d56d8dcd237185e2de724f5110a53a054e10316a",
+      "md5": "e91b85647a7f143c110d41fc7dfafdd2",
+      "module": "Phoenix.LiveViewTest.Support.ComponentAndNestedInLive",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.ComponentAndNestedInLive.beam"
+    },
+    {
+      "exck": "521303907bea9cee0934651303e8c80f0842b60989588f505fed56286fb10221",
+      "md5": "1e5b8af1eae5d404dfddeaf4c2df715e",
+      "module": "Phoenix.LiveViewTest.Support.ComponentAndNestedInLive.NestedComponent",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.ComponentAndNestedInLive.NestedComponent.beam"
+    },
+    {
+      "exck": "5cc38497ebf0d37ff9974f8260ef3b289584caea2ce2a54a8e6e5508237a08c5",
+      "md5": "669ddc9c787466268a66a825c5702435",
+      "module": "Phoenix.LiveViewTest.Support.ComponentAndNestedInLive.NestedLive",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.ComponentAndNestedInLive.NestedLive.beam"
+    },
+    {
+      "exck": "d002d06938ab70090e421a90d09d70e001a24c87ea5258f8f10919a79cefcd03",
+      "md5": "9b1e09634eaed0e315c76a279b1f4aca",
+      "module": "Phoenix.LiveViewTest.Support.ComponentInLive.Component",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.ComponentInLive.Component.beam"
+    },
+    {
+      "exck": "98a3f197e7fdb870528e1603f6d157236b085bc0e11639258469a9a5d6e77bfb",
+      "md5": "ab203cafbebc2301b59003ee1e1d5f19",
+      "module": "Phoenix.LiveViewTest.Support.ComponentInLive.Live",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.ComponentInLive.Live.beam"
+    },
+    {
+      "exck": "cc07f250af5ba23ac67272fbf17ee05d1c4f094c91cb6954f3863188e17995d0",
+      "md5": "74079da3a8e4f32464c3f0eb1a3f0018",
+      "module": "Phoenix.LiveViewTest.Support.ComponentInLive.Root",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.ComponentInLive.Root.beam"
+    },
+    {
+      "exck": "bbe740f4c1df07c4913f4a353ea2ce6dd2c85c34d7b2d9999ba5c01bfb488f8a",
+      "md5": "38c6089bffd13748c56aba524461784f",
+      "module": "Phoenix.LiveViewTest.Support.ConnectLive",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.ConnectLive.beam"
+    },
+    {
+      "exck": "56568cc6d59b4051c8d0bfd5bd166b9e2a7cf0669df135d6b147868ac40ca6bf",
+      "md5": "799e7d6e08228f0eaca3f08c621153ac",
+      "module": "Phoenix.LiveViewTest.Support.Controller",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.Controller.beam"
+    },
+    {
+      "exck": "93b06df3ca28a603a86c0a1f16eb846a2fc2494dbddf4fa58e2345b6d3072aff",
+      "md5": "d6904749dcba3007c0b72769242353f5",
+      "module": "Phoenix.LiveViewTest.Support.DashboardLive",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.DashboardLive.beam"
+    },
+    {
+      "exck": "c8bfa5254a24dd104a9869be292889e57a6cb7810ac20331ad5badbb425bd97e",
+      "md5": "13831c0f9c3815a7dbae79172862207a",
+      "module": "Phoenix.LiveViewTest.Support.DuplicateIdLive",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.DuplicateIdLive.beam"
+    },
+    {
+      "exck": "bc7501f0094d3af13d9b6228a946345ba3f96b95339e6d55c08332d094caa49d",
+      "md5": "e449a17a0c769d0a764539a385f8f8e2",
+      "module": "Phoenix.LiveViewTest.Support.DynamicDuplicateComponentLive",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.DynamicDuplicateComponentLive.beam"
+    },
+    {
+      "exck": "b63ae3e0929a5a83dd7d589a54c20714142bb12a2e37d9bb0133b61498642412",
+      "md5": "4e349ee7dc73f786cd1fa4d11c39c86d",
+      "module": "Phoenix.LiveViewTest.Support.DynamicDuplicateComponentLive.LiveComponent",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.DynamicDuplicateComponentLive.LiveComponent.beam"
+    },
+    {
+      "exck": "5ecfc042482a518171b3525b525265ed11c1a0494932aae7589d155afb90118e",
+      "md5": "1d50c5dcc090290570c7cc7da1e29f48",
+      "module": "Phoenix.LiveViewTest.Support.DynamicDuplicateComponentLive.LiveComponent2",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.DynamicDuplicateComponentLive.LiveComponent2.beam"
+    },
+    {
+      "exck": "5ecfc042482a518171b3525b525265ed11c1a0494932aae7589d155afb90118e",
+      "md5": "5998b77c0a0153f904ee9208122738d1",
+      "module": "Phoenix.LiveViewTest.Support.DynamicDuplicateComponentLive.LiveComponent3",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.DynamicDuplicateComponentLive.LiveComponent3.beam"
+    },
+    {
+      "exck": "4e39de2ae59aebe2f497a1341942ef244a8123e4f13361d285b95d99fc04c25a",
+      "md5": "4e07bd39c2192e329f24f3a855db6588",
+      "module": "Phoenix.LiveViewTest.Support.DynamicDuplicateComponentLive.NestedLive",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.DynamicDuplicateComponentLive.NestedLive.beam"
+    },
+    {
+      "exck": "1d8fd8f57d1071adf1afd12df10b271f9aff2c76a32be23fda3845cd80c2406b",
+      "md5": "5c834bbb9d0d4c948646131a3ea5afea",
+      "module": "Phoenix.LiveViewTest.Support.ElementsComponent",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.ElementsComponent.beam"
+    },
+    {
+      "exck": "43a3a611fc030c5f80ab76d97359f6318a368699724f4b105a935c4502888f5e",
+      "md5": "04e87c9d6bdba462b0d0fa872954fcd1",
+      "module": "Phoenix.LiveViewTest.Support.ElementsLive",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.ElementsLive.beam"
+    },
+    {
+      "exck": "bf2522edf0e6b74939148afcc670a0fb0ace417cf1b2c492cc287da359c76040",
+      "md5": "2d2c0d2d65bd26f95e4262858d16b337",
+      "module": "Phoenix.LiveViewTest.Support.Endpoint",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.Endpoint.beam"
+    },
+    {
+      "exck": "f8f2c1fbc6f87160e1a3174ebd79e15c63b0c21381b54495e03bf673f3c23a32",
+      "md5": "ef07ff276d0a36f07bb92c8f18e18025",
+      "module": "Phoenix.LiveViewTest.Support.EndpointOverridable",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.EndpointOverridable.beam"
+    },
+    {
+      "exck": "2a8ae7eb185995cd21dbcff89877348d265ceaea9601ca48eed34fb098ee4f65",
+      "md5": "602200081cb20b7e8f8ec594fbde076e",
+      "module": "Phoenix.LiveViewTest.Support.ErrorInHandleParamsLive",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.ErrorInHandleParamsLive.beam"
+    },
+    {
+      "exck": "44beb74f21e0a242fbfbd7c3d946ad785d56713c99b0a46cf6dcb193fddf05eb",
+      "md5": "974e20ea295dca2eb1ed6576d4e1d5ae",
+      "module": "Phoenix.LiveViewTest.Support.ErrorsLive",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.ErrorsLive.beam"
+    },
+    {
+      "exck": "e21e5d94248b4cb50c377f24d56d8dcd237185e2de724f5110a53a054e10316a",
+      "md5": "f0cbd770ee9dc7bd5ef86af443c29917",
+      "module": "Phoenix.LiveViewTest.Support.EventsInComponentLive",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.EventsInComponentLive.beam"
+    },
+    {
+      "exck": "66c6d7af2abfd815411a27b36edb9a50e81bd0cde19b370ff3333c99015d28e0",
+      "md5": "c71d4dc6ffb195a4f88e33614e930f2f",
+      "module": "Phoenix.LiveViewTest.Support.EventsInComponentLive.Child",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.EventsInComponentLive.Child.beam"
+    },
+    {
+      "exck": "d69151c37313a5e7f3445d4f876e699b11d894edbd3fe8500fbb468667657a2e",
+      "md5": "c567f8f2596bc86068a1a9ce0a8da9f9",
+      "module": "Phoenix.LiveViewTest.Support.EventsInComponentMultiJSLive",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.EventsInComponentMultiJSLive.beam"
+    },
+    {
+      "exck": "5b5b6d4906c0de78ff4d59e20c9d1f7f432cd9d721b470242954c65ecb370531",
+      "md5": "49f7fed6363e57beaafdebbf947f5e26",
+      "module": "Phoenix.LiveViewTest.Support.EventsInComponentMultiJSLive.Child",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.EventsInComponentMultiJSLive.Child.beam"
+    },
+    {
+      "exck": "bbe740f4c1df07c4913f4a353ea2ce6dd2c85c34d7b2d9999ba5c01bfb488f8a",
+      "md5": "424f3e103acda38b390b739e0c2a7c06",
+      "module": "Phoenix.LiveViewTest.Support.EventsInMountLive",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.EventsInMountLive.beam"
+    },
+    {
+      "exck": "5c7cb62ba046f64deee0d83e890a2e8e433a8b474e57160d132ff1502e75c127",
+      "md5": "da1bddef5aae09c41abd700fd5a473cf",
+      "module": "Phoenix.LiveViewTest.Support.EventsInMountLive.Child",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.EventsInMountLive.Child.beam"
+    },
+    {
+      "exck": "35fb424ea6d93df934a0d14eb6ce0a337605c7ae12f9de82c21a7afc87fee044",
+      "md5": "0da61d6378514749c778758a06ecb17d",
+      "module": "Phoenix.LiveViewTest.Support.EventsLive",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.EventsLive.beam"
+    },
+    {
+      "exck": "f5094ad782da3ff8f0ac0a6a67429304e6e2feeac9ac832eccbd6c46371ef64a",
+      "md5": "cacc35cd3011d6375249530141982f5d",
+      "module": "Phoenix.LiveViewTest.Support.EventsMultiJSLive",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.EventsMultiJSLive.beam"
+    },
+    {
+      "exck": "8cbf8daa4e557fd4c962345ca7fbb8fb72a6096d9147b96cddb47302b6ccae37",
+      "md5": "0d9928899e7a85b6f53cfd3ab79ac267",
+      "module": "Phoenix.LiveViewTest.Support.ExpensiveRuntimeChecksLive",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.ExpensiveRuntimeChecksLive.beam"
+    },
+    {
+      "exck": "31e38945e5aa8221edd2bfb1c5becfcb1a664ff40042272f5c3a0e1ba0d18693",
+      "md5": "b93cac8171b348b1022044b4504bc566",
+      "module": "Phoenix.LiveViewTest.Support.FlashChildLive",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.FlashChildLive.beam"
+    },
+    {
+      "exck": "e577590f5374579a803df3f10e346ad18f64b4a55189c0bf594ec5a05b1c7799",
+      "md5": "062846111b1fb45fb860e8b9791eea88",
+      "module": "Phoenix.LiveViewTest.Support.FlashComponent",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.FlashComponent.beam"
+    },
+    {
+      "exck": "88d91022563b7f256e4bf9eecb5938f7f88cc90074d8a24013681312f8a226ad",
+      "md5": "ec4ac8ef4a389f3a6e9c2ace7e93bbed",
+      "module": "Phoenix.LiveViewTest.Support.FlashLive",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.FlashLive.beam"
+    },
+    {
+      "exck": "3122f8787ef5329a71bcd279c6786f72ebcb0a766d67764ab0b1ce634c158e9b",
+      "md5": "037ab0635875eefbb36fe55dbaf14fc0",
+      "module": "Phoenix.LiveViewTest.Support.FooBarLive",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.FooBarLive.beam"
+    },
+    {
+      "exck": "3122f8787ef5329a71bcd279c6786f72ebcb0a766d67764ab0b1ce634c158e9b",
+      "md5": "9f4c0f100b08f8e52f293388c0a2fb5a",
+      "module": "Phoenix.LiveViewTest.Support.FooBarLive.Index",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.FooBarLive.Index.beam"
+    },
+    {
+      "exck": "3122f8787ef5329a71bcd279c6786f72ebcb0a766d67764ab0b1ce634c158e9b",
+      "md5": "6e176c778d39da4d536bb1e8a814af2f",
+      "module": "Phoenix.LiveViewTest.Support.FooBarLive.Nested.Index",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.FooBarLive.Nested.Index.beam"
+    },
+    {
+      "exck": "a40a015d605e1866ea37ba13fb0d2e5a69cff53528d0c6f1a62f477647cfd67a",
+      "md5": "a34a5d5fec38ceb3b42ae4b705b7bebe",
+      "module": "Phoenix.LiveViewTest.Support.FunctionComponent",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.FunctionComponent.beam"
+    },
+    {
+      "exck": "d60c94111deeca733560eb977898c37ba610aa57b030ac2989ce9895d3829033",
+      "md5": "558c2885e3005cf44f54235fb2876341",
+      "module": "Phoenix.LiveViewTest.Support.FunctionComponentWithAttrs",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.FunctionComponentWithAttrs.beam"
+    },
+    {
+      "exck": "49a4392bac6b3fc6c834d136a468505915bda988c280b2bf21ab4c73c2b86af4",
+      "md5": "c14044cbe9125e009be72104f078579a",
+      "module": "Phoenix.LiveViewTest.Support.FunctionComponentWithAttrs.Struct",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.FunctionComponentWithAttrs.Struct.beam"
+    },
+    {
+      "exck": "df621c09c93def0166b6fdbb87a7d55f6e49eecdadf85cf039132f5f978591a1",
+      "md5": "b3e1f479eca16b34ab617f7775341ed1",
+      "module": "Phoenix.LiveViewTest.Support.HaltConnectedMount",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.HaltConnectedMount.beam"
+    },
+    {
+      "exck": "11167a6137375b6100c36735e1c01ebdf8dcb3f541ea95f09db3702d2b5faad4",
+      "md5": "d6662345674c175e16369625f40ee8eb",
+      "module": "Phoenix.LiveViewTest.Support.HealthyLive",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.HealthyLive.beam"
+    },
+    {
+      "exck": "d0537fd3e165d3c712e313b72b5f2061eae4197e369fa2e6499157056195c40d",
+      "md5": "91a75ba8e4c5170be2a3bba209cdf93e",
+      "module": "Phoenix.LiveViewTest.Support.HighFrequencyStreamAndNoStreamUpdatesLive",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.HighFrequencyStreamAndNoStreamUpdatesLive.beam"
+    },
+    {
+      "exck": "e1930bfbe2ceb1a0eacf74eb2ab33dd0900b49d0a7aa9607af62f8c93dabc9f1",
+      "md5": "d2a875cbcf81e0799e6a81e3e658bff9",
+      "module": "Phoenix.LiveViewTest.Support.HooksAsyncComponent",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.HooksAsyncComponent.beam"
+    },
+    {
+      "exck": "7aa0cfa8756896dd6c40e65c707a83826487f43c63554908da53ce6314eb803f",
+      "md5": "dcee0aabc1338b3361e204d0d2f81cc6",
+      "module": "Phoenix.LiveViewTest.Support.HooksAttachInfoComponent",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.HooksAttachInfoComponent.beam"
+    },
+    {
+      "exck": "aa0de894f88c6bbac357c3eb249bb5111994a13fcc2009041e63259c9f790ff5",
+      "md5": "9abce930c59ec6e06f2d92cc57477d8b",
+      "module": "Phoenix.LiveViewTest.Support.HooksDetachInfoComponent",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.HooksDetachInfoComponent.beam"
+    },
+    {
+      "exck": "00446b22e6b4c8ae520fa208c58ac5abdd19e4912850423fcd5c5634a78b663f",
+      "md5": "adb0e340ab3dafcd00b7e867797c9073",
+      "module": "Phoenix.LiveViewTest.Support.HooksEventComponent",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.HooksEventComponent.beam"
+    },
+    {
+      "exck": "461b69b783965c1f29dbe16c3df65e231d5dc063b5069c00a750ee7d98e16d1f",
+      "md5": "0c0af2b7834c4e9ef236db9c01d5dc15",
+      "module": "Phoenix.LiveViewTest.Support.HooksLive",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.HooksLive.beam"
+    },
+    {
+      "exck": "ce9274f6fc1e457d5f0728a0c22c462e78356f72f30331884536a7aed94b0aed",
+      "md5": "6893dd064b29ac9a0d604d9ae08bbe36",
+      "module": "Phoenix.LiveViewTest.Support.HooksLive.BadMount",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.HooksLive.BadMount.beam"
+    },
+    {
+      "exck": "2726027114b63fbefb3022c16446213caf38133c72e86b08b597638f80eca02a",
+      "md5": "737b917717ad7f4761f274914674d6a5",
+      "module": "Phoenix.LiveViewTest.Support.HooksLive.HaltMount",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.HooksLive.HaltMount.beam"
+    },
+    {
+      "exck": "bbe740f4c1df07c4913f4a353ea2ce6dd2c85c34d7b2d9999ba5c01bfb488f8a",
+      "md5": "1893d37987c6b383882b191aec2d8d93",
+      "module": "Phoenix.LiveViewTest.Support.HooksLive.HandleInfoNotDefined",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.HooksLive.HandleInfoNotDefined.beam"
+    },
+    {
+      "exck": "bbe740f4c1df07c4913f4a353ea2ce6dd2c85c34d7b2d9999ba5c01bfb488f8a",
+      "md5": "854af57c0c3695b00a8fbbb43307ed5e",
+      "module": "Phoenix.LiveViewTest.Support.HooksLive.HandleParamsNotDefined",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.HooksLive.HandleParamsNotDefined.beam"
+    },
+    {
+      "exck": "47bcb7530c5fe3f27d597a750718a97f45286c08b61ecf91889ce3883aa3675f",
+      "md5": "2a17edaedab852863eb60d31f4145784",
+      "module": "Phoenix.LiveViewTest.Support.HooksLive.Noop",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.HooksLive.Noop.beam"
+    },
+    {
+      "exck": "2291c1c89c207951d7beb2d153dce0a625178c8db534d652a0d364b60f03d0ad",
+      "md5": "c36baf4f7962b7e71190bb138c053c55",
+      "module": "Phoenix.LiveViewTest.Support.HooksLive.OnMountOptions",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.HooksLive.OnMountOptions.beam"
+    },
+    {
+      "exck": "0151230c65232be7f369619840ccff4527bb34c7cac170788e6bc21635253b89",
+      "md5": "43ab318b84a36538002baee4e898a6c8",
+      "module": "Phoenix.LiveViewTest.Support.HooksLive.RedirectMount",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.HooksLive.RedirectMount.beam"
+    },
+    {
+      "exck": "f7e4d0116b8bf7b913e5b07bafa558fd5d103dea6779811d8b53ee95e8eaa7b4",
+      "md5": "54554b7c2113007c77f23717f4cb2c45",
+      "module": "Phoenix.LiveViewTest.Support.HooksLive.WithComponent",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.HooksLive.WithComponent.beam"
+    },
+    {
+      "exck": "4af1237521f00c040155b5b9169aa3246f540c4705a487a7e2942a851d827be4",
+      "md5": "e50133bccf4b954aa8116dcafa073f69",
+      "module": "Phoenix.LiveViewTest.Support.HostLive",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.HostLive.beam"
+    },
+    {
+      "exck": "1c017e302d37fdf4bb340bf45039c92bbf8a11e7b304275bc949fded6b7d76ff",
+      "md5": "30944a52bad5a89283d795040393929d",
+      "module": "Phoenix.LiveViewTest.Support.InitAssigns",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.InitAssigns.beam"
+    },
+    {
+      "exck": "4fa004b8c5269b3f90e30fe10f136c64f930db04384566feda2d7fdc67d22de4",
+      "md5": "705cfa3a3142f650e8a2cd0647f44387",
+      "module": "Phoenix.LiveViewTest.Support.LayoutLive",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.LayoutLive.beam"
+    },
+    {
+      "exck": "5c5b5a6e7a29dafdf0902145f0256f7ee6e1ad07a4d04439db5ac71b499e2a72",
+      "md5": "144451e1bd45e31746831d4fb6e8cdc9",
+      "module": "Phoenix.LiveViewTest.Support.LayoutView",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.LayoutView.beam"
+    },
+    {
+      "exck": "3122f8787ef5329a71bcd279c6786f72ebcb0a766d67764ab0b1ce634c158e9b",
+      "md5": "85da216a4f7e5f92b88fa9d12e9483fb",
+      "module": "Phoenix.LiveViewTest.Support.Live.Nested.Module",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.Live.Nested.Module.beam"
+    },
+    {
+      "exck": "32c123e53d8d6edfec30360d171dbb802550e8b03163bc7d423431e8ea8754bb",
+      "md5": "c107f13a66d2f370886bd1acf1e4defa",
+      "module": "Phoenix.LiveViewTest.Support.LiveInComponent.Component",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.LiveInComponent.Component.beam"
+    },
+    {
+      "exck": "5c7cb62ba046f64deee0d83e890a2e8e433a8b474e57160d132ff1502e75c127",
+      "md5": "11a1871e48846b875f80d1cc552e1334",
+      "module": "Phoenix.LiveViewTest.Support.LiveInComponent.Live",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.LiveInComponent.Live.beam"
+    },
+    {
+      "exck": "2b7ddcd6c1e8f8826e535bf2c4e63485005bf48f95019057344cba6666940d03",
+      "md5": "64d8940440f0369a42f22ea55807ad75",
+      "module": "Phoenix.LiveViewTest.Support.LiveInComponent.Root",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.LiveInComponent.Root.beam"
+    },
+    {
+      "exck": "67579685f12b250beedef01b56bc075b909c1aaad41e25d63d67c6f169430b07",
+      "md5": "447c50a70b204ff78e0c8288ebee29a1",
+      "module": "Phoenix.LiveViewTest.Support.MountArgs",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.MountArgs.beam"
+    },
+    {
+      "exck": "bbe740f4c1df07c4913f4a353ea2ce6dd2c85c34d7b2d9999ba5c01bfb488f8a",
+      "md5": "006bb32e048b57c0f481a8111375d7fb",
+      "module": "Phoenix.LiveViewTest.Support.NestedUploadLive",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.NestedUploadLive.beam"
+    },
+    {
+      "exck": "3122f8787ef5329a71bcd279c6786f72ebcb0a766d67764ab0b1ce634c158e9b",
+      "md5": "284243ca9bd2845d33d917ef5ecea8fe",
+      "module": "Phoenix.LiveViewTest.Support.NoSuffix",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.NoSuffix.beam"
+    },
+    {
+      "exck": "1c017e302d37fdf4bb340bf45039c92bbf8a11e7b304275bc949fded6b7d76ff",
+      "md5": "e3b217a0f3e91d2a80e00866e4c50d79",
+      "module": "Phoenix.LiveViewTest.Support.OnMount",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.OnMount.beam"
+    },
+    {
+      "exck": "148a89bc4bda4bce29141411c5bfccc7b8233c5ec300f4cc69e6883788ede618",
+      "md5": "7e0459c103ffec8eaaafc3de1cc8f353",
+      "module": "Phoenix.LiveViewTest.Support.OptsLive",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.OptsLive.beam"
+    },
+    {
+      "exck": "1c017e302d37fdf4bb340bf45039c92bbf8a11e7b304275bc949fded6b7d76ff",
+      "md5": "4aad5629d15b935d1a134c5ad4ffb499",
+      "module": "Phoenix.LiveViewTest.Support.OtherOnMount",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.OtherOnMount.beam"
+    },
+    {
+      "exck": "288d297d87c64e05e5144b6247097bac6a7695fd748f241c5b52d78487429f70",
+      "md5": "c5dc56f07d0b227a3fd450b484838c15",
+      "module": "Phoenix.LiveViewTest.Support.ParamCounterLive",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.ParamCounterLive.beam"
+    },
+    {
+      "exck": "bbe740f4c1df07c4913f4a353ea2ce6dd2c85c34d7b2d9999ba5c01bfb488f8a",
+      "md5": "549c0d9636e959b26f26dc581807cb5a",
+      "module": "Phoenix.LiveViewTest.Support.ParentLayoutLive",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.ParentLayoutLive.beam"
+    },
+    {
+      "exck": "f116a2cb23cf5d69d095300bcc81ae796d3800813f6a5cf91fc28471ce1fe3ee",
+      "md5": "a103cccaf33dddabc661ccd664630cc6",
+      "module": "Phoenix.LiveViewTest.Support.RedirLive",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.RedirLive.beam"
+    },
+    {
+      "exck": "9e0dc9113ed3571036d6415f8043945b0fa417b79718cc95697c75881dc34e61",
+      "md5": "a74def829c7977e7ce7850c6f096ede7",
+      "module": "Phoenix.LiveViewTest.Support.ReloadLive",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.ReloadLive.beam"
+    },
+    {
+      "exck": "3bdaa2624a0f60cd9ceea54c9c2264a17198bcf0567084a5edea39318e8bcf60",
+      "md5": "7f9d5f685fb2a03d93fc8c9d88ea7027",
+      "module": "Phoenix.LiveViewTest.Support.RenderWithLive",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.RenderWithLive.beam"
+    },
+    {
+      "exck": "e91c5299c7cf7c0d56a69eb88e5337aff232bb84f02176f2cd69045db28d965a",
+      "md5": "f2947a5e22781788d3067eafd162692e",
+      "module": "Phoenix.LiveViewTest.Support.RootLive",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.RootLive.beam"
+    },
+    {
+      "exck": "56101123fb304d8c19df0b2f9381b455196702865470f0ff373cb6d511352d98",
+      "md5": "88917d53eb76a2768796939e764a5cb3",
+      "module": "Phoenix.LiveViewTest.Support.Router",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.Router.beam"
+    },
+    {
+      "exck": "0b7a11fc91330e73ae3715156b769d442d7f7665d48fde7f2a2f6c25f42554ae",
+      "md5": "37953bb5e77d7d727645c2119ab267d0",
+      "module": "Phoenix.LiveViewTest.Support.Router.Helpers",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.Router.Helpers.beam"
+    },
+    {
+      "exck": "89e4e4fb996d20a54c1cfa82192b794f9cb95ccc07b15168b62432e680472f56",
+      "md5": "1fb90a2177c0176e350735d95a54b1a7",
+      "module": "Phoenix.LiveViewTest.Support.SameChildLive",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.SameChildLive.beam"
+    },
+    {
+      "exck": "8c9aaf0356f04d8943b9975eb8c7d86513f389b91a9e2e9792cba24462008542",
+      "md5": "359344401dddb99b19ef31fec3397f42",
+      "module": "Phoenix.LiveViewTest.Support.ShuffleLive",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.ShuffleLive.beam"
+    },
+    {
+      "exck": "87a4cbfaf233810277a1256b9419ca794e794b3db6761910040da8eb98cec5d2",
+      "md5": "0f29c873aae43351a0eb8b1ab183b5b0",
+      "module": "Phoenix.LiveViewTest.Support.StartAsyncLive",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.StartAsyncLive.beam"
+    },
+    {
+      "exck": "ed779a95c01ed524e8f65491e2c06784deb64bdc73e10136b8cdf57b9b141a29",
+      "md5": "415a647a9e6570a2d7762cedef956a0a",
+      "module": "Phoenix.LiveViewTest.Support.StartAsyncLive.LC",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.StartAsyncLive.LC.beam"
+    },
+    {
+      "exck": "cc648647921e0bad37e27da4052783c1fedb461d79f9ceac632ccbe412a70db6",
+      "md5": "7d31c215a6275e5a142b4746b6a91616",
+      "module": "Phoenix.LiveViewTest.Support.StatefulComponent",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.StatefulComponent.beam"
+    },
+    {
+      "exck": "cafe657fa72174db6c1e033a0a3ef3560f09750514f1fd051505bb112059e24a",
+      "md5": "10b9495ce76f223d39b6e8d84fad4a87",
+      "module": "Phoenix.LiveViewTest.Support.StreamAsyncLive",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.StreamAsyncLive.beam"
+    },
+    {
+      "exck": "017463e8808b1d20f0322646ea2191187fd61d0c1a4438012ce30013dafdd682",
+      "md5": "ca15b89d0a8eaecc580ef12cfb34a36f",
+      "module": "Phoenix.LiveViewTest.Support.StreamAsyncLive.LC",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.StreamAsyncLive.LC.beam"
+    },
+    {
+      "exck": "bdd33319e1ff3baebbe8dd60ce1da6eb4381badf5bc45944fdae3353bfd04e4c",
+      "md5": "0aa13066b887b92818534635d2ae6c67",
+      "module": "Phoenix.LiveViewTest.Support.StreamComponent",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.StreamComponent.beam"
+    },
+    {
+      "exck": "6703069b6787e89b85b87df5858af0c89e0380c463d4665db7b361fc88b89bc0",
+      "md5": "76fb21105071c13809afa73996ada5e2",
+      "module": "Phoenix.LiveViewTest.Support.StreamInsideForLive",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.StreamInsideForLive.beam"
+    },
+    {
+      "exck": "51bd09568a843c070dfae3a9b545d7c1506b761ba4ea707062c32d04c36e6eb3",
+      "md5": "eb66ee7d37efc48d6162de4c990bc922",
+      "module": "Phoenix.LiveViewTest.Support.StreamLimitLive",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.StreamLimitLive.beam"
+    },
+    {
+      "exck": "15d85f12c0072cfa2ae76cd5461eea764102f7a00ba7e0360136548b8509b908",
+      "md5": "bc77b8d2d7ad717c26402487cd305e95",
+      "module": "Phoenix.LiveViewTest.Support.StreamLive",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.StreamLive.beam"
+    },
+    {
+      "exck": "e21e5d94248b4cb50c377f24d56d8dcd237185e2de724f5110a53a054e10316a",
+      "md5": "558e574600cfb9b99d4099b9bba04cca",
+      "module": "Phoenix.LiveViewTest.Support.StreamNestedComponentResetLive",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.StreamNestedComponentResetLive.beam"
+    },
+    {
+      "exck": "7864ccd06d068a7573f2b12065d115a2a5846893b54dee85916306b092dfa1bd",
+      "md5": "141835f39f9e13ae49f66180fc1e2acd",
+      "module": "Phoenix.LiveViewTest.Support.StreamNestedComponentResetLive.InnerComponent",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.StreamNestedComponentResetLive.InnerComponent.beam"
+    },
+    {
+      "exck": "6729a8e31c09811f8b1d04e58085ae04a3ef19f4a568471ad52900ea772ef601",
+      "md5": "b3b75b7f8d48a56f38489d1c7a9b689c",
+      "module": "Phoenix.LiveViewTest.Support.StreamNestedLive",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.StreamNestedLive.beam"
+    },
+    {
+      "exck": "e21e5d94248b4cb50c377f24d56d8dcd237185e2de724f5110a53a054e10316a",
+      "md5": "ad5ceb8a8d8647b2bcbf728494552794",
+      "module": "Phoenix.LiveViewTest.Support.StreamResetLCLive",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.StreamResetLCLive.beam"
+    },
+    {
+      "exck": "32c123e53d8d6edfec30360d171dbb802550e8b03163bc7d423431e8ea8754bb",
+      "md5": "b25257959d0c659e169ee9bd0cfb6cde",
+      "module": "Phoenix.LiveViewTest.Support.StreamResetLCLive.InnerComponent",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.StreamResetLCLive.InnerComponent.beam"
+    },
+    {
+      "exck": "18b2282c64606d726a160be6b82a0389a981cf0dc29fdecf54cae1c1799906f7",
+      "md5": "41353f7b5414674cf9e15f7e21dc0eae",
+      "module": "Phoenix.LiveViewTest.Support.StreamResetLive",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.StreamResetLive.beam"
+    },
+    {
+      "exck": "bca568e393817d8b04b596cececb074b7a46eb5c294674f799c3365f32aaff02",
+      "md5": "0f2ff8167f2085874cac61eebbcc623b",
+      "module": "Phoenix.LiveViewTest.Support.TZLive",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.TZLive.beam"
+    },
+    {
+      "exck": "1b119f6f5352e19960d8902a9a8c17bcd3389783ef16344356a8973e75db1d0b",
+      "md5": "fce544d196b45ef743a0ef6bee60e5b2",
+      "module": "Phoenix.LiveViewTest.Support.ThermostatLive",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.ThermostatLive.beam"
+    },
+    {
+      "exck": "8b0d12a303ecf95ac4c6914558b26e9d123ffa99fce724957d9db0bfef8ba0ce",
+      "md5": "2435fdd07eea7073c66a5b7a7af33103",
+      "module": "Phoenix.LiveViewTest.Support.ThermostatLive.Error",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.ThermostatLive.Error.beam"
+    },
+    {
+      "exck": "58911011a32d38e1f8c9baa4106d0cfc6be65adf90f91c6cf71a4bf28d0a5b3f",
+      "md5": "758b823e4a1ba8d94756bebcfb24cfa4",
+      "module": "Phoenix.LiveViewTest.Support.UploadComponent",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.UploadComponent.beam"
+    },
+    {
+      "exck": "a3d40669065b209cb163d62d3bf4afbde78f3290b9a23224c53dfcad5c5b1917",
+      "md5": "4a8e669e9a2ac0a29acf268b65391908",
+      "module": "Phoenix.LiveViewTest.Support.UploadLive",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.UploadLive.beam"
+    },
+    {
+      "exck": "676e71887dbdb857abaae81764d54098efa15f6fbaac93e0ae7f2a90e9da0e51",
+      "md5": "50e7e8dc8a4e65492132a4f3fdea3e08",
+      "module": "Phoenix.LiveViewTest.Support.UploadLiveWithComponent",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.UploadLiveWithComponent.beam"
+    },
+    {
+      "exck": "2279fd053c2eea8ba95e0c2587328015733099095334ecf9aa95b2d9355ecd49",
+      "md5": "08b7d274a5bc870245045ae1ff082e57",
+      "module": "Phoenix.LiveViewTest.Support.WithComponentLive",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.WithComponentLive.beam"
+    },
+    {
+      "exck": "17521c611c544f996fea31d4facf27cc212de170ccf34fe2fff3d544685bd2c8",
+      "md5": "b7833fd2d837330abbe74c6a8be20ef8",
+      "module": "Phoenix.LiveViewTest.Support.WithLogDisabled",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.WithLogDisabled.beam"
+    },
+    {
+      "exck": "8441285a32d0d15812f859a05ea6589e4e7087e7f787accc62d2814fd247eac4",
+      "md5": "69537844289b9b1d0ca58d8da3d064f4",
+      "module": "Phoenix.LiveViewTest.Support.WithLogOverride",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.WithLogOverride.beam"
+    },
+    {
+      "exck": "9ca143aaaed27b47ac751432ce19c76affd4c5a058483d9af0563036f9cf28c5",
+      "md5": "c33c4491ce8c30c79ca3e18809b47772",
+      "module": "Phoenix.LiveViewTest.Support.WithMultipleTargets",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Support.WithMultipleTargets.beam"
+    },
+    {
+      "exck": "b777d48dd80669c3ec6b0546a3dff9933c04bd8234addd72b54487b36a2fb05c",
+      "md5": "e8a2380163a29fa508e34d5b04dabe86",
+      "module": "Phoenix.LiveViewTest.TreeDOM",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.TreeDOM.beam"
+    },
+    {
+      "exck": "bb5550ec197803a4646f374eb225b19ebbc4ca6e0e49bb38f7912fa23bf0d0fa",
+      "md5": "0600ba1623e2625e592019a7b039579b",
+      "module": "Phoenix.LiveViewTest.Upload",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Upload.beam"
+    },
+    {
+      "exck": "b1d36ed9392c6a0ed23b0ffc059aeb8da84aca56170aaa680ef10e25fc5c827a",
+      "md5": "e780266053fa27e3ce85666d07ac36a2",
+      "module": "Phoenix.LiveViewTest.UploadClient",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.UploadClient.beam"
+    },
+    {
+      "exck": "048a852c6879c8c05d1ef7ece5d03185b5d8c6625ed75893e0bef76aa218386a",
+      "md5": "bdc76e5819f1e7f08d5338cd5697c637",
+      "module": "Phoenix.LiveViewTest.Utils",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.Utils.beam"
+    },
+    {
+      "exck": "f7beab219b5a482ab34f94c2ce68f0bddb598907d303474c2cd0943f7f4b3f72",
+      "md5": "b99bdc7776ac2872e357ba58009001c3",
+      "module": "Phoenix.LiveViewTest.View",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveViewTest.View.beam"
+    },
+    {
+      "exck": "8bb78cd016a60f285e0de86c29a2156fb1885e585ca68f0b8b5dd4173dea0642",
+      "md5": "8e95723f2d502456af6791ed4a346291",
+      "module": "String.Chars.Phoenix.LiveComponent.CID",
+      "path": "_build/test/lib/phoenix_live_view/ebin/Elixir.String.Chars.Phoenix.LiveComponent.CID.beam"
+    }
+  ],
+  "capabilities": {
+    "bodies": false,
+    "body_hook": false,
+    "signatures": true
+  },
+  "checker_version": "elixir_checker_v10",
+  "completion": {
+    "blocking": 0,
+    "coverage_violations": [],
+    "exit_code": 0,
+    "reasons": [],
+    "status": "complete"
+  },
+  "config": {
+    "ci": true,
+    "clause_local_qualification": true,
+    "digest": "sha256:c95f1857e0a209121d5e3fc51e45212b3fbc95f647f4b53df9d4adc6b5dcf423",
+    "expand_opaque": false,
+    "profile": "review",
+    "require_static_return": false,
+    "rules": [
+      [
+        "SL001",
+        "warning"
+      ],
+      [
+        "SL002",
+        "warning"
+      ],
+      [
+        "SL003",
+        "warning"
+      ],
+      [
+        "SL006",
+        "warning"
+      ],
+      [
+        "SL008",
+        "warning"
+      ]
+    ],
+    "warnings_as_errors": false
+  },
+  "elixir": "1.21.0-dev",
+  "findings": [],
+  "ledger": {
+    "bodies": {
+      "completed": 0,
+      "requested": false
+    },
+    "entries": [
+      {
+        "class": "unknown",
+        "mfa": "Phoenix.Component.MacroComponent.ast_to_string/2",
+        "module": "Phoenix.Component.MacroComponent",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Phoenix.Component.MacroComponent.get_data/2",
+        "module": "Phoenix.Component.MacroComponent",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "exact",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Phoenix.LiveView.stream/4",
+        "module": "Phoenix.LiveView",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Phoenix.LiveView.stream_configure/3",
+        "module": "Phoenix.LiveView",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Phoenix.LiveView.stream_delete/3",
+        "module": "Phoenix.LiveView",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Phoenix.LiveView.stream_delete_by_dom_id/3",
+        "module": "Phoenix.LiveView",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Phoenix.LiveView.stream_insert/4",
+        "module": "Phoenix.LiveView",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Phoenix.LiveViewTest.DOM.css_escape/1",
+        "module": "Phoenix.LiveViewTest.DOM",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "exact",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Phoenix.LiveViewTest.DOM.parse_document/1",
+        "module": "Phoenix.LiveViewTest.DOM",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "no_counted_component"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Phoenix.LiveViewTest.DOM.parse_fragment/1",
+        "module": "Phoenix.LiveViewTest.DOM",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "no_counted_component"
+      },
+      {
+        "class": "none",
+        "mfa": "Phoenix.LiveViewTest.Support.AssignsLayoutView.template_not_found/2",
+        "module": "Phoenix.LiveViewTest.Support.AssignsLayoutView",
+        "notes": [],
+        "obligation": "established",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "exact",
+        "unknown_reason": null
+      },
+      {
+        "class": "none",
+        "mfa": "Phoenix.LiveViewTest.Support.LayoutView.template_not_found/2",
+        "module": "Phoenix.LiveViewTest.Support.LayoutView",
+        "notes": [],
+        "obligation": "established",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "exact",
+        "unknown_reason": null
+      }
+    ],
+    "functions": {
+      "compared": 12,
+      "found": 12,
+      "unavailable": 0,
+      "unsupported": 0
+    },
+    "lost_analysis": {},
+    "modules": {
+      "analysed": 190,
+      "discovered": 190,
+      "out_of_scope": {
+        "erlang_module": 0,
+        "excluded": 0
+      },
+      "unavailable": {}
+    },
+    "obligations": {
+      "established": 2,
+      "unknown": 10
+    },
+    "obligations_unknown_by_reason": {
+      "no_counted_component": 2,
+      "top_only": 8
+    },
+    "signatures": {
+      "available": 12,
+      "unavailable": {}
+    },
+    "slices": {
+      "approximate": 8,
+      "compared": 12,
+      "exact": 4,
+      "expanded": 0,
+      "found": 12,
+      "loss_kinds": {
+        "integer_refinement_erased": 5,
+        "opaque_boundary": 5,
+        "recursive_cutoff": 3
+      },
+      "unavailable": {},
+      "unsupported": {}
+    },
+    "specs_out_of_scope": {
+      "generated": 13
+    }
+  },
+  "otp": "28",
+  "project": {
+    "mix_env": null,
+    "mix_target": null,
+    "umbrella": false
+  },
+  "schema": "spec_lint/report",
+  "schema_version": 1,
+  "scope": {
+    "app_filters": [],
+    "apps": [
+      "phoenix_live_view"
+    ],
+    "exclude": [],
+    "module_filters": [],
+    "partial": false
+  },
+  "tool": {
+    "name": "spec_lint",
+    "version": "0.1.0"
+  }
+}
