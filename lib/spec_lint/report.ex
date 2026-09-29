@@ -16,8 +16,12 @@ defmodule SpecLint.Report do
   `render/2` therefore renders in a short-lived process that receives only
   `view/1` of the run: the run without its per-module analysis results,
   which no reporter reads. The rendered report comes back as one binary.
+  The process is monitored, not linked (`SpecLint.Isolated`): a crash while
+  rendering raises in the caller, where the Mix tasks turn it into an
+  internal failure (exit 2, no report).
   """
 
+  alias SpecLint.Isolated
   alias SpecLint.Report.{Console, Json}
   alias SpecLint.Run
 
@@ -34,9 +38,10 @@ defmodule SpecLint.Report do
   def render(%Run{} = run, format) when format in [:console, :json] do
     view = view(run)
 
-    fn -> view |> render_iodata(format) |> IO.iodata_to_binary() end
-    |> Task.async()
-    |> Task.await(:infinity)
+    case Isolated.run(fn -> view |> render_iodata(format) |> IO.iodata_to_binary() end) do
+      {:ok, report} -> report
+      {:error, {:crashed, reason}} -> raise "rendering crashed: " <> crash_message(reason)
+    end
   end
 
   @doc """
@@ -49,6 +54,12 @@ defmodule SpecLint.Report do
   @spec view(Run.t()) :: Run.t()
   def view(%Run{} = run),
     do: %{run | modules: [], excluded: [], evidence: %{}, reachability: %{}, inventory: []}
+
+  defp crash_message({exception, stacktrace})
+       when is_exception(exception) and is_list(stacktrace),
+       do: Exception.message(exception)
+
+  defp crash_message(reason), do: inspect(reason)
 
   defp render_iodata(run, :console), do: Console.render(run)
   defp render_iodata(run, :json), do: run |> Json.envelope() |> Json.encode()

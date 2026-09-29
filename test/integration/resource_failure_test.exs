@@ -10,6 +10,10 @@ defmodule SpecLint.Integration.ResourceFailureTest do
   #     configuration file, which is Elixir code evaluated in the run's VM)
   #     exits 2 with no report at all, and removes an earlier report at the
   #     output path;
+  #   * an exit after the analysis, or the crash of a linked process there,
+  #     is the same internal failure (exit 2, no report), not Mix's status 1;
+  #   * a crash of the compiler re-check process of a required reachability
+  #     check makes the run incomplete (exit 2 in CI), never a verdict;
   #   * a VM killed from outside while it analyses leaves no report at the
   #     output path: the atomic write did not happen, and the earlier
   #     report was removed when the run started.
@@ -129,6 +133,84 @@ defmodule SpecLint.Integration.ResourceFailureTest do
     end
 
     assert Path.wildcard(report <> ".tmp-*") == []
+  end
+
+  test "an exit after the analysis, or a crash of a linked process, exits 2 and leaves no report",
+       %{dir: dir, report: report} do
+    # Milestone 5 review: an exit, or the exit signal of a crashed linked
+    # process, is not an exception; both used to end the run with status 1,
+    # the status of new gated findings, in both modes.
+    injections = [
+      {"exit(:injected_exit)", "internal failure: exit :injected_exit"},
+      {"Task.await(Task.async(fn -> raise ArgumentError end))", "internal failure: exit"}
+    ]
+
+    for {injection, message} <- injections do
+      Fixture.write!(dir, ".spec_lint.exs", """
+      Code.compile_string(\"\"\"
+      defmodule SpecLint.Policy do
+        def apply_gates(_issues, _config, _regressions), do: #{injection}
+      end
+      \"\"\")
+
+      []
+      """)
+
+      for mode <- [["--ci"], []] do
+        File.write!(report, "{}")
+
+        {output, status} =
+          Fixture.mix(dir, ["spec_lint", "--format", "json", "--output", report] ++ mode)
+
+        assert status == 2, output
+        assert output =~ message
+        refute File.exists?(report)
+      end
+    end
+  end
+
+  test "a crashed reachability check makes the run incomplete, never a verdict",
+       %{dir: dir, report: report} do
+    # A clause conflict, so that the compiler re-check runs, in its own
+    # process, for a gate that needs it.
+    Fixture.write!(dir, "lib/consumer/conflict.ex", """
+    defmodule Consumer.Conflict do
+      @spec size(atom() | integer()) :: integer()
+      def size(name) when is_atom(name), do: name
+      def size(n) when is_integer(n), do: n
+    end
+    """)
+
+    {output, 1} = Fixture.mix(dir, ["spec_lint", "--ci", "--format", "json", "--output", report])
+    json = JSON.decode!(File.read!(report))
+    assert json["completion"]["status"] == "complete", output
+    assert [%{"subject" => "Consumer.Conflict.size/1", "gate" => true}] = json["findings"]
+
+    Fixture.write!(dir, ".spec_lint.exs", """
+    Code.compile_string(\"\"\"
+    defmodule SpecLint.GuardFeasibility do
+      def proven?(_definitions), do: raise(ArgumentError, "injected check crash")
+    end
+    \"\"\")
+
+    []
+    """)
+
+    for {mode, expected} <- [{["--ci"], 2}, {[], 0}] do
+      {output, status} =
+        Fixture.mix(dir, ["spec_lint", "--format", "json", "--output", report] ++ mode)
+
+      assert status == expected, output
+      json = JSON.decode!(File.read!(report))
+      assert json["completion"]["status"] == "incomplete"
+      assert json["completion"]["exit_code"] == expected
+
+      assert Enum.any?(
+               json["completion"]["reasons"],
+               &(&1 =~ "required reachability check failed for Consumer.Conflict.size/1" and
+                   &1 =~ "injected check crash")
+             )
+    end
   end
 
   test "a VM killed from outside during the analysis leaves no report",

@@ -45,6 +45,9 @@ defmodule SpecLint.RunOnEbin do
       report(run, cli, own[:write_baseline])
     rescue
       error -> fail("internal failure: " <> Exception.message(error))
+    catch
+      :throw, value -> fail("internal failure: uncaught throw " <> inspect(value))
+      :exit, reason -> fail("internal failure: exit " <> inspect(reason))
     end
 
     System.halt(run.exit_code)

@@ -323,8 +323,9 @@ defmodule Mix.Tasks.SpecLint do
     end
   end
 
-  # An exception while rendering is an internal failure (exit 2), never the
-  # exit status 1 Mix gives an uncaught exception, which CI reads as findings.
+  # An exception, throw or exit while rendering is an internal failure
+  # (exit 2), never the exit status 1 Mix gives an uncaught exception, which
+  # CI reads as findings.
   defp internal!(fun) do
     fun.()
   rescue
@@ -333,6 +334,12 @@ defmodule Mix.Tasks.SpecLint do
 
     error ->
       Mix.raise("internal failure: " <> Exception.message(error), exit_status: 2)
+  catch
+    :throw, value ->
+      Mix.raise("internal failure: uncaught throw " <> inspect(value), exit_status: 2)
+
+    :exit, reason ->
+      Mix.raise("internal failure: exit " <> inspect(reason), exit_status: 2)
   end
 
   defp write_output!(nil, _data), do: :ok

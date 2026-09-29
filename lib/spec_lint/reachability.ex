@@ -29,7 +29,7 @@ defmodule SpecLint.Reachability do
   clause, and does not establish the stored clause's return.
   """
 
-  alias SpecLint.{Analysis, Beam, Compiler, Coverage, GuardFeasibility}
+  alias SpecLint.{Analysis, Beam, Compiler, Coverage, GuardFeasibility, Isolated}
 
   @typedoc """
   The check for one function: the lines of its pattern and guard diagnostics
@@ -72,15 +72,20 @@ defmodule SpecLint.Reachability do
   # input: it reads the BEAM's debug info and runs the compiler's checker,
   # and that garbage stays out of the caller's heap, which holds every
   # analysed module (Milestone 1 profile: 37 s in the caller against a few
-  # seconds in a fresh process on Absinthe). The result is small.
+  # seconds in a fresh process on Absinthe). The result is small. The
+  # process is monitored, not linked (`SpecLint.Isolated`): a crash in it is
+  # an operational failure of the check, `{:error, {:crashed, reason}}`,
+  # which makes a required check's run incomplete (exit 2 in CI), never an
+  # exit signal that ends the run with status 1.
   defp check_module(module, mfas) do
     fun_arities = for {_module, name, arity} <- mfas, do: {name, arity}
     identity = Map.take(module, [:module, :path])
 
     result =
-      fn -> check_result(identity, fun_arities) end
-      |> Task.async()
-      |> Task.await(:infinity)
+      case Isolated.run(fn -> check_result(identity, fun_arities) end) do
+        {:ok, result} -> result
+        {:error, crashed} -> {:error, crashed}
+      end
 
     for mfa <- mfas, do: {mfa, function_result(mfa, result)}
   end

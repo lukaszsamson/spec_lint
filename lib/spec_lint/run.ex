@@ -7,9 +7,9 @@ defmodule SpecLint.Run do
 
   Exit codes: `0` accepted; `1` new gated findings or a coverage violation
   (only in CI mode or with `warnings_as_errors`); `2` incomplete run
-  (internal failure analysing a module, required reachability check failure;
-  unsupported compiler or checker chunk in CI), unsupported backend,
-  configuration error.
+  (internal failure analysing a module, required reachability check failure,
+  including a crashed check; unsupported compiler or checker chunk in CI),
+  unsupported backend, configuration error.
 
   Completion is `:complete`, `:partial` (a `--module` or `--app` filter
   was given; stale entries are never declared and the coverage floor is
@@ -134,10 +134,11 @@ defmodule SpecLint.Run do
   files whose `SpecLint.BuildRecord` names another compiler build or that
   changed after it was written, and an explicitly configured baseline file
   that does not exist (`SpecLint.Config`), and an internal failure after the
-  per-module analysis (an exception or throw in the evidence, reachability,
-  rule, coverage or baseline stages, which leaves no run to report; a
-  failure analysing one module instead makes the run `:incomplete`),
-  otherwise the finished run.
+  per-module analysis (an exception, throw or exit in the evidence,
+  reachability, rule, coverage or baseline stages, which leaves no run to
+  report; a failure analysing one module, or a crash of a required
+  reachability check, instead makes the run `:incomplete`), otherwise the
+  finished run.
   """
   @spec execute(Project.t(), Config.t(), [option()]) :: {:ok, t()} | {:error, String.t()}
   def execute(%Project{} = project, %Config{} = config, opts \\ []) do
@@ -181,18 +182,33 @@ defmodule SpecLint.Run do
     do: {:ok, unsupported_compiler(run, reason)}
 
   # A failure analysing one module is caught in `analyse_module/3` and makes
-  # the run incomplete. An exception or throw in the stages after it
+  # the run incomplete. An exception, throw or exit in the stages after it
   # (evidence, reachability, rules, coverage, baseline decisions) leaves no
   # run to report: it is an internal failure, returned as an error, so the
   # Mix tasks exit 2 and write no report that could be read as complete
-  # (Milestone 5, "resource failures").
+  # (Milestone 5, "resource failures"). An exit is caught too: `exit/1`, or
+  # a call that exits (a `GenServer.call/3` timeout, `Task.await/2` on a
+  # task that crashed) would otherwise end the Mix task with status 1, the
+  # status of new gated findings. The processes the run starts itself are
+  # not linked to it (`SpecLint.Isolated`), so their crashes come back as
+  # values; exits are trapped while the analysis runs so that a crash of
+  # any other linked process (a `Task.async/1` in a stage) reaches this
+  # process as a message and its `Task.await/2` as a catchable exit, not as
+  # an exit signal that ends the VM.
   defp guarded(analysis) do
-    {:ok, analysis.()}
-  rescue
-    error ->
-      {:error, "internal failure: " <> Exception.message(error) <> location(__STACKTRACE__)}
-  catch
-    :throw, value -> {:error, "internal failure: uncaught throw " <> inspect(value)}
+    trapping? = Process.flag(:trap_exit, true)
+
+    try do
+      {:ok, analysis.()}
+    rescue
+      error ->
+        {:error, "internal failure: " <> Exception.message(error) <> location(__STACKTRACE__)}
+    catch
+      :throw, value -> {:error, "internal failure: uncaught throw " <> inspect(value)}
+      :exit, reason -> {:error, "internal failure: exit " <> inspect(reason)}
+    after
+      Process.flag(:trap_exit, trapping?)
+    end
   end
 
   defp location([entry | _]), do: " (" <> Exception.format_stacktrace_entry(entry) <> ")"
@@ -434,6 +450,13 @@ defmodule SpecLint.Run do
   rescue
     error ->
       {:error, "internal failure analysing #{Path.basename(path)}: #{Exception.message(error)}"}
+  catch
+    :throw, value ->
+      {:error,
+       "internal failure analysing #{Path.basename(path)}: uncaught throw #{inspect(value)}"}
+
+    :exit, reason ->
+      {:error, "internal failure analysing #{Path.basename(path)}: exit #{inspect(reason)}"}
   end
 
   defp evidence(modules, config) do
