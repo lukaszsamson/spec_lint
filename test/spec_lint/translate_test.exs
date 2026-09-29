@@ -458,6 +458,37 @@ defmodule SpecLint.TranslateTest do
       assert_bounds(bound, C.none(), C.term(), [:nominal_boundary])
     end
 
+    # Audit row 18 (Milestone 3): 1.21's Code.Typespec reports an Erlang
+    # -nominal type as :nominal; 1.20.4's leaves it out, so a reference to
+    # it is unresolved. Both give term() above and none() below.
+    @tag :tmp_dir
+    test "an Erlang nominal type read from its BEAM, per adapter", %{tmp_dir: dir} do
+      module = :"spec_lint_nominal_#{System.unique_integer([:positive])}"
+
+      forms = [
+        {:attribute, 1, :module, module},
+        {:attribute, 1, :export_type, [id: 0]},
+        {:attribute, 1, :nominal, {:id, {:type, 1, :integer, []}, []}}
+      ]
+
+      {:ok, ^module, binary} = :compile.forms(forms, [:binary, :debug_info])
+      File.write!(Path.join(dir, "#{module}.beam"), binary)
+      true = Code.prepend_path(dir)
+
+      try do
+        ctx = Translate.context(Types, TypeCache.new())
+        ast = {:remote_type, 0, [{:atom, 0, module}, {:atom, 0, :id}, []]}
+        {:ok, bound} = Translate.type(ast, ctx)
+
+        loss =
+          if adapter().nominal_types?(), do: :nominal_boundary, else: :unresolved_remote_type
+
+        assert_bounds(bound, C.none(), C.term(), [loss])
+      after
+        Code.delete_path(dir)
+      end
+    end
+
     test "unresolved remote types" do
       ast = {:remote_type, 0, [{:atom, 0, SpecLint.NoSuchModule}, {:atom, 0, :t}, []]}
       assert_bounds(raw(ast), C.none(), C.term(), [:unresolved_remote_type])
