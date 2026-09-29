@@ -1,0 +1,345 @@
+UPSTREAM REPORTS AND INVESTIGATIONS
+Written: 2026-09-29
+Repository reviewed: 0cc9c50, including the clause-local qualification work.
+
+BOTTOM LINE
+
+We have confirmed library typespec mistakes and reproducible compiler precision
+limitations. We have NOT established an Elixir compiler soundness violation.
+An inferred type containing impossible extra values is not, by itself, unsound:
+it can be a conservative overapproximation. A SpecLint false positive also does
+not by itself imply that the compiler emitted an incorrect warning.
+
+The compiler evidence below is from the qualified fork build, Elixir
+1.21.0-dev c24c23538d521d25edd6a9a7a66fc5206caab70e, checker v10, OTP 28.
+Some body experiments additionally apply bench/corpus/warnings7.patch.
+These observations have not been requalified against current unmodified Elixir
+upstream. Library observations are also pinned revisions, not claims about
+current releases. No issue has been filed as part of this document.
+
+1. ELIXIR: LOCAL HELPERS DISCARD KNOWN CALL-ARGUMENT INFORMATION
+
+Priority: high for an upstream precision discussion; not a proven bug.
+Suggested title: "Local helper indirection loses a literal return shape that
+is preserved when the helper is inlined".
+
+Evidence:
+  bench/corpus/compiler_counterexamples/helper_insensitivity.ex
+  bench/corpus/compiler_counterexamples/check.exs
+
+The sign(:nan) clause passes {:error, :nan} to a private helper that either
+raises or returns that argument. The stored return is dynamic(). The otherwise
+equivalent sign_inline(:nan) stores {:error, :nan}. Both runtime calls return
+the tagged error. This difference determines whether SpecLint can detect the
+omission from the declared :negative | :zero | :positive return.
+
+Reproduce without SpecLint:
+  elixir bench/corpus/compiler_counterexamples/check.exs
+
+That command was rerun successfully while preparing this document. It compiles
+the examples, prints stored checker signatures and verifies runtime witnesses.
+
+Why it matters: the same pattern appears in Decimal.compare/2, Decimal.cmp/2
+and Ecto.Changeset.apply_action/2. Ash.UUIDv7.generate/0 illustrates a related
+failure to specialize a callee: a known 128-bit generated binary cannot reach
+encode/1's :error fallback, but inference retains that alternative.
+
+Ask upstream about preserving argument-to-return relationships or selective
+call-site specialization. Do not prescribe unrestricted re-inference of every
+callee: recursion, code size and compilation cost need consideration.
+
+Before filing: reproduce the standalone pair on current unmodified upstream;
+check for an existing inference roadmap/issue. Present the lost precision,
+not the absence of a typespec warning as a compiler contract violation.
+
+2. ELIXIR: HIGHER-ORDER COLLECTION RESULTS LOSE ELEMENT SHAPE
+
+Priority: high for an inference capability request; not a proven bug.
+Suggested title: "Preserve mapped result shape through Enum.map/2".
+
+Evidence:
+  bench/corpus/compiler_counterexamples/enum_map_result.ex
+  bench/corpus/compiler_counterexamples/README.md
+
+On the qualified build:
+  Enum.map(atoms, fn atom -> {atom, :tag} end) -> dynamic()
+  for atom <- atoms, do: {atom, :tag}         -> dynamic(list({term(), :tag}))
+
+The same check.exs command reproduces this and verifies tags([:a]) == [a: :tag].
+The spec [atom()] omits those tuple elements. A comprehension retains more
+information, although SpecLint still does not report this particular example:
+its list-component counting is a separate limitation, and [] is compatible
+with both list types. Improving inference alone is not a measured recall fix.
+
+Related investigations: Enum.reduce/3, Enum.into/2 and Map.new/1, motivated by
+Plug.Conn.Query.decode/4, Plug.Conn.merge_private/2 and Ecto association and
+preloader queries. Only Enum.map/2 has the standalone paired repro here; do
+not claim identical behavior for every operation without separate probes.
+
+Before filing: run on current upstream and ask whether parametric higher-order
+signatures are already planned. Keep this separate from helper specialization.
+
+3. ELIXIR/FORK HOOK: UNREACHABLE RETURNS RETAINED UNDER INJECTED DOMAINS
+
+Priority: investigate; NOT ready to report as a stock-compiler bug.
+Suggested investigation title: "Spec-domain injection differs from an
+equivalent source guard when eliminating unreachable returns".
+
+Evidence:
+  test/support/experiment_fixtures.ex: name/1 and display/1
+  bench/body_experiment.exs
+  bench/corpus/reports/expansion/body_fixtures.json
+  bench/corpus/reports/expansion/body_fixture_reproduction.md
+  EXPERIMENTS.md: False positives; Upstream bug qualification follow-up
+
+With the patched warnings/7 domain hook, name/1 retains nil from a redundant
+clause in the returned signature even though a diagnostic identifies that
+clause. display/1 retains the case catch-all's nil under an injected atom()
+domain, without the expected unreachable-branch diagnostic. The body experiment
+observed this in both the relevant gradual and static-domain checks.
+
+Important negative control: the unpatched qualified compiler correctly warns
+and stores only dynamic(:ok) for this ordinary source-level example:
+
+  def display(v) when is_atom(v) do
+    case v do
+      a when is_atom(a) -> :ok
+      _ -> nil
+    end
+  end
+
+Investigation steps:
+  a. Compare the hook's initial variable/context setup with source guards.
+  b. Inspect raw local_sigs and the compacted/stored form separately.
+  c. Distinguish retained diagnostic metadata from a signature intended for
+     downstream type application.
+  d. Reduce away SpecLint and the custom hook, if possible.
+
+If it reproduces only under our domain injection, fix or document the hook.
+Retaining nil is a precision issue unless it causes a separate demonstrated
+incorrect compiler diagnostic or omission of a possible runtime return.
+
+4. ELIXIR: RECURSIVE INFERENCE AND MACHINE-READABLE CHECKER EVIDENCE
+
+Priority: useful follow-up discussions, below the two standalone repros.
+
+Recursion: count([_ | rest]) = 1 + count(rest) is an existing small fixture
+whose recursive dynamic() return introduces float() into arithmetic inference.
+Investigate bounded fixed-point inference with empty/nonempty, mutually
+recursive, nonterminating and raising controls. Do not infer a compiler
+arithmetic bug from arithmetic applied to dynamic(). Detailed recursive
+qualification and performance measurements remain to be done.
+
+Checker API: request a versioned reader for inferred signatures and explicit
+source-clause-to-signature mapping plus redundancy/guard diagnostics. Today
+SpecLint re-runs Module.Types.warnings/6 over debug info to avoid gating dead
+clauses. That workaround is described in clause_local_qualification.md and
+SpecLint.Reachability. Stored clauses can include a pattern whose guard is
+impossible even while the compiler correctly warns; consuming those clauses
+without the diagnostic was a SpecLint bug, not evidence of compiler unsoundness.
+
+A spec-domain API is a separate feature request (EXPERIMENTS.md, "Minimal
+compiler API"). It should specify fresh target contexts, return representation,
+cost and unknown reachability explicitly. "No redundancy warning" must not
+be advertised as proof that a clause executes. An API alone will not repair
+lost helper, collection or recursive return precision.
+
+5. LIBRARY TYPESPEC BUGS WORTH REPORTING
+
+These have direct contract counterexamples on the pinned trees. Verify that
+the current upstream source still contains them, then prefer focused typespec
+fixes with runtime examples. They are library annotation bugs, not Elixir
+type-system bugs. Whether SpecLint gates a report is separate from its truth.
+
+Oban, revision 23fa8176b3586ca84f5859793739fad798e69d2b:
+  Registry.via/3 promises an inner two-tuple, but
+  Oban.Registry.via(Oban, nil, :witness) returns
+  {:via, Registry, {Oban.Registry, Oban, :witness}}.
+  All inputs are inside the declared domains. The nil-value control returns
+  the promised two-tuple. This is a good small first report.
+
+Ash, revision 164a4c0d0ef7724c5fd2153876c2cf90cd938863:
+  - Page.page_opts/1: false and nil are explicitly allowed inputs, returning
+    {:ok, false} and {:ok, nil}, outside {:ok, page()}. The keyword branch
+    also returns validated keyword options, so merely adding false | nil
+    would not fix the whole return declaration. This is an internal validator.
+  - load/3: :ok is an allowed first argument, and load(:ok, nil, []) returns
+    {:ok, :ok}, outside the declared record/list/nil successful payload.
+    nil is allowed by the atom() branch of load_statement().
+  - Test.refute_has_error/3: the valid :ok input returns :ok, outside its
+    Ash.Error.t() | no_return() declaration.
+  - read/2, read_one/2, read_first/2: return_query?: true produces successful
+    three-tuples absent from their return specs. Integration witnesses exist.
+  - page/2: a valid keyset page plus an integer request returns an error
+    binary, where the spec promises Ash.Error.t(). Integration witness exists.
+  - Policy.Policy.solve/1: an in-domain authorizer reaching an unsatisfiable
+    policy returns {:error, authorizer, :unsatisfiable}; the third element is
+    declared Ash.Error.t(). This is an internal solver-boundary mismatch;
+    the public authorization flow translates it to an exception.
+
+Evidence and commands:
+  bench/corpus/expansion_triage.md
+  bench/corpus/holdout_triage.md
+  elixir bench/corpus/expansion_witnesses.exs /path/to/pinned/checkouts
+  elixir bench/corpus/holdout_witnesses.exs /path/to/pinned/checkouts
+  elixir bench/corpus/ash_integration_witnesses.exs /path/to/pinned/checkouts
+
+The integration witnesses were corrected after discovering out-of-domain
+default struct fields. Preserve the input-domain checks when reducing them.
+Their hand-written predicates have documented limits; include actual inputs
+and inspect the relevant original type declarations before submitting.
+
+Secondary library candidates:
+  - Absinthe.Blueprint.Input.parse/1 produces structs with source_location:
+    nil although their types require a source location. Seven clause findings
+    concern this same mismatch; report it as one underlying issue. Revision
+    1372ceb5f8226175050a38821601cd57738c177b; evidence and witness are in
+    bench/corpus/clause_local_qualification.md.
+  - Req.Response.new/1 accepts map() and can construct status: -1 despite
+    Response.t() requiring non_neg_integer(). Revision
+    c6e8ab1f9d1c8e1aef935a6319faa40487bb6f42. Ask whether the input spec should
+    be narrower or validation intended; broad unchecked constructors may be
+    deliberately permissive, so this is lower priority than ordinary inputs.
+
+6. DO NOT REPORT THESE AS CONFIRMED COMPILER BUGS
+
+  - Oban.Period.to_seconds/1's float alternative: the tuple clauses do not
+    guard value. to_seconds({1.5, :minute}) really returns 90.0. That input
+    is outside Period.t(); the inferred implementation-wide float is valid.
+  - Ash.UUIDv7.generate/0's inferred :error: a caller/callee precision limit,
+    not a witnessed runtime omission or an unsound inferred exclusion.
+  - Ash.data_layer_query/2: the alleged third tuple element was refuted by
+    source analysis and the integration control; the wider read/2 union
+    spilled into inference.
+  - Ash.Query.apply_to/3: an error return was observed, but the loaded-
+    calculation query violates its declared Query.t() calculations field.
+    No in-domain error witness was established. Investigate that type field
+    separately rather than claiming a proved return omission.
+  - Function-arrow contravariance: the lattice behaved correctly. Widening
+    arrow arguments was our translator's incorrect bound construction.
+  - Independent substitution of repeated variables, structural opaque/nominal
+    expansion, and counting subtraction-created alternatives: translator or
+    evidence-model issues, not demonstrated compiler defects.
+  - Missing/corrupt build inventory, stale acknowledgements, report reduction
+    and unavailable-analysis metric mistakes: SpecLint/tooling defects.
+
+RECOMMENDED ORDER
+
+First qualify and submit the small witnessed library typespec fixes. In
+parallel, take the two existing standalone precision reproducers to current
+unmodified Elixir and discuss them as inference improvements. Investigate the
+patched-hook discrepancy before assigning it to upstream. Keep the API request
+separate from bug reports, and never use a clean lint run as proof of accurate
+specs or a lack of compiler bugs.
+
+--------------------------------------------------------------------------------
+APPENDIX (Fable, 2026-09-29): items verified directly against the pinned
+compiler (~/elixir at c24c235, Module.Types.Descr on the current tree), not
+through SpecLint. Each probe below was run with bin/elixir -e and the output
+copied verbatim. Ordering: 7 is a reproduced algebra bug, 8 and 9 are printer
+fidelity defects, 10 lists items from the ls-formal-verification branch that
+did NOT reproduce here and should be re-run with that branch's fuzzers before
+anyone files them.
+
+7. ELIXIR: Descr.list_tl/1 EXCLUDES AN ACHIEVABLE TAIL (reproduced, algebra)
+
+Priority: report. It is a soundness bug in a projection, independent of any
+SpecLint code. Suggested title: "list_tl over-excludes: tail of
+list(atom()) minus list(:y) drops [:y]".
+
+Repro (current tree):
+  import Module.Types.Descr
+  t = opt_difference(list(atom()), list(atom([:y])))
+  {:ok, tl} = list_tl(t)
+  to_quoted_string(t)   #=> "non_empty_list(atom()) and not non_empty_list(:y)"
+  to_quoted_string(tl)  #=> "list(atom()) and not non_empty_list(:y)"
+  subtype?(non_empty_list(atom([:y])), tl)   #=> false
+  disjoint?(non_empty_list(atom([:y])), tl)  #=> true
+
+Why it is wrong: [:x, :y] belongs to t (it is a non-empty list of atoms and
+is not a list made only of :y). Its tail is [:y], which belongs to
+non_empty_list(:y). The projection claims that tail is impossible
+(disjoint), so list_tl under-approximates. The correct result is
+list(atom()) with no exclusion: once the head has been removed, nothing is
+known about whether the remaining elements are all :y.
+
+Likely cause: list_tl keeps the negative literal of the difference
+(`not non_empty_list(:y)`) on the tail, but a negated "all elements are :y"
+constraint on the whole list does not transfer to its tail.
+
+Impact today: low in practice. The checker does not currently produce
+`list(A) and not list(B)` types from patterns (it does not refine a
+variable by the negation of earlier clauses), so I could not trigger a false
+warning from source. It will matter as soon as negative list refinements
+reach hd/tl typing. This is the same finding the verification branch
+recorded as "List-tail projection" in VERIFICATION_RESULTS.md; the branch's
+finite model rejected it, and the direct probe above confirms it on the
+current tree without the model.
+
+Before filing: add the four-line probe as a failing test in
+lib/elixir/test/elixir/module/types/descr_test.exs, and check whether
+list_hd has the dual problem (it did not in a quick look, but I did not
+probe it).
+
+8. ELIXIR: PRINTER MERGES fun(n) WITH (none(), ... -> term()) (reproduced)
+
+  to_quoted_string(fun(2))                       #=> "(none(), none() -> term())"
+  to_quoted_string(fun([none(), none()], term())) #=> "(none(), none() -> term())"
+  equal?(fun(2), fun([none(), none()], term()))   #=> false
+
+Two unequal types print identically. Any tool (and any human) reading
+diagnostics cannot tell "some 2-ary function" from the bottom-argument
+arrow. The verification branch recorded this as printer finding I1.
+Suggested fix: print fun(n) as `(... -> term())` with an arity marker, or as
+`fun(2)`, and reserve the arrow form for actual argument types. Low
+priority, but cheap, and it removes a class of misleading messages.
+
+9. ELIXIR: A MAP EQUAL TO map() PRINTS AS AN 11-DOMAIN LITERAL (reproduced)
+
+  doms = for k <- [:atom, :integer, :float, :binary, :bitstring_no_binary,
+                   :pid, :port, :reference, :tuple, :map, :list, :fun],
+         do: {[k], term()}
+  m = closed_map(doms)
+  equal?(m, open_map())  #=> true
+  to_quoted_string(m)    #=> "%{atom() => term(), bitstring() => term(),
+                              float() => term(), fun() => term(), ...}"
+
+Such maps arise from every spec written as %{optional(any()) => any()} or
+from Calendar.datetime()-style types once translated. The printer should
+normalise a closed map whose domains cover every key kind with term()
+values and no required keys to `map()`, and more generally collapse
+domain-complete maps before printing. Presentation only; no unsound result
+observed. (SpecLint works around it in its own canonical printer.)
+
+10. NOT REPRODUCED HERE; RE-RUN THE BRANCH FUZZERS BEFORE FILING
+
+  - map_put excluded outcome (verification branch: seed 5, sample 194,
+    minimised receiver `map() and not empty_map()`). Direct probe on the
+    current tree:
+      {:ok, p} = map_put(opt_difference(open_map(), empty_map()), atom([:a]), integer())
+      to_quoted_string(p)  #=> "%{..., a: integer()}"
+      subtype?(closed_map([{:a, {integer(), false}}]), p)  #=> true
+    The receiver %{a: :x} is non-empty and Map.put(%{a: :x}, :a, 1) is
+    %{a: 1}; that outcome is included, so the minimised form does not show
+    the defect. Either the bug was fixed between the branch's compiler input
+    and c24c235, or the minimisation lost the trigger. Re-run
+    lib/elixir/scripts/descr_fuzz.exs from the branch against the current
+    tree with the recorded seed before claiming anything.
+  - A1 crash: Module.Types.Of.impl/2 calling __info__/1 on an Erlang
+    module. `defimpl P1, for: :lists do ... end` compiles on c24c235 with
+    only the usual warning; the current impl/2 guards __info__/1 with
+    function_exported?/2. Treat as fixed unless the branch's generated
+    program reproduces it.
+  - Equality-narrowing clause warning and integer/float domain-map `==`
+    warning (verification branch "checker findings"): the sources were in
+    the branch's /tmp checker.log, which is gone. No repro exists in this
+    repository. Regenerate with infer_soundness.exs from the branch.
+
+Observed but NOT bugs (recorded so nobody re-investigates):
+  - Stored inferred clause returns may be static (Keyword.new/0) while
+    applied results are always dynamic()-wrapped: by design.
+  - `dynamic(not :undefined)` and similar near-top returns for code that
+    rewrites :undefined/nil results: correct over-approximation.
+  - A closed map with an all-:y-list difference printing as
+    "non_empty_list(atom()) and not non_empty_list(:y)": correct, [] is
+    genuinely excluded because [] is in list(:y).
