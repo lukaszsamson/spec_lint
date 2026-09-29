@@ -13,10 +13,12 @@ gating compilers, and thirty unchanged corpus reports within frozen budgets.
 See `RELEASE.md` for the exact scope; local Linux checks are not a full
 final Linux corpus campaign.
 
-1. Publish the qualified experimental source at `lukaszsamson/spec_lint`
-   under Apache-2.0, preserving Elixir notices. Run the manual Ubuntu
-   qualification workflow and retain its outcome separately from local Linux
-   evidence. Git publication is not a Hex release.
+1. **Completed:** publish the qualified experimental source at
+   `lukaszsamson/spec_lint` under Apache-2.0 with Elixir notices. All three
+   Ubuntu qualification lanes passed on `ce2e814`; see
+   `bench/corpus/toolchain/github-linux-results.md`. Git publication is not
+   a Hex release. The extracted package consumer also passed initial and
+   incremental runs (`bench/corpus/toolchain/package-publication.json`).
 2. Qualify public Mix task adoption on prominent projects, starting with
    the custom dependency compiler boundary below. Preserve fail-closed
    provenance; do not turn the raw-BEAM corpus into an installation claim.

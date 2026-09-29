@@ -32,7 +32,10 @@ run in [Linux results](bench/corpus/toolchain/linux-results.md). The complete
 macOS Absinthe replays took 75.71 / 67.99 seconds within the frozen 90-second
 budget, not the earlier 60-second aspiration.
 
-Publication is authorized at `lukaszsamson/spec_lint` under Apache-2.0.
+Source is published at [lukaszsamson/spec_lint](https://github.com/lukaszsamson/spec_lint)
+under Apache-2.0. The three-lane Ubuntu workflow passed on `ce2e814`;
+[CI evidence](bench/corpus/toolchain/github-linux-results.md) records the
+full quality scope and exclusions, separately from the macOS corpus campaign.
 Elixir-derived code carries source and modification notices. No Hex release
 or new upstream issue has been published as part of this qualification.
 The original objective remains open: 3 / 8 / 7 gated / additionally reported /
