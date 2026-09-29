@@ -1,0 +1,36 @@
+{
+  "absinthe": {
+    "frozen_at": "3b89842",
+    "holdout": true,
+    "revision": "1372ceb5f8226175050a38821601cd57738c177b"
+  },
+  "ash": {
+    "holdout": true,
+    "revision": "164a4c0d0ef7724c5fd2153876c2cf90cd938863"
+  },
+  "broadway": {
+    "revision": "8debff6f4e2b92385c8bd9c60475f3daec7819f5"
+  },
+  "nx": {
+    "holdout": true,
+    "project_subdir": "nx",
+    "revision": "a0076029fe98f851c0183e2fb47d58de3d4bcb34"
+  },
+  "oban": {
+    "revision": "23fa8176b3586ca84f5859793739fad798e69d2b"
+  },
+  "phoenix_live_view": {
+    "revision": "517afcb3854fc6e26b3f2caadfce6c82d76bfd7a"
+  },
+  "req": {
+    "revision": "c6e8ab1f9d1c8e1aef935a6319faa40487bb6f42"
+  },
+  "stdlib": {
+    "revision": "759443e724f55bf58e71c0603644e99058918d52"
+  },
+  "tesla": {
+    "frozen_at": "3b89842",
+    "holdout": true,
+    "revision": "f1d040b237cf6fe07fc57d4915d95dca24546483"
+  }
+}

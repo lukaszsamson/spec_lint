@@ -21,6 +21,10 @@
 # compiled with `MIX_ENV=test mix deps.get && MIX_ENV=test mix compile`.
 # ELIXIR_DIR is the Elixir checkout the toolchain was built from (default
 # ~/elixir); its lib/*/ebin directories are the stdlib corpus.
+# SPEC_LINT_STDLIB_SOURCE is the git checkout whose revision the stdlib
+# corpus is checked against and recorded as (default ELIXIR_DIR), for an
+# installed release whose directory is not a checkout (the precompiled
+# Elixir 1.20.4 of the Milestone 3 replay, with a checkout of its tag).
 #
 # Corpora: stdlib jason decimal nimble_options mime plug ecto fixtures
 # (default: all). Two files are written per corpus:
@@ -110,7 +114,7 @@ select_corpus() {
   case "$1" in
     stdlib)
       project_root="$elixir_dir"
-      source_repo="$elixir_dir"
+      source_repo="${SPEC_LINT_STDLIB_SOURCE:-$elixir_dir}"
       check_revision stdlib "$source_repo"
       for app in elixir eex ex_unit iex logger mix; do
         ebins+=("$elixir_dir/lib/$app/ebin")
