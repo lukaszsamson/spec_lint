@@ -315,3 +315,11 @@ Phase 2 baselines, taken with the qualification off.
 - `compiler_counterexamples/`: minimal modules, with a self-checking
   script, for the two compiler inference limits behind most known misses
   (helper insensitivity and `Enum.map/2` results).
+
+## Phase 4 regression replay
+
+`reports/phase4/` retains the replay after guard-feasibility qualification and
+required-check failure handling. See its README for regeneration and the
+interrupted preliminary Absinthe attempt. `PHASE_4_PLAN.md` records the final
+gates and remaining limits. These projects are regression corpora, not fresh
+holdouts for the helper experiment.

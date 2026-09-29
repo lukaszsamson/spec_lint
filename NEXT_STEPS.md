@@ -1,3 +1,31 @@
+# Current next steps after Phase 4
+
+Phase 4 delivery and validation are recorded in `PHASE_4_PLAN.md` and
+`STATUS.md`. Earlier plans below are historical.
+
+1. Qualify the minimal compiler counterexamples on an isolated, unmodified
+   upstream revision before proposing changes upstream. Keep precision
+   limitations separate from demonstrated compiler soundness bugs.
+2. Extend the isolated helper experiment to a normal-return summary for a
+   helper that either returns an argument or raises. Freeze positive and
+   negative controls first: multiple callers, side effects, exceptions,
+   overloads, guards, recursion and code-size limits. Require a witnessed
+   real omission to improve before adopting a compiler change.
+3. Ask for source-to-stored clause mappings and reachability information in
+   the checker API. Local guard witnesses reduce false gates but do not prove
+   normal return or establish that mapping. Do not infer a precise mapping
+   from clause indices.
+4. Treat Absinthe as a performance regression benchmark: its existing full
+   product scan previously took 345 seconds; the current full attempt was
+   stopped after approximately 15 minutes without a report. The separate expanded experiment
+   is much larger. Isolate translation, type printing and serialization costs
+   before designing bounded expansion or caching. Preserve conservative
+   lower/upper bounds and loss records if expansion is capped.
+5. Keep valid spec contradictions eligible regardless of `@doc false` or
+   constructor naming. Use explicit baselines for accepted debt; documentation
+   visibility does not change the declared contract. Keep new corpora for a
+   frozen holdout once there is a precision change to test.
+
 # Next delivery: evidence quality and broader validation
 
 Started 2026-09-29 from `caff376`. This is the execution plan; completion and

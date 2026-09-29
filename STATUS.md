@@ -1,12 +1,53 @@
 # SpecLint status
 
-Date 2026-09-29. This covers Phase 0, Phase 1, the post-Phase 1 review
-fixes (commit `1b0fe93`), the first external review (all five findings
-closed: four fixes in `c4a8e18`, the corpus bundle in `3adadd4`), the
-body-backend experiment (`ac3a75b`), the second external review, the
-follow-up delivery, and the Close phase of the clause-local qualification
-experiment (first section). `DESIGN.md` is the authoritative design, `EXPERIMENTS.md`
-holds the measurements, and `README.md` is the user guide.
+Date 2026-09-29. `DESIGN.md` is the authoritative design,
+`EXPERIMENTS.md` holds measurements, and `README.md` is the user guide.
+Phase 4 follows the review of the Phase 3 implementation at `0cc9c50`;
+previous results below are historical and are superseded where noted.
+
+## Phase 4: guard qualification and required-check failures
+
+The two defects in `PHASE_3_REVIEW.md` are fixed. Absence of compiler
+warnings is no longer the only protection against impossible compound guards.
+SL001 clause conflicts additionally require concrete, statically evaluated
+head-and-guard witnesses for all guarded source clauses of the function.
+Each witness must be rejected by all preceding clauses. The interpreter
+only evaluates supported patterns and whitelisted pure Erlang guard BIFs;
+it never invokes target functions. Unsupported syntax or exhausting the
+bounded search blocks qualification as `guard_feasibility: "unproven"`.
+This remains function-wide and does not prove a stored clause's normal return
+or map it to a source clause. Unguarded clauses still rely on the existing
+compiler diagnostics and stored-domain shadowing checks.
+
+An operational failure in a reachability check needed for an otherwise
+eligible gate now makes the run incomplete and exits 2 in CI, under both
+qualification settings. Baselines cannot acknowledge away that failure.
+Disabled SL001 and findings already blocked by other prerequisites do not
+make such checks required. Conservative unknown guard feasibility is distinct
+from an operational failure.
+
+The helper experiment in `bench/helper_experiment/REPORT.md` recovers exact
+inline signatures in four synthetic cases using a narrow source transform.
+It is not a compiler patch or a production backend. Raising, branching and
+recursive helpers remain unsupported, and the motivating `sign(:nan)` miss
+remains dynamic. **New real-library detections: zero.** The next precision
+experiment should address normal-return summaries of a helper that either
+returns its input or raises, with evaluation and exception controls. Keep
+SL002 informational and judge adoption by independently witnessed real-code
+improvement, not synthetic success alone.
+
+Independent Sol review and root adversarial probes corrected guard-alternative
+semantics (multiple `when` guards are OR), bounded candidate construction,
+prior-clause exclusion, and prototype handling of guarded overloads,
+call-shaped ASTs, quotes and captures. Regression tests retain these controls.
+Validation: 322 tests, strict Credo, formatting, Dialyzer and the self CI
+check pass. Fourteen complete corpus replays preserve their ledgers and two
+known gates. A scoped Absinthe run preserves seven more. **The full Absinthe
+replay was stopped after approximately 15 minutes and remains incomplete**;
+do not describe this as a completed 15-project replay. See `PHASE_4_PLAN.md`
+and `bench/corpus/reports/phase4/summary.json` for the detailed result.
+
+## Phase 3 history
 
 ## Close phase (2026-09-29): clause-local qualification adopted
 
@@ -53,7 +94,8 @@ finding for finding.
   list, never a page). SpecLint does not report it.
 - **Provenance paths** now use placeholders, and the docs are corrected.
 
-**Remaining open items.**
+**Remaining open items at Phase 3 (guard qualification and failure handling
+are superseded by Phase 4 above).**
 
 - `clause_reachable` is `unchecked`, not proven, when the type checker
   reports nothing: a dead clause it cannot see (a contradictory numeric

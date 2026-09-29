@@ -11,27 +11,34 @@ defmodule SpecLint.Reachability do
   misses it because no earlier clause covers it. `check/2` therefore
   re-runs the compiler's type checker (`SpecLint.Compiler.pattern_diagnostics/4`)
   over the debug info of every function with a `clause_conflict` and keeps
-  the lines of its pattern and guard diagnostics for that function.
+  the lines of its pattern and guard diagnostics for that function. When
+  that pass reports nothing, `SpecLint.GuardFeasibility` requires a concrete
+  head-and-guard witness for every guarded source clause. It checks that no
+  preceding source clause can accept each witness.
 
   Stored clauses cannot be mapped back to source clauses (the checker drops
   precise clauses whose return is empty, such as a clause that always
   raises, and merges clauses with equal returns), so
   `SpecLint.Rules.ReturnConflict` blocks every clause conflict of a function
   with any such diagnostic. That over-blocks, and never misses a clause the
-  compiler's type checker reports. A dead clause the type checker does not
-  report is out of reach: a guard whose contradiction it cannot see (such as
-  `x > 5 and x < 3`), a clause only the Erlang compiler reports, or a clause
-  quoted with `generated: true`, whose diagnostics the checker suppresses.
+  compiler's type checker reports. A guard without a supported witness blocks
+  qualification as `:guard_unproven`; this includes unsupported guard or
+  pattern syntax and exhausted witness searches. This is conservative and
+  may block a live clause. The positive proof concerns source clause head
+  feasibility, not a mapping from a source clause to a stored signature
+  clause, and does not establish the stored clause's return.
   """
 
-  alias SpecLint.{Analysis, Beam, Compiler, Coverage}
+  alias SpecLint.{Analysis, Beam, Compiler, Coverage, GuardFeasibility}
 
   @typedoc """
-  The check for one function: the lines of its pattern and guard
-  diagnostics (`[]` when the compiler reported none), or why the check
-  could not run.
+  The check for one function: the lines of its pattern and guard diagnostics
+  (`[]` when the compiler reported none), a successful check whose guarded
+  source clauses could not all be proved feasible, or an operational failure.
   """
-  @type result :: {:ok, [pos_integer() | nil]} | {:error, term()}
+  @type result ::
+          {:ok, [pos_integer() | nil] | {:guard_unproven, [pos_integer() | nil]}}
+          | {:error, term()}
 
   @doc """
   Checks every function of `modules` that has a slice with a
@@ -63,31 +70,55 @@ defmodule SpecLint.Reachability do
 
   defp check_module(module, mfas) do
     fun_arities = for {_module, name, arity} <- mfas, do: {name, arity}
+    result = check_result(module, fun_arities)
+    for mfa <- mfas, do: {mfa, function_result(mfa, result)}
+  end
 
-    result =
-      case Beam.read(module.path) do
-        {:ok, %Beam{debug_info: {:ok, info}}} ->
-          definitions = Enum.filter(info.definitions, &(elem(&1, 0) in fun_arities))
+  defp check_result(module, fun_arities) do
+    case Beam.read(module.path) do
+      {:ok, %Beam{debug_info: {:ok, info}}} ->
+        definitions = Enum.filter(info.definitions, &(elem(&1, 0) in fun_arities))
+        compiler_result(module, info, definitions)
 
-          Compiler.pattern_diagnostics(
-            module.module,
-            info.file,
-            info.checker_attributes,
-            definitions
-          )
+      {:ok, %Beam{debug_info: {:error, reason}}} ->
+        {:error, {:debug_info, reason}}
 
-        {:ok, %Beam{debug_info: {:error, reason}}} ->
-          {:error, {:debug_info, reason}}
-
-        {:error, reason} ->
-          {:error, {:beam, reason}}
-      end
-
-    for {_module, name, arity} = mfa <- mfas do
-      case result do
-        {:ok, diagnostics} -> {mfa, {:ok, for({{^name, ^arity}, line} <- diagnostics, do: line)}}
-        {:error, reason} -> {mfa, {:error, reason}}
-      end
+      {:error, reason} ->
+        {:error, {:beam, reason}}
     end
   end
+
+  defp compiler_result(module, info, definitions) do
+    case Compiler.pattern_diagnostics(
+           module.module,
+           info.file,
+           info.checker_attributes,
+           definitions
+         ) do
+      {:ok, diagnostics} ->
+        proven =
+          definitions
+          |> Enum.group_by(&elem(&1, 0))
+          |> Map.new(fn {fun_arity, grouped} ->
+            {fun_arity, GuardFeasibility.proven?(grouped)}
+          end)
+
+        {:ok, diagnostics, proven}
+
+      error ->
+        error
+    end
+  end
+
+  defp function_result({_module, name, arity}, {:ok, diagnostics, proven}) do
+    lines = for {{^name, ^arity}, line} <- diagnostics, do: line
+
+    if Map.get(proven, {name, arity}, false) or lines != [] do
+      {:ok, lines}
+    else
+      {:ok, {:guard_unproven, lines}}
+    end
+  end
+
+  defp function_result(_mfa, {:error, reason}), do: {:error, reason}
 end

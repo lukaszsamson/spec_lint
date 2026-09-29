@@ -27,6 +27,7 @@ defmodule SpecLint.ClauseLocalTest do
     Compiler,
     Config,
     Evidence,
+    GuardFeasibility,
     Issue,
     Policy,
     Project,
@@ -417,7 +418,7 @@ defmodule SpecLint.ClauseLocalTest do
       assert on.reachability[{Omission, :via, 3}] == {:ok, []}
     end
 
-    test "a check that could not run blocks only under the clause-local qualification" do
+    test "a check that could not run blocks under either qualification" do
       reason = {:error, {:checker_failed, "boom"}}
 
       assert [issue] =
@@ -429,9 +430,181 @@ defmodule SpecLint.ClauseLocalTest do
       assert [issue] =
                ReturnConflict.check_function(rule_context(Omission, :via, 3, false, reason))
 
-      assert Issue.blocked(issue) == []
-      assert {:clause_reachable, :unchecked} in issue.prerequisites
+      assert Issue.blocked(issue) == [:clause_reachable]
+      assert {:clause_reachable, :blocked} in issue.prerequisites
     end
+  end
+
+  test "compound impossible guards cannot qualify clause conflicts", %{tmp_dir: tmp_dir} do
+    source = """
+    defmodule SpecLint.ClauseLocalProbe.Compound do
+      @moduledoc false
+      defguardp impossible(x) when is_integer(x) and is_atom(x)
+      defguardp integer(x) when is_integer(x)
+
+      @spec direct(:a | :b) :: :ok
+      def direct(:b = x) when is_integer(x) and is_atom(x), do: {:error, :bad}
+      def direct(x) when is_atom(x), do: :ok
+
+      @spec macro_guard(:a | :b) :: :ok
+      def macro_guard(:b = x) when impossible(x), do: {:error, :bad}
+      def macro_guard(x) when is_atom(x), do: :ok
+
+      @spec single(:a | :b) :: :ok
+      def single(:b = x) when is_integer(x), do: {:error, :bad}
+      def single(x) when is_atom(x), do: :ok
+
+      @spec single_macro(:a | :b) :: :ok
+      def single_macro(:b = x) when integer(x), do: {:error, :bad}
+      def single_macro(x) when is_atom(x), do: :ok
+
+      @spec feasible(:a | :b) :: :ok
+      def feasible(:b = x) when is_atom(x), do: {:error, :bad}
+      def feasible(x) when is_atom(x), do: :ok
+    end
+    """
+
+    ebin = elixirc!(tmp_dir, source)
+    project = Project.from_ebins([{:probe, ebin}], tmp_dir)
+
+    for config <- [@off, @on] do
+      {:ok, run} = Run.execute(project, %{config | baseline: "none.json"}, ci: true)
+      module = SpecLint.ClauseLocalProbe.Compound
+
+      for name <- [:direct, :macro_guard] do
+        assert [issue] = sl001(run, {module, name, 1})
+        refute issue.gate
+        assert :clause_reachable in Issue.blocked(issue)
+        assert issue.data.guard_feasibility == "unproven"
+        assert run.reachability[{module, name, 1}] == {:ok, {:guard_unproven, []}}
+      end
+
+      for name <- [:single, :single_macro] do
+        assert [issue] = sl001(run, {module, name, 1})
+        refute issue.gate
+        assert :clause_reachable in Issue.blocked(issue)
+        assert {:ok, [_ | _]} = run.reachability[{module, name, 1}]
+      end
+
+      assert [issue] = sl001(run, {module, :feasible, 1})
+      assert issue.gate
+      assert run.reachability[{module, :feasible, 1}] == {:ok, []}
+    end
+  end
+
+  test "guard witnesses satisfy repeated variables and exclude preceding clauses" do
+    x = {:x, [version: 0], nil}
+    is_atom = {{:., [], [:erlang, :is_atom]}, [], [x]}
+    is_integer = {{:., [], [:erlang, :is_integer]}, [], [x]}
+    repeated = {:{}, [], [x, x]}
+    head = fn pattern, guards -> {[], [pattern], guards, nil} end
+    definition = fn clauses -> {{:f, 1}, :def, [], clauses} end
+
+    assert GuardFeasibility.proven?([definition.([head.(repeated, [is_atom])])])
+    refute GuardFeasibility.proven?([definition.([head.({:=, [], [:b, x]}, [is_integer])])])
+
+    # A witness for the later guarded head is intercepted by the first head,
+    # even if that first clause always raises and is absent from ExCk.
+    refute GuardFeasibility.proven?([
+             definition.([{[], [:b], [], :raises}, head.({:=, [], [:b, x]}, [is_atom])])
+           ])
+
+    unknown = {{:., [], [:erlang, :unsupported_guard]}, [], [x]}
+    partly_known = {{:., [], [:erlang, :orelse]}, [], [is_atom, unknown]}
+
+    # Unknown evaluation of an earlier guard cannot establish exclusion.
+    refute GuardFeasibility.proven?([
+             definition.([head.(x, [partly_known]), head.(x, [is_integer])])
+           ])
+
+    refute GuardFeasibility.proven?([definition.([head.(x, [unknown])])])
+  end
+
+  test "numeric guard witnesses must satisfy all comparisons" do
+    x = {:x, [version: 0], nil}
+    greater = {{:., [], [:erlang, :>]}, [], [x, 5]}
+    lesser = {{:., [], [:erlang, :<]}, [], [x, 3]}
+    impossible = {{:., [], [:erlang, :andalso]}, [], [greater, lesser]}
+    definition = fn guard -> {{:f, 1}, :def, [], [{[], [x], [guard], nil}]} end
+
+    refute GuardFeasibility.proven?([definition.(impossible)])
+    assert GuardFeasibility.proven?([definition.(lesser)])
+  end
+
+  test "multiple when guards are alternatives for the current and preceding clauses" do
+    x = {:x, [version: 0], nil}
+    is_atom = {{:., [], [:erlang, :is_atom]}, [], [x]}
+    is_integer = {{:., [], [:erlang, :is_integer]}, [], [x]}
+    equals_one = {{:., [], [:erlang, :"=:="]}, [], [x, 1]}
+    head = fn pattern, guards -> {[], [pattern], guards, nil} end
+    definition = fn clauses -> {{:f, 1}, :def, [], clauses} end
+
+    assert GuardFeasibility.proven?([definition.([head.(x, [is_atom, is_integer])])])
+
+    # The first guard accepts 2 although the second rejects it. A later
+    # literal-2 clause has no reachable witness even if that first body raises.
+    refute GuardFeasibility.proven?([
+             definition.([
+               {[], [x], [is_integer, equals_one], :raises},
+               head.(2, [is_integer])
+             ])
+           ])
+  end
+
+  test "wide guard search is bounded and remains conservative" do
+    variables = for i <- 0..7, do: {String.to_atom("x#{i}"), [version: i], nil}
+    [first | _] = variables
+    guard = {{:., [], [:erlang, :is_atom]}, [], [first]}
+    definition = {{:f, 8}, :def, [], [{[], variables, [guard], nil}]}
+    assert GuardFeasibility.proven?([definition])
+  end
+
+  test "dynamic struct witnesses bind the tag and satisfy nested fields" do
+    module = {:module, [version: 0], nil}
+    value = {:value, [version: 1], nil}
+    struct = {:%, [], [module, {:%{}, [], []}]}
+    alias_pattern = {:=, [], [struct, value]}
+    is_foo = {{:., [], [:erlang, :"=:="]}, [], [module, :foo]}
+
+    definition = fn patterns, guard ->
+      {{:f, length(patterns)}, :def, [], [{[], patterns, [guard], nil}]}
+    end
+
+    assert GuardFeasibility.proven?([definition.([alias_pattern], is_foo)])
+    assert GuardFeasibility.proven?([definition.([struct, module], is_foo)])
+
+    wrong_tag = {:%, [], [module, {:%{}, [], [__struct__: :bar]}]}
+    refute GuardFeasibility.proven?([definition.([wrong_tag], is_foo)])
+
+    unsupported_field = {:%, [], [module, {:%{}, [], [field: {:<<>>, [], []}]}]}
+    refute GuardFeasibility.proven?([definition.([unsupported_field], is_foo)])
+
+    matcher = fn
+      %tag{} = map -> {tag, map}
+      _ -> :miss
+    end
+
+    assert matcher.(%{__struct__: :foo}) == {:foo, %{__struct__: :foo}}
+    assert matcher.(%{__struct__: 1}) == :miss
+  end
+
+  test "an earlier dynamic struct clause intercepts later guarded witnesses" do
+    module = {:module, [version: 0], nil}
+    struct = {:%, [], [module, {:%{}, [], []}]}
+    guard = {{:., [], [:erlang, :"=:="]}, [], [module, :foo]}
+    is_map = {{:., [], [:erlang, :is_map]}, [], [{:value, [version: 1], nil}]}
+    later = {:%{}, [], [__struct__: :foo]}
+
+    refute GuardFeasibility.proven?([
+             {{:f, 1}, :def, [], [{[], [struct], [guard], :raises}, {[], [later], [true], nil}]}
+           ])
+
+    # An unsupported nested field in a preceding clause blocks exclusion.
+    unknown = {:%, [], [module, {:%{}, [], [field: {:<<>>, [], []}]}]}
+
+    refute GuardFeasibility.proven?([
+             {{:f, 1}, :def, [], [{[], [unknown], [is_map], nil}, {[], [later], [true], nil}]}
+           ])
   end
 
   defp rule_context(module, name, arity, clause_local?, check) do

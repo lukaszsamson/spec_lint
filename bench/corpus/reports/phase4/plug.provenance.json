@@ -1,0 +1,49 @@
+{
+  "artifacts": [
+    {
+      "beam_count": 62,
+      "path": "$OSS/plug//_build/test/lib/plug/ebin",
+      "sha256": "9044b655e9a28302a5c73e54337b5a714865e9c805d9c49d1be7fdffd86b8535"
+    },
+    {
+      "beam_count": 2,
+      "path": "$OSS/plug//_build/test/lib/mime/ebin",
+      "sha256": "ce5aa4072a08814d8593ce29f9259a4f6a267a2e3142b12f8c7c04391bfe48b8"
+    },
+    {
+      "beam_count": 62,
+      "path": "$OSS/plug//_build/test/lib/plug/ebin",
+      "sha256": "9044b655e9a28302a5c73e54337b5a714865e9c805d9c49d1be7fdffd86b8535"
+    },
+    {
+      "beam_count": 5,
+      "path": "$OSS/plug//_build/test/lib/plug_crypto/ebin",
+      "sha256": "7331c9bf34f3846079db778beed745f3583576cd7a441bb32523f6f0b575ad33"
+    },
+    {
+      "beam_count": 4,
+      "path": "$OSS/plug//_build/test/lib/telemetry/ebin",
+      "sha256": "e93abf875285949ef850c9fdc6208868743fc0da3d6a6fd20c498e869e962246"
+    }
+  ],
+  "corpus": "plug",
+  "corpus_manifest_sha256": null,
+  "schema": "spec_lint.corpus_provenance/1",
+  "source": {
+    "dirty": false,
+    "lockfile_sha256": "6dccd3737d663f64f09e57cc4af6981bf56bf85ff87f6781fdcf85584cfa9aa2",
+    "revision": "73404f851852a00ffb2014be95d4598900fa77b8"
+  },
+  "tool": {
+    "dirty": true,
+    "lockfile_sha256": "a23fa18ff765b9ddc4f310975ca588771fabb25d06b9fc50267b620bf8af026b",
+    "revision": "5f43764b68004db4d9f793da2f8fdd76d80d903c",
+    "source_sha256": "685c993fc45f4e38f81656f78a94d4ea340988699952c52fab53350eabcff2e6"
+  },
+  "toolchain": {
+    "compiler": null,
+    "elixir": "Elixir 1.21.0-dev (c24c235) (compiled with Erlang/OTP 28)",
+    "loaded_module_types_beam": "$ELIXIR/bin/../lib/elixir/ebin/Elixir.Module.Types.beam",
+    "loaded_module_types_sha256": "6a0ce8ab9665459220f41a61aa41f0b7f92f32029ea6395e33f283776120810e"
+  }
+}

@@ -224,7 +224,7 @@ applied return `U(D)`.
      returns `R_k`, entirely outside the spec". Prerequisites: the SL001
      prerequisites plus the clause is contained and the compiler did not
      already flag it unreachable. The chunk does not record reachability,
-     so the prerequisite `clause_reachable` is decided by two checks and
+     so the prerequisite `clause_reachable` is decided by three checks and
      is blocked when either flags the clause: (1) the compiler's own type
      checker, re-run over the function's debug info in the mode it uses
      for warnings after compilation (`SpecLint.Reachability`), reports a
@@ -238,9 +238,18 @@ applied return `U(D)`.
      diagnostics the checker suppresses). Check (2) alone misses a clause
      whose guard contradicts its own pattern: it is stored with its
      pattern domain and its body's return, and nothing covers it (2026-09-29
-     review). Otherwise the prerequisite is `unchecked`: a dead clause the
-     type checker cannot see, such as a contradictory numeric guard, is
-     not ruled out. The stored clause return is used, not the wrapped
+     review). Check (3), added after Phase 3, requires a bounded positive
+     witness for every guarded source clause in the function. A witness
+     must match the complete head, satisfy at least one expanded guard
+     alternative, and be excluded by every earlier source clause. Only
+     supported pure Erlang guard operations are interpreted; no target
+     function is called. Unsupported syntax or exhausted search blocks the
+     function's clause findings (`data.guard_feasibility: "unproven"`).
+     The candidate Cartesian products are capped at 4,096 per expansion.
+     Success leaves the prerequisite `unchecked`: it establishes source
+     guard feasibility, not source-to-stored clause mapping or normal return.
+     A failed required compiler re-check is incomplete analysis, with CI
+     exit 2 in either qualification setting. The stored clause return is used, not the wrapped
      application result. The reported clause index is the stored signature
      clause, which is not a source clause index: the checker drops clauses
      whose return is empty (a clause that always raises) and merges clauses
@@ -324,8 +333,9 @@ positives. Its unreachable-clause prerequisite cannot be read from the
 checker chunk. Since the post-Phase 1 review it is approximated from the
 stored clause domains, and since the 2026-09-29 review also from the
 compiler's own pattern and guard diagnostics, re-run over debug info
-(section 3.1 step 7): a flagged or possibly shadowed clause is blocked, any
-other clause is reported as unchecked.
+(section 3.1 step 7). After Phase 3, bounded source-guard witness search
+also blocks unproven guarded functions. A flagged, possibly shadowed or
+guard-unproven clause is blocked; a surviving clause remains unchecked.
 
 **Decision (Close phase, 2026-09-29): clause-local qualification is the
 default, gating in both profiles.** With `clause_local_qualification: true`
@@ -758,17 +768,19 @@ These notes record choices the text above left open.
   local runs report it.
 - **SL007.** It is off by default. Requesting it, or `analysis: :bodies`,
   exits 2 with a capability message.
-- **Clause reachability.** The `clause_conflict` prerequisite
-  `clause_reachable` is `blocked` for a possibly shadowed clause and for
-  every clause of a function in which the compiler's type checker, re-run
-  over debug info, reports a pattern or guard diagnostic (section 3.1 step
-  7, `SpecLint.Reachability`); the lines are in the finding's
-  `data.pattern_diagnostic_lines`. It is `unchecked` otherwise, and
-  `unchecked` does not block gating. When the re-check cannot run it is
-  `unchecked` with `clause_local_qualification: false` and `blocked` with
-  it (`data.reachability_check`). The re-check runs only for functions with
-  a clause conflict; it may load a struct module that a pattern names, as
-  compilation did, and never calls a target function.
+- **Clause reachability.** The `clause_conflict` prerequisite is blocked by
+  possible shadowing, compiler pattern/guard diagnostics anywhere in the
+  function, or unproven source-guard feasibility (section 3.1 step 7).
+  Diagnostic lines and `guard_feasibility: "unproven"` are kept in finding
+  data. Successful checks leave reachability unchecked; they do not prove
+  normal return. A failed check needed for an otherwise eligible SL001 gate
+  makes the run incomplete and exits 2 in CI, before baseline decisions,
+  under either clause-local setting. It blocks the finding in both settings.
+  Disabled SL001 skips its reachability checks. A failure irrelevant to an
+  already blocked finding does not turn the run incomplete. Unknown guard
+  feasibility is a conservative analysis result, not an operational failure.
+  The compiler re-check may load a struct module to read its fields; neither
+  it nor witness search invokes target functions.
 - **Inexact arrow arguments.** Section 6 excludes a slice with an
   `arrow_polarity` argument from slice-level SL001 gating; the prerequisite
   is `no_arrow_polarity_argument` (the slice form, the clause form with
@@ -1095,11 +1107,13 @@ improvements listed there.
   over-blocks guarded clauses: on the stdlib 23 contributing clauses (22
   functions) are possibly shadowed, none of them a conflict. The second
   blocks per function, not per clause, because stored clauses cannot be
-  mapped to source clauses. Neither sees a dead clause the type checker
-  cannot see (a contradictory numeric guard), nor a clause only the Erlang
-  compiler reports. An upstream chunk field with the per-source-clause
-  verdict and the source-to-stored clause mapping would close it, and would
-  also let a finding name its source clause and line.
+  mapped to source clauses. The additional bounded source-guard witness
+  check conservatively blocks unsupported or unwitnessed guarded functions,
+  including contradictions the compiler does not diagnose. It is not a
+  general reachability solver and does not prove that a body returns normally.
+  A versioned upstream per-source-clause verdict and source-to-stored mapping
+  would reduce over-blocking and let a finding name its source clause and line;
+  that verdict must distinguish unknown from proven reachability.
 - **Containment against typed struct fields.** A struct pattern leaves
   fields `term()`, so any function whose spec takes a struct with typed
   fields is `domain_escape`. That makes `structured_possible` unreachable

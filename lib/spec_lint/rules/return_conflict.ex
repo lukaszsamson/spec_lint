@@ -29,12 +29,11 @@ defmodule SpecLint.Rules.ReturnConflict do
       (`SpecLint.Compare.shadowed/1`), which also covers clauses quoted with
       `generated: true`, whose diagnostics the type checker suppresses.
 
-  Otherwise it is `:unchecked`: the type checker reported nothing, but a dead
-  clause it cannot see (a contradictory numeric guard, say) is not ruled
-  out. When the re-check could not run (`data.reachability_check`), the
-  state is `:unchecked` for the slice-wide form of the prerequisites and
-  `:blocked` under the clause-local qualification. A `no_return()` spec is
-  `SL006`'s case.
+  Otherwise it is `:unchecked`: the type checker reported nothing and guard
+  feasibility was established. A guard whose feasibility cannot be proved
+  blocks the finding (`data.guard_feasibility`). A failed re-check also
+  blocks it (`data.reachability_check`); a required failure makes the run
+  incomplete. A `no_return()` spec is `SL006`'s case.
 
   The reported `clause` is the index of the stored signature clause, not of
   a source clause: the checker drops clauses whose return is empty (such as
@@ -166,7 +165,10 @@ defmodule SpecLint.Rules.ReturnConflict do
                "#{Rule.translation_string(slice)})"}
           ] ++ check_details(check),
         prerequisites: clause_prerequisites(slice, contributing, check, clause_local?),
-        data: Map.merge(clause_data(slice, clause_local?), check_data(check))
+        data:
+          clause_data(slice, clause_local?)
+          |> Map.merge(check_data(check))
+          |> maybe_mark_required_check(contributing, check)
       )
     end
   end
@@ -201,10 +203,22 @@ defmodule SpecLint.Rules.ReturnConflict do
   end
 
   defp check_data({:ok, []}), do: %{}
+
+  defp check_data({:ok, {:guard_unproven, lines}}),
+    do: %{guard_feasibility: "unproven", pattern_diagnostic_lines: lines}
+
   defp check_data({:ok, lines}), do: %{pattern_diagnostic_lines: lines}
   defp check_data({:error, reason}), do: %{reachability_check: "unavailable: " <> inspect(reason)}
 
+  defp maybe_mark_required_check(data, %{shadowed?: false}, {:error, _reason}),
+    do: Map.put(data, :reachability_check_required, true)
+
+  defp maybe_mark_required_check(data, _contributing, _check), do: data
+
   defp check_details({:ok, [_ | _] = lines}),
+    do: [{"compiler pattern diagnostics", "lines " <> Enum.map_join(lines, ", ", &line_text/1)}]
+
+  defp check_details({:ok, {:guard_unproven, [_ | _] = lines}}),
     do: [{"compiler pattern diagnostics", "lines " <> Enum.map_join(lines, ", ", &line_text/1)}]
 
   defp check_details(_check), do: []
@@ -219,11 +233,14 @@ defmodule SpecLint.Rules.ReturnConflict do
 
   # clause_reachable: blocked when shadowed or when the compiler's type
   # checker flags the function's patterns or guards; unchecked when it
-  # reports nothing. A check that could not run blocks only under the
-  # clause-local qualification.
+  # reports nothing and guard feasibility was established. A check that
+  # could not run blocks under either qualification policy.
   defp reachable(%{shadowed?: true}, _check, _clause_local?), do: :blocked
   defp reachable(_contributing, {:ok, []}, _clause_local?), do: :unchecked
   defp reachable(_contributing, {:ok, [_ | _]}, _clause_local?), do: :blocked
-  defp reachable(_contributing, {:error, _reason}, true), do: :blocked
-  defp reachable(_contributing, {:error, _reason}, false), do: :unchecked
+
+  defp reachable(_contributing, {:ok, {:guard_unproven, _lines}}, _clause_local?),
+    do: :blocked
+
+  defp reachable(_contributing, {:error, _reason}, _clause_local?), do: :blocked
 end

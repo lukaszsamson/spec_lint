@@ -7,13 +7,15 @@ defmodule SpecLint.Run do
 
   Exit codes: `0` accepted; `1` new gated findings or a coverage violation
   (only in CI mode or with `warnings_as_errors`); `2` incomplete run
-  (internal failure analysing a module; unsupported compiler or checker
-  chunk in CI), unsupported backend, configuration error.
+  (internal failure analysing a module, required reachability check failure;
+  unsupported compiler or checker chunk in CI), unsupported backend,
+  configuration error.
 
   Completion is `:complete`, `:partial` (a `--module` or `--app` filter
   was given; stale entries are never declared and the coverage floor is
   not checked) or `:incomplete` (an internal failure, or a checker chunk
-  written by another checker version, which fails preflight: exit 2 in CI).
+  written by another checker version, which fails preflight: exit 2 in CI;
+  or a required reachability check failure).
 
   Coverage (`SL008`) is always evaluated, including slices the baseline
   inventory lists whose function is still exported but lost its spec
@@ -38,7 +40,7 @@ defmodule SpecLint.Run do
     TypeCache
   }
 
-  alias SpecLint.Rules.AnalysisUnavailable
+  alias SpecLint.Rules.{AnalysisUnavailable, ReturnConflict}
 
   @type completion :: :complete | :partial | :incomplete
 
@@ -312,7 +314,8 @@ defmodule SpecLint.Run do
       | modules: modules,
         excluded: excluded,
         evidence: evidence,
-        reachability: Reachability.check(modules, evidence),
+        reachability:
+          if(sl001_selected?(run), do: Reachability.check(modules, evidence), else: %{}),
         beams: beam_list(run.project, results)
     }
 
@@ -370,7 +373,8 @@ defmodule SpecLint.Run do
       |> Policy.apply_gates(run.config, regressions)
 
     chunk_reasons = unsupported_chunks(run.modules)
-    incomplete? = failures != [] or chunk_reasons != []
+    reachability_reasons = required_reachability_failures(run, issues)
+    incomplete? = incomplete?(failures, chunk_reasons, reachability_reasons)
 
     {issues, decisions} =
       Baseline.decide(issues, run.baseline,
@@ -398,14 +402,40 @@ defmodule SpecLint.Run do
     }
 
     blocking? = Enum.any?(run.issues, &Issue.blocking?/1) or violations != []
-    errored? = failures != [] or adapter_error? or (chunk_reasons != [] and run.ci?)
+
+    errored? = errored?(run, failures, chunk_reasons, reachability_reasons, adapter_error?)
 
     %{
       run
       | completion: completion(run, incomplete?),
-        completion_reasons: failures ++ chunk_reasons ++ adapter_reasons ++ floor_notes,
+        completion_reasons:
+          failures ++ chunk_reasons ++ reachability_reasons ++ adapter_reasons ++ floor_notes,
         exit_code: exit_code(run, errored?, blocking?)
     }
+  end
+
+  defp incomplete?(failures, chunks, reachability),
+    do: failures != [] or chunks != [] or reachability != []
+
+  defp errored?(run, failures, chunks, reachability, adapter_error?),
+    do: failures != [] or adapter_error? or (run.ci? and (chunks != [] or reachability != []))
+
+  # Only a check needed to decide an otherwise eligible SL001 clause gate is
+  # required. A disabled rule, a shadowed clause, or another blocked
+  # prerequisite must not turn an optional check failure into an incomplete
+  # run. Inspect findings before baseline decisions so acknowledgements
+  # cannot hide a required failure.
+  defp required_reachability_failures(run, issues) do
+    for %Issue{rule: "SL001", evidence: :clause_conflict} = issue <- issues,
+        issue.data[:reachability_check_required],
+        Enum.all?(issue.prerequisites, fn
+          {:clause_reachable, _state} -> true
+          {_name, state} -> state != :blocked
+        end),
+        {:error, reason} <- [Map.fetch!(run.reachability, issue.mfa)],
+        uniq: true do
+      "required reachability check failed for #{Issue.subject(issue)}: #{inspect(reason)}"
+    end
   end
 
   defp split_coverage_only(run, issues) do
@@ -444,6 +474,7 @@ defmodule SpecLint.Run do
   end
 
   defp sl008_selected?(run), do: List.keymember?(run.rules, AnalysisUnavailable, 0)
+  defp sl001_selected?(run), do: List.keymember?(run.rules, ReturnConflict, 0)
 
   # SL008 always runs (coverage), whatever the rule selection.
   defp ran_rule_ids(run),

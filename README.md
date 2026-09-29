@@ -107,12 +107,20 @@ A gated finding still has to meet its prerequisites to fail the build:
   can tell: it is not covered by the clauses before it, and the compiler's
   own type checker, re-run over the function's debug info, reports no
   pattern or guard diagnostic in the function (a guard that never
-  succeeds, a redundant clause). A dead clause the type checker cannot see,
-  such as a contradictory numeric guard, is not ruled out.
+  succeeds, a redundant clause). Guarded source clauses also need the
+  bounded witnesses described below; this still does not prove normal return.
 
 A per-clause finding names the stored signature clause (`clause #k`),
 which the compiler may have merged with others or renumbered by dropping
 clauses that always raise; the reported line is the function's first line.
+
+Per-clause conflicts additionally require a bounded witness for each
+guarded source clause in the function, accounting for earlier clauses. Unsupported
+guards or unsuccessful search leave the finding reported but non-gating,
+with `guard_feasibility: "unproven"` in JSON. This checks guard feasibility;
+it does not execute target functions or prove that a function returns.
+A required compiler re-check failure is different: the run is incomplete
+and CI exits 2, even with a baseline or `--no-clause-local-qualification`.
 
 `--explain` prints which prerequisite blocked gating. A rule's severity
 only changes how a finding is printed, never whether it gates.

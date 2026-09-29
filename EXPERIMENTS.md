@@ -1,3 +1,14 @@
+# Latest experiment: Phase 4
+
+The bounded helper investigation, commands, frozen cases, negative controls
+and measured limits are in `bench/helper_experiment/REPORT.md`. Four synthetic
+pairs recover the inline signature; no new real-library omission is detected.
+The production changes harden guard qualification and incomplete-run handling;
+they do not add helper inference or a body backend. Final regression replay
+and gate results are recorded in `PHASE_4_PLAN.md`.
+
+The remainder preserves the earlier experiments and their original decisions.
+
 # Phase 0 report: SL002 usefulness experiment
 
 Date 2026-09-28. This is the go/no-go experiment of DESIGN.md section 11,
