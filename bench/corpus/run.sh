@@ -10,6 +10,11 @@
 # (for example --clause-local-qualification); the report's config records them.
 # SPEC_LINT_PRODUCT_ONLY=1 skips the experiment report, for option comparisons
 # that do not change it (the experiment has no product options).
+# SPEC_LINT_BASELINE_DIR runs the product with --baseline DIR/NAME.json for
+# every corpus that has one there; SPEC_LINT_WRITE_BASELINE_DIR additionally
+# writes DIR/NAME.json (run_on_ebin.exs --write-baseline, the checks of mix
+# spec_lint.baseline) after the product run, for the per-adapter baselines
+# of the Milestone 3 replay.
 # SPEC_LINT_CORPUS_BUILD reads each OSS corpus from a separate build root,
 # $SPEC_LINT_CORPUS_BUILD/NAME/lib/*/ebin (toolchain/compile_corpora.sh),
 # instead of the checkout's _build/test; reports write it as $BUILD. The
@@ -188,9 +193,14 @@ for name in "${corpora[@]}"; do
   fi
 
   if [ "$name" != fixtures ]; then
+    baseline_args=()
+    if [ -n "${SPEC_LINT_BASELINE_DIR:-}" ] && [ -f "$SPEC_LINT_BASELINE_DIR/$name.json" ]; then
+      baseline_args=(--baseline "$SPEC_LINT_BASELINE_DIR/$name.json")
+    fi
     set +e
     MIX_ENV=test mix run bench/run_on_ebin.exs -- "${args[@]}" ${cp_args[@]+"${cp_args[@]}"} \
       --root "$project_root" --ci --format json --output "$raw/$name.spec_lint.json" \
+      ${baseline_args[@]+"${baseline_args[@]}"} \
       ${product_args[@]+"${product_args[@]}"} >"$raw/$name.run.log" 2>&1
     status=$?
     set -e
@@ -214,6 +224,12 @@ for name in "${corpora[@]}"; do
       cp "$raw/$name.run.log" "$out/$name.spec_lint.log"
       echo "exit status/report mismatch for $name: $status vs $report_status" >&2
       exit 2
+    fi
+    if [ -n "${SPEC_LINT_WRITE_BASELINE_DIR:-}" ]; then
+      mkdir -p "$SPEC_LINT_WRITE_BASELINE_DIR"
+      MIX_ENV=test mix run bench/run_on_ebin.exs -- "${args[@]}" ${cp_args[@]+"${cp_args[@]}"} \
+        --root "$project_root" --write-baseline "$SPEC_LINT_WRITE_BASELINE_DIR/$name.json" \
+        ${product_args[@]+"${product_args[@]}"} >&2
     fi
   fi
 done
