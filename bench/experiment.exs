@@ -220,7 +220,7 @@ defmodule SpecLint.Experiment do
 
   defp component_entry(component) do
     %{
-      descr: component.descr_string,
+      descr: Compiler.to_string(component.descr),
       kind: component.kind,
       label: component.label,
       present_in_contributing: component.present_in_contributing?,

@@ -124,7 +124,8 @@ defmodule SpecLint.Report.Json do
       "file" => issue.file,
       "line" => issue.line,
       "message" => issue.message,
-      "details" => Enum.map(issue.details, fn {label, value} -> [label, value] end),
+      "details" =>
+        Enum.map(Issue.rendered_details(issue), fn {label, value} -> [label, value] end),
       "prerequisites" =>
         Enum.map(issue.prerequisites, fn {name, state} ->
           [Atom.to_string(name), Atom.to_string(state)]

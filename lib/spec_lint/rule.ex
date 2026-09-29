@@ -6,8 +6,10 @@ defmodule SpecLint.Rule do
   A rule turns raw per-slice relations (`SpecLint.Compare`) and evidence
   (`SpecLint.Evidence`) into `SpecLint.Issue` values. Rules never decide
   gating: they record which gating prerequisites were met, and
-  `SpecLint.Policy` decides. Rules never print; `details` are rendered by
-  the reporters.
+  `SpecLint.Policy` decides. Rules never print types: `details` hold
+  unrendered values (`t:SpecLint.Issue.text/0`, built with `domain_text/1`,
+  `clause_text/1`, `{:type, descr}` and `{:spec, name, spec}`) that the
+  reporters render for the findings they show.
   """
 
   alias SpecLint.{Analysis, Baseline, Bound, Compiler, Evidence, Issue}
@@ -166,16 +168,31 @@ defmodule SpecLint.Rule do
     _ -> inspect(spec)
   end
 
+  @doc """
+  A slice domain from its argument bounds (upper bounds), unrendered:
+  `(arg, ...)` once rendered (`SpecLint.Issue.render/1`).
+  """
+  @spec domain_text([Bound.t()]) :: Issue.text()
+  def domain_text(args), do: ["(", types_text(Enum.map(args, & &1.hi)), ")"]
+
   @doc "Prints a slice domain from its argument bounds (upper bounds)."
   @spec domain_string([Bound.t()]) :: String.t()
-  def domain_string(args), do: "(" <> Enum.map_join(args, ", ", &Compiler.to_string(&1.hi)) <> ")"
+  def domain_string(args), do: args |> domain_text() |> Issue.render()
+
+  @doc """
+  An inferred clause, unrendered: `(args) -> return` once rendered
+  (`SpecLint.Issue.render/1`).
+  """
+  @spec clause_text(Compiler.clause()) :: Issue.text()
+  def clause_text({args, return}), do: ["(", types_text(args), ") -> ", {:type, return}]
 
   @doc "Prints an inferred clause as `(args) -> return`."
   @spec clause_string(Compiler.clause()) :: String.t()
-  def clause_string({args, return}) do
-    "(" <>
-      Enum.map_join(args, ", ", &Compiler.to_string/1) <> ") -> " <> Compiler.to_string(return)
-  end
+  def clause_string(clause), do: clause |> clause_text() |> Issue.render()
+
+  @doc "Types separated by `, `, unrendered."
+  @spec types_text([Compiler.descr()]) :: Issue.text()
+  def types_text(descrs), do: descrs |> Enum.map(&{:type, &1}) |> Enum.intersperse(", ")
 
   @doc """
   `translation exact` or `translation approximate: loss kinds` for a

@@ -50,11 +50,12 @@ defmodule SpecLint.Report.Console do
 
     slice = if issue.slice, do: " slice #{issue.slice}", else: ""
     clause = if issue.clause, do: " clause ##{issue.clause}", else: ""
-    width = issue.details |> Enum.map(&String.length(elem(&1, 0))) |> Enum.max(fn -> 0 end)
+    rendered = Issue.rendered_details(issue)
+    width = rendered |> Enum.map(&String.length(elem(&1, 0))) |> Enum.max(fn -> 0 end)
     width = max(width + 2, 17)
 
     details =
-      for {label, value} <- issue.details do
+      for {label, value} <- rendered do
         ["  ", String.pad_trailing(label <> ":", width), value, "\n"]
       end
 

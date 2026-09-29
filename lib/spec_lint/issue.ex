@@ -6,9 +6,15 @@ defmodule SpecLint.Issue do
 
   Rules create issues; `SpecLint.Policy` sets `gate` (whether the finding
   would fail CI when it is new) and `SpecLint.Baseline` sets `baseline`
-  (whether a baseline acknowledges it). The printed `details` are
-  presentation only; the fingerprint never hashes them.
+  (whether a baseline acknowledges it). The `details` are presentation
+  only; the fingerprint never hashes them. They are kept unrendered
+  (`t:text/0`): types in them are printed by `render/1`, which the
+  reporters and `--explain` call for the findings they show. Nothing
+  before rendering prints a type, so the cost of printing grows with the
+  number of rendered findings, not with the number of analysed slices.
   """
+
+  alias SpecLint.{Compiler, Rule}
 
   @typedoc "Rule ID such as `\"SL001\"`."
   @type rule_id :: String.t()
@@ -30,6 +36,25 @@ defmodule SpecLint.Issue do
           | :hint
           | :unsupported
           | :unavailable
+
+  @typedoc """
+  The unrendered value of one detail line (see `render/1`):
+
+    * a string, rendered as it is;
+    * `{:type, descr}` - a type, printed through the compiler adapter
+      (`SpecLint.Compiler.to_string/1`);
+    * `{:spec, name, spec}` - one spec clause, printed as
+      `name(args) :: return` (`SpecLint.Rule.spec_string/2`);
+    * `{:join_unique, texts, separator}` - each text rendered, repeated
+      renderings dropped (first occurrence kept), joined by `separator`;
+    * a list of texts, rendered and concatenated.
+  """
+  @type text ::
+          String.t()
+          | {:type, Compiler.descr()}
+          | {:spec, atom(), tuple()}
+          | {:join_unique, [text()], String.t()}
+          | [text()]
 
   @typedoc "How a finding is printed. Never decides gating."
   @type severity :: :error | :warning | :info | :hint
@@ -59,7 +84,7 @@ defmodule SpecLint.Issue do
           file: String.t() | nil,
           line: pos_integer() | nil,
           message: String.t(),
-          details: [{String.t(), String.t()}],
+          details: [{String.t(), text()}],
           prerequisites: [prerequisite()],
           data: map(),
           fingerprint: String.t() | nil,
@@ -87,6 +112,26 @@ defmodule SpecLint.Issue do
     gate: false,
     baseline: :new
   ]
+
+  @doc """
+  Renders one detail value (`t:text/0`) to a string. This is where the
+  types of a finding are printed; call it only for findings that are
+  shown.
+  """
+  @spec render(text()) :: String.t()
+  def render(text) when is_binary(text), do: text
+  def render({:type, descr}), do: Compiler.to_string(descr)
+  def render({:spec, name, spec}), do: Rule.spec_string(name, spec)
+
+  def render({:join_unique, texts, separator}),
+    do: texts |> Enum.map(&render/1) |> Enum.uniq() |> Enum.join(separator)
+
+  def render(texts) when is_list(texts), do: Enum.map_join(texts, &render/1)
+
+  @doc "The issue's details with every value rendered (`render/1`)."
+  @spec rendered_details(t()) :: [{String.t(), String.t()}]
+  def rendered_details(%__MODULE__{details: details}),
+    do: for({label, text} <- details, do: {label, render(text)})
 
   @doc "Whether every prerequisite is met or unchecked (none is blocked)."
   @spec prerequisites_met?(t()) :: boolean()

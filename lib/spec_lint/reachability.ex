@@ -68,9 +68,20 @@ defmodule SpecLint.Reachability do
     end
   end
 
+  # The check runs in its own process with only the module's identity as
+  # input: it reads the BEAM's debug info and runs the compiler's checker,
+  # and that garbage stays out of the caller's heap, which holds every
+  # analysed module (Milestone 1 profile: 37 s in the caller against a few
+  # seconds in a fresh process on Absinthe). The result is small.
   defp check_module(module, mfas) do
     fun_arities = for {_module, name, arity} <- mfas, do: {name, arity}
-    result = check_result(module, fun_arities)
+    identity = Map.take(module, [:module, :path])
+
+    result =
+      fn -> check_result(identity, fun_arities) end
+      |> Task.async()
+      |> Task.await(:infinity)
+
     for mfa <- mfas, do: {mfa, function_result(mfa, result)}
   end
 

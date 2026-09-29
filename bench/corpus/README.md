@@ -323,3 +323,11 @@ required-check failure handling. See its README for regeneration and the
 interrupted preliminary Absinthe attempt. `PHASE_4_PLAN.md` records the final
 gates and remaining limits. These projects are regression corpora, not fresh
 holdouts for the helper experiment.
+
+## Milestone 1 replay
+
+`reports/m1/` holds the product-only replay of all fifteen corpora after
+type printing was removed from classification, with provenance, a
+`summary.json` produced by `compare_replay.sh` against `reports/phase4/` (and
+against `reports/expansion/clause_local/on/` for Absinthe, which Phase 4
+lacks) and the Absinthe timings. See its README.

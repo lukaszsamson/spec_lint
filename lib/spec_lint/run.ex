@@ -288,6 +288,11 @@ defmodule SpecLint.Run do
   end
 
   defp analyse(run, beams, opts) do
+    # BEAM hashes are read before the analysis: afterwards this process
+    # holds every analysed module, and on a large project (Absinthe: a heap
+    # of about 4 GB) the garbage collections that reading hundreds of files
+    # triggers cost minutes (Milestone 1 profile).
+    md5s = Map.new(beams, fn {_app, path} -> {path, beam_md5(path)} end)
     cache = TypeCache.new()
 
     {results, failures} =
@@ -316,7 +321,7 @@ defmodule SpecLint.Run do
         evidence: evidence,
         reachability:
           if(sl001_selected?(run), do: Reachability.check(modules, evidence), else: %{}),
-        beams: beam_list(run.project, results)
+        beams: beam_list(run.project, results, md5s)
     }
 
     finish(run, failures, opts)
@@ -347,10 +352,10 @@ defmodule SpecLint.Run do
     end
   end
 
-  defp beam_list(project, results) do
+  defp beam_list(project, results, md5s) do
     results
     |> Enum.map(fn result ->
-      md5 = beam_md5(result.path)
+      md5 = Map.get_lazy(md5s, result.path, fn -> beam_md5(result.path) end)
       name = if result.module, do: inspect(result.module), else: Path.basename(result.path)
       {name, Project.relative(project, result.path), md5}
     end)

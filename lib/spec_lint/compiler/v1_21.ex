@@ -536,6 +536,20 @@ defmodule SpecLint.Compiler.V121 do
   # of it is used when it is shorter. An empty type prints as `none()`
   # (a lazy difference that is empty would otherwise print as a non-empty
   # looking `A and not B`). Gradual types print through Descr.
+  #
+  # Decision (Milestone 1): the complement is no longer printed in full
+  # unconditionally, but the result is the same string as before for
+  # every type. (1) Tuple and map literals are printed once per call and
+  # memoised: the complement's lines negate the literals the direct form
+  # already printed, which for struct types was most of the cost. (2) The
+  # complement is printed piece by piece with a budget, the length of the
+  # direct form minus `not `: a running lower bound of its length (the
+  # distinct pieces so far plus their ` or ` separators, never counting
+  # parentheses) that reaches the budget proves `not (...)` cannot be
+  # shorter, and printing stops. No length threshold or structural guess
+  # decides the form, because neither was exact on the corpora (a
+  # 23-character `not map() and not {...}` loses to `not ({...} or map())`,
+  # and a positive union without `not` can lose to its complement).
   @impl true
   @spec to_string(SpecLint.Compiler.descr()) :: String.t()
   def to_string(descr) do
@@ -554,31 +568,90 @@ defmodule SpecLint.Compiler.V121 do
     if Descr.empty?(complement) do
       "term()"
     else
-      direct = normal_form_string(descr)
-      negated = "not " <> parenthesise(normal_form_string(complement))
-      if String.length(negated) < String.length(direct), do: negated, else: direct
+      {:ok, direct, memo} = normal_form_string(descr, :infinity, %{})
+      direct_length = String.length(direct)
+
+      complement
+      |> normal_form_string(direct_length - String.length("not "), memo)
+      |> shorter(direct, direct_length)
     end
   end
 
-  defp normal_form_string(descr) do
+  defp shorter({:ok, complement, _memo}, direct, direct_length) do
+    negated = "not " <> parenthesise(complement)
+    if String.length(negated) < direct_length, do: negated, else: direct
+  end
+
+  defp shorter(:over_budget, direct, _direct_length), do: direct
+
+  # The normal form string of a static type, or `:over_budget` as soon as
+  # a lower bound of its length reaches `budget`. `memo` maps `{kind,
+  # literal}` to its printed string.
+  defp normal_form_string(descr, budget, memo) do
     static = descr |> unfold_node() |> Descr.unfold()
     rest = Map.drop(static, [:tuple, :map])
 
-    rest_string = if Descr.empty?(rest), do: [], else: [quoted(rest)]
+    first = if Descr.empty?(rest), do: [], else: [quoted(rest)]
+
+    acc = %{
+      pieces: first,
+      seen: MapSet.new(),
+      bound: pieces_bound(first),
+      memo: memo
+    }
 
     lines =
       Enum.flat_map([:tuple, :map], fn kind ->
         case Map.get(static, kind) do
           nil -> []
-          bdd -> bdd |> Descr.bdd_to_dnf() |> Enum.reverse() |> Enum.flat_map(&line(kind, &1))
+          bdd -> bdd |> Descr.bdd_to_dnf() |> Enum.reverse() |> Enum.map(&{kind, &1})
         end
       end)
 
-    case rest_string ++ Enum.uniq(lines) do
-      [single] -> single
-      pieces -> Enum.map_join(pieces, " or ", &parenthesise_and/1)
+    with {:ok, acc} <- within_budget(acc, budget),
+         {:ok, acc} <- add_lines(lines, acc, budget) do
+      string =
+        case Enum.reverse(acc.pieces) do
+          [single] -> single
+          pieces -> Enum.map_join(pieces, " or ", &parenthesise_and/1)
+        end
+
+      {:ok, string, acc.memo}
     end
   end
+
+  defp add_lines([], acc, _budget), do: {:ok, acc}
+
+  defp add_lines([{kind, dnf_line} | lines], acc, budget) do
+    {printed, memo} = line(kind, dnf_line, acc.memo)
+    acc = %{acc | memo: memo}
+
+    acc = Enum.reduce(printed, acc, &add_piece/2)
+    with {:ok, acc} <- within_budget(acc, budget), do: add_lines(lines, acc, budget)
+  end
+
+  # Repeated lines are printed once (the first occurrence is kept); the
+  # bound counts each distinct piece and the ` or ` before it.
+  defp add_piece(string, acc) do
+    if MapSet.member?(acc.seen, string) do
+      acc
+    else
+      separator = if acc.pieces == [], do: 0, else: String.length(" or ")
+
+      %{
+        acc
+        | pieces: [string | acc.pieces],
+          seen: MapSet.put(acc.seen, string),
+          bound: acc.bound + separator + String.length(string)
+      }
+    end
+  end
+
+  defp pieces_bound(pieces), do: Enum.sum_by(pieces, &String.length/1)
+
+  defp within_budget(_acc, budget) when budget != :infinity and budget <= 0, do: :over_budget
+  defp within_budget(%{bound: bound}, budget) when bound >= budget, do: :over_budget
+  defp within_budget(acc, _budget), do: {:ok, acc}
 
   defp parenthesise(string) do
     if String.contains?(string, [" or ", " and "]), do: "(" <> string <> ")", else: string
@@ -588,26 +661,37 @@ defmodule SpecLint.Compiler.V121 do
     if String.contains?(string, " and not "), do: "(" <> string <> ")", else: string
   end
 
-  defp line(kind, {pos, negs}) do
+  defp line(kind, {pos, negs}, memo) do
     positives = if pos == [], do: [top_literal(kind)], else: pos
     pos_descr = positives |> Enum.map(&%{kind => &1}) |> Enum.reduce(&Descr.opt_intersection/2)
     live = Enum.reject(negs, &Descr.disjoint?(pos_descr, %{kind => &1}))
     line = Enum.reduce(live, pos_descr, &Descr.opt_difference(&2, %{kind => &1}))
 
     if Descr.empty?(line) do
-      []
+      {[], memo}
     else
-      positive = Enum.map_join(positives, " and ", &literal_string(kind, &1))
+      {positive_strings, memo} = Enum.map_reduce(positives, memo, &literal_string(kind, &1, &2))
+      {negative_strings, memo} = Enum.map_reduce(live, memo, &literal_string(kind, &1, &2))
+      positive = Enum.join(positive_strings, " and ")
 
-      case Enum.map(live, &literal_string(kind, &1)) do
-        [] -> [positive]
-        [neg] -> [positive <> " and not " <> neg]
-        negs -> [positive <> " and not (" <> Enum.join(negs, " or ") <> ")"]
+      case negative_strings do
+        [] -> {[positive], memo}
+        [neg] -> {[positive <> " and not " <> neg], memo}
+        negs -> {[positive <> " and not (" <> Enum.join(negs, " or ") <> ")"], memo}
       end
     end
   end
 
-  defp literal_string(kind, literal), do: quoted(%{kind => literal})
+  defp literal_string(kind, literal, memo) do
+    case memo do
+      %{{^kind, ^literal} => string} ->
+        {string, memo}
+
+      %{} ->
+        string = quoted(%{kind => literal})
+        {string, Map.put(memo, {kind, literal}, string)}
+    end
+  end
 
   @impl true
   @spec atom_fetch(SpecLint.Compiler.descr()) ::

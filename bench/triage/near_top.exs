@@ -26,7 +26,10 @@ try do
     IO.puts("  top_only=#{rel.top_only?} class=#{c.class} reasons=#{inspect(c.reasons)}")
 
     components =
-      Enum.map(c.components, &{&1.label, &1.present_in_contributing?, &1.descr_string})
+      Enum.map(
+        c.components,
+        &{&1.label, &1.present_in_contributing?, SpecLint.Compiler.to_string(&1.descr)}
+      )
 
     IO.puts("  components=#{inspect(components)}")
   end

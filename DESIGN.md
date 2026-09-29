@@ -418,6 +418,23 @@ A per-clause finding reads `... Store.lookup/1 slice 0 clause #1 [warning]`.
 Types are printed with `Descr.to_quoted/2` and
 `skip_dynamic_for_indivisible: false`.
 
+**Decision (Milestone 1): printing is presentation only and happens last.**
+The classifier (section 3.1), `SpecLint.Compare` and the rules work on
+`Descr` terms only; no type is printed or serialised to decide a class, a
+prerequisite or a gate. Rules keep finding details unrendered (a type is
+`{:type, descr}`), and the reporters and `--explain` print them for the
+findings they show, so the number of printed types grows with the number
+of rendered findings, not with the number of analysed slices. Printing
+every component of every slice had made the Absinthe run take about ten
+minutes. The adapter's printer keeps its output: it memoises tuple and map
+literals within one call and prints the complement form against a length
+budget, stopping once a lower bound of its length shows that `not (...)`
+cannot be shorter than the direct form. A length threshold or a structural
+guess was rejected because neither reproduced the old choice on the
+corpora. Tests pin all three properties: a stub adapter that cannot print
+classifies and runs identically, `Run.execute/3` prints no type, and the
+printer returns the strings of the previous implementation.
+
 ## 5. Architecture
 
 ```
@@ -754,7 +771,12 @@ These notes record choices the text above left open.
   names and union member order, so a cosmetic spec edit turned an
   acknowledged finding into a new gating one. The cost: refinements the
   lattice erases inside a type (`pos_integer()` against
-  `non_neg_integer()` in a tuple) do not change the fingerprint. The slice
+  `non_neg_integer()` in a tuple) do not change the fingerprint.
+  `canonical/1` is a structural serialisation of the `Descr` term (maps as
+  sorted key/value lists, recursive nodes unfolded to a fixed depth); it
+  never prints. The Milestone 1 audit confirmed this, so removing printing
+  from classification left every fingerprint and the baseline format
+  version unchanged. The slice
   and clause indexes are part of the hash, so reordering spec clauses
   changes the fingerprint. Reordering other functions, changing lines,
   recompiling, renaming a type alias or variable and reordering a union do

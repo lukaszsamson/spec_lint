@@ -17,7 +17,7 @@ defmodule SpecLint.Rules.PossibleMissingReturn do
 
   @behaviour SpecLint.Rule
 
-  alias SpecLint.{Compiler, Rule, Rules.ReturnConflict}
+  alias SpecLint.{Rule, Rules.ReturnConflict}
 
   @reported [
     :structured_possible,
@@ -61,9 +61,9 @@ defmodule SpecLint.Rules.PossibleMissingReturn do
         evidence: class,
         message: message(class),
         details: [
-          {"spec", Rule.spec_string(name, slice.spec)},
-          {"inferred extra", extra_string(slice, evidence)},
-          {"slice", Rule.domain_string(slice.args)},
+          {"spec", {:spec, name, slice.spec}},
+          {"inferred extra", extra_text(slice, evidence)},
+          {"slice", Rule.domain_text(slice.args)},
           {"evidence", "#{class} (signature backend, #{Rule.translation_string(slice)})"}
         ],
         prerequisites:
@@ -90,17 +90,18 @@ defmodule SpecLint.Rules.PossibleMissingReturn do
     do: "Possible missing alternative of a whole base kind; often imprecise inference."
 
   # The counted (present) components when there are any, else the whole
-  # extra of the worst clause or the slice.
-  defp extra_string(slice, evidence) do
+  # extra of the slice. Unrendered: repeated printings of the components
+  # are dropped when the finding is rendered, as before the rendering was
+  # deferred.
+  defp extra_text(slice, evidence) do
     counted =
       (evidence.components ++ Enum.flat_map(evidence.clauses, & &1.components))
       |> Enum.filter(&(&1.present_in_contributing? and &1.label != :unknown))
-      |> Enum.map(& &1.descr_string)
-      |> Enum.uniq()
+      |> Enum.map(&{:type, &1.descr})
 
     case counted do
-      [] -> Compiler.to_string(slice.relations.extra)
-      strings -> Enum.join(strings, " or ")
+      [] -> {:type, slice.relations.extra}
+      types -> {:join_unique, types, " or "}
     end
   end
 end

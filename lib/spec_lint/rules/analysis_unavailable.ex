@@ -123,7 +123,7 @@ defmodule SpecLint.Rules.AnalysisUnavailable do
         fingerprint_extra: {kind, key},
         message: "spec slice is #{kind}: #{key}",
         details: [
-          {"spec", Rule.spec_string(Rule.function_name(context), slice.spec)},
+          {"spec", {:spec, Rule.function_name(context), slice.spec}},
           {"status", "#{kind}: #{key}"}
         ],
         data: %{status: Atom.to_string(kind), reason: key}

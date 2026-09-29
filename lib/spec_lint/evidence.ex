@@ -102,6 +102,13 @@ defmodule SpecLint.Evidence do
        whose clause return is gradual. The option does not change any
        other class. The default is `false`.
 
+  Classification works on `Descr` terms only, through the adapter's set
+  operations and `SpecLint.Compiler.components/1`. It never prints a type
+  or serialises one (`SpecLint.Compiler.to_string/1`,
+  `SpecLint.Compiler.canonical/1`): printing is presentation and happens
+  in the reporters, for rendered findings only (`SpecLint.Issue.render/1`).
+  A component keeps its `descr` for them.
+
   One more reading of DESIGN 3.1 is fixed here. A certain escape takes
   precedence over input approximation: an escape is a fact about the
   clause domain that holds for every refinement of `D_hi`, while
@@ -136,9 +143,12 @@ defmodule SpecLint.Evidence do
   @typedoc "Label of one component."
   @type label :: :structured | :whole_kind | :unknown
 
-  @typedoc "One labelled component of `extra`."
+  @typedoc """
+  One labelled component of `extra`. `descr` is the component's own type;
+  it is never printed here (see the moduledoc).
+  """
   @type component :: %{
-          descr_string: String.t(),
+          descr: Compiler.descr(),
           kind: Compiler.kind(),
           label: label(),
           present_in_contributing?: boolean(),
@@ -452,7 +462,7 @@ defmodule SpecLint.Evidence do
       present? = not subtraction? and present?(component.descr, label, returns)
 
       %{
-        descr_string: Compiler.to_string(component.descr),
+        descr: component.descr,
         kind: component.kind,
         label: label,
         present_in_contributing?: present?,

@@ -50,9 +50,9 @@ defmodule SpecLint.Rules.PossibleUnexpectedReturn do
         evidence: :unexpected_return,
         message: "the spec says no normal return, but inference predicts one",
         details: [
-          {"spec", Rule.spec_string(name, slice.spec)},
-          {"inferred return", Compiler.to_string(rel.applied_upper)},
-          {"slice", Rule.domain_string(slice.args)},
+          {"spec", {:spec, name, slice.spec}},
+          {"inferred return", {:type, rel.applied_upper}},
+          {"slice", Rule.domain_text(slice.args)},
           {"evidence", "unexpected_return (signature backend; not a reachability proof)"}
         ]
       )

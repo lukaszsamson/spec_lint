@@ -51,7 +51,7 @@ defmodule SpecLint.EvidenceTest do
       assert [%{label: :structured, present_in_contributing?: true, kind: :tuple} = component] =
                classification.components
 
-      assert component.descr_string == "{:error, :missing}"
+      assert C.to_string(component.descr) == "{:error, :missing}"
       assert classification.reasons == []
     end
 
@@ -242,7 +242,7 @@ defmodule SpecLint.EvidenceTest do
 
       assert %{tag_in_spec?: true, present_in_contributing?: false} = artefact
       assert %{tag_in_spec?: true, present_in_contributing?: true} = counted
-      assert counted.descr_string =~ ":b"
+      assert C.to_string(counted.descr) =~ ":b"
       assert {:subtraction_payload, 1} in classification.reasons
 
       # The same code-derived position one level down.

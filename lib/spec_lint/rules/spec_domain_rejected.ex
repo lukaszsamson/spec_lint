@@ -12,7 +12,7 @@ defmodule SpecLint.Rules.SpecDomainRejected do
 
   @behaviour SpecLint.Rule
 
-  alias SpecLint.{Compiler, Rule}
+  alias SpecLint.Rule
 
   @impl true
   @spec id() :: String.t()
@@ -49,10 +49,9 @@ defmodule SpecLint.Rules.SpecDomainRejected do
         evidence: :conflict,
         message: "the checker would warn on every call in this slice",
         details: [
-          {"spec", Rule.spec_string(name, slice.spec)},
-          {"slice", Rule.domain_string(slice.args)},
-          {"inferred domain",
-           "(" <> Enum.map_join(rel.inferred_domain, ", ", &Compiler.to_string/1) <> ")"},
+          {"spec", {:spec, name, slice.spec}},
+          {"slice", Rule.domain_text(slice.args)},
+          {"inferred domain", ["(", Rule.types_text(rel.inferred_domain), ")"]},
           {"disjoint positions", disjoint_string(disjoint)},
           {"evidence", "conflict (signature backend, #{Rule.translation_string(slice)})"}
         ],

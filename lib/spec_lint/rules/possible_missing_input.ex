@@ -64,7 +64,7 @@ defmodule SpecLint.Rules.PossibleMissingInput do
       evidence: :hint,
       message: "the implementation accepts inputs the spec does not declare",
       details: [
-        {"accepted outside the spec", Compiler.to_string(outside)},
+        {"accepted outside the spec", {:type, outside}},
         {"evidence", "hint (signature backend)"}
       ]
     )

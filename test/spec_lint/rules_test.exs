@@ -126,7 +126,7 @@ defmodule SpecLint.RulesTest do
     run = run!([Cases])
     status = issues(run, {Cases, :status, 1})
     assert [%Issue{rule: "SL002", evidence: :structured_possible} = issue] = status
-    assert {"inferred extra", ":timeout"} in issue.details
+    assert {"inferred extra", ":timeout"} in Issue.rendered_details(issue)
     refute issue.gate
 
     assert [%{evidence: :possible_domain_escape}] = issues(run, {Cases, :display, 1})
@@ -147,7 +147,7 @@ defmodule SpecLint.RulesTest do
     run = run!([Compare])
     assert [issue] = issues(run, {Compare, :rejected, 1})
     assert %Issue{rule: "SL003", evidence: :conflict} = issue
-    assert {"disjoint positions", "argument 1"} in issue.details
+    assert {"disjoint positions", "argument 1"} in Issue.rendered_details(issue)
     assert issue.gate
   end
 
@@ -176,7 +176,8 @@ defmodule SpecLint.RulesTest do
     assert [%{rule: "SL005", evidence: :hint, gate: false} = narrower] =
              issues(run, {Cases, :wide, 1})
 
-    assert {"never returned", _} = List.keyfind(narrower.details, "never returned", 0)
+    assert {"never returned", _} =
+             List.keyfind(Issue.rendered_details(narrower), "never returned", 0)
   end
 
   test "--except removes rules; SL007 cannot be requested" do

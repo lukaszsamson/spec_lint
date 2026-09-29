@@ -5,6 +5,46 @@ Date 2026-09-29. `DESIGN.md` is the authoritative design,
 Phase 4 follows the review of the Phase 3 implementation at `0cc9c50`;
 previous results below are historical and are superseded where noted.
 
+## Milestone 1: no type printing during classification
+
+The Absinthe profile (`bench/corpus/reports/phase4/absinthe.profile.md`)
+showed that more than 90 percent of the product run was spent printing
+types inside the evidence classifier. Classification now works on `Descr`
+terms only: `SpecLint.Evidence` components keep their `descr`, rule details
+stay unrendered until a reporter or `--explain` shows the finding, and
+`SpecLint.Run.execute/3` prints no type. The adapter printer returns the
+same strings as before but memoises literals and stops printing the
+complement form once it cannot be shorter. BEAM hashes are read before the
+analysis, and each reachability check runs in its own process, because the
+run process's heap (about 3.3 GB of translated bounds on Absinthe) made
+garbage collection dominate both.
+
+Fingerprint audit: `SpecLint.Compiler.canonical/1` was already structural
+and does not print. It is unchanged, so fingerprints, baselines and the
+baseline format version are unchanged; no migration is needed.
+
+Absinthe, `bench/absinthe_profile.exs`: `Run.execute/3` without rules (what
+the Phase 4 profile measured) went from 576-684 s (606 s re-measured on the
+same machine) to 59.3 s; with the default rules it takes 65-68 s, so the
+60-second target is met only without rules. The complete product run
+(`run_on_ebin.exs --ci --format json`) takes 109 s, against 345 s in Phase 3.
+The remaining cost is translation (about 31 s) and garbage collection of the
+retained results; JSON rendering in the run process varied from 1 s to 78 s
+between runs and was not investigated further.
+
+The fifteen-corpus replay (`bench/corpus/reports/m1/`) is complete for the
+first time since Phase 3. Its fourteen reports with a Phase 4 counterpart
+are byte-identical to it. Absinthe matches the Phase 3 flag-on report
+except for the earlier `stored signature clause` label, and its seven
+`parse/1` findings match the scoped Phase 4 run exactly: 4,204 compared
+slices, 63 findings, 9 gates before and after, every fingerprint unchanged.
+New tests: a stub adapter that cannot print gives identical classifications
+and runs, `Run.execute/3` prints zero types and rendering the fixture
+findings stays within a budget, the printer matches the previous
+implementation on 835 types, and Evidence and Compare import no printer.
+Validation: 329 tests, strict Credo, formatting, Dialyzer and the self CI
+check (282 slices, exit 0) pass.
+
 ## Phase 4: guard qualification and required-check failures
 
 The two defects in `PHASE_3_REVIEW.md` are fixed. Absence of compiler

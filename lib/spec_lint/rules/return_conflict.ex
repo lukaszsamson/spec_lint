@@ -75,7 +75,7 @@ defmodule SpecLint.Rules.ReturnConflict do
 
   @behaviour SpecLint.Rule
 
-  alias SpecLint.{Compiler, Rule}
+  alias SpecLint.Rule
 
   @impl true
   @spec id() :: String.t()
@@ -132,9 +132,9 @@ defmodule SpecLint.Rules.ReturnConflict do
       evidence: :conflict,
       message: "any normal return would be outside the spec",
       details: [
-        {"spec", Rule.spec_string(name, slice.spec)},
-        {"inferred return", Compiler.to_string(rel.applied_upper)},
-        {"slice", Rule.domain_string(slice.args)},
+        {"spec", {:spec, name, slice.spec}},
+        {"inferred return", {:type, rel.applied_upper}},
+        {"slice", Rule.domain_text(slice.args)},
         {"evidence", "conflict (signature backend, #{Rule.translation_string(slice)})"}
       ],
       prerequisites: Rule.sl001_prerequisites(slice)
@@ -157,9 +157,9 @@ defmodule SpecLint.Rules.ReturnConflict do
         message: "the clause matching this domain returns only values outside the spec",
         details:
           [
-            {"spec", Rule.spec_string(name, slice.spec)},
-            {"stored signature clause", "##{clause.index} " <> clause_text(contributing)},
-            {"slice", Rule.domain_string(slice.args)},
+            {"spec", {:spec, name, slice.spec}},
+            {"stored signature clause", ["##{clause.index} ", clause_text(contributing)]},
+            {"slice", Rule.domain_text(slice.args)},
             {"evidence",
              "clause_conflict (signature backend, #{containment_text(clause_local?)}, " <>
                "#{Rule.translation_string(slice)})"}
@@ -229,7 +229,7 @@ defmodule SpecLint.Rules.ReturnConflict do
   defp containment_text(false), do: "clause contained"
   defp containment_text(true), do: "clause contained in the spec lower bound"
 
-  defp clause_text(%{args: args, return: return}), do: Rule.clause_string({args, return})
+  defp clause_text(%{args: args, return: return}), do: Rule.clause_text({args, return})
 
   # clause_reachable: blocked when shadowed or when the compiler's type
   # checker flags the function's patterns or guards; unchecked when it

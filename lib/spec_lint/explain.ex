@@ -218,7 +218,7 @@ defmodule SpecLint.Explain do
     components =
       for component <- evidence.components do
         "    #{component.label}#{if component.present_in_contributing?, do: "", else: " (absent)"}" <>
-          " #{component.descr_string}\n"
+          " #{Compiler.to_string(component.descr)}\n"
       end
 
     [

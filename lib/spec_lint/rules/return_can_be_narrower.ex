@@ -11,7 +11,7 @@ defmodule SpecLint.Rules.ReturnCanBeNarrower do
 
   @behaviour SpecLint.Rule
 
-  alias SpecLint.{Compiler, Rule}
+  alias SpecLint.Rule
 
   @impl true
   @spec id() :: String.t()
@@ -50,9 +50,9 @@ defmodule SpecLint.Rules.ReturnCanBeNarrower do
         evidence: :hint,
         message: "the spec return could be narrower",
         details: [
-          {"spec", Rule.spec_string(name, slice.spec)},
-          {"inferred return", Compiler.to_string(rel.applied_upper)},
-          {"never returned", Compiler.to_string(rel.missing)},
+          {"spec", {:spec, name, slice.spec}},
+          {"inferred return", {:type, rel.applied_upper}},
+          {"never returned", {:type, rel.missing}},
           {"evidence", "hint (signature backend, #{Rule.translation_string(slice)})"}
         ]
       )

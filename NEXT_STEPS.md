@@ -15,12 +15,14 @@ Phase 4 delivery and validation are recorded in `PHASE_4_PLAN.md` and
    the checker API. Local guard witnesses reduce false gates but do not prove
    normal return or establish that mapping. Do not infer a precise mapping
    from clause indices.
-4. Treat Absinthe as a performance regression benchmark: its existing full
-   product scan previously took 345 seconds; the current full attempt was
-   stopped after approximately 15 minutes without a report. The separate expanded experiment
-   is much larger. Isolate translation, type printing and serialization costs
-   before designing bounded expansion or caching. Preserve conservative
-   lower/upper bounds and loss records if expansion is capped.
+4. Treat Absinthe as a performance regression benchmark. Milestone 1
+   removed type printing from classification: `Run.execute/3` takes 59 s
+   without rules and 65-68 s with the default rules, and the full product
+   run 109 s (`bench/corpus/reports/m1/`). The remaining cost is translation
+   and garbage collection of about 3.3 GB of retained translated bounds.
+   Sharing translated named types across slices is the next lever. Preserve
+   conservative lower/upper bounds and loss records if expansion is capped
+   or memoised (loss paths are relative to the slice).
 5. Keep valid spec contradictions eligible regardless of `@doc false` or
    constructor naming. Use explicit baselines for accepted debt; documentation
    visibility does not change the declared contract. Keep new corpora for a

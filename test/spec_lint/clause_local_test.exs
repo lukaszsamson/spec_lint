@@ -153,7 +153,10 @@ defmodule SpecLint.ClauseLocalTest do
 
       assert Policy.explain(after_, @on) =~ "gates"
 
-      assert Enum.find_value(after_.details, &(elem(&1, 0) == "evidence" && elem(&1, 1))) =~
+      assert Enum.find_value(
+               Issue.rendered_details(after_),
+               &(elem(&1, 0) == "evidence" && elem(&1, 1))
+             ) =~
                "clause contained in the spec lower bound"
 
       # The fingerprint does not depend on the setting, so a baseline entry
@@ -375,7 +378,7 @@ defmodule SpecLint.ClauseLocalTest do
         assert Issue.blocked(issue) -- [:no_arrow_polarity_argument] == [:clause_reachable]
         assert [line] = issue.data.pattern_diagnostic_lines
         assert is_integer(line)
-        assert {"compiler pattern diagnostics", "lines #{line}"} in issue.details
+        assert {"compiler pattern diagnostics", "lines #{line}"} in Issue.rendered_details(issue)
       end
 
       # Runtime: no input reaches the dead clause. :b falls through to the
@@ -392,7 +395,11 @@ defmodule SpecLint.ClauseLocalTest do
       index = SpecLint.ClauseLocalProbe.Index
       assert [issue] = sl001(on, {index, :idx, 1})
       assert %Issue{evidence: :clause_conflict, clause: 0, gate: true} = issue
-      assert {"stored signature clause", "#0 (:b) -> {:error, :b}"} in issue.details
+
+      assert {"stored signature clause", "#0 (:b) -> {:error, :b}"} in Issue.rendered_details(
+               issue
+             )
+
       refute Map.has_key?(issue.data, :pattern_diagnostic_lines)
 
       # A true positive: the in-spec :b returns {:error, :b}; control :c.
