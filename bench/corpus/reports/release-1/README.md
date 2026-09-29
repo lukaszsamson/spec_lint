@@ -130,7 +130,12 @@ measurement): per corpus, wall = max(5 s, 1.5 x the maximum of the three
 run-1 measurements, rounded up to 5 s); peak RSS = max(256 MiB, 1.3 x
 that maximum, rounded up to 64 MiB). Both runs of every corpus under every
 adapter are within budget. The budgets are for this machine class; a
-slower CI machine needs its own measurement.
+slower CI machine needs its own measurement. **They are post-hoc
+regression thresholds**: derived from run 1, so run 1 is within them by
+construction and run 2 was the only independent check here (the committed
+run-1 `*.resources.json` record `"budget": null`, measured before the
+budgets existed). Release campaign 2 (`../release-2/`) is measured against
+them as frozen.
 
 ## Resource failures
 
@@ -218,3 +223,34 @@ MIX_ENV=test mix run bench/evaluation/struct_defaults.exs -- --out OUT/REV/struc
 The reports were written outside the worktree (so provenance saw it
 clean) and copied here; `fixtures*.json` had the tool build path replaced
 by `$TOOL_BUILD` afterwards (a path string only).
+
+## Milestone 5 review notes
+
+- **Refutation** (`refutation.json`): each of the 3 gated functions (27
+  gates) survived two independent refutation attempts: 0 gated false
+  positives.
+- **Detection** against the frozen inventory: `detection_v1.json`
+  (version 1: 3 gated, 7 reported, 7 silent of 17 on every adapter) and
+  `detection_v2.json` (version 2, which adds `Ash.Query.apply_to/3` as
+  F18: 3, 8 and 7 of 18). Campaign 1 had committed no detection output;
+  both are computed from the reports above, with every report's hash and
+  provenance revision.
+- **The frozen commit swept in another agent's draft.** `06b7496` also
+  committed the installation agent's in-progress `README.md` (the 1.19.4
+  matrix correction and a block of unfilled release placeholders
+  addressed to "the committing agent"), which its message does not
+  mention, and the README then cited `test/integration/release/` before
+  those tests were committed. `README.md` is outside `source_sha256`, so
+  no report here is affected. The tests were committed in `08d96f9` and
+  the placeholders filled in the release verdict commit; later commits
+  staged explicit paths only.
+- **Tooling.** The review found that `run.sh` skipped budget checks
+  silently for a missing budgets file or corpus entry and could keep the
+  report of a VM killed after its write, and that `gate_diff.sh`,
+  `compare_replay.sh`, `compare_lines.sh` and `struct_defaults.exs`
+  accepted missing reports. None of this affected this campaign (every
+  report is complete, every corpus has a budget, no run was killed); all
+  are fixed in `0cd5d11`, and campaign 2 replays with the fixed tooling.
+- **Test counts.** The 439/439/442 above exclude the 18 installation and
+  upgrade tests, which were not committed then; with them, and with a
+  1.19 compiler named, campaign 2's frozen tree passes 468/468/471.

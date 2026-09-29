@@ -1,0 +1,260 @@
+{
+  "artifacts": [
+    {
+      "beam_count": 81,
+      "path": "$BUILD/oban/lib/oban/ebin",
+      "sha256": "97421ee0661995605e7f62bf6230a2506f334eae9accfe124ec0d0666cc047ba"
+    },
+    {
+      "beam_count": 50,
+      "path": "$BUILD/oban/lib/benchee/ebin",
+      "sha256": "001cd6747b742664d1bc79927dcc224c17ff737835c28f3a9aac6a80ae003642"
+    },
+    {
+      "beam_count": 3,
+      "path": "$BUILD/oban/lib/bunt/ebin",
+      "sha256": "36bf8921a29871f51372f6ddf75c0a11b7b16eed6189cb2b519ac63af29f6c05"
+    },
+    {
+      "beam_count": 3,
+      "path": "$BUILD/oban/lib/cc_precompiler/ebin",
+      "sha256": "89f9c7ca2ad0d812e5c8e10e8dd4e34f0ed80ed86eae5c69a4535ff2ddad1e35"
+    },
+    {
+      "beam_count": 269,
+      "path": "$BUILD/oban/lib/credo/ebin",
+      "sha256": "c4d7fc5540dfe411527bda7fb242b5b062cb0d928fe6552345a0b7a89e9d3ed4"
+    },
+    {
+      "beam_count": 25,
+      "path": "$BUILD/oban/lib/db_connection/ebin",
+      "sha256": "878dd29f26b13752ee366e9c725f88531d6aedc6ac690a82c9898f361a2e626f"
+    },
+    {
+      "beam_count": 7,
+      "path": "$BUILD/oban/lib/decimal/ebin",
+      "sha256": "3ba08d7c102f63d5d7b2bb3698aa96c93ef1fb9be6a88d5dd265f378ce9be379"
+    },
+    {
+      "beam_count": 5,
+      "path": "$BUILD/oban/lib/deep_merge/ebin",
+      "sha256": "277982ea0da8253178a43de70e017887a40b81edcaea7bb44b92f13eec8be176"
+    },
+    {
+      "beam_count": 70,
+      "path": "$BUILD/oban/lib/dialyxir/ebin",
+      "sha256": "cd4793bb9a753dff9064de6e1aff53b60467ac17a865381630de1d2c2b154bee"
+    },
+    {
+      "beam_count": 67,
+      "path": "$BUILD/oban/lib/earmark_parser/ebin",
+      "sha256": "52b551f03dd57baf3bc665ae5cac3dd404438b00b1b34b24ca960a0ca590d81d"
+    },
+    {
+      "beam_count": 100,
+      "path": "$BUILD/oban/lib/ecto/ebin",
+      "sha256": "b51d89d0ff5167423cecf8a04bd31aa3588f06e55547ff8c3f885243dd102bf3"
+    },
+    {
+      "beam_count": 31,
+      "path": "$BUILD/oban/lib/ecto_sql/ebin",
+      "sha256": "3015c6cdd4a42a7aad215a0df01143e1c32707c452a81197144b0194be725b8f"
+    },
+    {
+      "beam_count": 5,
+      "path": "$BUILD/oban/lib/ecto_sqlite3/ebin",
+      "sha256": "557f74cbc034bd8a5b69d88747689ad05b4b82fb34a3469a199dfc7bf9ae3935"
+    },
+    {
+      "beam_count": 8,
+      "path": "$BUILD/oban/lib/elixir_make/ebin",
+      "sha256": "0ae36d0319355036fae60d844ef3706474f587315f04943ba7725b4f5705aa65"
+    },
+    {
+      "beam_count": 3,
+      "path": "$BUILD/oban/lib/erlex/ebin",
+      "sha256": "0bca56b957aafcbbcc33962ba175f5bbe5cc79bed480752aff7d3a3a6436ad4c"
+    },
+    {
+      "beam_count": 35,
+      "path": "$BUILD/oban/lib/ex_doc/ebin",
+      "sha256": "c4f8eed7dc59a0cbff40b96d535d553c808f0dc648a51b046d8185095e7d51c9"
+    },
+    {
+      "beam_count": 15,
+      "path": "$BUILD/oban/lib/exqlite/ebin",
+      "sha256": "6e09bc6b25c6355df22e5e8ca9734849e0d923302bf344a86eb01747d8428bfc"
+    },
+    {
+      "beam_count": 7,
+      "path": "$BUILD/oban/lib/file_system/ebin",
+      "sha256": "c0a413b598a98ede49c71cba73661ac179f22adf5532f609e692b0895a50c708"
+    },
+    {
+      "beam_count": 15,
+      "path": "$BUILD/oban/lib/finch/ebin",
+      "sha256": "b993de7b04cc29b4eecf1b4579d5c62347739a48ef6485d598e6076dd0effb77"
+    },
+    {
+      "beam_count": 5,
+      "path": "$BUILD/oban/lib/glob_ex/ebin",
+      "sha256": "6616b0f65c2824b8d1eda1b889434587d334bdf993906325a5d7cd4c3d23479f"
+    },
+    {
+      "beam_count": 4,
+      "path": "$BUILD/oban/lib/hpax/ebin",
+      "sha256": "cc8d65d9e617ccbf087bcddfb02dfc5dc7ce0390c944a176992ec9c9a9ad64e9"
+    },
+    {
+      "beam_count": 61,
+      "path": "$BUILD/oban/lib/igniter/ebin",
+      "sha256": "7726942fb59b25e2ab154799a76ee0bc4d6ccdae73f1f181f1a8366d9080c761"
+    },
+    {
+      "beam_count": 28,
+      "path": "$BUILD/oban/lib/jason/ebin",
+      "sha256": "0432ad2d907f7ae722026d2ff612cb2f9552d4654a9cdd09203d7b93d7ba6cf8"
+    },
+    {
+      "beam_count": 15,
+      "path": "$BUILD/oban/lib/makeup/ebin",
+      "sha256": "cdf72a6410d84b827efc6b5dc3673e00e6b17467638d1074e8ebdb0e2c7c5df6"
+    },
+    {
+      "beam_count": 3,
+      "path": "$BUILD/oban/lib/makeup_diff/ebin",
+      "sha256": "557abb36aca9e32abe02864a41e5a034648760abd58c9e57a0f645f433aa464c"
+    },
+    {
+      "beam_count": 6,
+      "path": "$BUILD/oban/lib/makeup_elixir/ebin",
+      "sha256": "d1eab896d7c29fbfa450aeb9e75747692ef5e102334414e7988281a2ab311972"
+    },
+    {
+      "beam_count": 4,
+      "path": "$BUILD/oban/lib/makeup_erlang/ebin",
+      "sha256": "1ace0d8ced05e1f9618e4b0592a2410f42c7d18714800c6a7801de22798a14fc"
+    },
+    {
+      "beam_count": 1,
+      "path": "$BUILD/oban/lib/mime/ebin",
+      "sha256": "678dfd489ac3b615d77046628403f072232e9400428caee1d2dac8ccf42c4174"
+    },
+    {
+      "beam_count": 21,
+      "path": "$BUILD/oban/lib/mint/ebin",
+      "sha256": "c69d40acc91c9c70980de907f1f8d4101c1295f810bc7ce39ce3b5f485b5913b"
+    },
+    {
+      "beam_count": 27,
+      "path": "$BUILD/oban/lib/myxql/ebin",
+      "sha256": "9017cba1fa460fd56a0dc253042e7d57fdae35c9355596875914d3383ff518e6"
+    },
+    {
+      "beam_count": 3,
+      "path": "$BUILD/oban/lib/nimble_options/ebin",
+      "sha256": "03e3d1523837d7bf31dc71fa485163351e3738d5ede3c73beaced8dca142e229"
+    },
+    {
+      "beam_count": 4,
+      "path": "$BUILD/oban/lib/nimble_parsec/ebin",
+      "sha256": "5a220b8fac2e90e8de25d3840fb49b5c12af909fac81de90ed57a086c77fd805"
+    },
+    {
+      "beam_count": 2,
+      "path": "$BUILD/oban/lib/nimble_pool/ebin",
+      "sha256": "f88230d583ec02ea94e657743eb17138632a2e5a0ffa9df9e8a9e93409f3b2eb"
+    },
+    {
+      "beam_count": 81,
+      "path": "$BUILD/oban/lib/oban/ebin",
+      "sha256": "97421ee0661995605e7f62bf6230a2506f334eae9accfe124ec0d0666cc047ba"
+    },
+    {
+      "beam_count": 20,
+      "path": "$BUILD/oban/lib/owl/ebin",
+      "sha256": "096d97adc7bf8d39935ec8dcd8d58012caa19e4fcdaedd54269f16d18125e048"
+    },
+    {
+      "beam_count": 92,
+      "path": "$BUILD/oban/lib/postgrex/ebin",
+      "sha256": "14c91058809f2fa480e8bda393e85ffa4f3ba6078eaa78ac3102ace6d283750e"
+    },
+    {
+      "beam_count": 23,
+      "path": "$BUILD/oban/lib/req/ebin",
+      "sha256": "2a3743409421a0aa8b49dc4f0791c7e589619f6b23295ee5b82c242e83176e88"
+    },
+    {
+      "beam_count": 17,
+      "path": "$BUILD/oban/lib/rewrite/ebin",
+      "sha256": "7099cc1e48fedb64be68904f03b92b24ecab7aa1dddbb7e4624769b9a1121bc8"
+    },
+    {
+      "beam_count": 20,
+      "path": "$BUILD/oban/lib/sourceror/ebin",
+      "sha256": "6f6703890e80ca097752fbbc7036b2c90725e3976a4b33a0f13e97ea9b321c23"
+    },
+    {
+      "beam_count": 9,
+      "path": "$BUILD/oban/lib/spitfire/ebin",
+      "sha256": "23e782b63bffd65c7bf13580f42127f31ee1d9c04db491283c28bd558b70e412"
+    },
+    {
+      "beam_count": 4,
+      "path": "$BUILD/oban/lib/statistex/ebin",
+      "sha256": "5a2a8bdb6eda4fd2b08d1891ebacbc0b61ad58b9c478254b598e1719916238eb"
+    },
+    {
+      "beam_count": 9,
+      "path": "$BUILD/oban/lib/stream_data/ebin",
+      "sha256": "1050abbc608248d19e091f435d71adebdd08943b4316b3f7d3fccbe73a7e3d5b"
+    },
+    {
+      "beam_count": 7,
+      "path": "$BUILD/oban/lib/telemetry/ebin",
+      "sha256": "6e2dee243654e8783025423a77d406593fb4b6635c5401b66dd1dc6cc041edf7"
+    },
+    {
+      "beam_count": 1,
+      "path": "$BUILD/oban/lib/text_diff/ebin",
+      "sha256": "abdf6a70f6b2109d9279a9cb609b9ecd5da1590d9de31e283d4f25e15f0b74bf"
+    },
+    {
+      "beam_count": 18,
+      "path": "$BUILD/oban/lib/tz/ebin",
+      "sha256": "45b4aa28b55ac612081c81fd555c93082a4c760ea1b40faaeca0ccd6a0826462"
+    }
+  ],
+  "corpus": "oban",
+  "corpus_manifest_sha256": "a0070da27d23d6763e7593c49aad975bb1803169ea45b98479412eec56e09824",
+  "schema": "spec_lint.corpus_provenance/1",
+  "source": {
+    "dirty": false,
+    "lockfile_sha256": "f243a66a968755e9d4b2192dbc402d0a8f27920293a9c7ffc42e59f822af6f18",
+    "revision": "23fa8176b3586ca84f5859793739fad798e69d2b"
+  },
+  "tool": {
+    "dirty": false,
+    "lockfile_sha256": "a23fa18ff765b9ddc4f310975ca588771fabb25d06b9fc50267b620bf8af026b",
+    "revision": "58fe1ddf34d23d22d3048cceb09a2d60e8d9342e",
+    "source_sha256": "26c90fa829b7277e88a6d8c26bcb4a67acc5539ae5c3c51c4a969dd61948a9eb"
+  },
+  "toolchain": {
+    "compiler": {
+      "dirty": false,
+      "patch_sha256": null,
+      "revision": "759443e724f55bf58e71c0603644e99058918d52"
+    },
+    "elixir": "Elixir 1.20.4 (compiled with Erlang/OTP 29)",
+    "identity": {
+      "code_digest": "cf42510c62e2725d02769af5996c808a8b597351db0d0dceb52ebf8a88febcb8",
+      "exck_digest": "28bc01cf3075064bdebb88faf653a8ca8decb87c8c1bbd8e24c0e2e28a596d07",
+      "modules": 447,
+      "otp_version": "28.5.0.1",
+      "revision": "759443e"
+    },
+    "loaded_module_types_beam": "$ELIXIR/bin/../lib/elixir/ebin/Elixir.Module.Types.beam",
+    "loaded_module_types_sha256": "4f940d51f36dc2e32dbda99765a598d652c978c0ac2b531d168108b1c0d2f7c6"
+  }
+}

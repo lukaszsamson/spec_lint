@@ -1,0 +1,1446 @@
+{
+  "inventory_version": 2,
+  "schema": "spec_lint/evaluation_detection",
+  "sets": {
+    "1.20.4+759443e": {
+      "all": {
+        "denominator": 18,
+        "gated": 3,
+        "gated_recall": "3/18",
+        "reported": 8,
+        "reported_recall": "11/18",
+        "silent": 7
+      },
+      "by_category": {
+        "return_value": {
+          "denominator": 15,
+          "gated": 2,
+          "gated_recall": "2/15",
+          "reported": 8,
+          "reported_recall": "10/15",
+          "silent": 5
+        },
+        "struct_default": {
+          "denominator": 1,
+          "gated": 1,
+          "gated_recall": "1/1",
+          "reported": 0,
+          "reported_recall": "1/1",
+          "silent": 0
+        },
+        "struct_field_from_input": {
+          "denominator": 2,
+          "gated": 0,
+          "gated_recall": "0/2",
+          "reported": 0,
+          "reported_recall": "0/2",
+          "silent": 2
+        }
+      },
+      "dir": "bench/corpus/reports/release-2/1.20.4",
+      "families": [
+        {
+          "category": "return_value",
+          "class": "silent",
+          "findings": [],
+          "id": "F01-decimal-compare-nan",
+          "matched": []
+        },
+        {
+          "category": "return_value",
+          "class": "silent",
+          "findings": [],
+          "id": "F02-plug-query-decode-initial",
+          "matched": []
+        },
+        {
+          "category": "struct_field_from_input",
+          "class": "silent",
+          "findings": [],
+          "id": "F03-plug-merge-private-keys",
+          "matched": []
+        },
+        {
+          "category": "return_value",
+          "class": "silent",
+          "findings": [],
+          "id": "F04-ecto-changeset-nil-data",
+          "matched": []
+        },
+        {
+          "category": "return_value",
+          "class": "reported",
+          "findings": [
+            "Ecto.Query.Builder.Join.escape/3 SL002 possible_domain_escape gate=false"
+          ],
+          "id": "F05-ecto-join-escape-stale",
+          "matched": [
+            {
+              "clause": null,
+              "evidence": "possible_domain_escape",
+              "extra": [
+                "inferred extra: not ({atom(),\n atom() or binary() or float() or integer() or list(term()) or\n   {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()},\n atom() or binary() or float() or integer() or list(term()) or\n   {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()}, list(term())})"
+              ],
+              "fingerprint": "sha256:983bc31bc42393f8b09613d57f7dfc7398d0a3366b092d0863c17600415db5f0",
+              "gate": false,
+              "rule": "SL002",
+              "slice": 0,
+              "subject": "Ecto.Query.Builder.Join.escape/3"
+            }
+          ]
+        },
+        {
+          "category": "return_value",
+          "class": "reported",
+          "findings": [
+            "Ecto.Query.Builder.quoted_type/2 SL002 possible_domain_escape gate=false"
+          ],
+          "id": "F06-ecto-quoted-type-stale",
+          "matched": [
+            {
+              "clause": null,
+              "evidence": "possible_domain_escape",
+              "extra": [
+                "inferred extra: not (:any or :binary or :binary_id or :bitstring or :boolean or :date or :decimal or :duration or\n  :float or :id or :integer or :map or :naive_datetime or :naive_datetime_usec or :string or :time or\n  :time_usec or :utc_datetime or :utc_datetime_usec or {integer(),\n atom() or binary() or float() or integer() or list(term()) or\n   {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()}} or {:array or :map, term()} or {:in or :try, term()} or {:supertype, :datetime})"
+              ],
+              "fingerprint": "sha256:d0d4e7f0f3c005aac8eee1946e21e7a8d84c305ad4718a4f9c8492807c0e8c85",
+              "gate": false,
+              "rule": "SL002",
+              "slice": 0,
+              "subject": "Ecto.Query.Builder.quoted_type/2"
+            }
+          ]
+        },
+        {
+          "category": "return_value",
+          "class": "silent",
+          "findings": [],
+          "id": "F07-ecto-assoc-query-rows",
+          "matched": []
+        },
+        {
+          "category": "return_value",
+          "class": "silent",
+          "findings": [],
+          "id": "F08-ecto-preloader-query-fun",
+          "matched": []
+        },
+        {
+          "category": "return_value",
+          "class": "gated",
+          "findings": [
+            "Oban.Registry.via/3 SL001 clause_conflict gate=true"
+          ],
+          "id": "F09-oban-registry-via-value",
+          "matched": [
+            {
+              "clause": 1,
+              "evidence": "clause_conflict",
+              "extra": [
+                "stored signature clause: #1 (term(), term(), not nil) -> dynamic({:via, Registry, {Oban.Registry, term(), not nil}})"
+              ],
+              "fingerprint": "sha256:517ab74f0b8034ae2264161f3a441f7fd6f1b86c0ab705bd29b682940fd44ee2",
+              "gate": true,
+              "rule": "SL001",
+              "slice": 0,
+              "subject": "Oban.Registry.via/3"
+            }
+          ]
+        },
+        {
+          "category": "return_value",
+          "class": "gated",
+          "findings": [
+            "Ash.Page.page_opts/1 SL001 clause_conflict gate=true"
+          ],
+          "id": "F10-ash-page-opts-falsy",
+          "matched": [
+            {
+              "clause": 0,
+              "evidence": "clause_conflict",
+              "extra": [
+                "stored signature clause: #0 (false or nil) -> dynamic({:ok, false or nil})"
+              ],
+              "fingerprint": "sha256:e8bb15ebe3aa48e257a73320a1c80861d00fabfd5d996d7eec9f24bed165073d",
+              "gate": true,
+              "rule": "SL001",
+              "slice": 0,
+              "subject": "Ash.Page.page_opts/1"
+            }
+          ]
+        },
+        {
+          "category": "return_value",
+          "class": "reported",
+          "findings": [
+            "Ash.load/3 SL002 possible_domain_escape gate=false"
+          ],
+          "id": "F11-ash-load-ok",
+          "matched": [
+            {
+              "clause": null,
+              "evidence": "possible_domain_escape",
+              "extra": [
+                "inferred extra: not ({:error, term()} or {:ok,\n %{atom() => term(), __struct__: atom()} or nil or list(%{atom() => term(), __struct__: atom()})})"
+              ],
+              "fingerprint": "sha256:ea6fff586ce12e676ade0f64d838168ba5f9aadbc41f12501d131bf3d7957a1a",
+              "gate": false,
+              "rule": "SL002",
+              "slice": 0,
+              "subject": "Ash.load/3"
+            }
+          ]
+        },
+        {
+          "category": "return_value",
+          "class": "reported",
+          "findings": [
+            "Ash.Test.refute_has_error/3 SL002 possible_domain_escape gate=false"
+          ],
+          "id": "F12-ash-refute-has-error-ok",
+          "matched": [
+            {
+              "clause": null,
+              "evidence": "possible_domain_escape",
+              "extra": [
+                "inferred extra: not (%{\n  atom() => term(),\n  __exception__: true,\n  __struct__: atom(),\n  bread_crumbs: list(binary()),\n  class: :forbidden or :framework or :invalid or :unknown,\n  context: map(),\n  stacktrace: %Splode.Stacktrace{stacktrace: list(term())} or nil,\n  vars: list({atom(), term()})\n})"
+              ],
+              "fingerprint": "sha256:07e1d9432119b6501e13552407368853f084420fc4a8144957d00e0328028c0c",
+              "gate": false,
+              "rule": "SL002",
+              "slice": 0,
+              "subject": "Ash.Test.refute_has_error/3"
+            }
+          ]
+        },
+        {
+          "category": "return_value",
+          "class": "reported",
+          "findings": [
+            "Ash.read/2 SL002 possible_domain_escape gate=false",
+            "Ash.read_first/2 SL002 possible_domain_escape gate=false",
+            "Ash.read_one/2 SL002 possible_domain_escape gate=false"
+          ],
+          "id": "F13-ash-read-return-query",
+          "matched": [
+            {
+              "clause": null,
+              "evidence": "possible_domain_escape",
+              "extra": [
+                "inferred extra: {:ok, term(), term()}"
+              ],
+              "fingerprint": "sha256:12be8b3e7eacac7d8402620a4d331e307b121d665b7320b87095d905530b0093",
+              "gate": false,
+              "rule": "SL002",
+              "slice": 0,
+              "subject": "Ash.read/2"
+            },
+            {
+              "clause": null,
+              "evidence": "possible_domain_escape",
+              "extra": [
+                "inferred extra: {:ok, term(), term()}"
+              ],
+              "fingerprint": "sha256:e354e22f110b2bdcfc511b7285bb6f4952615e5e60e8e9bd244a4cd19f5e4bdd",
+              "gate": false,
+              "rule": "SL002",
+              "slice": 0,
+              "subject": "Ash.read_first/2"
+            },
+            {
+              "clause": null,
+              "evidence": "possible_domain_escape",
+              "extra": [
+                "inferred extra: {:ok, term(), term()}"
+              ],
+              "fingerprint": "sha256:777c93c775d3164b32393c414611d0bc8aff5e1f95c11087152f9bf7984b5c03",
+              "gate": false,
+              "rule": "SL002",
+              "slice": 0,
+              "subject": "Ash.read_one/2"
+            }
+          ]
+        },
+        {
+          "category": "return_value",
+          "class": "reported",
+          "findings": [
+            "Ash.page/2 SL002 possible_domain_escape gate=false"
+          ],
+          "id": "F14-ash-page-keyset-integer",
+          "matched": [
+            {
+              "clause": null,
+              "evidence": "possible_domain_escape",
+              "extra": [
+                "inferred extra: {:ok, term(), term()} or {:error, binary()}"
+              ],
+              "fingerprint": "sha256:4a1291e99f48e87d624755c55ea16be2cd21345c73840a079b75d648fe73d069",
+              "gate": false,
+              "rule": "SL002",
+              "slice": 0,
+              "subject": "Ash.page/2"
+            }
+          ]
+        },
+        {
+          "category": "return_value",
+          "class": "reported",
+          "findings": [
+            "Ash.Policy.Policy.solve/1 SL002 possible_domain_escape gate=false"
+          ],
+          "id": "F15-ash-policy-solve-unsatisfiable",
+          "matched": [
+            {
+              "clause": null,
+              "evidence": "possible_domain_escape",
+              "extra": [
+                "inferred extra: {:error, %{..., solver_statement: term()}, :unsatisfiable}"
+              ],
+              "fingerprint": "sha256:19abcf6e846025491fd7a977c4ad5f31141c82dd6e95e0d8a525506786dca46d",
+              "gate": false,
+              "rule": "SL002",
+              "slice": 0,
+              "subject": "Ash.Policy.Policy.solve/1"
+            }
+          ]
+        },
+        {
+          "category": "struct_default",
+          "class": "gated",
+          "findings": [
+            "Absinthe.Blueprint.Input.parse/1 SL001 clause_conflict gate=true x7"
+          ],
+          "id": "F16-absinthe-input-parse-source-location",
+          "matched": [
+            {
+              "clause": 1,
+              "evidence": "clause_conflict",
+              "extra": [
+                "stored signature clause: #1 (integer()) -> dynamic(%Absinthe.Blueprint.Input.Integer{\n  value: integer(),\n  source_location: nil,\n  flags: empty_map(),\n  schema_node: nil,\n  errors: empty_list()\n})"
+              ],
+              "fingerprint": "sha256:01a369677f4311488c7b2618a1b04a7032fea1ec87d7fe69e8ebd740f239fe20",
+              "gate": true,
+              "rule": "SL001",
+              "slice": 0,
+              "subject": "Absinthe.Blueprint.Input.parse/1"
+            },
+            {
+              "clause": 2,
+              "evidence": "clause_conflict",
+              "extra": [
+                "stored signature clause: #2 (float()) -> dynamic(%Absinthe.Blueprint.Input.Float{\n  value: float(),\n  source_location: nil,\n  flags: empty_map(),\n  schema_node: nil,\n  errors: empty_list()\n})"
+              ],
+              "fingerprint": "sha256:bb6ae41172269b35a782f3c263a5ed3d1885f14f92a770e2c34f869e8b515ef6",
+              "gate": true,
+              "rule": "SL001",
+              "slice": 0,
+              "subject": "Absinthe.Blueprint.Input.parse/1"
+            },
+            {
+              "clause": 3,
+              "evidence": "clause_conflict",
+              "extra": [
+                "stored signature clause: #3 (nil) -> %Absinthe.Blueprint.Input.Null{\n  source_location: nil,\n  flags: empty_map(),\n  schema_node: nil,\n  errors: empty_list()\n}"
+              ],
+              "fingerprint": "sha256:98ac67c13899a9a8f8f30fa5e3a6d37b738a808e067f6442b01adb7a537d3b87",
+              "gate": true,
+              "rule": "SL001",
+              "slice": 0,
+              "subject": "Absinthe.Blueprint.Input.parse/1"
+            },
+            {
+              "clause": 4,
+              "evidence": "clause_conflict",
+              "extra": [
+                "stored signature clause: #4 (binary()) -> dynamic(%Absinthe.Blueprint.Input.String{\n  value: binary(),\n  source_location: nil,\n  flags: empty_map(),\n  schema_node: nil,\n  errors: empty_list()\n})"
+              ],
+              "fingerprint": "sha256:a56c9c1af998f7cb46c7c0027eee2628b90d8b96e94b31267d0a8c14c16d6b5a",
+              "gate": true,
+              "rule": "SL001",
+              "slice": 0,
+              "subject": "Absinthe.Blueprint.Input.parse/1"
+            },
+            {
+              "clause": 5,
+              "evidence": "clause_conflict",
+              "extra": [
+                "stored signature clause: #5 (boolean()) -> dynamic(%Absinthe.Blueprint.Input.Boolean{\n  value: boolean(),\n  source_location: nil,\n  flags: empty_map(),\n  schema_node: nil,\n  errors: empty_list()\n})"
+              ],
+              "fingerprint": "sha256:011e9bc9aaae28d7fbbeb72600694e58e4dfa552b9a4d696544dc7dd559c0129",
+              "gate": true,
+              "rule": "SL001",
+              "slice": 0,
+              "subject": "Absinthe.Blueprint.Input.parse/1"
+            },
+            {
+              "clause": 6,
+              "evidence": "clause_conflict",
+              "extra": [
+                "stored signature clause: #6 (empty_list() or non_empty_list(term(), term())) -> dynamic(%Absinthe.Blueprint.Input.List{\n  source_location: nil,\n  flags: empty_map(),\n  schema_node: nil,\n  errors: empty_list()\n})"
+              ],
+              "fingerprint": "sha256:e4fe4386395cdc7cc09f1de09c9faaa7c7569b78691bb77c3edfcf163519dd8a",
+              "gate": true,
+              "rule": "SL001",
+              "slice": 0,
+              "subject": "Absinthe.Blueprint.Input.parse/1"
+            },
+            {
+              "clause": 7,
+              "evidence": "clause_conflict",
+              "extra": [
+                "stored signature clause: #7 (non_struct_map()) -> dynamic(%Absinthe.Blueprint.Input.Object{\n  source_location: nil,\n  flags: empty_map(),\n  schema_node: nil,\n  errors: empty_list()\n})"
+              ],
+              "fingerprint": "sha256:94f82aedc814719ee5e70ac0cf493cc97c0a71b89cedc3bef60193dbede44fd8",
+              "gate": true,
+              "rule": "SL001",
+              "slice": 0,
+              "subject": "Absinthe.Blueprint.Input.parse/1"
+            }
+          ]
+        },
+        {
+          "category": "struct_field_from_input",
+          "class": "silent",
+          "findings": [],
+          "id": "F17-req-response-new-status",
+          "matched": []
+        },
+        {
+          "category": "return_value",
+          "class": "reported",
+          "findings": [
+            "Ash.Query.apply_to/3 SL002 possible_domain_escape gate=false"
+          ],
+          "id": "F18-ash-query-apply-to-error",
+          "matched": [
+            {
+              "clause": null,
+              "evidence": "possible_domain_escape",
+              "extra": [
+                "inferred extra: {:error, term()}"
+              ],
+              "fingerprint": "sha256:8a06f0313c1bbf9c925bf86b4e095dfec1c0a96b795cf454c9813d3af3f54710",
+              "gate": false,
+              "rule": "SL002",
+              "slice": 0,
+              "subject": "Ash.Query.apply_to/3"
+            }
+          ]
+        }
+      ],
+      "reports": [
+        {
+          "corpus": "absinthe",
+          "path": "bench/corpus/reports/release-2/1.20.4/absinthe.spec_lint.json",
+          "revision": "1372ceb5f8226175050a38821601cd57738c177b",
+          "sha256": "sha256:08b70584fc194b5a59edc4d44aec83735f254cba9386a76096dbea97841e8176"
+        },
+        {
+          "corpus": "ash",
+          "path": "bench/corpus/reports/release-2/1.20.4/ash.spec_lint.json",
+          "revision": "164a4c0d0ef7724c5fd2153876c2cf90cd938863",
+          "sha256": "sha256:df2c042f0c991e655b47b26cba7fc10bc8d4cbd6f5877da7a80b490ecfde102e"
+        },
+        {
+          "corpus": "decimal",
+          "path": "bench/corpus/reports/release-2/1.20.4/decimal.spec_lint.json",
+          "revision": "92a28e6b9a103f2b52a22b3f772f7a2a34b7b1d5",
+          "sha256": "sha256:3de4bdf599538c8dbf6e220a4b7f5ffa4f047b300fee735a6f4db2143815bcbe"
+        },
+        {
+          "corpus": "ecto",
+          "path": "bench/corpus/reports/release-2/1.20.4/ecto.spec_lint.json",
+          "revision": "94d69279c517347ff0962b138f4ccd0556486ae2",
+          "sha256": "sha256:759d88824931d134b4b7d81ef3cd30577d1a63470331dcd6a77f3c45b84bfc9c"
+        },
+        {
+          "corpus": "oban",
+          "path": "bench/corpus/reports/release-2/1.20.4/oban.spec_lint.json",
+          "revision": "23fa8176b3586ca84f5859793739fad798e69d2b",
+          "sha256": "sha256:4c820f7cf648a110441e69d50af5f25817372f61e9d0a9d41fe47b91e21f0d47"
+        },
+        {
+          "corpus": "plug",
+          "path": "bench/corpus/reports/release-2/1.20.4/plug.spec_lint.json",
+          "revision": "73404f851852a00ffb2014be95d4598900fa77b8",
+          "sha256": "sha256:420d14f0229c96ed971d1f5bc42f8ea4a0fe7b4671662514651bb433beba3f84"
+        },
+        {
+          "corpus": "req",
+          "path": "bench/corpus/reports/release-2/1.20.4/req.spec_lint.json",
+          "revision": "c6e8ab1f9d1c8e1aef935a6319faa40487bb6f42",
+          "sha256": "sha256:5f66f19838afca515b94f2c6038d6a5181b109ac3ef7d8225e5b8dc68126b013"
+        }
+      ],
+      "return_value": {
+        "denominator": 15,
+        "gated": 2,
+        "gated_recall": "2/15",
+        "reported": 8,
+        "reported_recall": "10/15",
+        "silent": 5
+      }
+    },
+    "1.21.0-dev+648b2a9": {
+      "all": {
+        "denominator": 18,
+        "gated": 3,
+        "gated_recall": "3/18",
+        "reported": 8,
+        "reported_recall": "11/18",
+        "silent": 7
+      },
+      "by_category": {
+        "return_value": {
+          "denominator": 15,
+          "gated": 2,
+          "gated_recall": "2/15",
+          "reported": 8,
+          "reported_recall": "10/15",
+          "silent": 5
+        },
+        "struct_default": {
+          "denominator": 1,
+          "gated": 1,
+          "gated_recall": "1/1",
+          "reported": 0,
+          "reported_recall": "1/1",
+          "silent": 0
+        },
+        "struct_field_from_input": {
+          "denominator": 2,
+          "gated": 0,
+          "gated_recall": "0/2",
+          "reported": 0,
+          "reported_recall": "0/2",
+          "silent": 2
+        }
+      },
+      "dir": "bench/corpus/reports/release-2/648b2a9",
+      "families": [
+        {
+          "category": "return_value",
+          "class": "silent",
+          "findings": [],
+          "id": "F01-decimal-compare-nan",
+          "matched": []
+        },
+        {
+          "category": "return_value",
+          "class": "silent",
+          "findings": [],
+          "id": "F02-plug-query-decode-initial",
+          "matched": []
+        },
+        {
+          "category": "struct_field_from_input",
+          "class": "silent",
+          "findings": [],
+          "id": "F03-plug-merge-private-keys",
+          "matched": []
+        },
+        {
+          "category": "return_value",
+          "class": "silent",
+          "findings": [],
+          "id": "F04-ecto-changeset-nil-data",
+          "matched": []
+        },
+        {
+          "category": "return_value",
+          "class": "reported",
+          "findings": [
+            "Ecto.Query.Builder.Join.escape/3 SL002 possible_domain_escape gate=false"
+          ],
+          "id": "F05-ecto-join-escape-stale",
+          "matched": [
+            {
+              "clause": null,
+              "evidence": "possible_domain_escape",
+              "extra": [
+                "inferred extra: not ({atom(),\n atom() or binary() or float() or integer() or list(term()) or\n   {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()},\n atom() or binary() or float() or integer() or list(term()) or\n   {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()}, list(term())})"
+              ],
+              "fingerprint": "sha256:daae4b2a2def3d4080614f78f13ea1b2ee19c232446aa61b3669742d4de9c85a",
+              "gate": false,
+              "rule": "SL002",
+              "slice": 0,
+              "subject": "Ecto.Query.Builder.Join.escape/3"
+            }
+          ]
+        },
+        {
+          "category": "return_value",
+          "class": "reported",
+          "findings": [
+            "Ecto.Query.Builder.quoted_type/2 SL002 possible_domain_escape gate=false"
+          ],
+          "id": "F06-ecto-quoted-type-stale",
+          "matched": [
+            {
+              "clause": null,
+              "evidence": "possible_domain_escape",
+              "extra": [
+                "inferred extra: not (:any or :binary or :binary_id or :bitstring or :boolean or :date or :decimal or :duration or\n  :float or :id or :integer or :map or :naive_datetime or :naive_datetime_usec or :string or :time or\n  :time_usec or :utc_datetime or :utc_datetime_usec or {integer(),\n atom() or binary() or float() or integer() or list(term()) or\n   {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()}} or {:array or :map, term()} or {:in or :try, term()} or {:supertype, :datetime})"
+              ],
+              "fingerprint": "sha256:1514d7988a8f1a7f268ceb7ae9e19a412a6839a2e3f311d243ea9a0e5e1a817a",
+              "gate": false,
+              "rule": "SL002",
+              "slice": 0,
+              "subject": "Ecto.Query.Builder.quoted_type/2"
+            }
+          ]
+        },
+        {
+          "category": "return_value",
+          "class": "silent",
+          "findings": [],
+          "id": "F07-ecto-assoc-query-rows",
+          "matched": []
+        },
+        {
+          "category": "return_value",
+          "class": "silent",
+          "findings": [],
+          "id": "F08-ecto-preloader-query-fun",
+          "matched": []
+        },
+        {
+          "category": "return_value",
+          "class": "gated",
+          "findings": [
+            "Oban.Registry.via/3 SL001 clause_conflict gate=true"
+          ],
+          "id": "F09-oban-registry-via-value",
+          "matched": [
+            {
+              "clause": 1,
+              "evidence": "clause_conflict",
+              "extra": [
+                "stored signature clause: #1 (term(), term(), not nil) -> dynamic({:via, Registry, {Oban.Registry, term(), not nil}})"
+              ],
+              "fingerprint": "sha256:517ab74f0b8034ae2264161f3a441f7fd6f1b86c0ab705bd29b682940fd44ee2",
+              "gate": true,
+              "rule": "SL001",
+              "slice": 0,
+              "subject": "Oban.Registry.via/3"
+            }
+          ]
+        },
+        {
+          "category": "return_value",
+          "class": "gated",
+          "findings": [
+            "Ash.Page.page_opts/1 SL001 clause_conflict gate=true"
+          ],
+          "id": "F10-ash-page-opts-falsy",
+          "matched": [
+            {
+              "clause": 0,
+              "evidence": "clause_conflict",
+              "extra": [
+                "stored signature clause: #0 (false or nil) -> dynamic({:ok, false or nil})"
+              ],
+              "fingerprint": "sha256:27cf2ddf38f5ab151a02dd82955b4f33d857a48f961cb703645f3b401aa970e6",
+              "gate": true,
+              "rule": "SL001",
+              "slice": 0,
+              "subject": "Ash.Page.page_opts/1"
+            }
+          ]
+        },
+        {
+          "category": "return_value",
+          "class": "reported",
+          "findings": [
+            "Ash.load/3 SL002 possible_domain_escape gate=false"
+          ],
+          "id": "F11-ash-load-ok",
+          "matched": [
+            {
+              "clause": null,
+              "evidence": "possible_domain_escape",
+              "extra": [
+                "inferred extra: not ({:error, term()} or {:ok,\n %{atom() => term(), __struct__: atom()} or nil or list(%{atom() => term(), __struct__: atom()})})"
+              ],
+              "fingerprint": "sha256:61475202fa6e991ca854bff8f18da681b081a46a43357df3a8d830bcfc02cd87",
+              "gate": false,
+              "rule": "SL002",
+              "slice": 0,
+              "subject": "Ash.load/3"
+            }
+          ]
+        },
+        {
+          "category": "return_value",
+          "class": "reported",
+          "findings": [
+            "Ash.Test.refute_has_error/3 SL002 possible_domain_escape gate=false"
+          ],
+          "id": "F12-ash-refute-has-error-ok",
+          "matched": [
+            {
+              "clause": null,
+              "evidence": "possible_domain_escape",
+              "extra": [
+                "inferred extra: not (%{\n  atom() => term(),\n  __exception__: true,\n  __struct__: atom(),\n  bread_crumbs: list(binary()),\n  class: :forbidden or :framework or :invalid or :unknown,\n  context: map(),\n  stacktrace: %Splode.Stacktrace{stacktrace: list(term())} or nil,\n  vars: list({atom(), term()})\n})"
+              ],
+              "fingerprint": "sha256:b1d8587e0e471958dd93ae885bb2b015eb70ca53340dca28b617ab57609618c2",
+              "gate": false,
+              "rule": "SL002",
+              "slice": 0,
+              "subject": "Ash.Test.refute_has_error/3"
+            }
+          ]
+        },
+        {
+          "category": "return_value",
+          "class": "reported",
+          "findings": [
+            "Ash.read/2 SL002 possible_domain_escape gate=false",
+            "Ash.read_first/2 SL002 possible_domain_escape gate=false",
+            "Ash.read_one/2 SL002 possible_domain_escape gate=false"
+          ],
+          "id": "F13-ash-read-return-query",
+          "matched": [
+            {
+              "clause": null,
+              "evidence": "possible_domain_escape",
+              "extra": [
+                "inferred extra: {:ok, term(), term()}"
+              ],
+              "fingerprint": "sha256:2210eef4026092bccb7a44fd0dc872c109adaf5620c10fdff70e30004a0687eb",
+              "gate": false,
+              "rule": "SL002",
+              "slice": 0,
+              "subject": "Ash.read/2"
+            },
+            {
+              "clause": null,
+              "evidence": "possible_domain_escape",
+              "extra": [
+                "inferred extra: {:ok, term(), term()}"
+              ],
+              "fingerprint": "sha256:9f8bbb7c6de55004695e5ed09367901c8b2af1ac9bb1d6da0f1a5f504c553667",
+              "gate": false,
+              "rule": "SL002",
+              "slice": 0,
+              "subject": "Ash.read_first/2"
+            },
+            {
+              "clause": null,
+              "evidence": "possible_domain_escape",
+              "extra": [
+                "inferred extra: {:ok, term(), term()}"
+              ],
+              "fingerprint": "sha256:e1ef86f1c7beb774d3dd6b0f003145e97f53af089e2bd74f2aa5ec509468fd43",
+              "gate": false,
+              "rule": "SL002",
+              "slice": 0,
+              "subject": "Ash.read_one/2"
+            }
+          ]
+        },
+        {
+          "category": "return_value",
+          "class": "reported",
+          "findings": [
+            "Ash.page/2 SL002 possible_domain_escape gate=false"
+          ],
+          "id": "F14-ash-page-keyset-integer",
+          "matched": [
+            {
+              "clause": null,
+              "evidence": "possible_domain_escape",
+              "extra": [
+                "inferred extra: {:ok, term(), term()} or {:error, binary()}"
+              ],
+              "fingerprint": "sha256:f188978e902daa6a1dfbcb933e89b1408784e0e7a8848839ae23487af050e8b7",
+              "gate": false,
+              "rule": "SL002",
+              "slice": 0,
+              "subject": "Ash.page/2"
+            }
+          ]
+        },
+        {
+          "category": "return_value",
+          "class": "reported",
+          "findings": [
+            "Ash.Policy.Policy.solve/1 SL002 possible_domain_escape gate=false"
+          ],
+          "id": "F15-ash-policy-solve-unsatisfiable",
+          "matched": [
+            {
+              "clause": null,
+              "evidence": "possible_domain_escape",
+              "extra": [
+                "inferred extra: {:error, %{..., solver_statement: term()}, :unsatisfiable}"
+              ],
+              "fingerprint": "sha256:9b1af1cfd6bc081d96d9c63ae137361592022af1773a7ed6a8929b7ab925a778",
+              "gate": false,
+              "rule": "SL002",
+              "slice": 0,
+              "subject": "Ash.Policy.Policy.solve/1"
+            }
+          ]
+        },
+        {
+          "category": "struct_default",
+          "class": "gated",
+          "findings": [
+            "Absinthe.Blueprint.Input.parse/1 SL001 clause_conflict gate=true x7"
+          ],
+          "id": "F16-absinthe-input-parse-source-location",
+          "matched": [
+            {
+              "clause": 1,
+              "evidence": "clause_conflict",
+              "extra": [
+                "stored signature clause: #1 (integer()) -> dynamic(%Absinthe.Blueprint.Input.Integer{\n  value: integer(),\n  source_location: nil,\n  flags: empty_map(),\n  schema_node: nil,\n  errors: empty_list()\n})"
+              ],
+              "fingerprint": "sha256:f0917dc8074530a76751ef66c717b72812eeca92fb88256a2b18479d10d419a2",
+              "gate": true,
+              "rule": "SL001",
+              "slice": 0,
+              "subject": "Absinthe.Blueprint.Input.parse/1"
+            },
+            {
+              "clause": 2,
+              "evidence": "clause_conflict",
+              "extra": [
+                "stored signature clause: #2 (float()) -> dynamic(%Absinthe.Blueprint.Input.Float{\n  value: float(),\n  source_location: nil,\n  flags: empty_map(),\n  schema_node: nil,\n  errors: empty_list()\n})"
+              ],
+              "fingerprint": "sha256:acbbb69c878b065d0845faf3cd562c18d14d311e494da42c3907963b31f46a96",
+              "gate": true,
+              "rule": "SL001",
+              "slice": 0,
+              "subject": "Absinthe.Blueprint.Input.parse/1"
+            },
+            {
+              "clause": 3,
+              "evidence": "clause_conflict",
+              "extra": [
+                "stored signature clause: #3 (nil) -> %Absinthe.Blueprint.Input.Null{\n  source_location: nil,\n  flags: empty_map(),\n  schema_node: nil,\n  errors: empty_list()\n}"
+              ],
+              "fingerprint": "sha256:9e06666ff934efde0669a28cf7f3782fd609e50d307300634c2058a0fe938222",
+              "gate": true,
+              "rule": "SL001",
+              "slice": 0,
+              "subject": "Absinthe.Blueprint.Input.parse/1"
+            },
+            {
+              "clause": 4,
+              "evidence": "clause_conflict",
+              "extra": [
+                "stored signature clause: #4 (binary()) -> dynamic(%Absinthe.Blueprint.Input.String{\n  value: binary(),\n  source_location: nil,\n  flags: empty_map(),\n  schema_node: nil,\n  errors: empty_list()\n})"
+              ],
+              "fingerprint": "sha256:bd77235f7deeae2b6f62a9a4e004df9f0c260b1e940b4a900481a86861f3c3fc",
+              "gate": true,
+              "rule": "SL001",
+              "slice": 0,
+              "subject": "Absinthe.Blueprint.Input.parse/1"
+            },
+            {
+              "clause": 5,
+              "evidence": "clause_conflict",
+              "extra": [
+                "stored signature clause: #5 (boolean()) -> dynamic(%Absinthe.Blueprint.Input.Boolean{\n  value: boolean(),\n  source_location: nil,\n  flags: empty_map(),\n  schema_node: nil,\n  errors: empty_list()\n})"
+              ],
+              "fingerprint": "sha256:5eda241626ddbcfd99add7b8abe3df7b7c806cd0e00329b024890e4a8ecf9b4e",
+              "gate": true,
+              "rule": "SL001",
+              "slice": 0,
+              "subject": "Absinthe.Blueprint.Input.parse/1"
+            },
+            {
+              "clause": 6,
+              "evidence": "clause_conflict",
+              "extra": [
+                "stored signature clause: #6 (empty_list() or non_empty_list(term(), term())) -> dynamic(%Absinthe.Blueprint.Input.List{\n  source_location: nil,\n  flags: empty_map(),\n  schema_node: nil,\n  errors: empty_list()\n})"
+              ],
+              "fingerprint": "sha256:c96e7379395b0ed28648db69a662aa231faff648d446ef0f91ee6366340ff2f1",
+              "gate": true,
+              "rule": "SL001",
+              "slice": 0,
+              "subject": "Absinthe.Blueprint.Input.parse/1"
+            },
+            {
+              "clause": 7,
+              "evidence": "clause_conflict",
+              "extra": [
+                "stored signature clause: #7 (non_struct_map()) -> dynamic(%Absinthe.Blueprint.Input.Object{\n  source_location: nil,\n  flags: empty_map(),\n  schema_node: nil,\n  errors: empty_list()\n})"
+              ],
+              "fingerprint": "sha256:1d3a6590b33bbb4b0f69d1e4cee69f88946905c50d60d14a0e07ff33fd3653c2",
+              "gate": true,
+              "rule": "SL001",
+              "slice": 0,
+              "subject": "Absinthe.Blueprint.Input.parse/1"
+            }
+          ]
+        },
+        {
+          "category": "struct_field_from_input",
+          "class": "silent",
+          "findings": [],
+          "id": "F17-req-response-new-status",
+          "matched": []
+        },
+        {
+          "category": "return_value",
+          "class": "reported",
+          "findings": [
+            "Ash.Query.apply_to/3 SL002 possible_domain_escape gate=false"
+          ],
+          "id": "F18-ash-query-apply-to-error",
+          "matched": [
+            {
+              "clause": null,
+              "evidence": "possible_domain_escape",
+              "extra": [
+                "inferred extra: {:error, term()}"
+              ],
+              "fingerprint": "sha256:06fcb345a31c08035dd6b88a852ad84caa5cf371038129eb8c8498f5da27acb7",
+              "gate": false,
+              "rule": "SL002",
+              "slice": 0,
+              "subject": "Ash.Query.apply_to/3"
+            }
+          ]
+        }
+      ],
+      "reports": [
+        {
+          "corpus": "absinthe",
+          "path": "bench/corpus/reports/release-2/648b2a9/absinthe.spec_lint.json",
+          "revision": "1372ceb5f8226175050a38821601cd57738c177b",
+          "sha256": "sha256:8ba7aac902378639cbc02c66edf669bf1d98b53f08689d4a4e4ebb71d4121c5f"
+        },
+        {
+          "corpus": "ash",
+          "path": "bench/corpus/reports/release-2/648b2a9/ash.spec_lint.json",
+          "revision": "164a4c0d0ef7724c5fd2153876c2cf90cd938863",
+          "sha256": "sha256:25c7f33f10a7c9fd656f78c95f946a38d43b08998da6c52b3f34518175df24bd"
+        },
+        {
+          "corpus": "decimal",
+          "path": "bench/corpus/reports/release-2/648b2a9/decimal.spec_lint.json",
+          "revision": "92a28e6b9a103f2b52a22b3f772f7a2a34b7b1d5",
+          "sha256": "sha256:720be67ec3644fb08776eec857e78bc8065a207ad8baede0dc44a32b57b24588"
+        },
+        {
+          "corpus": "ecto",
+          "path": "bench/corpus/reports/release-2/648b2a9/ecto.spec_lint.json",
+          "revision": "94d69279c517347ff0962b138f4ccd0556486ae2",
+          "sha256": "sha256:bdee4a670e46b0b206dac84ed253de998d59b46cd6b066cebcd561cd7389d714"
+        },
+        {
+          "corpus": "oban",
+          "path": "bench/corpus/reports/release-2/648b2a9/oban.spec_lint.json",
+          "revision": "23fa8176b3586ca84f5859793739fad798e69d2b",
+          "sha256": "sha256:5248b4ec19bea8401784a1495cc890825b18e7e8020541fd34ec72748a8c76c0"
+        },
+        {
+          "corpus": "plug",
+          "path": "bench/corpus/reports/release-2/648b2a9/plug.spec_lint.json",
+          "revision": "73404f851852a00ffb2014be95d4598900fa77b8",
+          "sha256": "sha256:64b79702e4518b118ce835a02d204e6ee23b2dc580bcb424e3ad5fb2bef88c44"
+        },
+        {
+          "corpus": "req",
+          "path": "bench/corpus/reports/release-2/648b2a9/req.spec_lint.json",
+          "revision": "c6e8ab1f9d1c8e1aef935a6319faa40487bb6f42",
+          "sha256": "sha256:8221f9c05cb72b35e2c6b05fbf7cd3d5d8647e701deafa3ec6286ad9ef3921ed"
+        }
+      ],
+      "return_value": {
+        "denominator": 15,
+        "gated": 2,
+        "gated_recall": "2/15",
+        "reported": 8,
+        "reported_recall": "10/15",
+        "silent": 5
+      }
+    },
+    "1.21.0-dev+c24c235": {
+      "all": {
+        "denominator": 18,
+        "gated": 3,
+        "gated_recall": "3/18",
+        "reported": 8,
+        "reported_recall": "11/18",
+        "silent": 7
+      },
+      "by_category": {
+        "return_value": {
+          "denominator": 15,
+          "gated": 2,
+          "gated_recall": "2/15",
+          "reported": 8,
+          "reported_recall": "10/15",
+          "silent": 5
+        },
+        "struct_default": {
+          "denominator": 1,
+          "gated": 1,
+          "gated_recall": "1/1",
+          "reported": 0,
+          "reported_recall": "1/1",
+          "silent": 0
+        },
+        "struct_field_from_input": {
+          "denominator": 2,
+          "gated": 0,
+          "gated_recall": "0/2",
+          "reported": 0,
+          "reported_recall": "0/2",
+          "silent": 2
+        }
+      },
+      "dir": "bench/corpus/reports/release-2/c24c235",
+      "families": [
+        {
+          "category": "return_value",
+          "class": "silent",
+          "findings": [],
+          "id": "F01-decimal-compare-nan",
+          "matched": []
+        },
+        {
+          "category": "return_value",
+          "class": "silent",
+          "findings": [],
+          "id": "F02-plug-query-decode-initial",
+          "matched": []
+        },
+        {
+          "category": "struct_field_from_input",
+          "class": "silent",
+          "findings": [],
+          "id": "F03-plug-merge-private-keys",
+          "matched": []
+        },
+        {
+          "category": "return_value",
+          "class": "silent",
+          "findings": [],
+          "id": "F04-ecto-changeset-nil-data",
+          "matched": []
+        },
+        {
+          "category": "return_value",
+          "class": "reported",
+          "findings": [
+            "Ecto.Query.Builder.Join.escape/3 SL002 possible_domain_escape gate=false"
+          ],
+          "id": "F05-ecto-join-escape-stale",
+          "matched": [
+            {
+              "clause": null,
+              "evidence": "possible_domain_escape",
+              "extra": [
+                "inferred extra: not ({atom(),\n atom() or binary() or float() or integer() or list(term()) or\n   {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()},\n atom() or binary() or float() or integer() or list(term()) or\n   {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()}, list(term())})"
+              ],
+              "fingerprint": "sha256:daae4b2a2def3d4080614f78f13ea1b2ee19c232446aa61b3669742d4de9c85a",
+              "gate": false,
+              "rule": "SL002",
+              "slice": 0,
+              "subject": "Ecto.Query.Builder.Join.escape/3"
+            }
+          ]
+        },
+        {
+          "category": "return_value",
+          "class": "reported",
+          "findings": [
+            "Ecto.Query.Builder.quoted_type/2 SL002 possible_domain_escape gate=false"
+          ],
+          "id": "F06-ecto-quoted-type-stale",
+          "matched": [
+            {
+              "clause": null,
+              "evidence": "possible_domain_escape",
+              "extra": [
+                "inferred extra: not (:any or :binary or :binary_id or :bitstring or :boolean or :date or :decimal or :duration or\n  :float or :id or :integer or :map or :naive_datetime or :naive_datetime_usec or :string or :time or\n  :time_usec or :utc_datetime or :utc_datetime_usec or {integer(),\n atom() or binary() or float() or integer() or list(term()) or\n   {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()}} or {:array or :map, term()} or {:in or :try, term()} or {:supertype, :datetime})"
+              ],
+              "fingerprint": "sha256:1514d7988a8f1a7f268ceb7ae9e19a412a6839a2e3f311d243ea9a0e5e1a817a",
+              "gate": false,
+              "rule": "SL002",
+              "slice": 0,
+              "subject": "Ecto.Query.Builder.quoted_type/2"
+            }
+          ]
+        },
+        {
+          "category": "return_value",
+          "class": "silent",
+          "findings": [],
+          "id": "F07-ecto-assoc-query-rows",
+          "matched": []
+        },
+        {
+          "category": "return_value",
+          "class": "silent",
+          "findings": [],
+          "id": "F08-ecto-preloader-query-fun",
+          "matched": []
+        },
+        {
+          "category": "return_value",
+          "class": "gated",
+          "findings": [
+            "Oban.Registry.via/3 SL001 clause_conflict gate=true"
+          ],
+          "id": "F09-oban-registry-via-value",
+          "matched": [
+            {
+              "clause": 1,
+              "evidence": "clause_conflict",
+              "extra": [
+                "stored signature clause: #1 (term(), term(), not nil) -> dynamic({:via, Registry, {Oban.Registry, term(), not nil}})"
+              ],
+              "fingerprint": "sha256:517ab74f0b8034ae2264161f3a441f7fd6f1b86c0ab705bd29b682940fd44ee2",
+              "gate": true,
+              "rule": "SL001",
+              "slice": 0,
+              "subject": "Oban.Registry.via/3"
+            }
+          ]
+        },
+        {
+          "category": "return_value",
+          "class": "gated",
+          "findings": [
+            "Ash.Page.page_opts/1 SL001 clause_conflict gate=true"
+          ],
+          "id": "F10-ash-page-opts-falsy",
+          "matched": [
+            {
+              "clause": 0,
+              "evidence": "clause_conflict",
+              "extra": [
+                "stored signature clause: #0 (false or nil) -> dynamic({:ok, false or nil})"
+              ],
+              "fingerprint": "sha256:27cf2ddf38f5ab151a02dd82955b4f33d857a48f961cb703645f3b401aa970e6",
+              "gate": true,
+              "rule": "SL001",
+              "slice": 0,
+              "subject": "Ash.Page.page_opts/1"
+            }
+          ]
+        },
+        {
+          "category": "return_value",
+          "class": "reported",
+          "findings": [
+            "Ash.load/3 SL002 possible_domain_escape gate=false"
+          ],
+          "id": "F11-ash-load-ok",
+          "matched": [
+            {
+              "clause": null,
+              "evidence": "possible_domain_escape",
+              "extra": [
+                "inferred extra: not ({:error, term()} or {:ok,\n %{atom() => term(), __struct__: atom()} or nil or list(%{atom() => term(), __struct__: atom()})})"
+              ],
+              "fingerprint": "sha256:61475202fa6e991ca854bff8f18da681b081a46a43357df3a8d830bcfc02cd87",
+              "gate": false,
+              "rule": "SL002",
+              "slice": 0,
+              "subject": "Ash.load/3"
+            }
+          ]
+        },
+        {
+          "category": "return_value",
+          "class": "reported",
+          "findings": [
+            "Ash.Test.refute_has_error/3 SL002 possible_domain_escape gate=false"
+          ],
+          "id": "F12-ash-refute-has-error-ok",
+          "matched": [
+            {
+              "clause": null,
+              "evidence": "possible_domain_escape",
+              "extra": [
+                "inferred extra: not (%{\n  atom() => term(),\n  __exception__: true,\n  __struct__: atom(),\n  bread_crumbs: list(binary()),\n  class: :forbidden or :framework or :invalid or :unknown,\n  context: map(),\n  stacktrace: %Splode.Stacktrace{stacktrace: list(term())} or nil,\n  vars: list({atom(), term()})\n})"
+              ],
+              "fingerprint": "sha256:b1d8587e0e471958dd93ae885bb2b015eb70ca53340dca28b617ab57609618c2",
+              "gate": false,
+              "rule": "SL002",
+              "slice": 0,
+              "subject": "Ash.Test.refute_has_error/3"
+            }
+          ]
+        },
+        {
+          "category": "return_value",
+          "class": "reported",
+          "findings": [
+            "Ash.read/2 SL002 possible_domain_escape gate=false",
+            "Ash.read_first/2 SL002 possible_domain_escape gate=false",
+            "Ash.read_one/2 SL002 possible_domain_escape gate=false"
+          ],
+          "id": "F13-ash-read-return-query",
+          "matched": [
+            {
+              "clause": null,
+              "evidence": "possible_domain_escape",
+              "extra": [
+                "inferred extra: {:ok, term(), term()}"
+              ],
+              "fingerprint": "sha256:2210eef4026092bccb7a44fd0dc872c109adaf5620c10fdff70e30004a0687eb",
+              "gate": false,
+              "rule": "SL002",
+              "slice": 0,
+              "subject": "Ash.read/2"
+            },
+            {
+              "clause": null,
+              "evidence": "possible_domain_escape",
+              "extra": [
+                "inferred extra: {:ok, term(), term()}"
+              ],
+              "fingerprint": "sha256:9f8bbb7c6de55004695e5ed09367901c8b2af1ac9bb1d6da0f1a5f504c553667",
+              "gate": false,
+              "rule": "SL002",
+              "slice": 0,
+              "subject": "Ash.read_first/2"
+            },
+            {
+              "clause": null,
+              "evidence": "possible_domain_escape",
+              "extra": [
+                "inferred extra: {:ok, term(), term()}"
+              ],
+              "fingerprint": "sha256:e1ef86f1c7beb774d3dd6b0f003145e97f53af089e2bd74f2aa5ec509468fd43",
+              "gate": false,
+              "rule": "SL002",
+              "slice": 0,
+              "subject": "Ash.read_one/2"
+            }
+          ]
+        },
+        {
+          "category": "return_value",
+          "class": "reported",
+          "findings": [
+            "Ash.page/2 SL002 possible_domain_escape gate=false"
+          ],
+          "id": "F14-ash-page-keyset-integer",
+          "matched": [
+            {
+              "clause": null,
+              "evidence": "possible_domain_escape",
+              "extra": [
+                "inferred extra: {:ok, term(), term()} or {:error, binary()}"
+              ],
+              "fingerprint": "sha256:f188978e902daa6a1dfbcb933e89b1408784e0e7a8848839ae23487af050e8b7",
+              "gate": false,
+              "rule": "SL002",
+              "slice": 0,
+              "subject": "Ash.page/2"
+            }
+          ]
+        },
+        {
+          "category": "return_value",
+          "class": "reported",
+          "findings": [
+            "Ash.Policy.Policy.solve/1 SL002 possible_domain_escape gate=false"
+          ],
+          "id": "F15-ash-policy-solve-unsatisfiable",
+          "matched": [
+            {
+              "clause": null,
+              "evidence": "possible_domain_escape",
+              "extra": [
+                "inferred extra: {:error, %{..., solver_statement: term()}, :unsatisfiable}"
+              ],
+              "fingerprint": "sha256:9b1af1cfd6bc081d96d9c63ae137361592022af1773a7ed6a8929b7ab925a778",
+              "gate": false,
+              "rule": "SL002",
+              "slice": 0,
+              "subject": "Ash.Policy.Policy.solve/1"
+            }
+          ]
+        },
+        {
+          "category": "struct_default",
+          "class": "gated",
+          "findings": [
+            "Absinthe.Blueprint.Input.parse/1 SL001 clause_conflict gate=true x7"
+          ],
+          "id": "F16-absinthe-input-parse-source-location",
+          "matched": [
+            {
+              "clause": 1,
+              "evidence": "clause_conflict",
+              "extra": [
+                "stored signature clause: #1 (integer()) -> dynamic(%Absinthe.Blueprint.Input.Integer{\n  value: integer(),\n  source_location: nil,\n  flags: empty_map(),\n  schema_node: nil,\n  errors: empty_list()\n})"
+              ],
+              "fingerprint": "sha256:f0917dc8074530a76751ef66c717b72812eeca92fb88256a2b18479d10d419a2",
+              "gate": true,
+              "rule": "SL001",
+              "slice": 0,
+              "subject": "Absinthe.Blueprint.Input.parse/1"
+            },
+            {
+              "clause": 2,
+              "evidence": "clause_conflict",
+              "extra": [
+                "stored signature clause: #2 (float()) -> dynamic(%Absinthe.Blueprint.Input.Float{\n  value: float(),\n  source_location: nil,\n  flags: empty_map(),\n  schema_node: nil,\n  errors: empty_list()\n})"
+              ],
+              "fingerprint": "sha256:acbbb69c878b065d0845faf3cd562c18d14d311e494da42c3907963b31f46a96",
+              "gate": true,
+              "rule": "SL001",
+              "slice": 0,
+              "subject": "Absinthe.Blueprint.Input.parse/1"
+            },
+            {
+              "clause": 3,
+              "evidence": "clause_conflict",
+              "extra": [
+                "stored signature clause: #3 (nil) -> %Absinthe.Blueprint.Input.Null{\n  source_location: nil,\n  flags: empty_map(),\n  schema_node: nil,\n  errors: empty_list()\n}"
+              ],
+              "fingerprint": "sha256:9e06666ff934efde0669a28cf7f3782fd609e50d307300634c2058a0fe938222",
+              "gate": true,
+              "rule": "SL001",
+              "slice": 0,
+              "subject": "Absinthe.Blueprint.Input.parse/1"
+            },
+            {
+              "clause": 4,
+              "evidence": "clause_conflict",
+              "extra": [
+                "stored signature clause: #4 (binary()) -> dynamic(%Absinthe.Blueprint.Input.String{\n  value: binary(),\n  source_location: nil,\n  flags: empty_map(),\n  schema_node: nil,\n  errors: empty_list()\n})"
+              ],
+              "fingerprint": "sha256:bd77235f7deeae2b6f62a9a4e004df9f0c260b1e940b4a900481a86861f3c3fc",
+              "gate": true,
+              "rule": "SL001",
+              "slice": 0,
+              "subject": "Absinthe.Blueprint.Input.parse/1"
+            },
+            {
+              "clause": 5,
+              "evidence": "clause_conflict",
+              "extra": [
+                "stored signature clause: #5 (boolean()) -> dynamic(%Absinthe.Blueprint.Input.Boolean{\n  value: boolean(),\n  source_location: nil,\n  flags: empty_map(),\n  schema_node: nil,\n  errors: empty_list()\n})"
+              ],
+              "fingerprint": "sha256:5eda241626ddbcfd99add7b8abe3df7b7c806cd0e00329b024890e4a8ecf9b4e",
+              "gate": true,
+              "rule": "SL001",
+              "slice": 0,
+              "subject": "Absinthe.Blueprint.Input.parse/1"
+            },
+            {
+              "clause": 6,
+              "evidence": "clause_conflict",
+              "extra": [
+                "stored signature clause: #6 (empty_list() or non_empty_list(term(), term())) -> dynamic(%Absinthe.Blueprint.Input.List{\n  source_location: nil,\n  flags: empty_map(),\n  schema_node: nil,\n  errors: empty_list()\n})"
+              ],
+              "fingerprint": "sha256:c96e7379395b0ed28648db69a662aa231faff648d446ef0f91ee6366340ff2f1",
+              "gate": true,
+              "rule": "SL001",
+              "slice": 0,
+              "subject": "Absinthe.Blueprint.Input.parse/1"
+            },
+            {
+              "clause": 7,
+              "evidence": "clause_conflict",
+              "extra": [
+                "stored signature clause: #7 (non_struct_map()) -> dynamic(%Absinthe.Blueprint.Input.Object{\n  source_location: nil,\n  flags: empty_map(),\n  schema_node: nil,\n  errors: empty_list()\n})"
+              ],
+              "fingerprint": "sha256:1d3a6590b33bbb4b0f69d1e4cee69f88946905c50d60d14a0e07ff33fd3653c2",
+              "gate": true,
+              "rule": "SL001",
+              "slice": 0,
+              "subject": "Absinthe.Blueprint.Input.parse/1"
+            }
+          ]
+        },
+        {
+          "category": "struct_field_from_input",
+          "class": "silent",
+          "findings": [],
+          "id": "F17-req-response-new-status",
+          "matched": []
+        },
+        {
+          "category": "return_value",
+          "class": "reported",
+          "findings": [
+            "Ash.Query.apply_to/3 SL002 possible_domain_escape gate=false"
+          ],
+          "id": "F18-ash-query-apply-to-error",
+          "matched": [
+            {
+              "clause": null,
+              "evidence": "possible_domain_escape",
+              "extra": [
+                "inferred extra: {:error, term()}"
+              ],
+              "fingerprint": "sha256:06fcb345a31c08035dd6b88a852ad84caa5cf371038129eb8c8498f5da27acb7",
+              "gate": false,
+              "rule": "SL002",
+              "slice": 0,
+              "subject": "Ash.Query.apply_to/3"
+            }
+          ]
+        }
+      ],
+      "reports": [
+        {
+          "corpus": "absinthe",
+          "path": "bench/corpus/reports/release-2/c24c235/absinthe.spec_lint.json",
+          "revision": "1372ceb5f8226175050a38821601cd57738c177b",
+          "sha256": "sha256:c1fecc46e6c2ad3b9517b0391c24c85ab94c252cc345dcf7625ea16fdfa5d233"
+        },
+        {
+          "corpus": "ash",
+          "path": "bench/corpus/reports/release-2/c24c235/ash.spec_lint.json",
+          "revision": "164a4c0d0ef7724c5fd2153876c2cf90cd938863",
+          "sha256": "sha256:feca15ce96a85cc1821c6852cdfef51b56669136571b0912c63be4d3f21e8cb7"
+        },
+        {
+          "corpus": "decimal",
+          "path": "bench/corpus/reports/release-2/c24c235/decimal.spec_lint.json",
+          "revision": "92a28e6b9a103f2b52a22b3f772f7a2a34b7b1d5",
+          "sha256": "sha256:fb0a186a23b41e3af1ed3f94d2e98fa2aaf9347d654feae33c1cc1155b97f5af"
+        },
+        {
+          "corpus": "ecto",
+          "path": "bench/corpus/reports/release-2/c24c235/ecto.spec_lint.json",
+          "revision": "94d69279c517347ff0962b138f4ccd0556486ae2",
+          "sha256": "sha256:fc96642870e36bf243e8aa165929c40637ba76de37135b7cecbf0358ceb647c6"
+        },
+        {
+          "corpus": "oban",
+          "path": "bench/corpus/reports/release-2/c24c235/oban.spec_lint.json",
+          "revision": "23fa8176b3586ca84f5859793739fad798e69d2b",
+          "sha256": "sha256:264d974390e420df1eb3740822ac99d21b0b378e1059aac8fdaaefd7a75c6a8a"
+        },
+        {
+          "corpus": "plug",
+          "path": "bench/corpus/reports/release-2/c24c235/plug.spec_lint.json",
+          "revision": "73404f851852a00ffb2014be95d4598900fa77b8",
+          "sha256": "sha256:b814ad9aed89da6f051a105f898ef8f9ab1d4f9cf78781c3fae10a026139a800"
+        },
+        {
+          "corpus": "req",
+          "path": "bench/corpus/reports/release-2/c24c235/req.spec_lint.json",
+          "revision": "c6e8ab1f9d1c8e1aef935a6319faa40487bb6f42",
+          "sha256": "sha256:b9f7ff458127f0480648f14270dc4b7a1287b3645904b537c742d8432b667905"
+        }
+      ],
+      "return_value": {
+        "denominator": 15,
+        "gated": 2,
+        "gated_recall": "2/15",
+        "reported": 8,
+        "reported_recall": "10/15",
+        "silent": 5
+      }
+    }
+  }
+}

@@ -1,0 +1,10 @@
+deps_compile exit 0 (1 s)
+format exit 0 (1 s)
+credo exit 0 (2 s)
+test exit 0 (210 s)
+dialyzer exit 0 (2 s)
+Finished in 208.5 seconds (43.2s async, 165.3s sync)
+Result: 468 passed, 9 excluded
+Total errors: 0, Skipped: 0, Unnecessary Skips: 0
+done (passed successfully)
+selfcheck (mix spec_lint --ci on 58fe1dd) exit 0: complete, 408 slices compared, 0 findings

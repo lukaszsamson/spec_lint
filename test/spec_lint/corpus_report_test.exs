@@ -510,7 +510,7 @@ defmodule SpecLint.CorpusReportTest do
     end
   end
 
-  test "budgets.json covers the fifteen corpora and the release campaign is within it" do
+  test "budgets.json covers the fifteen corpora and both release campaigns are within it" do
     root = Path.expand("../..", __DIR__)
     budgets = root |> Path.join("bench/corpus/budgets.json") |> File.read!() |> JSON.decode!()
 
@@ -526,6 +526,15 @@ defmodule SpecLint.CorpusReportTest do
 
     measured = Path.wildcard(Path.join(root, "bench/corpus/reports/release-1/*/*.resources.json"))
     assert length(measured) == 3 * 2 * length(corpora)
+
+    # Release campaign 2 was measured against the frozen budgets.
+    checked = Path.wildcard(Path.join(root, "bench/corpus/reports/release-2/*/*.resources.json"))
+    assert length(checked) == 3 * length(corpora)
+
+    for file <- checked,
+        do: assert(JSON.decode!(File.read!(file))["budget"]["within"] == true, file)
+
+    measured = measured ++ checked
 
     for file <- measured do
       resources = file |> File.read!() |> JSON.decode!()

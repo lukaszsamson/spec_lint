@@ -1,0 +1,225 @@
+{
+  "artifacts": [
+    {
+      "beam_count": 100,
+      "path": "$BUILD/tesla/lib/tesla/ebin",
+      "sha256": "5f4ead0843e51c8aa09ad46238eb6f2321bf8b73477eab6a9b64b39122ed5d22"
+    },
+    {
+      "beam_count": 1,
+      "path": "$BUILD/tesla/lib/castore/ebin",
+      "sha256": "c78493aa5acff0c87704e76067867b50199e5a30021a00120a0484a4de3259b3"
+    },
+    {
+      "beam_count": 2,
+      "path": "$BUILD/tesla/lib/certifi/ebin",
+      "sha256": "1e824afbb57c5525b2b44fb8e64f1fe25de78dac5a14e1071642f3c1c0120008"
+    },
+    {
+      "beam_count": 9,
+      "path": "$BUILD/tesla/lib/con_cache/ebin",
+      "sha256": "913ec7808f2389b79a200bab2dc7838e0307f66f518fb768aeaeb9b25e1e7610"
+    },
+    {
+      "beam_count": 29,
+      "path": "$BUILD/tesla/lib/cowboy/ebin",
+      "sha256": "81d0c61bf350d83c2bee1906ccdc6e6859d739117f21bf8bb79753fe6b4b9a87"
+    },
+    {
+      "beam_count": 25,
+      "path": "$BUILD/tesla/lib/cowlib/ebin",
+      "sha256": "7dca9918d248a539ed1c49825f27f05f2b4bb100b13b9eec9596eb0fe034faf1"
+    },
+    {
+      "beam_count": 73,
+      "path": "$BUILD/tesla/lib/dialyxir/ebin",
+      "sha256": "679e1167f12a0750a2d589e28847bbe3f4216e98374affac15bd1f3246d7ef66"
+    },
+    {
+      "beam_count": 4,
+      "path": "$BUILD/tesla/lib/erlex/ebin",
+      "sha256": "12843ab98b06b1d7413ea88a5a19a07a026e4a291c20cd7d6713239ee88a2424"
+    },
+    {
+      "beam_count": 52,
+      "path": "$BUILD/tesla/lib/excoveralls/ebin",
+      "sha256": "b6b37f44be2a88a3bcc909d0df6a5974f98b50b0a67f17ac4c6a55b013a1bf47"
+    },
+    {
+      "beam_count": 24,
+      "path": "$BUILD/tesla/lib/finch/ebin",
+      "sha256": "96ec82d596ec313cf1473c9d61d3fd09f8cc8d03853be2f6839d022bd26e25f0"
+    },
+    {
+      "beam_count": 13,
+      "path": "$BUILD/tesla/lib/fuse/ebin",
+      "sha256": "82d5957ec0eeced4a6f58aab65483aabf36cb83b12f40ec8e8c1098a89f5f452"
+    },
+    {
+      "beam_count": 32,
+      "path": "$BUILD/tesla/lib/gun/ebin",
+      "sha256": "be2ccae3ae2106f54ecaff9ff6c6b871ada67edb64baff892a4f17913d5a0c11"
+    },
+    {
+      "beam_count": 13,
+      "path": "$BUILD/tesla/lib/h2/ebin",
+      "sha256": "9819c9c3c7ee6dad6c386c723c97990e7fb2686f8d50a3128a4af1be70c68c25"
+    },
+    {
+      "beam_count": 36,
+      "path": "$BUILD/tesla/lib/hackney/ebin",
+      "sha256": "9e5af7a85875b9ed84cc28c8e351d9a9105b4cb09fd0fe6d46489a985b5b87b5"
+    },
+    {
+      "beam_count": 4,
+      "path": "$BUILD/tesla/lib/hpax/ebin",
+      "sha256": "a71915fda4cd1e57a272aa96e2699c2c170c89e87df2eb45c7e9c5bdd1b55080"
+    },
+    {
+      "beam_count": 34,
+      "path": "$BUILD/tesla/lib/httparrot/ebin",
+      "sha256": "a6d25a789b8c9a4db9713c8b7c049a667bbf387648e867b3748ecd8c92b21227"
+    },
+    {
+      "beam_count": 7,
+      "path": "$BUILD/tesla/lib/ibrowse/ebin",
+      "sha256": "8d278d4713108f6d12e66d27bdafd094c30e4744e28bd7e3cd154146e5de0602"
+    },
+    {
+      "beam_count": 8,
+      "path": "$BUILD/tesla/lib/idna/ebin",
+      "sha256": "51e0cf152c93a89b1db47d8d3b861031b5f51cf99c34b95818158ab3d7b16669"
+    },
+    {
+      "beam_count": 27,
+      "path": "$BUILD/tesla/lib/jason/ebin",
+      "sha256": "c89e5ac002b2138969bb0edca4de5ae722e031649a95794431994e1a5c2d1e16"
+    },
+    {
+      "beam_count": 1,
+      "path": "$BUILD/tesla/lib/mime/ebin",
+      "sha256": "4ceefa5038d2223e09c20924c89a4fca1fb9ad4216c6b0abb1f10bd9b7237dd8"
+    },
+    {
+      "beam_count": 1,
+      "path": "$BUILD/tesla/lib/mimerl/ebin",
+      "sha256": "b124c171f1da47163295228980009157aeb47c6fb91a513c7b7accc3d5b9b541"
+    },
+    {
+      "beam_count": 21,
+      "path": "$BUILD/tesla/lib/mint/ebin",
+      "sha256": "b9de3ef6314b1dbf97b86237009571d9d88792e4a62b0f0214db214326e4a576"
+    },
+    {
+      "beam_count": 4,
+      "path": "$BUILD/tesla/lib/mox/ebin",
+      "sha256": "cf65954934a7a69a9300c7382fb358933060694a8f69093d4ce9c446a5716df9"
+    },
+    {
+      "beam_count": 25,
+      "path": "$BUILD/tesla/lib/msgpax/ebin",
+      "sha256": "cb36b2ff145a6a0081b080a94b8cee1ce2480fd69379922d7d7a1402bc0e0f2e"
+    },
+    {
+      "beam_count": 3,
+      "path": "$BUILD/tesla/lib/nimble_options/ebin",
+      "sha256": "98e26d32e3fd24a31ca25af71a1de2c85b587a166938764b3ccb0c42e4a5b533"
+    },
+    {
+      "beam_count": 2,
+      "path": "$BUILD/tesla/lib/nimble_ownership/ebin",
+      "sha256": "8c7113a8baff7faf35e4b33d982dc60a8feca241a784b638e650f93d290f329b"
+    },
+    {
+      "beam_count": 2,
+      "path": "$BUILD/tesla/lib/nimble_pool/ebin",
+      "sha256": "5c4a794076cff1069fc874e8f735549766c8cb79594e5f0cb519ffebaa1c092f"
+    },
+    {
+      "beam_count": 24,
+      "path": "$BUILD/tesla/lib/opentelemetry_api/ebin",
+      "sha256": "fe9765a408455228e824d314d77f2b9e9666b9dc1ab28658dcd8c556803599dd"
+    },
+    {
+      "beam_count": 5,
+      "path": "$BUILD/tesla/lib/opentelemetry_process_propagator/ebin",
+      "sha256": "9b29836243f94faaffcabcc9e74e002adf8eb50ef40283ef3aa67ea675321767"
+    },
+    {
+      "beam_count": 81,
+      "path": "$BUILD/tesla/lib/opentelemetry_semantic_conventions/ebin",
+      "sha256": "637a86378a46cab642f295995fe1e89968a7e4e34b5c41b881748d0861c19dee"
+    },
+    {
+      "beam_count": 6,
+      "path": "$BUILD/tesla/lib/parse_trans/ebin",
+      "sha256": "15fc98c7f919db5fe191b0ba716902a08f60a620c19bbcd59ff0069de9c5b136"
+    },
+    {
+      "beam_count": 28,
+      "path": "$BUILD/tesla/lib/poison/ebin",
+      "sha256": "9dd990278eac25c6ceb38a95d90358171e6d2d6b146d4515924388f9e3c58c49"
+    },
+    {
+      "beam_count": 59,
+      "path": "$BUILD/tesla/lib/quic/ebin",
+      "sha256": "4ed9e6a8cdb8bfe0f838e946ba0b70f72726fd57e0092380b8ba59285cf146b5"
+    },
+    {
+      "beam_count": 17,
+      "path": "$BUILD/tesla/lib/ranch/ebin",
+      "sha256": "c378e90d64dfbd1fa425849d5af7d5445bee0e7bc37a000c6b8743dd36d976fb"
+    },
+    {
+      "beam_count": 7,
+      "path": "$BUILD/tesla/lib/ssl_verify_fun/ebin",
+      "sha256": "bd69fe943fd3f2bb8c7aeab8dae8060562a9ab62a26f00a4fb178f4c64458299"
+    },
+    {
+      "beam_count": 7,
+      "path": "$BUILD/tesla/lib/telemetry/ebin",
+      "sha256": "c7fa6f6dc8f3d5c99c0b901ced346f826fb7056575cc553b8c905ca2cba3870a"
+    },
+    {
+      "beam_count": 100,
+      "path": "$BUILD/tesla/lib/tesla/ebin",
+      "sha256": "5f4ead0843e51c8aa09ad46238eb6f2321bf8b73477eab6a9b64b39122ed5d22"
+    },
+    {
+      "beam_count": 13,
+      "path": "$BUILD/tesla/lib/webtransport/ebin",
+      "sha256": "cb4d91668a0dc7215d2c335d628d2edf9b8e3a16f60ee537db61395886263214"
+    }
+  ],
+  "corpus": "tesla",
+  "corpus_manifest_sha256": "efbece0e69e5bc1b3abfd2a9473b8552ae3b86ca027d908b999b05d0803594f8",
+  "schema": "spec_lint.corpus_provenance/1",
+  "source": {
+    "dirty": false,
+    "lockfile_sha256": "cc7af3d549cd330d8327a062afff12657e360356018a35599f5b61195ec925cf",
+    "revision": "f1d040b237cf6fe07fc57d4915d95dca24546483"
+  },
+  "tool": {
+    "dirty": false,
+    "lockfile_sha256": "a23fa18ff765b9ddc4f310975ca588771fabb25d06b9fc50267b620bf8af026b",
+    "revision": "58fe1ddf34d23d22d3048cceb09a2d60e8d9342e",
+    "source_sha256": "26c90fa829b7277e88a6d8c26bcb4a67acc5539ae5c3c51c4a969dd61948a9eb"
+  },
+  "toolchain": {
+    "compiler": {
+      "dirty": false,
+      "patch_sha256": null,
+      "revision": "648b2a94934664cfd2c788348d02d799c68faa69"
+    },
+    "elixir": "Elixir 1.21.0-dev (648b2a9) (compiled with Erlang/OTP 28)",
+    "identity": {
+      "code_digest": "bb1eb6ffb87c526cf1eb3e588759e18845f5557d41e0d05308e92ebf45fa116f",
+      "exck_digest": "2166532d21874b8814974360b4ff482e530f7a00d155fbad8da28e3da7829a39",
+      "modules": 447,
+      "otp_version": "28.5.0.1",
+      "revision": "648b2a9"
+    },
+    "loaded_module_types_beam": "$COMPILER/bin/../lib/elixir/ebin/Elixir.Module.Types.beam",
+    "loaded_module_types_sha256": "a291632979e5a60be06a8d8d4a1f661d521124e69c2fcbb33445b8ddfcc50aff"
+  }
+}

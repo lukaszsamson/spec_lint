@@ -1,0 +1,14 @@
+{
+  "budget": {
+    "max_rss_mb": 8256,
+    "wall_s": 90,
+    "within": true
+  },
+  "corpus": "absinthe",
+  "max_rss_bytes": 6375931904,
+  "method": "/usr/bin/time -l around the product run (mix run bench/run_on_ebin.exs); wall is its real time, max_rss_bytes the maximum resident set size of the process tree it waited for (the product VM)",
+  "peak_footprint_bytes": 11299955256,
+  "platform": "Darwin arm64",
+  "schema": "spec_lint.corpus_resources/1",
+  "wall_s": 57.06
+}

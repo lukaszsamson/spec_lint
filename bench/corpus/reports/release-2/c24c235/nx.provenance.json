@@ -1,0 +1,55 @@
+{
+  "artifacts": [
+    {
+      "beam_count": 101,
+      "path": "$BUILD/nx/lib/nx/ebin",
+      "sha256": "ed6b349f308d5d6572c5c283e4b9d43c0b5ebc9462a82e88f6f38889e2bc7630"
+    },
+    {
+      "beam_count": 4,
+      "path": "$BUILD/nx/lib/complex/ebin",
+      "sha256": "ac60c458e3bd458029ccaf35e3040b0dff5652cebe8a6a569929fe14988a6c97"
+    },
+    {
+      "beam_count": 101,
+      "path": "$BUILD/nx/lib/nx/ebin",
+      "sha256": "ed6b349f308d5d6572c5c283e4b9d43c0b5ebc9462a82e88f6f38889e2bc7630"
+    },
+    {
+      "beam_count": 5,
+      "path": "$BUILD/nx/lib/telemetry/ebin",
+      "sha256": "6f5fed309de87325bae5416004a287f6edcbb2e415f2ced522ab8b501f52ac9e"
+    }
+  ],
+  "corpus": "nx",
+  "corpus_manifest_sha256": "f9f6dc1939a32b3ef408414d51463276ab42581dfb91400d7ce320fec2d6e955",
+  "schema": "spec_lint.corpus_provenance/1",
+  "source": {
+    "dirty": false,
+    "lockfile_sha256": "7eb5910b59c55ebf5bf2a7e71b9d43a093c4f2159b433510064e33039d1b6a2f",
+    "revision": "a0076029fe98f851c0183e2fb47d58de3d4bcb34"
+  },
+  "tool": {
+    "dirty": false,
+    "lockfile_sha256": "a23fa18ff765b9ddc4f310975ca588771fabb25d06b9fc50267b620bf8af026b",
+    "revision": "58fe1ddf34d23d22d3048cceb09a2d60e8d9342e",
+    "source_sha256": "26c90fa829b7277e88a6d8c26bcb4a67acc5539ae5c3c51c4a969dd61948a9eb"
+  },
+  "toolchain": {
+    "compiler": {
+      "dirty": false,
+      "patch_sha256": null,
+      "revision": "c24c23538d521d25edd6a9a7a66fc5206caab70e"
+    },
+    "elixir": "Elixir 1.21.0-dev (c24c235) (compiled with Erlang/OTP 28)",
+    "identity": {
+      "code_digest": "59b3bff89d67a058d3e57e54e4b3ec4b0f463cc9cc506546ee6d2b363ccc500b",
+      "exck_digest": "08604ec6a828b5a15925ff3adc2ee9e7666e1e444f3ef95875554b7a0154da96",
+      "modules": 447,
+      "otp_version": "28.5.0.1",
+      "revision": "c24c235"
+    },
+    "loaded_module_types_beam": "$COMPILER/bin/../lib/elixir/ebin/Elixir.Module.Types.beam",
+    "loaded_module_types_sha256": "67af52fc2fd99fa60b47602b8d62edf29fe140ae2ff124cb6a8b10962ae1e839"
+  }
+}

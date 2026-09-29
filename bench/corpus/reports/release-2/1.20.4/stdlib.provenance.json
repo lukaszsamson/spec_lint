@@ -1,0 +1,65 @@
+{
+  "artifacts": [
+    {
+      "beam_count": 271,
+      "path": "$ELIXIR/lib/elixir/ebin",
+      "sha256": "0ba5b60dbd9527a26274fa2b7cb204a4f50fd5de47673d8cf419966508fdd889"
+    },
+    {
+      "beam_count": 5,
+      "path": "$ELIXIR/lib/eex/ebin",
+      "sha256": "ff2aa8bad9a709a13eba4fd2995dbb5d82751ff3006ee7ef8015e33c8457b61c"
+    },
+    {
+      "beam_count": 27,
+      "path": "$ELIXIR/lib/ex_unit/ebin",
+      "sha256": "ad2cea2e8cf99d5f0ca76b624fb5b0b486f93b1b2d216907e729a35fda42e252"
+    },
+    {
+      "beam_count": 31,
+      "path": "$ELIXIR/lib/iex/ebin",
+      "sha256": "332dfbe2770d8dc4a29227320052c450e1606bb689fdf1a126c06321536eaeb4"
+    },
+    {
+      "beam_count": 11,
+      "path": "$ELIXIR/lib/logger/ebin",
+      "sha256": "7c73a90c8f62f89c60ac9cbab5cdec0dc6610d22d03fe907e4d6c5ea1a3e6015"
+    },
+    {
+      "beam_count": 102,
+      "path": "$ELIXIR/lib/mix/ebin",
+      "sha256": "b6606238c315dda0c2a2941826868e5cc6b74c71a3a57305503744f5a9f4f104"
+    }
+  ],
+  "corpus": "stdlib",
+  "corpus_manifest_sha256": "a0070da27d23d6763e7593c49aad975bb1803169ea45b98479412eec56e09824",
+  "schema": "spec_lint.corpus_provenance/1",
+  "source": {
+    "dirty": false,
+    "lockfile_sha256": null,
+    "revision": "759443e724f55bf58e71c0603644e99058918d52"
+  },
+  "tool": {
+    "dirty": false,
+    "lockfile_sha256": "a23fa18ff765b9ddc4f310975ca588771fabb25d06b9fc50267b620bf8af026b",
+    "revision": "58fe1ddf34d23d22d3048cceb09a2d60e8d9342e",
+    "source_sha256": "26c90fa829b7277e88a6d8c26bcb4a67acc5539ae5c3c51c4a969dd61948a9eb"
+  },
+  "toolchain": {
+    "compiler": {
+      "dirty": false,
+      "patch_sha256": null,
+      "revision": "759443e724f55bf58e71c0603644e99058918d52"
+    },
+    "elixir": "Elixir 1.20.4 (compiled with Erlang/OTP 29)",
+    "identity": {
+      "code_digest": "cf42510c62e2725d02769af5996c808a8b597351db0d0dceb52ebf8a88febcb8",
+      "exck_digest": "28bc01cf3075064bdebb88faf653a8ca8decb87c8c1bbd8e24c0e2e28a596d07",
+      "modules": 447,
+      "otp_version": "28.5.0.1",
+      "revision": "759443e"
+    },
+    "loaded_module_types_beam": "$ELIXIR/bin/../lib/elixir/ebin/Elixir.Module.Types.beam",
+    "loaded_module_types_sha256": "4f940d51f36dc2e32dbda99765a598d652c978c0ac2b531d168108b1c0d2f7c6"
+  }
+}
