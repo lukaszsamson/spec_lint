@@ -982,8 +982,8 @@
       "inferred": [
         "(atom()) -> dynamic({:error, term()} or {:ok, :ok})"
       ],
-      "line": 143,
-      "location": "$SPEC_LINT/test/support/experiment_fixtures.ex:143",
+      "line": 144,
+      "location": "$SPEC_LINT/test/support/experiment_fixtures.ex:144",
       "mfa": "SpecLint.ExperimentFixtures.Cases.gradual_payload/1",
       "sl002_candidate": true,
       "sl002_candidate_static": false,
@@ -1462,8 +1462,8 @@
       "inferred": [
         "(atom(), term()) -> dynamic({:ok, term(), :a or :b})"
       ],
-      "line": 137,
-      "location": "$SPEC_LINT/test/support/experiment_fixtures.ex:137",
+      "line": 138,
+      "location": "$SPEC_LINT/test/support/experiment_fixtures.ex:138",
       "mfa": "SpecLint.ExperimentFixtures.Cases.narrowed_payload/2",
       "sl002_candidate": true,
       "sl002_candidate_static": false,
@@ -2095,8 +2095,8 @@
         "(atom()) -> :ok",
         "(:x) -> :error"
       ],
-      "line": 131,
-      "location": "$SPEC_LINT/test/support/experiment_fixtures.ex:131",
+      "line": 132,
+      "location": "$SPEC_LINT/test/support/experiment_fixtures.ex:132",
       "mfa": "SpecLint.ExperimentFixtures.Cases.shadowed/1",
       "sl002_candidate": false,
       "sl002_candidate_static": false,
@@ -2979,8 +2979,8 @@
       "inferred": [
         "() -> %{\n  tuple() =>\n    %{\n      class: :clause_conflict,\n      note: binary(),\n      omission?: false,\n      slices: non_empty_list(:clause_conflict or :none)\n    } or %{class: :clause_conflict, note: binary(), omission?: boolean()} or\n      %{\n        class: :clause_conflict or :structured_possible,\n        note: binary(),\n        omission?: true,\n        static_class: :possible_gradual\n      } or %{class: :none or :structured_possible or :unknown, note: binary(), omission?: true} or\n      %{\n        class: :none or :possible_domain_escape or :possible_input_approximate or :unknown,\n        note: binary(),\n        omission?: false\n      }\n}"
       ],
-      "line": 345,
-      "location": "$SPEC_LINT/test/support/experiment_fixtures.ex:345",
+      "line": 346,
+      "location": "$SPEC_LINT/test/support/experiment_fixtures.ex:346",
       "mfa": "SpecLint.ExperimentFixtures.expected/0",
       "sl002_candidate": false,
       "sl002_candidate_static": false,
@@ -3037,6 +3037,1028 @@
       ],
       "specs": [
         "expected() :: %{required(mfa()) => map()}"
+      ],
+      "status": "compared"
+    },
+    {
+      "class": "unknown",
+      "class_static": "unknown",
+      "clause_conflict_candidate": false,
+      "clause_conflict_candidate_static": false,
+      "file": "$SPEC_LINT/test/support/fixtures.ex",
+      "inferred": [
+        "(false or nil) -> dynamic()",
+        "(fun()) -> {:ok, :page}"
+      ],
+      "line": 341,
+      "location": "$SPEC_LINT/test/support/fixtures.ex:341",
+      "mfa": "SpecLint.Fixtures.ClauseLocal.gradual/1",
+      "sl002_candidate": false,
+      "sl002_candidate_static": false,
+      "slices": [
+        {
+          "applied": [
+            0,
+            1
+          ],
+          "applied_return": "term()",
+          "arg_loss_kinds": [
+            "arrow_polarity"
+          ],
+          "badapply": false,
+          "class": "unknown",
+          "class_static": "unknown",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [
+            {
+              "class": "unknown",
+              "class_static": "unknown",
+              "clause": 0,
+              "components": [],
+              "containment": "contained",
+              "extra": "not {:ok, :page}",
+              "reasons": [
+                "top_only"
+              ],
+              "static_return": false
+            },
+            {
+              "class": "none",
+              "class_static": "none",
+              "clause": 1,
+              "components": [],
+              "containment": "containment_unknown",
+              "extra": "none()",
+              "reasons": [
+                "containment_unknown=[1]",
+                "no_extra"
+              ],
+              "static_return": true
+            }
+          ],
+          "components": [],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "contained",
+              "static_return": false
+            },
+            {
+              "clause": 1,
+              "containment": "containment_unknown",
+              "static_return": true
+            }
+          ],
+          "cutoff": false,
+          "extra": "not {:ok, :page}",
+          "index": 0,
+          "input_approximate": true,
+          "loss_kinds": [
+            "arrow_polarity"
+          ],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "top_only"
+          ],
+          "return_loss_kinds": [],
+          "return_relation": "superset",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "false or nil or fun()"
+          ],
+          "spec_return": "{:ok, :page}",
+          "status": "compared",
+          "top_only": true,
+          "union_class": "unknown",
+          "union_class_static": "unknown"
+        }
+      ],
+      "specs": [
+        "gradual(false | nil | (... -> term())) :: {:ok, :page}"
+      ],
+      "status": "compared"
+    },
+    {
+      "class": "none",
+      "class_static": "none",
+      "clause_conflict_candidate": false,
+      "clause_conflict_candidate_static": false,
+      "file": "$SPEC_LINT/test/support/fixtures.ex",
+      "inferred": [
+        "(term()) -> dynamic()"
+      ],
+      "line": 358,
+      "location": "$SPEC_LINT/test/support/fixtures.ex:358",
+      "mfa": "SpecLint.Fixtures.ClauseLocal.identity/1",
+      "sl002_candidate": false,
+      "sl002_candidate_static": false,
+      "slices": [
+        {
+          "applied": [
+            0
+          ],
+          "applied_return": "term()",
+          "arg_loss_kinds": [],
+          "badapply": false,
+          "class": "none",
+          "class_static": "none",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [],
+          "components": [],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "contained",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "none()",
+          "index": 0,
+          "input_approximate": false,
+          "loss_kinds": [],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "no_extra"
+          ],
+          "return_loss_kinds": [],
+          "return_relation": "equal",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "term()"
+          ],
+          "spec_return": "term()",
+          "status": "compared",
+          "top_only": true,
+          "union_class": "none",
+          "union_class_static": "none"
+        }
+      ],
+      "specs": [
+        "identity(term()) :: term()"
+      ],
+      "status": "compared"
+    },
+    {
+      "class": "possible_domain_escape",
+      "class_static": "possible_domain_escape",
+      "clause_conflict_candidate": false,
+      "clause_conflict_candidate_static": false,
+      "file": "$SPEC_LINT/test/support/fixtures.ex",
+      "inferred": [
+        "((none() -> term())) -> :ok",
+        "(not (none() -> term())) -> dynamic({:bad, not (none() -> term())})"
+      ],
+      "line": 322,
+      "location": "$SPEC_LINT/test/support/fixtures.ex:322",
+      "mfa": "SpecLint.Fixtures.ClauseLocal.impossible/1",
+      "sl002_candidate": false,
+      "sl002_candidate_static": false,
+      "slices": [
+        {
+          "applied": [
+            0,
+            1
+          ],
+          "applied_return": ":ok or {:bad, not (none() -> term())}",
+          "arg_loss_kinds": [
+            "arrow_polarity",
+            "integer_refinement_erased"
+          ],
+          "badapply": false,
+          "class": "possible_domain_escape",
+          "class_static": "possible_domain_escape",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [
+            {
+              "class": "none",
+              "class_static": "none",
+              "clause": 0,
+              "components": [],
+              "containment": "containment_unknown",
+              "extra": "none()",
+              "reasons": [
+                "containment_unknown=[0]",
+                "no_extra"
+              ],
+              "static_return": true
+            },
+            {
+              "class": "possible_domain_escape",
+              "class_static": "possible_domain_escape",
+              "clause": 1,
+              "components": [],
+              "containment": "domain_escape",
+              "extra": "{:bad, not (none() -> term())}",
+              "reasons": [
+                "domain_escape=[1]",
+                "disjoint"
+              ],
+              "static_return": false
+            }
+          ],
+          "components": [
+            {
+              "descr": "{:bad, not (none() -> term())}",
+              "detail": "tuple",
+              "kind": "tuple",
+              "label": "structured",
+              "payload_gradual": true,
+              "present_in_contributing": true,
+              "subtraction_payload": false,
+              "tag_in_spec": false
+            }
+          ],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "containment_unknown",
+              "static_return": true
+            },
+            {
+              "clause": 1,
+              "containment": "domain_escape",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "{:bad, not (none() -> term())}",
+          "index": 0,
+          "input_approximate": true,
+          "loss_kinds": [
+            "arrow_polarity",
+            "integer_refinement_erased"
+          ],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "input_approximate",
+            "domain_escape=[1]",
+            "containment_unknown=[0]",
+            "payload_gradual=1"
+          ],
+          "return_loss_kinds": [],
+          "return_relation": "superset",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "(none() -> term()) or integer()"
+          ],
+          "spec_return": ":ok",
+          "status": "compared",
+          "top_only": false,
+          "union_class": "possible_domain_escape",
+          "union_class_static": "possible_domain_escape"
+        }
+      ],
+      "specs": [
+        "impossible(pos_integer() | (pos_integer() -> atom())) :: :ok"
+      ],
+      "status": "compared"
+    },
+    {
+      "class": "unknown",
+      "class_static": "unknown",
+      "clause_conflict_candidate": false,
+      "clause_conflict_candidate_static": false,
+      "file": "$SPEC_LINT/test/support/fixtures.ex",
+      "inferred": [
+        "(false or nil) -> dynamic(not :undefined)",
+        "(fun()) -> {:ok, :page}"
+      ],
+      "line": 346,
+      "location": "$SPEC_LINT/test/support/fixtures.ex:346",
+      "mfa": "SpecLint.Fixtures.ClauseLocal.near_top/1",
+      "sl002_candidate": false,
+      "sl002_candidate_static": false,
+      "slices": [
+        {
+          "applied": [
+            0,
+            1
+          ],
+          "applied_return": "not :undefined",
+          "arg_loss_kinds": [
+            "arrow_polarity"
+          ],
+          "badapply": false,
+          "class": "unknown",
+          "class_static": "unknown",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [
+            {
+              "class": "unknown",
+              "class_static": "unknown",
+              "clause": 0,
+              "components": [],
+              "containment": "contained",
+              "extra": "not (:undefined or {:ok, :page})",
+              "reasons": [
+                "near_top"
+              ],
+              "static_return": false
+            },
+            {
+              "class": "none",
+              "class_static": "none",
+              "clause": 1,
+              "components": [],
+              "containment": "containment_unknown",
+              "extra": "none()",
+              "reasons": [
+                "containment_unknown=[1]",
+                "no_extra"
+              ],
+              "static_return": true
+            }
+          ],
+          "components": [],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "contained",
+              "static_return": false
+            },
+            {
+              "clause": 1,
+              "containment": "containment_unknown",
+              "static_return": true
+            }
+          ],
+          "cutoff": false,
+          "extra": "not (:undefined or {:ok, :page})",
+          "index": 0,
+          "input_approximate": true,
+          "loss_kinds": [
+            "arrow_polarity"
+          ],
+          "near_top": true,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "near_top"
+          ],
+          "return_loss_kinds": [],
+          "return_relation": "superset",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "false or nil or fun()"
+          ],
+          "spec_return": "{:ok, :page}",
+          "status": "compared",
+          "top_only": false,
+          "union_class": "unknown",
+          "union_class_static": "unknown"
+        }
+      ],
+      "specs": [
+        "near_top(false | nil | (... -> term())) :: {:ok, :page}"
+      ],
+      "status": "compared"
+    },
+    {
+      "class": "possible_input_approximate",
+      "class_static": "possible_input_approximate",
+      "clause_conflict_candidate": false,
+      "clause_conflict_candidate_static": false,
+      "file": "$SPEC_LINT/test/support/fixtures.ex",
+      "inferred": [
+        "(:default or fun()) -> :ok",
+        "(integer()) -> dynamic({:error, integer()})"
+      ],
+      "line": 307,
+      "location": "$SPEC_LINT/test/support/fixtures.ex:307",
+      "mfa": "SpecLint.Fixtures.ClauseLocal.only_hi/1",
+      "sl002_candidate": false,
+      "sl002_candidate_static": false,
+      "slices": [
+        {
+          "applied": [
+            0,
+            1
+          ],
+          "applied_return": ":ok or {:error, integer()}",
+          "arg_loss_kinds": [
+            "arrow_polarity",
+            "integer_refinement_erased"
+          ],
+          "badapply": false,
+          "class": "possible_input_approximate",
+          "class_static": "possible_input_approximate",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [
+            {
+              "class": "none",
+              "class_static": "none",
+              "clause": 0,
+              "components": [],
+              "containment": "containment_unknown",
+              "extra": "none()",
+              "reasons": [
+                "containment_unknown=[0]",
+                "no_extra"
+              ],
+              "static_return": true
+            },
+            {
+              "class": "possible_input_approximate",
+              "class_static": "possible_input_approximate",
+              "clause": 1,
+              "components": [],
+              "containment": "containment_unknown",
+              "extra": "{:error, integer()}",
+              "reasons": [
+                "containment_unknown=[1]",
+                "disjoint"
+              ],
+              "static_return": false
+            }
+          ],
+          "components": [
+            {
+              "descr": "{:error, integer()}",
+              "detail": "tuple",
+              "kind": "tuple",
+              "label": "structured",
+              "payload_gradual": true,
+              "present_in_contributing": true,
+              "subtraction_payload": false,
+              "tag_in_spec": false
+            }
+          ],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "containment_unknown",
+              "static_return": true
+            },
+            {
+              "clause": 1,
+              "containment": "containment_unknown",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "{:error, integer()}",
+          "index": 0,
+          "input_approximate": true,
+          "loss_kinds": [
+            "arrow_polarity",
+            "integer_refinement_erased"
+          ],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "input_approximate",
+            "containment_unknown=[0, 1]",
+            "payload_gradual=1"
+          ],
+          "return_loss_kinds": [],
+          "return_relation": "superset",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            ":default or fun() or integer()"
+          ],
+          "spec_return": ":ok",
+          "status": "compared",
+          "top_only": false,
+          "union_class": "possible_input_approximate",
+          "union_class_static": "possible_input_approximate"
+        }
+      ],
+      "specs": [
+        "only_hi(pos_integer() | :default | (... -> term())) :: :ok"
+      ],
+      "status": "compared"
+    },
+    {
+      "class": "clause_conflict",
+      "class_static": "possible_gradual",
+      "clause_conflict_candidate": false,
+      "clause_conflict_candidate_static": false,
+      "file": "$SPEC_LINT/test/support/fixtures.ex",
+      "inferred": [
+        "(:a) -> (term() -> dynamic())",
+        "(:b) -> (term(), term() -> dynamic({term(), term()}))"
+      ],
+      "line": 335,
+      "location": "$SPEC_LINT/test/support/fixtures.ex:335",
+      "mfa": "SpecLint.Fixtures.ClauseLocal.other_arity/1",
+      "sl002_candidate": false,
+      "sl002_candidate_static": false,
+      "slices": [
+        {
+          "applied": [
+            0,
+            1
+          ],
+          "applied_return": "(term() -> term()) or (term(), term() -> {term(), term()})",
+          "arg_loss_kinds": [],
+          "badapply": false,
+          "class": "clause_conflict",
+          "class_static": "possible_gradual",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [
+            {
+              "class": "none",
+              "class_static": "none",
+              "clause": 0,
+              "components": [],
+              "containment": "contained",
+              "extra": "none()",
+              "reasons": [
+                "no_extra"
+              ],
+              "static_return": false
+            },
+            {
+              "class": "clause_conflict",
+              "class_static": "possible_gradual",
+              "clause": 1,
+              "components": [],
+              "containment": "contained",
+              "extra": "(term(), term() -> {term(), term()})",
+              "reasons": [
+                "disjoint"
+              ],
+              "static_return": false
+            }
+          ],
+          "components": [
+            {
+              "descr": "(term(), term() -> {term(), term()})",
+              "detail": "shape",
+              "kind": "fun",
+              "label": "unknown",
+              "payload_gradual": false,
+              "present_in_contributing": true,
+              "subtraction_payload": false,
+              "tag_in_spec": false
+            }
+          ],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "contained",
+              "static_return": false
+            },
+            {
+              "clause": 1,
+              "containment": "contained",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "(term(), term() -> {term(), term()})",
+          "index": 0,
+          "input_approximate": false,
+          "loss_kinds": [
+            "arrow_polarity",
+            "integer_refinement_erased"
+          ],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "unknown_components=1",
+            "no_counted_component",
+            "return_inexact"
+          ],
+          "return_loss_kinds": [
+            "arrow_polarity",
+            "integer_refinement_erased"
+          ],
+          "return_relation": "overlapping",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            ":a or :b"
+          ],
+          "spec_return": "(none() -> term())",
+          "status": "compared",
+          "top_only": false,
+          "union_class": "unknown",
+          "union_class_static": "unknown"
+        }
+      ],
+      "specs": [
+        "other_arity(:a | :b) :: (pos_integer() -> atom())"
+      ],
+      "status": "compared"
+    },
+    {
+      "class": "clause_conflict",
+      "class_static": "possible_gradual",
+      "clause_conflict_candidate": false,
+      "clause_conflict_candidate_static": false,
+      "file": "$SPEC_LINT/test/support/fixtures.ex",
+      "inferred": [
+        "(false or nil) -> dynamic({:ok, false or nil})",
+        "(fun()) -> {:ok, :page}",
+        "(atom() and not(false, nil)) -> :ok"
+      ],
+      "line": 315,
+      "location": "$SPEC_LINT/test/support/fixtures.ex:315",
+      "mfa": "SpecLint.Fixtures.ClauseLocal.overlapping/1",
+      "sl002_candidate": false,
+      "sl002_candidate_static": false,
+      "slices": [
+        {
+          "applied": [
+            0,
+            1
+          ],
+          "applied_return": "{:ok, false or nil or :page}",
+          "arg_loss_kinds": [
+            "arrow_polarity"
+          ],
+          "badapply": false,
+          "class": "clause_conflict",
+          "class_static": "possible_gradual",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [
+            {
+              "class": "clause_conflict",
+              "class_static": "possible_gradual",
+              "clause": 0,
+              "components": [],
+              "containment": "contained",
+              "extra": "{:ok, false or nil}",
+              "reasons": [
+                "disjoint"
+              ],
+              "static_return": false
+            },
+            {
+              "class": "none",
+              "class_static": "none",
+              "clause": 1,
+              "components": [],
+              "containment": "containment_unknown",
+              "extra": "none()",
+              "reasons": [
+                "containment_unknown=[1]",
+                "no_extra"
+              ],
+              "static_return": true
+            }
+          ],
+          "components": [
+            {
+              "descr": "{:ok, false or nil}",
+              "detail": "tuple",
+              "kind": "tuple",
+              "label": "structured",
+              "payload_gradual": true,
+              "present_in_contributing": true,
+              "subtraction_payload": false,
+              "tag_in_spec": true
+            }
+          ],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "contained",
+              "static_return": false
+            },
+            {
+              "clause": 1,
+              "containment": "containment_unknown",
+              "static_return": true
+            }
+          ],
+          "cutoff": false,
+          "extra": "{:ok, false or nil or :page} and not {:ok, :page}",
+          "index": 0,
+          "input_approximate": true,
+          "loss_kinds": [
+            "arrow_polarity"
+          ],
+          "near_top": false,
+          "overlap": true,
+          "overlap_unknown": false,
+          "reasons": [
+            "input_approximate",
+            "containment_unknown=[1]",
+            "tag_in_spec=1",
+            "payload_gradual=1",
+            "overlap"
+          ],
+          "return_loss_kinds": [],
+          "return_relation": "superset",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "false or nil or fun()"
+          ],
+          "spec_return": "{:ok, :page}",
+          "status": "compared",
+          "top_only": false,
+          "union_class": "possible_input_approximate",
+          "union_class_static": "possible_input_approximate"
+        },
+        {
+          "applied": [
+            0,
+            2
+          ],
+          "applied_return": ":ok or {:ok, false or nil}",
+          "arg_loss_kinds": [],
+          "badapply": false,
+          "class": "clause_conflict",
+          "class_static": "possible_gradual",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [
+            {
+              "class": "clause_conflict",
+              "class_static": "possible_gradual",
+              "clause": 0,
+              "components": [],
+              "containment": "contained",
+              "extra": "{:ok, false or nil}",
+              "reasons": [
+                "disjoint"
+              ],
+              "static_return": false
+            },
+            {
+              "class": "none",
+              "class_static": "none",
+              "clause": 2,
+              "components": [],
+              "containment": "contained",
+              "extra": "none()",
+              "reasons": [
+                "no_extra"
+              ],
+              "static_return": true
+            }
+          ],
+          "components": [
+            {
+              "descr": "{:ok, false or nil}",
+              "detail": "tuple",
+              "kind": "tuple",
+              "label": "structured",
+              "payload_gradual": true,
+              "present_in_contributing": true,
+              "subtraction_payload": false,
+              "tag_in_spec": false
+            }
+          ],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "contained",
+              "static_return": false
+            },
+            {
+              "clause": 2,
+              "containment": "contained",
+              "static_return": true
+            }
+          ],
+          "cutoff": false,
+          "extra": "{:ok, false or nil}",
+          "index": 1,
+          "input_approximate": false,
+          "loss_kinds": [],
+          "near_top": false,
+          "overlap": true,
+          "overlap_unknown": false,
+          "reasons": [
+            "payload_gradual=1",
+            "overlap"
+          ],
+          "return_loss_kinds": [],
+          "return_relation": "superset",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "atom()"
+          ],
+          "spec_return": ":ok",
+          "status": "compared",
+          "top_only": false,
+          "union_class": "structured_possible",
+          "union_class_static": "possible_gradual"
+        }
+      ],
+      "specs": [
+        "overlapping(false | nil | (... -> term())) :: {:ok, :page}",
+        "overlapping(atom()) :: :ok"
+      ],
+      "status": "compared"
+    },
+    {
+      "class": "clause_conflict",
+      "class_static": "clause_conflict",
+      "clause_conflict_candidate": false,
+      "clause_conflict_candidate_static": false,
+      "file": "$SPEC_LINT/test/support/fixtures.ex",
+      "inferred": [
+        "(atom() or fun()) -> :ok",
+        "(false) -> {:error, false}"
+      ],
+      "line": 352,
+      "location": "$SPEC_LINT/test/support/fixtures.ex:352",
+      "mfa": "SpecLint.Fixtures.ClauseLocal.redundant/1",
+      "sl002_candidate": false,
+      "sl002_candidate_static": false,
+      "slices": [
+        {
+          "applied": [
+            0,
+            1
+          ],
+          "applied_return": ":ok or {:error, false}",
+          "arg_loss_kinds": [
+            "arrow_polarity"
+          ],
+          "badapply": false,
+          "class": "clause_conflict",
+          "class_static": "clause_conflict",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [
+            {
+              "class": "none",
+              "class_static": "none",
+              "clause": 0,
+              "components": [],
+              "containment": "domain_escape",
+              "extra": "none()",
+              "reasons": [
+                "domain_escape=[0]",
+                "no_extra"
+              ],
+              "static_return": true
+            },
+            {
+              "class": "clause_conflict",
+              "class_static": "clause_conflict",
+              "clause": 1,
+              "components": [],
+              "containment": "contained",
+              "extra": "{:error, false}",
+              "reasons": [
+                "possibly_shadowed",
+                "disjoint"
+              ],
+              "static_return": true
+            }
+          ],
+          "components": [
+            {
+              "descr": "{:error, false}",
+              "detail": "tuple",
+              "kind": "tuple",
+              "label": "structured",
+              "payload_gradual": false,
+              "present_in_contributing": true,
+              "subtraction_payload": false,
+              "tag_in_spec": false
+            }
+          ],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "domain_escape",
+              "static_return": true
+            },
+            {
+              "clause": 1,
+              "containment": "contained",
+              "static_return": true
+            }
+          ],
+          "cutoff": false,
+          "extra": "{:error, false}",
+          "index": 0,
+          "input_approximate": true,
+          "loss_kinds": [
+            "arrow_polarity"
+          ],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "input_approximate",
+            "domain_escape=[0]"
+          ],
+          "return_loss_kinds": [],
+          "return_relation": "superset",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "false or nil or fun()"
+          ],
+          "spec_return": ":ok",
+          "status": "compared",
+          "top_only": false,
+          "union_class": "possible_domain_escape",
+          "union_class_static": "possible_domain_escape"
+        }
+      ],
+      "specs": [
+        "redundant(false | nil | (... -> term())) :: :ok"
+      ],
+      "status": "compared"
+    },
+    {
+      "class": "none",
+      "class_static": "none",
+      "clause_conflict_candidate": false,
+      "clause_conflict_candidate_static": false,
+      "file": "$SPEC_LINT/test/support/fixtures.ex",
+      "inferred": [
+        "(:a) -> (term() -> dynamic())",
+        "(:b) -> (term() -> dynamic({term()}))"
+      ],
+      "line": 328,
+      "location": "$SPEC_LINT/test/support/fixtures.ex:328",
+      "mfa": "SpecLint.Fixtures.ClauseLocal.same_arity/1",
+      "sl002_candidate": false,
+      "sl002_candidate_static": false,
+      "slices": [
+        {
+          "applied": [
+            0,
+            1
+          ],
+          "applied_return": "(term() -> term())",
+          "arg_loss_kinds": [],
+          "badapply": false,
+          "class": "none",
+          "class_static": "none",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [],
+          "components": [],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "contained",
+              "static_return": false
+            },
+            {
+              "clause": 1,
+              "containment": "contained",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "none()",
+          "index": 0,
+          "input_approximate": false,
+          "loss_kinds": [
+            "arrow_polarity",
+            "integer_refinement_erased"
+          ],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "no_extra",
+            "return_inexact"
+          ],
+          "return_loss_kinds": [
+            "arrow_polarity",
+            "integer_refinement_erased"
+          ],
+          "return_relation": "subset",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            ":a or :b"
+          ],
+          "spec_return": "(none() -> term())",
+          "status": "compared",
+          "top_only": false,
+          "union_class": "none",
+          "union_class_static": "none"
+        }
+      ],
+      "specs": [
+        "same_arity(:a | :b) :: (pos_integer() -> atom())"
       ],
       "status": "compared"
     },
@@ -4531,8 +5553,8 @@
       "inferred": [
         "(term()) -> dynamic()"
       ],
-      "line": 242,
-      "location": "$SPEC_LINT/test/support/fixtures.ex:242",
+      "line": 243,
+      "location": "$SPEC_LINT/test/support/fixtures.ex:243",
       "mfa": "SpecLint.Fixtures.Generated.__call__/1",
       "sl002_candidate": false,
       "sl002_candidate_static": false,
@@ -4985,8 +6007,8 @@
         "(atom()) -> dynamic(atom())",
         "(integer()) -> dynamic(integer())"
       ],
-      "line": 277,
-      "location": "$SPEC_LINT/test/support/fixtures.ex:277",
+      "line": 287,
+      "location": "$SPEC_LINT/test/support/fixtures.ex:287",
       "mfa": "SpecLint.Fixtures.Siblings.disjoint_sibling/1",
       "sl002_candidate": false,
       "sl002_candidate_static": false,
@@ -5122,8 +6144,8 @@
       "inferred": [
         "(atom()) -> dynamic(atom())"
       ],
-      "line": 271,
-      "location": "$SPEC_LINT/test/support/fixtures.ex:271",
+      "line": 281,
+      "location": "$SPEC_LINT/test/support/fixtures.ex:281",
       "mfa": "SpecLint.Fixtures.Siblings.unsupported_sibling/1",
       "sl002_candidate": false,
       "sl002_candidate_static": false,
@@ -8645,6 +9667,236 @@
         "quoted_type(Macro.t(), keyword()) :: quoted_type()"
       ],
       "status": "compared"
+    },
+    {
+      "class": "clause_conflict",
+      "class_static": "possible_gradual",
+      "clause_conflict_candidate": false,
+      "clause_conflict_candidate_static": false,
+      "file": "$SPEC_LINT/test/support/omission_fixtures.ex",
+      "inferred": [
+        "(false or nil) -> dynamic({:ok, false or nil})",
+        "(empty_list() or non_empty_list(term(), term()) or %{..., __struct__: atom()} or map()) -> dynamic(\n  {:error, binary()} or {:ok, %SpecLint.OmissionFixtures.Page{results: empty_list(), rerun: nil}}\n)"
+      ],
+      "line": 286,
+      "location": "$SPEC_LINT/test/support/omission_fixtures.ex:286",
+      "mfa": "SpecLint.OmissionFixtures.ClauseLocal.page_opts/1",
+      "sl002_candidate": false,
+      "sl002_candidate_static": false,
+      "slices": [
+        {
+          "applied": [
+            0,
+            1
+          ],
+          "applied_return": "{:ok, false or nil} or {:ok, %SpecLint.OmissionFixtures.Page{results: empty_list(), rerun: nil}} or {:error, binary()}",
+          "arg_loss_kinds": [
+            "arrow_polarity"
+          ],
+          "badapply": false,
+          "class": "clause_conflict",
+          "class_static": "possible_gradual",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [
+            {
+              "class": "clause_conflict",
+              "class_static": "possible_gradual",
+              "clause": 0,
+              "components": [],
+              "containment": "contained",
+              "extra": "{:ok, false or nil}",
+              "reasons": [
+                "disjoint"
+              ],
+              "static_return": false
+            },
+            {
+              "class": "none",
+              "class_static": "none",
+              "clause": 1,
+              "components": [],
+              "containment": "domain_escape",
+              "extra": "none()",
+              "reasons": [
+                "domain_escape=[1]",
+                "no_extra"
+              ],
+              "static_return": false
+            }
+          ],
+          "components": [
+            {
+              "descr": "{:ok, false or nil}",
+              "detail": "tuple",
+              "kind": "tuple",
+              "label": "structured",
+              "payload_gradual": true,
+              "present_in_contributing": true,
+              "subtraction_payload": false,
+              "tag_in_spec": true
+            }
+          ],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "contained",
+              "static_return": false
+            },
+            {
+              "clause": 1,
+              "containment": "domain_escape",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "{:ok, false or nil}",
+          "index": 0,
+          "input_approximate": true,
+          "loss_kinds": [
+            "arrow_polarity"
+          ],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "input_approximate",
+            "domain_escape=[1]",
+            "tag_in_spec=1",
+            "payload_gradual=1",
+            "return_inexact"
+          ],
+          "return_loss_kinds": [
+            "arrow_polarity"
+          ],
+          "return_relation": "overlapping",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "false or nil or list({atom(), term()}) or %SpecLint.OmissionFixtures.Page{results: list(term()), rerun: nil or fun()}"
+          ],
+          "spec_return": "{:error, binary()} or {:ok, %SpecLint.OmissionFixtures.Page{results: list(term()), rerun: nil or fun()}}",
+          "status": "compared",
+          "top_only": false,
+          "union_class": "possible_domain_escape",
+          "union_class_static": "possible_domain_escape"
+        }
+      ],
+      "specs": [
+        "page_opts(page() | false | nil | keyword()) :: {:ok, page()} | {:error, String.t()}"
+      ],
+      "status": "compared"
+    },
+    {
+      "class": "clause_conflict",
+      "class_static": "possible_gradual",
+      "clause_conflict_candidate": true,
+      "clause_conflict_candidate_static": false,
+      "file": "$SPEC_LINT/test/support/omission_fixtures.ex",
+      "inferred": [
+        "(term(), term(), nil) -> dynamic({:via, Registry, {SpecLint.OmissionFixtures.ClauseLocal, term()}})",
+        "(term(), term(), not nil) -> dynamic({:via, Registry, {SpecLint.OmissionFixtures.ClauseLocal, term(), not nil}})"
+      ],
+      "line": 303,
+      "location": "$SPEC_LINT/test/support/omission_fixtures.ex:303",
+      "mfa": "SpecLint.OmissionFixtures.ClauseLocal.via/3",
+      "sl002_candidate": false,
+      "sl002_candidate_static": false,
+      "slices": [
+        {
+          "applied": [
+            0,
+            1
+          ],
+          "applied_return": "{:via, Registry,\n {SpecLint.OmissionFixtures.ClauseLocal, term()} or\n   {SpecLint.OmissionFixtures.ClauseLocal, term(), not nil}}",
+          "arg_loss_kinds": [],
+          "badapply": false,
+          "class": "clause_conflict",
+          "class_static": "possible_gradual",
+          "clause_conflict_candidate": true,
+          "clause_conflict_candidate_static": false,
+          "clauses": [
+            {
+              "class": "none",
+              "class_static": "none",
+              "clause": 0,
+              "components": [],
+              "containment": "contained",
+              "extra": "none()",
+              "reasons": [
+                "no_extra"
+              ],
+              "static_return": false
+            },
+            {
+              "class": "clause_conflict",
+              "class_static": "possible_gradual",
+              "clause": 1,
+              "components": [],
+              "containment": "contained",
+              "extra": "{:via, Registry, {SpecLint.OmissionFixtures.ClauseLocal, term(), not nil}}",
+              "reasons": [
+                "disjoint"
+              ],
+              "static_return": false
+            }
+          ],
+          "components": [
+            {
+              "descr": "{:via, Registry, {SpecLint.OmissionFixtures.ClauseLocal, term(), not nil}}",
+              "detail": "tuple",
+              "kind": "tuple",
+              "label": "unknown",
+              "payload_gradual": false,
+              "present_in_contributing": true,
+              "subtraction_payload": false,
+              "tag_in_spec": false
+            }
+          ],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "contained",
+              "static_return": false
+            },
+            {
+              "clause": 1,
+              "containment": "contained",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "{:via, Registry,\n {SpecLint.OmissionFixtures.ClauseLocal, term()} or\n   {SpecLint.OmissionFixtures.ClauseLocal, term(), not nil}} and not {:via, Registry, {SpecLint.OmissionFixtures.ClauseLocal, term()}}",
+          "index": 0,
+          "input_approximate": false,
+          "loss_kinds": [],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "unknown_components=1",
+            "no_counted_component"
+          ],
+          "return_loss_kinds": [],
+          "return_relation": "superset",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "term()",
+            "term()",
+            "term()"
+          ],
+          "spec_return": "{:via, Registry, {SpecLint.OmissionFixtures.ClauseLocal, term()}}",
+          "status": "compared",
+          "top_only": false,
+          "union_class": "unknown",
+          "union_class_static": "unknown"
+        }
+      ],
+      "specs": [
+        "via(term(), role(), value()) :: {:via, Registry, {SpecLint.OmissionFixtures.ClauseLocal, key()}}"
+      ],
+      "status": "compared"
     }
   ],
   "label": "fixtures",
@@ -8652,56 +9904,56 @@
   "totals": {
     "badapply_slices": 2,
     "clause_classes": {
-      "clause_conflict": 11,
-      "none": 21,
-      "possible_domain_escape": 16,
-      "possible_input_approximate": 4,
+      "clause_conflict": 17,
+      "none": 31,
+      "possible_domain_escape": 17,
+      "possible_input_approximate": 5,
       "structured_possible": 6,
-      "unknown": 33
+      "unknown": 35
     },
     "clause_classes_static": {
-      "clause_conflict": 5,
-      "none": 21,
-      "possible_domain_escape": 16,
-      "possible_gradual": 11,
-      "possible_input_approximate": 4,
+      "clause_conflict": 6,
+      "none": 31,
+      "possible_domain_escape": 17,
+      "possible_gradual": 16,
+      "possible_input_approximate": 5,
       "structured_possible": 1,
-      "unknown": 33
+      "unknown": 35
     },
-    "clause_conflict_candidate_functions": 7,
+    "clause_conflict_candidate_functions": 8,
     "clause_conflict_candidate_functions_static": 3,
     "component_labels": {
-      "structured": 21,
+      "structured": 27,
       "structured_absent": 4,
-      "unknown": 2,
+      "unknown": 4,
       "unknown_absent": 6,
       "whole_kind": 6
     },
     "function_classes": {
-      "clause_conflict": 10,
-      "none": 30,
-      "possible_domain_escape": 7,
-      "possible_input_approximate": 4,
+      "clause_conflict": 15,
+      "none": 32,
+      "possible_domain_escape": 8,
+      "possible_input_approximate": 5,
       "structured_possible": 6,
-      "unknown": 26
+      "unknown": 28
     },
     "function_classes_static": {
-      "clause_conflict": 5,
-      "none": 30,
-      "possible_domain_escape": 7,
-      "possible_gradual": 10,
-      "possible_input_approximate": 4,
+      "clause_conflict": 6,
+      "none": 32,
+      "possible_domain_escape": 8,
+      "possible_gradual": 14,
+      "possible_input_approximate": 5,
       "structured_possible": 1,
-      "unknown": 26
+      "unknown": 28
     },
-    "functions": 83,
+    "functions": 94,
     "functions_by_status": {
-      "compared": 83
+      "compared": 94
     },
     "loss_kinds": {
-      "arrow_polarity": 7,
+      "arrow_polarity": 16,
       "charlist_as_integers": 1,
-      "integer_refinement_erased": 20,
+      "integer_refinement_erased": 24,
       "map_key_widened": 5,
       "opaque_boundary": 2,
       "recursive_cutoff": 4,
@@ -8709,52 +9961,52 @@
       "type_variable_correlation": 9,
       "unresolved_remote_type": 3
     },
-    "modules": 19,
+    "modules": 22,
     "modules_by_status": {
-      "ok": 19
+      "ok": 22
     },
-    "near_top_slices": 1,
+    "near_top_slices": 2,
     "out_of_scope_by_reason": {
       "generated": 2,
       "macro": 1,
       "not_exported": 1,
       "protocol": 4
     },
-    "overlap_slices": 4,
+    "overlap_slices": 6,
     "overlap_unknown_slices": 5,
     "sl002_candidate_functions": 5,
     "sl002_candidate_functions_static": 1,
     "sl002_candidate_slices": 5,
     "sl002_candidate_slices_tag_in_spec": 1,
     "slice_classes": {
-      "clause_conflict": 10,
-      "none": 35,
-      "possible_domain_escape": 9,
-      "possible_input_approximate": 4,
+      "clause_conflict": 16,
+      "none": 37,
+      "possible_domain_escape": 10,
+      "possible_input_approximate": 5,
       "structured_possible": 6,
-      "unknown": 27
+      "unknown": 29
     },
     "slice_classes_static": {
-      "clause_conflict": 5,
-      "none": 35,
-      "possible_domain_escape": 9,
-      "possible_gradual": 10,
-      "possible_input_approximate": 4,
+      "clause_conflict": 6,
+      "none": 37,
+      "possible_domain_escape": 10,
+      "possible_gradual": 15,
+      "possible_input_approximate": 5,
       "structured_possible": 1,
-      "unknown": 27
+      "unknown": 29
     },
-    "slices": 91,
-    "slices_approximate": 39,
-    "slices_compared": 91,
-    "slices_exact": 52,
-    "top_only_slices": 24,
+    "slices": 103,
+    "slices_approximate": 48,
+    "slices_compared": 103,
+    "slices_exact": 55,
+    "top_only_slices": 26,
     "unavailable_by_reason": {},
     "union_classes": {
-      "none": 35,
-      "possible_domain_escape": 8,
-      "possible_input_approximate": 4,
-      "structured_possible": 11,
-      "unknown": 29,
+      "none": 37,
+      "possible_domain_escape": 11,
+      "possible_input_approximate": 6,
+      "structured_possible": 12,
+      "unknown": 33,
       "whole_kind_possible": 4
     },
     "unsupported_by_reason": {}

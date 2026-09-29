@@ -68,6 +68,7 @@ go to standard error, so standard output is only the JSON report.
 | `--rules ID,...` | Run only these rules (IDs or names). Enables rules that are off by default. |
 | `--except ID,...` | Do not run these rules. Coverage is still checked when `SL008` is left out. |
 | `--require-static-return` | Treat structured evidence supported only by gradual clause returns as `possible_gradual`. |
+| `--clause-local-qualification` | Experiment, off by default and not adopted: an `SL001` clause conflict gates when its clause's whole domain is inside the spec's argument lower bounds, instead of requiring the whole slice to be free of arrow losses. See `bench/corpus/clause_local_qualification.md`. |
 
 ### Exit status
 
@@ -133,6 +134,7 @@ under `--warnings-as-errors`.
   exclude: ["lib/generated/**"],
   expand_opaque: false,
   require_static_return: false,
+  clause_local_qualification: false,
   warnings_as_errors: false
 ]
 ```
@@ -154,6 +156,10 @@ under `--warnings-as-errors`.
   structurally. It is shown in the report header, in each finding's
   translation (`translation exact (opaque expanded)`), in the ledger and
   in the JSON `config`.
+- **`clause_local_qualification: true`** is the experiment of
+  `--clause-local-qualification` (default `false`). It is shown in the JSON
+  `config`, and each affected finding lists `clause_contained_in_lo`
+  among its prerequisites.
 - Command-line options override the file.
 
 ## Baseline

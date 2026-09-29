@@ -21,6 +21,35 @@ defmodule SpecLint.Rules.ReturnConflict do
   (`SpecLint.Compare.shadowed/1`, which over-approximates and so never
   misses a clause the compiler reports as redundant) and `:unchecked`
   otherwise. A `no_return()` spec is `SL006`'s case.
+
+  ## Clause-local qualification (experiment, off by default)
+
+  With `clause_local_qualification: true` in the function context
+  (`SpecLint.Config`), a clause-level finding replaces the slice-wide
+  prerequisites `no_arrow_in_return` and `no_arrow_polarity_argument` by
+  `clause_contained_in_lo`: the clause's whole domain tuple is non-empty
+  and contained in the tuple of the spec's argument lower bounds `D_lo`
+  (`SpecLint.Compare`, `contained_lo?`). The argument, recorded in
+  `bench/corpus/clause_local_qualification.md`:
+
+    * `D_lo ⊆ D`, and every translation loss, `arrow_polarity` included
+      (its lower bound is `none()`), only shrinks `D_lo`, so a loss can never
+      make a clause look contained: every input the clause accepts is in
+      the spec domain;
+    * `R_k`, the stored clause return, is non-empty and neither top nor
+      near-top (the evidence class requires it), and is disjoint from
+      `S_hi`, an over-approximation of the spec return by construction: an
+      inexact arrow in the return is `fun(arity)` there, still an upper
+      bound, so a returned function of that arity is never disjoint from it.
+
+  So any normal return of that clause is outside the spec, whatever arrows
+  the rest of the slice contains. A clause contained only in `D_hi` never
+  has the class `clause_conflict` (its containment is unknown), and
+  `no_unsupported_loss`, `no_overlap` and `clause_reachable` still apply.
+  The superseded prerequisites and their states are kept in the issue's
+  `data`, so a report shows both readings. The slice-level form keeps the
+  slice-wide prerequisites: its applied return `U(D)` comes from applying
+  the signature at `D_hi`, not from one contained clause.
   """
 
   @behaviour SpecLint.Rule
@@ -93,6 +122,7 @@ defmodule SpecLint.Rules.ReturnConflict do
 
   defp clause_issues(context, slice, evidence) do
     name = Rule.function_name(context)
+    clause_local? = Map.get(context, :clause_local_qualification, false)
 
     for %{class: :clause_conflict} = clause <- evidence.clauses do
       contributing = Enum.find(slice.relations.contributing, &(&1.index == clause.index))
@@ -108,15 +138,46 @@ defmodule SpecLint.Rules.ReturnConflict do
           {"inferred clause", "##{clause.index} " <> clause_text(contributing)},
           {"slice", Rule.domain_string(slice.args)},
           {"evidence",
-           "clause_conflict (signature backend, clause contained, " <>
+           "clause_conflict (signature backend, #{containment_text(clause_local?)}, " <>
              "#{Rule.translation_string(slice)})"}
         ],
-        prerequisites:
-          Rule.sl001_prerequisites(slice) ++
-            [{:clause_contained, :met}, {:clause_reachable, reachable(contributing)}]
+        prerequisites: clause_prerequisites(slice, contributing, clause_local?),
+        data: clause_data(slice, clause_local?)
       )
     end
   end
+
+  @superseded [:no_arrow_in_return, :no_arrow_polarity_argument]
+
+  defp clause_prerequisites(slice, contributing, false) do
+    Rule.sl001_prerequisites(slice) ++
+      [{:clause_contained, :met}, {:clause_reachable, reachable(contributing)}]
+  end
+
+  defp clause_prerequisites(slice, contributing, true) do
+    kept =
+      for {name, _state} = pair <- Rule.sl001_prerequisites(slice),
+          name not in @superseded,
+          do: pair
+
+    kept ++
+      [
+        {:clause_contained_in_lo, Rule.state(contributing.contained_lo?)},
+        {:clause_reachable, reachable(contributing)}
+      ]
+  end
+
+  defp clause_data(_slice, false), do: %{}
+
+  defp clause_data(slice, true) do
+    superseded =
+      for {name, state} <- Rule.sl001_prerequisites(slice), name in @superseded, do: [name, state]
+
+    %{qualification: :clause_local, superseded_prerequisites: superseded}
+  end
+
+  defp containment_text(false), do: "clause contained"
+  defp containment_text(true), do: "clause contained in the spec lower bound"
 
   defp clause_text(%{args: args, return: return}), do: Rule.clause_string({args, return})
 

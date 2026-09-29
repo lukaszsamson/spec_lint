@@ -35,6 +35,10 @@ defmodule Mix.Tasks.SpecLint do
     * `--explain Mod.fun/arity` - explain one function
     * `--rules ID,...`, `--except ID,...` - select rules by ID or name
     * `--require-static-return` - DESIGN 3.1 step 9 (default `false`)
+    * `--clause-local-qualification` - experiment, not adopted: qualify an
+      SL001 clause conflict by the containment of its clause domain in the
+      spec's argument lower bounds instead of the slice-wide arrow
+      prerequisites (default `false`)
 
   Exit status: `0` accepted; `1` new gated findings or a coverage violation
   (with `--ci` or `--warnings-as-errors`); `2` invalid options or

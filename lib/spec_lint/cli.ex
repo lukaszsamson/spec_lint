@@ -19,6 +19,9 @@ defmodule SpecLint.CLI do
       --rules ID,...               run only these rules (IDs or names)
       --except ID,...              do not run these rules
       --require-static-return      DESIGN 3.1 step 9 (default from config: false)
+      --clause-local-qualification experiment: qualify SL001 clause conflicts by
+                                   clause containment in the spec lower bound
+                                   (default from config: false)
   """
 
   alias SpecLint.Explain
@@ -37,7 +40,8 @@ defmodule SpecLint.CLI do
     explain: :string,
     rules: :string,
     except: :string,
-    require_static_return: :boolean
+    require_static_return: :boolean,
+    clause_local_qualification: :boolean
   ]
 
   @type t :: %{
@@ -54,7 +58,8 @@ defmodule SpecLint.CLI do
           explain: mfa() | nil,
           only: [String.t()] | nil,
           except: [String.t()],
-          require_static_return: boolean() | nil
+          require_static_return: boolean() | nil,
+          clause_local_qualification: boolean() | nil
         }
 
   @doc "Parses `argv`. Every error is a message for exit code 2."
@@ -94,7 +99,8 @@ defmodule SpecLint.CLI do
          explain: explain,
          only: opts[:rules] && list(opts[:rules]),
          except: list(opts[:except] || ""),
-         require_static_return: opts[:require_static_return]
+         require_static_return: opts[:require_static_return],
+         clause_local_qualification: opts[:clause_local_qualification]
        }}
     end
   end
@@ -131,7 +137,8 @@ defmodule SpecLint.CLI do
       analysis: cli.analysis,
       baseline: cli.baseline,
       warnings_as_errors: cli.warnings_as_errors,
-      require_static_return: cli.require_static_return
+      require_static_return: cli.require_static_return,
+      clause_local_qualification: cli.clause_local_qualification
     ]
   end
 end

@@ -80,7 +80,11 @@ parent directory name:
       --code-path $OSS/ecto/_build/test/lib/telemetry/ebin \
       --root $OSS/ecto --ci --format json --output ecto.spec_lint.json
 
-`run.sh` issues exactly these invocations for every corpus. The `fixtures`
+`run.sh` issues exactly these invocations for every corpus. Two optional
+variables serve option comparisons: `SPEC_LINT_PRODUCT_ARGS` appends options
+to the product run (the report's `config` records them) and
+`SPEC_LINT_PRODUCT_ONLY=1` skips the experiment report, which has no product
+options. The `fixtures`
 corpus stages the fixture beams from `_build/test/lib/spec_lint/ebin` into a
 temporary `fixtures/ebin` directory and puts the spec_lint ebin on
 `--code-path`.
@@ -150,11 +154,15 @@ Headline numbers of the current reports (functions / classes):
 | mime | 5 | none 5 |
 | plug | 86 | unknown 79, none 7 |
 | ecto | 165 | unknown 137, none 24, possible_domain_escape 4 |
-| fixtures | 83 | clause_conflict 10, structured_possible 6, possible_domain_escape 7, possible_input_approximate 4, unknown 26, none 30 |
+| fixtures | 94 | clause_conflict 15, structured_possible 6, possible_domain_escape 8, possible_input_approximate 5, unknown 28, none 32 |
 
 No corpus of real code has a `clause_conflict` function, which is the one
 gating class: gating recall on the nine known real omissions is 0 of 9
-(see `omissions/README.md`).
+(see `omissions/README.md`). The fixtures row was regenerated for the
+clause-local qualification experiment: it adds the two clause-local omission
+stand-ins and nine control functions (`SpecLint.Fixtures.ClauseLocal`),
+which account for all 11 new functions; the classes of the 83 earlier
+fixture functions and the fixture accuracy block are unchanged.
 
 ## Body-backend experiment (`reports/body/`)
 
@@ -253,3 +261,29 @@ finding); legacy `warn`/`detected` combine gates and structured candidates.
 Do not quote legacy `detected` as gated recall. Failed analysis is unavailable,
 not a negative result. The new `reports/expansion/body_fixtures.json` reruns
 fixtures with those metrics; older body reports retain their historical schema.
+
+## Clause-local qualification experiment (2026-09-29)
+
+`reports/expansion/clause_local/{off,on}/` hold product reports
+(`NAME.spec_lint.json`) and provenance for all fifteen real-code corpora
+(stdlib, the six original libraries, the six expansion projects and the
+absinthe/tesla holdouts), from one frozen tool tree, without and with
+`--clause-local-qualification`. The experiment report does not depend on
+product options, so these runs skip it:
+
+```sh
+SPEC_LINT_PRODUCT_ONLY=1 SPEC_LINT_PRODUCT_ARGS=--clause-local-qualification \
+SPEC_LINT_CORPUS_OUT="$PWD/bench/corpus/reports/expansion/clause_local/on" \
+SPEC_LINT_OSS=$OSS bench/corpus/run.sh stdlib jason decimal nimble_options mime plug ecto
+
+SPEC_LINT_PRODUCT_ONLY=1 SPEC_LINT_PRODUCT_ARGS=--clause-local-qualification \
+SPEC_LINT_CORPUS_OUT="$PWD/bench/corpus/reports/expansion/clause_local/on" \
+SPEC_LINT_CORPUS_MANIFEST="$PWD/bench/corpus/expansion.json" \
+SPEC_LINT_OSS=/path/to/isolated/checkouts \
+bench/corpus/run.sh req broadway oban phoenix_live_view ash nx absinthe tesla
+```
+
+Leave out `SPEC_LINT_PRODUCT_ARGS` and write to `off/` for the baseline
+reading. Tesla needs the qualified compiler selected explicitly (its
+`.tool-versions` names 1.19; see `holdout2_baseline.md`). Results and triage:
+`clause_local_qualification.md`.

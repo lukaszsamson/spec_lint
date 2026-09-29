@@ -251,3 +251,58 @@ defmodule SpecLint.OmissionFixtures.Cases do
 
   defp unextract([], [], _fun), do: []
 end
+
+defmodule SpecLint.OmissionFixtures.Page do
+  @moduledoc false
+  # Stands in for %Ash.Page.Keyset{}: a struct with an arrow deep inside a
+  # field type. `(... -> term())` translates inexactly (arrow_polarity: the
+  # lower bound of that field alternative is none()).
+  defstruct results: [], rerun: nil
+
+  @type t :: %__MODULE__{results: list(), rerun: nil | (... -> term())}
+end
+
+defmodule SpecLint.OmissionFixtures.ClauseLocal do
+  @moduledoc false
+  # Executable reproducers for the two witnessed clause-level return
+  # omissions behind the clause-local qualification experiment
+  # (bench/corpus/clause_local_qualification.md). Each keeps the spec and
+  # clause structure of the original; bench/corpus/omissions/README.md maps
+  # them to the original MFA, revision and file:line. Their classes and gate
+  # states are asserted by test/spec_lint/omissions_test.exs, and their
+  # runtime witnesses there call them with in-spec inputs.
+
+  alias SpecLint.OmissionFixtures.Page
+
+  ## Ash.Page.page_opts/1: false and nil are in the input spec, and their
+  ## clause returns {:ok, false} or {:ok, nil}, outside {:ok, page()}. The
+  ## arrow inside page() gives the whole slice an arrow_polarity loss, so
+  ## the slice-wide SL001 prerequisite blocks it; the clause itself is
+  ## contained in the spec's lower bound.
+
+  @type page :: Page.t()
+
+  @spec page_opts(page() | false | nil | keyword()) :: {:ok, page()} | {:error, String.t()}
+  def page_opts(term) when term in [false, nil], do: {:ok, term}
+
+  def page_opts(page_opts) do
+    if page_opts[:limit],
+      do: {:ok, %Page{results: [], rerun: nil}},
+      else: {:error, "limit is required"}
+  end
+
+  ## Oban.Registry.via/3: a non-nil value adds a third element to the inner
+  ## tuple, while the spec promises {module, key()}. The translation is
+  ## exact; this conflict gates with or without the qualification.
+
+  @type role :: term()
+  @type key :: term() | {term(), role()}
+  @type value :: term()
+
+  @spec via(term(), role(), value()) :: {:via, Registry, {__MODULE__, key()}}
+  def via(oban_name, role, nil), do: {:via, Registry, {__MODULE__, key(oban_name, role)}}
+  def via(oban_name, role, value), do: {:via, Registry, {__MODULE__, key(oban_name, role), value}}
+
+  defp key(oban_name, nil), do: oban_name
+  defp key(oban_name, role), do: {oban_name, role}
+end

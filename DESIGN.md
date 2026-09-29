@@ -312,6 +312,23 @@ checker chunk. Since the post-Phase 1 review it is approximated from the
 stored clause domains (section 3.1 step 7): a possibly shadowed clause is
 blocked, any other clause is reported as unchecked.
 
+**Experiment, not adopted (2026-09-29): clause-local qualification.**
+Behind `clause_local_qualification: true` (`--clause-local-qualification`,
+default `false`), a `clause_conflict` replaces the prerequisites
+`no_arrow_in_return` and `no_arrow_polarity_argument` by
+`clause_contained_in_lo`: the clause's whole, non-empty domain tuple is a
+subtype of the tuple of the argument lower bounds `D_lo` (tuple-wise,
+never position by position). Every translation loss, `arrow_polarity`
+included, only shrinks `D_lo`, so a loss cannot make a clause look
+contained; the stored clause return `R_k` is non-empty, not top or near-top
+and disjoint from `S_hi`, which stays an upper bound (an inexact arrow in
+the return is `fun(arity)` there, and `Descr` never calls two functions of
+the same arity disjoint). `no_unsupported_loss`, `no_overlap` and
+`clause_reachable` are kept; the slice-level `conflict` keeps the old
+prerequisites. The superseded prerequisites and their states are kept in
+the finding's `data`. Measurements, triage and the open decision are in
+`bench/corpus/clause_local_qualification.md`.
+
 **Decision (post-Phase 1 review): SL006 ignores top-only and near-top
 `U(D)`.** Steps 2 and 8 of section 3.1 treat such inference as "inference
 gave up", not as evidence, and the same reading applies to a `no_return()`

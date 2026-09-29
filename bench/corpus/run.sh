@@ -6,6 +6,10 @@
 # {"revision": "40-character SHA", "app": "app_name", "project_subdir": "subdir"}.
 # SPEC_LINT_CORPUS_OUT selects a separate output directory for wider scans.
 # SPEC_LINT_ALLOW_UNPINNED=1 permits exploratory runs at other revisions.
+# SPEC_LINT_PRODUCT_ARGS adds whitespace-separated options to the product run
+# (for example --clause-local-qualification); the report's config records them.
+# SPEC_LINT_PRODUCT_ONLY=1 skips the experiment report, for option comparisons
+# that do not change it (the experiment has no product options).
 #
 # SPEC_LINT_OSS holds one checkout per library (jason decimal nimble_options
 # mime plug ecto), each at the revision pinned in bench/corpus/README.md and
@@ -82,6 +86,12 @@ else
   corpora=(stdlib jason decimal nimble_options mime plug ecto fixtures)
 fi
 
+product_args=()
+if [ -n "${SPEC_LINT_PRODUCT_ARGS:-}" ]; then
+  read -r -a product_args <<<"$SPEC_LINT_PRODUCT_ARGS"
+fi
+product_only="${SPEC_LINT_PRODUCT_ONLY:-0}"
+
 cd "$root"
 mkdir -p "$out"
 MIX_ENV=test mix compile >/dev/null
@@ -142,27 +152,29 @@ for name in "${corpora[@]}"; do
   bench/corpus/provenance.sh "$out/$name.provenance.json" "$name" "$source_repo" \
     "$project_root" "$root" "${ebins[@]}" ${codepaths[@]+"${codepaths[@]}"}
 
-  set +e
-  MIX_ENV=test mix run bench/experiment.exs -- "${args[@]}" ${cp_args[@]+"${cp_args[@]}"} \
-    --label "$name" --out "$raw/$name.json" 2>"$raw/$name.log"
-  status=$?
-  set -e
-  if [ -s "$raw/$name.json" ]; then
-    SPEC_LINT_ROOT="$root" SPEC_LINT_RAW_DIR="$raw" \
-      bench/corpus/normalise_report.sh "$raw/$name.json" "$out/$name.json"
-  fi
-  if [ "$status" -ne 0 ] || [ ! -s "$raw/$name.json" ]; then
-    cp "$raw/$name.log" "$out/$name.experiment.log"
-    cat "$raw/$name.log" >&2
-    echo "experiment failed for $name (exit $status); log retained at $out/$name.experiment.log" >&2
-    exit 2
+  if [ "$product_only" != 1 ]; then
+    set +e
+    MIX_ENV=test mix run bench/experiment.exs -- "${args[@]}" ${cp_args[@]+"${cp_args[@]}"} \
+      --label "$name" --out "$raw/$name.json" 2>"$raw/$name.log"
+    status=$?
+    set -e
+    if [ -s "$raw/$name.json" ]; then
+      SPEC_LINT_ROOT="$root" SPEC_LINT_RAW_DIR="$raw" \
+        bench/corpus/normalise_report.sh "$raw/$name.json" "$out/$name.json"
+    fi
+    if [ "$status" -ne 0 ] || [ ! -s "$raw/$name.json" ]; then
+      cp "$raw/$name.log" "$out/$name.experiment.log"
+      cat "$raw/$name.log" >&2
+      echo "experiment failed for $name (exit $status); log retained at $out/$name.experiment.log" >&2
+      exit 2
+    fi
   fi
 
   if [ "$name" != fixtures ]; then
     set +e
     MIX_ENV=test mix run bench/run_on_ebin.exs -- "${args[@]}" ${cp_args[@]+"${cp_args[@]}"} \
       --root "$project_root" --ci --format json --output "$raw/$name.spec_lint.json" \
-      >"$raw/$name.run.log" 2>&1
+      ${product_args[@]+"${product_args[@]}"} >"$raw/$name.run.log" 2>&1
     status=$?
     set -e
     if [ ! -s "$raw/$name.spec_lint.json" ]; then

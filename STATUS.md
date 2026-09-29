@@ -7,6 +7,21 @@ body-backend experiment (`ac3a75b`) and the second external review (this
 phase, below). `DESIGN.md` is the authoritative design, `EXPERIMENTS.md`
 holds the measurements, and `README.md` is the user guide.
 
+## Clause-local qualification experiment (not adopted)
+
+`--clause-local-qualification` (default `false`) qualifies an SL001 clause
+conflict by containment of its clause domain in the spec's argument lower
+bounds, instead of by the slice-wide arrow prerequisites.
+
+- **Tuned corpora:** it adds one witnessed true gate (`Ash.Page.page_opts/1`)
+  across stdlib, the six original libraries and the six expansion projects.
+- **Fresh holdouts:** absinthe and tesla, frozen before the change, are
+  unchanged: 7 and 0 gates.
+- **False positives:** none were found, and every negative control stays
+  ungated.
+
+See `bench/corpus/clause_local_qualification.md`.
+
 ## Follow-up delivery: broader evidence and build integrity
 
 The six-project expansion adds 1,252 eligible functions and 1,260 spec

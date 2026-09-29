@@ -17,8 +17,8 @@ defmodule SpecLint.OmissionsTest do
 
   import SpecLint.TestHelpers
 
-  alias SpecLint.{Analysis, Compiler, Evidence}
-  alias SpecLint.OmissionFixtures.{Cases, Changeset, Conn, Num}
+  alias SpecLint.{Analysis, Compiler, Config, Evidence, Issue}
+  alias SpecLint.OmissionFixtures.{Cases, Changeset, ClauseLocal, Conn, Num, Page}
 
   # {fixture, original MFA, current class, current class with
   #  require_static_return: true, top_only reason?, desired class}
@@ -126,6 +126,93 @@ defmodule SpecLint.OmissionsTest do
         refute Compiler.subtype?(inferred, upper)
         refute Compiler.subtype?(inferred, lower)
       end
+    end
+  end
+
+  # The two witnessed clause-level omissions of the expansion cohort,
+  # reproduced by SpecLint.OmissionFixtures.ClauseLocal (the clause-local
+  # qualification experiment, bench/corpus/clause_local_qualification.md).
+  # Unlike the nine above, both are clause_conflict today.
+  # {fixture, original MFA, class, class with require_static_return: true,
+  #  SL001 gate without the flag, SL001 gate with clause_local_qualification}
+  @clause_local [
+    # Ash.Page.page_opts/1: blocked by the arrow inside page() without the
+    # flag; its (false or nil) clause is contained in the spec lower bound.
+    {{:page_opts, 1}, "Ash.Page.page_opts/1", :clause_conflict, :possible_gradual, false, true},
+    # Oban.Registry.via/3: exact translation, gates either way.
+    {{:via, 3}, "Oban.Registry.via/3", :clause_conflict, :possible_gradual, true, true}
+  ]
+
+  describe "clause-local stand-ins" do
+    setup do
+      result = Analysis.module(beam_path(ClauseLocal))
+      assert result.status == :ok
+      %{functions: Map.new(result.functions, &{&1.mfa, &1})}
+    end
+
+    for {{name, arity}, original, class, static, gate_off, gate_on} <- @clause_local do
+      @fixture {ClauseLocal, name, arity}
+      @class class
+      @static static
+      @gate_off gate_off
+      @gate_on gate_on
+
+      test "#{name}/#{arity} (#{original}) is #{class}, gated #{gate_off}/#{gate_on}", %{
+        functions: functions
+      } do
+        function = Map.fetch!(functions, @fixture)
+        assert function.status == :compared
+        assert Evidence.classify_function(function.slices) == @class
+        assert Evidence.classify_function(function.slices, require_static_return: true) == @static
+
+        for {flag, gate} <- [{false, @gate_off}, {true, @gate_on}] do
+          config = %Config{baseline: "tmp/none.json", clause_local_qualification: flag}
+          run = run!([ClauseLocal], [], config)
+
+          assert [%Issue{rule: "SL001", evidence: :clause_conflict} = issue] =
+                   issues(run, @fixture)
+
+          assert issue.gate == gate
+        end
+      end
+    end
+
+    test "every clause-local stand-in has a recorded class", %{functions: functions} do
+      assert functions |> Map.keys() |> Enum.sort() ==
+               @clause_local
+               |> Enum.map(fn {{name, arity}, _, _, _, _, _} -> {ClauseLocal, name, arity} end)
+               |> Enum.sort()
+    end
+  end
+
+  # Hand-written from the specs of the stand-ins, independent of SpecLint.
+  defp page_opts_return?({:ok, %Page{}}), do: true
+  defp page_opts_return?({:error, message}), do: is_binary(message)
+  defp page_opts_return?(_other), do: false
+
+  defp via_return?({:via, Registry, {ClauseLocal, _key}}), do: true
+  defp via_return?(_other), do: false
+
+  describe "runtime witnesses for the clause-local stand-ins" do
+    test "page_opts/1 returns {:ok, false} and {:ok, nil} for the literal inputs" do
+      for input <- [false, nil] do
+        result = ClauseLocal.page_opts(input)
+        assert result == {:ok, input}
+        refute page_opts_return?(result)
+      end
+
+      # Control: a keyword list inside the spec returns a declared value.
+      assert page_opts_return?(ClauseLocal.page_opts(limit: 1))
+    end
+
+    test "via/3 returns an inner three-tuple for a non-nil value" do
+      result = ClauseLocal.via(:name, nil, :witness)
+      assert result == {:via, Registry, {ClauseLocal, :name, :witness}}
+      refute via_return?(result)
+
+      # Control: the same name and role with a nil value.
+      assert via_return?(ClauseLocal.via(:name, nil, nil))
+      assert via_return?(ClauseLocal.via(:name, :role, nil))
     end
   end
 

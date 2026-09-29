@@ -174,10 +174,16 @@ defmodule SpecLint.Evidence do
           | {:subtraction_payload, non_neg_integer()}
           | {:payload_gradual, non_neg_integer()}
 
-  @typedoc "Per-clause evidence (DESIGN 3.1 step 7) for one contributing clause."
+  @typedoc """
+  Per-clause evidence (DESIGN 3.1 step 7) for one contributing clause.
+  `contained_lo?` is `SpecLint.Compare`'s containment of the clause's whole
+  domain in the spec's argument lower bounds, which the clause-local
+  qualification of `SpecLint.Rules.ReturnConflict` requires.
+  """
   @type clause_evidence :: %{
           index: non_neg_integer(),
           containment: Compare.containment(),
+          contained_lo?: boolean(),
           static_return?: boolean(),
           class: class(),
           extra: Compiler.descr(),
@@ -345,6 +351,7 @@ defmodule SpecLint.Evidence do
     base = %{
       index: contributing.index,
       containment: contributing.containment,
+      contained_lo?: contributing.contained_lo?,
       static_return?: contributing.static_return?,
       extra: extra,
       components: []

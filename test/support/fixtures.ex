@@ -256,6 +256,15 @@ defmodule SpecLint.Fixtures.Shadow do
       def unquote(name)(:x), do: :error
     end
   end
+
+  # The same, for a redundant clause `name(pattern) -> result` (used by
+  # SpecLint.Fixtures.ClauseLocal.redundant/1).
+  @doc false
+  defmacro redundant_clause(name, pattern, result) do
+    quote generated: true do
+      def unquote(name)(unquote(pattern)), do: unquote(result)
+    end
+  end
 end
 
 defmodule SpecLint.Fixtures.Siblings do
@@ -277,4 +286,74 @@ defmodule SpecLint.Fixtures.Siblings do
   @spec disjoint_sibling(integer()) :: SpecLint.Fixtures.Synthetic.weird()
   def disjoint_sibling(x) when is_atom(x), do: x
   def disjoint_sibling(x) when is_integer(x), do: x
+end
+
+defmodule SpecLint.Fixtures.ClauseLocal do
+  @moduledoc false
+  # Controls for the clause-local qualification experiment
+  # (SpecLint.Rules.ReturnConflict, bench/corpus/clause_local_qualification.md).
+  # Every spec has an inexact arrow, so the slice-wide SL001 prerequisites
+  # block; with the qualification, none of these may gate except the
+  # function returned at another arity (other_arity/1), a real violation.
+  # The positive stand-ins are SpecLint.OmissionFixtures.ClauseLocal.
+
+  alias SpecLint.Fixtures.Shadow
+  require Shadow
+
+  # A clause contained only in D_hi: pos_integer() translates to integer()
+  # with lower bound none(), so the integer() clause is not contained in
+  # D_lo (its containment is unknown, not a clause conflict).
+  @spec only_hi(pos_integer() | :default | (... -> term())) :: :ok
+  def only_hi(:default), do: :ok
+  def only_hi(n) when is_integer(n), do: {:error, n}
+  def only_hi(f) when is_function(f), do: :ok
+
+  # Overlapping overloads: false is in the lower bound of both slices, so
+  # the overlap tag blocks the clause conflict of each.
+  @spec overlapping(false | nil | (... -> term())) :: {:ok, :page}
+  @spec overlapping(atom()) :: :ok
+  def overlapping(x) when x in [false, nil], do: {:ok, x}
+  def overlapping(f) when is_function(f), do: {:ok, :page}
+  def overlapping(a) when is_atom(a), do: :ok
+
+  # An impossible input: D_lo is empty (an erased refinement and an inexact
+  # arrow), and the catch-all clause escapes the spec domain.
+  @spec impossible(pos_integer() | (pos_integer() -> atom())) :: :ok
+  def impossible(f) when is_function(f, 1), do: :ok
+  def impossible(x), do: {:bad, x}
+
+  # An inexact arrow in the return: S_hi has fun(1), so a returned 1-ary
+  # function is never disjoint from the spec.
+  @spec same_arity(:a | :b) :: (pos_integer() -> atom())
+  def same_arity(:a), do: fn x -> x end
+  def same_arity(:b), do: fn x -> {x} end
+
+  # The same spec, but clause :b returns a 2-ary function, which no value of
+  # (pos_integer() -> atom()) is: a real conflict, and it gates with the
+  # qualification (the arrow return no longer blocks the clause).
+  @spec other_arity(:a | :b) :: (pos_integer() -> atom())
+  def other_arity(:a), do: fn x -> x end
+  def other_arity(:b), do: fn x, y -> {x, y} end
+
+  # A gradual clause return with no evidence: apply/3 returns dynamic(),
+  # so the clause is top-only.
+  @spec gradual(false | nil | (... -> term())) :: {:ok, :page}
+  def gradual(x) when x in [false, nil], do: apply(__MODULE__, :identity, [x])
+  def gradual(f) when is_function(f), do: {:ok, :page}
+
+  # A near-top clause return: Process.put/2 is dynamic(not :undefined).
+  @spec near_top(false | nil | (... -> term())) :: {:ok, :page}
+  def near_top(x) when x in [false, nil], do: Process.put(:clause_local_near_top, x)
+  def near_top(f) when is_function(f), do: {:ok, :page}
+
+  # A clause the compiler reports as redundant: (false) is covered by the
+  # atom() clause before it. The clause conflicts, but it is unreachable.
+  @spec redundant(false | nil | (... -> term())) :: :ok
+  def redundant(x) when is_atom(x), do: :ok
+  def redundant(f) when is_function(f), do: :ok
+  Shadow.redundant_clause(:redundant, false, {:error, false})
+
+  @doc false
+  @spec identity(term()) :: term()
+  def identity(x), do: x
 end

@@ -1202,3 +1202,39 @@ unguarded tuple arithmetic legitimately admits floats outside its input
 spec; its float inference is not a compiler bug. The earlier triage wording
 claiming integer-only branches was corrected after directly executing
 `Oban.Period.to_seconds({1.5, :minute})` and observing `90.0`.
+
+## Clause-local qualification (2026-09-29, not adopted)
+
+`--clause-local-qualification` (config `clause_local_qualification`, default
+`false`) lets an `SL001` `clause_conflict` replace `no_arrow_in_return` and
+`no_arrow_polarity_argument` with `clause_contained_in_lo`. That new
+prerequisite holds when the clause's whole domain is contained in the spec's
+argument lower bounds, compared tuple-wise. The slice-level form is
+unchanged. The absinthe and tesla holdouts were frozen at `3b89842`, before
+the change (`bench/corpus/holdout2_baseline.md`), and the implementation was
+frozen before they were run.
+
+| Corpora | Compared slices | SL001 gates, flag off | SL001 gates, flag on | New false positives |
+| --- | ---: | ---: | ---: | ---: |
+| stdlib and six original libraries | 2,104 | 0 | 0 | 0 |
+| six expansion projects (tuned) | 1,260 | 1 | 2 | 0 |
+| absinthe and tesla (fresh holdouts) | 840 | 7 | 7 | 0 |
+
+The one new gate is `Ash.Page.page_opts/1`, a witnessed true omission.
+
+- **Fresh holdouts.** They agree, but have no power. Before the change
+  neither had an SL001 finding blocked by an arrow prerequisite, so the flag
+  could not move them.
+- **Fixtures.** Both omission stand-ins (`page_opts/1` and `via/3`) and nine
+  controls behave as designed. The controls are a clause inside `D_hi` only,
+  overlapping overloads, an empty `D_lo` with an escaping clause, an arrow
+  return with a same-arity function, gradual and near-top returns, and a
+  redundant clause. A 2-ary function returned under a 1-ary inexact arrow
+  return now gates, which is a real violation.
+- **Holdout gates.** The seven pre-existing absinthe gates
+  (`Blueprint.Input.parse/1`) were triaged as true type-contract violations:
+  a default `source_location: nil` against a struct type.
+
+Full tables, the soundness argument and the triage are in
+`bench/corpus/clause_local_qualification.md`. Adoption is left to the Close
+phase.

@@ -65,6 +65,26 @@ Gating recall on these nine is 0 of 9 (`clause_conflict` is the only
 gating class); reported recall is 2 of 9 (`join_escape/3` and
 `quoted_type/2`, class `possible_domain_escape`, reported as SL002).
 
+## Clause-local stand-ins (expansion cohort)
+
+Two further witnessed omissions come from the expansion cohort
+(`bench/corpus/expansion.json`) and back the clause-local qualification
+experiment (`bench/corpus/clause_local_qualification.md`). They are in the
+same file, module `SpecLint.OmissionFixtures.ClauseLocal` (with the
+stand-in struct `Page`), pinned by the `@clause_local` table of
+`test/spec_lint/omissions_test.exs`, and each has a runtime witness there:
+an in-spec input returns a value that a hand-written predicate of the
+declared return rejects, next to an in-domain control it accepts.
+
+| Fixture (`ClauseLocal`), spec line | Original MFA | Corpus revision | Original file:line | Shape reproduced | Class (union / static) | SL001 gate without / with the flag |
+| --- | --- | --- | --- | --- | --- | --- |
+| `page_opts/1`, line 285 | `Ash.Page.page_opts/1` | ash `164a4c0` | `lib/ash/page/page.ex:13-14` | `false` and `nil` are in the input spec and their clause returns `{:ok, false}` or `{:ok, nil}`; an inexact arrow inside the page struct gives the slice an `arrow_polarity` loss | clause_conflict / possible_gradual | no (`no_arrow_polarity_argument`) / yes |
+| `via/3`, line 302 | `Oban.Registry.via/3` | oban `23fa817` | `lib/oban/registry.ex:122-125` | a non-nil value adds a third element to the inner tuple; exact translation | clause_conflict / possible_gradual | yes / yes |
+
+Unlike the nine above, both are `clause_conflict` already; the experiment
+only changes whether `page_opts/1` gates. The stand-in drops Ash's option
+validation (its catch-all clause returns a literal page or an error).
+
 ## Adding or changing a reproducer
 
 1. Edit `SpecLint.OmissionFixtures.Cases`. Keep the spec and the

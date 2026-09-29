@@ -552,6 +552,13 @@ defmodule SpecLint.Run do
         %{slice: slice, evidence: Map.get(run.evidence, {function.mfa, slice.index})}
       end
 
-    %{module: module, function: function, file: file, slices: slices, severity: severity}
+    %{
+      module: module,
+      function: function,
+      file: file,
+      slices: slices,
+      severity: severity,
+      clause_local_qualification: run.config.clause_local_qualification
+    }
   end
 end

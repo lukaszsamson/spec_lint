@@ -1,0 +1,329 @@
+{
+  "artifacts": [
+    {
+      "beam_count": 1279,
+      "path": "/tmp/spec-lint-expansion/ash//_build/test/lib/ash/ebin",
+      "sha256": "b04d95181b572515d33d4c0ec07b26432d3cfa27657c7a7b605499c9bf6826da"
+    },
+    {
+      "beam_count": 1279,
+      "path": "/tmp/spec-lint-expansion/ash//_build/test/lib/ash/ebin",
+      "sha256": "b04d95181b572515d33d4c0ec07b26432d3cfa27657c7a7b605499c9bf6826da"
+    },
+    {
+      "beam_count": 50,
+      "path": "/tmp/spec-lint-expansion/ash//_build/test/lib/benchee/ebin",
+      "sha256": "d3c33c63ef613030ad9a6491e2daff12069a9431827521b2c398730ef88ab786"
+    },
+    {
+      "beam_count": 3,
+      "path": "/tmp/spec-lint-expansion/ash//_build/test/lib/bunt/ebin",
+      "sha256": "88d05d29be746a61d8cfe1dcee8355aa66b7cbef87fc5bbdb2198343f7e9d3ce"
+    },
+    {
+      "beam_count": 263,
+      "path": "/tmp/spec-lint-expansion/ash//_build/test/lib/credo/ebin",
+      "sha256": "8804d0888010a2e96e7a6a7bcea2b13864add9ba10a181a2e79686128c52e1be"
+    },
+    {
+      "beam_count": 19,
+      "path": "/tmp/spec-lint-expansion/ash//_build/test/lib/crux/ebin",
+      "sha256": "67ff235c108c2b15c6ec22b24e1064027a464304fea1c66376bf763001bbcf1f"
+    },
+    {
+      "beam_count": 7,
+      "path": "/tmp/spec-lint-expansion/ash//_build/test/lib/decimal/ebin",
+      "sha256": "5eb65aca9f2e7a801b87f106cbbbcea3a674a5ebbc62e94a9ff6ad754dc1347b"
+    },
+    {
+      "beam_count": 5,
+      "path": "/tmp/spec-lint-expansion/ash//_build/test/lib/deep_merge/ebin",
+      "sha256": "3ce690eb551c2fbfad10c40cd407d8ce0768630624928268c5f592c9384df3fa"
+    },
+    {
+      "beam_count": 70,
+      "path": "/tmp/spec-lint-expansion/ash//_build/test/lib/dialyxir/ebin",
+      "sha256": "ca2930136c26d39c0efe7081e18c19eb073f7b2aab4ab596496ccd57465ed4b2"
+    },
+    {
+      "beam_count": 67,
+      "path": "/tmp/spec-lint-expansion/ash//_build/test/lib/earmark_parser/ebin",
+      "sha256": "075792bd83b9a4643e8af1063ebebf34adfe50cbaf9596a1970db93632330b8a"
+    },
+    {
+      "beam_count": 100,
+      "path": "/tmp/spec-lint-expansion/ash//_build/test/lib/ecto/ebin",
+      "sha256": "b771357976f091639a2f01f8d14f180c3d9ee0eb723388584028fdfd4c7350ee"
+    },
+    {
+      "beam_count": 3,
+      "path": "/tmp/spec-lint-expansion/ash//_build/test/lib/eflame/ebin",
+      "sha256": "632c6545b2b727ec1fb6e6fef5acae40e33a32be3e920998885d5429e91d9237"
+    },
+    {
+      "beam_count": 8,
+      "path": "/tmp/spec-lint-expansion/ash//_build/test/lib/elixir_make/ebin",
+      "sha256": "6eaa38fbf71c5bc4a5d63c32928e979cc18a1663abfd0c643391a1ec2ed0f519"
+    },
+    {
+      "beam_count": 3,
+      "path": "/tmp/spec-lint-expansion/ash//_build/test/lib/erlex/ebin",
+      "sha256": "297741870d30e02d1a05e06a513fcc2e6524cfb1454e533e5e14cad30ba6d2e5"
+    },
+    {
+      "beam_count": 7,
+      "path": "/tmp/spec-lint-expansion/ash//_build/test/lib/ets/ebin",
+      "sha256": "f737b40cefe08c0008d11d302d067db187e2d6d84272c4b3ea2f442bfa899b68"
+    },
+    {
+      "beam_count": 13,
+      "path": "/tmp/spec-lint-expansion/ash//_build/test/lib/ex_check/ebin",
+      "sha256": "d43842b83384c6ea7ca9072a00d73ab7e40ec717367982c2834ccca681cb1e35"
+    },
+    {
+      "beam_count": 30,
+      "path": "/tmp/spec-lint-expansion/ash//_build/test/lib/ex_doc/ebin",
+      "sha256": "391d0e9a99b4a774c9863e6c8846e84291c059ae7bfd05319673ecd54e56d8c9"
+    },
+    {
+      "beam_count": 7,
+      "path": "/tmp/spec-lint-expansion/ash//_build/test/lib/file_system/ebin",
+      "sha256": "cfcb66d86da2537a6ba447503f30dd5f6fda12b44ccfa69b8a27e4a003792304"
+    },
+    {
+      "beam_count": 15,
+      "path": "/tmp/spec-lint-expansion/ash//_build/test/lib/finch/ebin",
+      "sha256": "792701550e1d14178b0aaccd0bcb8f7b0aee1de4e4588641f89ee0f0e8e8d34e"
+    },
+    {
+      "beam_count": 3,
+      "path": "/tmp/spec-lint-expansion/ash//_build/test/lib/git_cli/ebin",
+      "sha256": "fea30be9ff823cdb44113ca7c57e442043acb893108e7ba6d58cda972e2cf09c"
+    },
+    {
+      "beam_count": 14,
+      "path": "/tmp/spec-lint-expansion/ash//_build/test/lib/git_ops/ebin",
+      "sha256": "92be6a30eb88d33b6c8c6baa5e6b8ff914482a063ece350a685c7053f3df5309"
+    },
+    {
+      "beam_count": 5,
+      "path": "/tmp/spec-lint-expansion/ash//_build/test/lib/glob_ex/ebin",
+      "sha256": "870fd593be7adb1fbfebef122fef858895f14a3fdd656072afbf1694b07c91d7"
+    },
+    {
+      "beam_count": 6,
+      "path": "/tmp/spec-lint-expansion/ash//_build/test/lib/ham/ebin",
+      "sha256": "8936911630988665c4fac67eec35c4162076fdd443321b63d0907f5a3ecaf25c"
+    },
+    {
+      "beam_count": 4,
+      "path": "/tmp/spec-lint-expansion/ash//_build/test/lib/hpax/ebin",
+      "sha256": "f87d18530146d73a51612352e23163293e83f92df049829ec070917afdfac2b5"
+    },
+    {
+      "beam_count": 61,
+      "path": "/tmp/spec-lint-expansion/ash//_build/test/lib/igniter/ebin",
+      "sha256": "a4030da137ef3336e3c5ccf23bb15d384637a0dd27049dea7f050dcdaff424b6"
+    },
+    {
+      "beam_count": 108,
+      "path": "/tmp/spec-lint-expansion/ash//_build/test/lib/iterex/ebin",
+      "sha256": "77b458312ed5394a950922ce9489f2ac2a7ab7f4ec243939f91e2a793ec4930e"
+    },
+    {
+      "beam_count": 28,
+      "path": "/tmp/spec-lint-expansion/ash//_build/test/lib/jason/ebin",
+      "sha256": "149dfedc878ac18112de549b26e6e8bdcf96b6be42ada54a017a1a37431fd5a0"
+    },
+    {
+      "beam_count": 16,
+      "path": "/tmp/spec-lint-expansion/ash//_build/test/lib/libgraph/ebin",
+      "sha256": "9e7c9c668096a7b0a9bd58c698dac010f358efd776d19da0bf6ade592d974558"
+    },
+    {
+      "beam_count": 15,
+      "path": "/tmp/spec-lint-expansion/ash//_build/test/lib/makeup/ebin",
+      "sha256": "572dcb3b60ad496e3070fec4b3701d29b98754e97d46747303cf4ac374cada2f"
+    },
+    {
+      "beam_count": 3,
+      "path": "/tmp/spec-lint-expansion/ash//_build/test/lib/makeup_diff/ebin",
+      "sha256": "6d359af7b1666bf0c4d4494cb9eac47130dedd69e9c15f831b716e951bcf0c0a"
+    },
+    {
+      "beam_count": 6,
+      "path": "/tmp/spec-lint-expansion/ash//_build/test/lib/makeup_elixir/ebin",
+      "sha256": "4cb19076abf3249a56ea156cbc0eb4cd1be59ff66385780d6be38ede4f4df4e2"
+    },
+    {
+      "beam_count": 4,
+      "path": "/tmp/spec-lint-expansion/ash//_build/test/lib/makeup_erlang/ebin",
+      "sha256": "590b68cc4f4f18f717e6fec75e158b57ce7e1064867481dcbfd31a05d29b2d26"
+    },
+    {
+      "beam_count": 1,
+      "path": "/tmp/spec-lint-expansion/ash//_build/test/lib/mime/ebin",
+      "sha256": "9091ff9155a65f2482348c50d36a20f6d0182db5b91443c9e1bfa578f5264039"
+    },
+    {
+      "beam_count": 13,
+      "path": "/tmp/spec-lint-expansion/ash//_build/test/lib/mimic/ebin",
+      "sha256": "889c6d177fc661ac4bac2981fdaa45b4e540ac027c37f92ca12ea1c56c451f6f"
+    },
+    {
+      "beam_count": 21,
+      "path": "/tmp/spec-lint-expansion/ash//_build/test/lib/mint/ebin",
+      "sha256": "aeba2d7a53c929316ddc1557e2c8fdf2d29e086bf0ff9327149d918fbfd94f68"
+    },
+    {
+      "beam_count": 20,
+      "path": "/tmp/spec-lint-expansion/ash//_build/test/lib/mix_audit/ebin",
+      "sha256": "bf2752a9eeab2904bfeed76fcc55c6908a02bf92f5457fc1e88fdcb4f6580c67"
+    },
+    {
+      "beam_count": 8,
+      "path": "/tmp/spec-lint-expansion/ash//_build/test/lib/mix_test_watch/ebin",
+      "sha256": "dbd4a21e61e1b9e041fe90c08928015a80080e97e353a6345a89edaf5fc0faf0"
+    },
+    {
+      "beam_count": 3,
+      "path": "/tmp/spec-lint-expansion/ash//_build/test/lib/nimble_options/ebin",
+      "sha256": "67f0865ddc4ed360b61e1f56dda122f6cefb408bb9f6c61ad042adaf9de9378b"
+    },
+    {
+      "beam_count": 4,
+      "path": "/tmp/spec-lint-expansion/ash//_build/test/lib/nimble_parsec/ebin",
+      "sha256": "d863ad4b5bc60f87ff6997e33b1457c2cc660247c5a6ef333c5b9e2ea096ca7c"
+    },
+    {
+      "beam_count": 2,
+      "path": "/tmp/spec-lint-expansion/ash//_build/test/lib/nimble_pool/ebin",
+      "sha256": "e438d59a7f87954b582876cb22af488e123e43aa62dbbaf69690fc9f7c904c81"
+    },
+    {
+      "beam_count": 20,
+      "path": "/tmp/spec-lint-expansion/ash//_build/test/lib/owl/ebin",
+      "sha256": "e088d5da5640d42fdfc683beaf26a73108a2bf4efdf7fdacb3287a6ca861bd0e"
+    },
+    {
+      "beam_count": 3,
+      "path": "/tmp/spec-lint-expansion/ash//_build/test/lib/picosat_elixir/ebin",
+      "sha256": "4665e5a09aea187fc48956ac696436086372d6a781331e523ac1a61c20d0c669"
+    },
+    {
+      "beam_count": 60,
+      "path": "/tmp/spec-lint-expansion/ash//_build/test/lib/plug/ebin",
+      "sha256": "6cf020444cfb3139c27fc65cc05011eefbd14092ae4fcb0b9e8d2efcb2c61159"
+    },
+    {
+      "beam_count": 5,
+      "path": "/tmp/spec-lint-expansion/ash//_build/test/lib/plug_crypto/ebin",
+      "sha256": "19bb5079af6461225d8dffea1c1b3baa42c43c9f27a6ee8818372d57f8192eb1"
+    },
+    {
+      "beam_count": 244,
+      "path": "/tmp/spec-lint-expansion/ash//_build/test/lib/reactor/ebin",
+      "sha256": "6f3cc3721deb10c70e57dd6ebbc5510caafdb655863504a723d354388a8fab68"
+    },
+    {
+      "beam_count": 24,
+      "path": "/tmp/spec-lint-expansion/ash//_build/test/lib/req/ebin",
+      "sha256": "3445691fb242292f57c01e6e7e8a78b70ee5fd3c040df610beacebef5c22a1b7"
+    },
+    {
+      "beam_count": 17,
+      "path": "/tmp/spec-lint-expansion/ash//_build/test/lib/rewrite/ebin",
+      "sha256": "bf8146ebc0ebe2c772456358e0ae881556f0582e31e07071003a540690b0e12a"
+    },
+    {
+      "beam_count": 1,
+      "path": "/tmp/spec-lint-expansion/ash//_build/test/lib/simple_sat/ebin",
+      "sha256": "b93014db9adb16f215751cccf609d911e73c73bf2cdda28855d48a4063c74a2a"
+    },
+    {
+      "beam_count": 52,
+      "path": "/tmp/spec-lint-expansion/ash//_build/test/lib/sobelow/ebin",
+      "sha256": "bab9258a29b200e8665b76bca17e9018463233c53add93f83b205009061d454d"
+    },
+    {
+      "beam_count": 12,
+      "path": "/tmp/spec-lint-expansion/ash//_build/test/lib/sourceror/ebin",
+      "sha256": "56e994a3c7a36aa6c81b51ee3a44df4fee9bc0b54b9d5b8924a09f5d9b3e375c"
+    },
+    {
+      "beam_count": 43,
+      "path": "/tmp/spec-lint-expansion/ash//_build/test/lib/spark/ebin",
+      "sha256": "40d94feba2711e706473711d21f2b87c344f5f5c87ad2b5b3abeef13b3ac62a0"
+    },
+    {
+      "beam_count": 8,
+      "path": "/tmp/spec-lint-expansion/ash//_build/test/lib/spitfire/ebin",
+      "sha256": "a737a53abfdf45ef30df94a13ec2351d72521cee860313118d32b315a0046849"
+    },
+    {
+      "beam_count": 6,
+      "path": "/tmp/spec-lint-expansion/ash//_build/test/lib/splode/ebin",
+      "sha256": "7efebed5d5660a548e2e71152647977ccf9e1f10161daf0d741a299b359039f7"
+    },
+    {
+      "beam_count": 4,
+      "path": "/tmp/spec-lint-expansion/ash//_build/test/lib/statistex/ebin",
+      "sha256": "af08b182d491fac0245773e26ea2a7f5d67908e435dd3ea2efca1f9a9cc065d2"
+    },
+    {
+      "beam_count": 9,
+      "path": "/tmp/spec-lint-expansion/ash//_build/test/lib/stream_data/ebin",
+      "sha256": "9523bb469d298cc45b89c4170500417045cc70ad46129f1a091c4598cdc6cd6f"
+    },
+    {
+      "beam_count": 5,
+      "path": "/tmp/spec-lint-expansion/ash//_build/test/lib/telemetry/ebin",
+      "sha256": "a5a714b65ab536c38221c928cc91696477b02ce0d2649cbf82a7dbda207041a1"
+    },
+    {
+      "beam_count": 1,
+      "path": "/tmp/spec-lint-expansion/ash//_build/test/lib/text_diff/ebin",
+      "sha256": "87d980c00579c6b0341e4e680512d886ae239dddd7b5b6f6507871d819c9b7e6"
+    },
+    {
+      "beam_count": 18,
+      "path": "/tmp/spec-lint-expansion/ash//_build/test/lib/tz/ebin",
+      "sha256": "8d92c0f36c74feb01040e2c16f4686ffe03a25042711b526a91b1140be6314dc"
+    },
+    {
+      "beam_count": 28,
+      "path": "/tmp/spec-lint-expansion/ash//_build/test/lib/yamerl/ebin",
+      "sha256": "8ee026b15b58fbd1e9c05c3c6a5eb7bd729efd1a97970486d368ea115d302c4d"
+    },
+    {
+      "beam_count": 7,
+      "path": "/tmp/spec-lint-expansion/ash//_build/test/lib/yaml_elixir/ebin",
+      "sha256": "a14b56fc7435bf5c2bae496656322692e342bbb3494014dc62cf9cc0f536747d"
+    },
+    {
+      "beam_count": 15,
+      "path": "/tmp/spec-lint-expansion/ash//_build/test/lib/ymlr/ebin",
+      "sha256": "c22e24129367c5cbee270349fbe018625744583b88da8a94b1485a2abf488cb3"
+    }
+  ],
+  "corpus": "ash",
+  "corpus_manifest_sha256": "f9f6dc1939a32b3ef408414d51463276ab42581dfb91400d7ce320fec2d6e955",
+  "schema": "spec_lint.corpus_provenance/1",
+  "source": {
+    "dirty": false,
+    "lockfile_sha256": "48cb84acad36baaa0c7d2076fce0ac7bea7e73c2d84212418547e5a5ebf37a49",
+    "revision": "164a4c0d0ef7724c5fd2153876c2cf90cd938863"
+  },
+  "tool": {
+    "dirty": true,
+    "lockfile_sha256": "a23fa18ff765b9ddc4f310975ca588771fabb25d06b9fc50267b620bf8af026b",
+    "revision": "10970dc568affbe61ea7bb955fa2e35acda7200a",
+    "source_sha256": "fa106878da294a1e87f2fb6ab32dd1ae12e5ca0d6680497126c0e220e5712e6e"
+  },
+  "toolchain": {
+    "compiler": null,
+    "elixir": "Elixir 1.21.0-dev (c24c235) (compiled with Erlang/OTP 28)",
+    "loaded_module_types_beam": "/Users/lukaszsamson/elixir/bin/../lib/elixir/ebin/Elixir.Module.Types.beam",
+    "loaded_module_types_sha256": "6a0ce8ab9665459220f41a61aa41f0b7f92f32029ea6395e33f283776120810e"
+  }
+}

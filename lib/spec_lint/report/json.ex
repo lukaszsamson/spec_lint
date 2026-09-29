@@ -49,6 +49,7 @@ defmodule SpecLint.Report.Json do
         "profile" => Atom.to_string(run.config.profile),
         "expand_opaque" => run.config.expand_opaque,
         "require_static_return" => run.config.require_static_return,
+        "clause_local_qualification" => run.config.clause_local_qualification,
         "warnings_as_errors" => run.config.warnings_as_errors,
         "ci" => run.ci?,
         "rules" =>

@@ -56,7 +56,12 @@ defmodule SpecLint.Compare do
   An inferred clause that the application rule selected for a slice.
   `shadowed?` means the clause may be unreachable: its domain tuple is
   contained in the union of the domain tuples of the clauses before it
-  (see `shadowed/1`).
+  (see `shadowed/1`). `contained_lo?` means the clause's whole domain
+  tuple (upper bounds of its stored arguments) is non-empty and a subtype
+  of the tuple of the spec's argument lower bounds `D_lo`, compared as
+  whole tuples, never position by position: every input the clause accepts
+  is then certainly inside the spec domain `D`, whatever losses widened
+  `D_hi` (the clause-local qualification, `SpecLint.Rules.ReturnConflict`).
   """
   @type contributing :: %{
           index: non_neg_integer(),
@@ -64,6 +69,7 @@ defmodule SpecLint.Compare do
           return: Compiler.descr(),
           static_return?: boolean(),
           containment: containment(),
+          contained_lo?: boolean(),
           shadowed?: boolean()
         }
 
@@ -301,7 +307,9 @@ defmodule SpecLint.Compare do
   # argument tuples. Not contained in D_hi means not contained in D (D ⊆ D_hi),
   # so an escape is certain even with losses. Containment in D_lo implies
   # containment in D (D_lo ⊆ D); containment in D_hi alone implies it only
-  # when no argument lost precision (then D_lo = D = D_hi).
+  # when no argument lost precision (then D_lo = D = D_hi). `contained_lo?`
+  # records containment in D_lo itself, for a non-empty clause domain (an
+  # empty one is contained in anything and says nothing about any input).
   defp contributing(clauses, used, spec_domain, input_approximate?, d_lo) do
     used_set = MapSet.new(used)
     spec_domain_lo = Compiler.tuple(d_lo)
@@ -310,11 +318,17 @@ defmodule SpecLint.Compare do
     for {{args, return}, index} <- Enum.with_index(clauses), MapSet.member?(used_set, index) do
       clause_domain = args |> Enum.map(&Compiler.upper_bound/1) |> Compiler.tuple()
 
+      # D_lo ⊆ D_hi, so containment in D_lo is only tested inside D_hi, and
+      # without losses D_lo = D_hi.
+      in_hi? = Compiler.subtype?(clause_domain, spec_domain)
+
+      in_lo? =
+        in_hi? and (not input_approximate? or Compiler.subtype?(clause_domain, spec_domain_lo))
+
       containment =
         cond do
-          not Compiler.subtype?(clause_domain, spec_domain) -> :domain_escape
-          not input_approximate? -> :contained
-          Compiler.subtype?(clause_domain, spec_domain_lo) -> :contained
+          not in_hi? -> :domain_escape
+          in_lo? -> :contained
           true -> :containment_unknown
         end
 
@@ -324,6 +338,7 @@ defmodule SpecLint.Compare do
         return: return,
         static_return?: not Compiler.gradual?(return),
         containment: containment,
+        contained_lo?: in_lo? and not Compiler.empty?(clause_domain),
         shadowed?: MapSet.member?(shadowed, index)
       }
     end

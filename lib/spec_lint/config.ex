@@ -17,6 +17,7 @@ defmodule SpecLint.Config do
     exclude: ["lib/generated/**"],
     expand_opaque: false,
     require_static_return: false,
+    clause_local_qualification: false,
     warnings_as_errors: false
   ]
   ```
@@ -30,6 +31,12 @@ defmodule SpecLint.Config do
 
   `require_static_return` defaults to `false`, the Phase 1 rerun decision
   (DESIGN.md section 4, `EXPERIMENTS.md`).
+
+  `clause_local_qualification` (default `false`) is an experiment, not an
+  adopted policy (DESIGN.md section 4, `bench/corpus/clause_local_qualification.md`):
+  with it, an `SL001` `clause_conflict` needs its clause's whole domain
+  contained in the spec's argument lower bounds instead of the slice-wide
+  arrow prerequisites (`SpecLint.Rules.ReturnConflict`).
 
   A baseline path given explicitly (`baseline:` in the file, or
   `--baseline`) sets `baseline_explicit`: `SpecLint.Run` then treats a
@@ -54,6 +61,7 @@ defmodule SpecLint.Config do
           exclude: [String.t()],
           expand_opaque: boolean(),
           require_static_return: boolean(),
+          clause_local_qualification: boolean(),
           warnings_as_errors: boolean(),
           baseline_explicit: boolean(),
           source: String.t() | nil
@@ -67,6 +75,7 @@ defmodule SpecLint.Config do
             exclude: [],
             expand_opaque: false,
             require_static_return: false,
+            clause_local_qualification: false,
             warnings_as_errors: false,
             baseline_explicit: false,
             source: nil
@@ -80,6 +89,7 @@ defmodule SpecLint.Config do
     :exclude,
     :expand_opaque,
     :require_static_return,
+    :clause_local_qualification,
     :warnings_as_errors
   ]
 
@@ -144,8 +154,12 @@ defmodule SpecLint.Config do
   end
 
   defp put(config, key, value)
-       when key in [:expand_opaque, :require_static_return, :warnings_as_errors] and
-              is_boolean(value),
+       when key in [
+              :expand_opaque,
+              :require_static_return,
+              :clause_local_qualification,
+              :warnings_as_errors
+            ] and is_boolean(value),
        do: {:ok, Map.put(config, key, value)}
 
   defp put(_config, key, value) when key in @keys, do: invalid(key, value)
@@ -212,7 +226,8 @@ defmodule SpecLint.Config do
 
   @doc """
   Applies command-line overrides: `:profile`, `:analysis`, `:baseline`,
-  `:warnings_as_errors`, `:require_static_return` and `:exclude`.
+  `:warnings_as_errors`, `:require_static_return`,
+  `:clause_local_qualification` and `:exclude`.
   """
   @spec merge_cli(t(), keyword()) :: {:ok, t()} | {:error, String.t()}
   def merge_cli(config, cli) do
@@ -223,6 +238,7 @@ defmodule SpecLint.Config do
       :baseline,
       :warnings_as_errors,
       :require_static_return,
+      :clause_local_qualification,
       :exclude
     ])
     |> Enum.reject(fn {_key, value} -> value == nil end)

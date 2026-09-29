@@ -71,3 +71,24 @@ a regression test. Reports are in `bench/corpus/reports/expansion/`.
 
 Source changes and results are left uncommitted for review. The pre-existing
 `PHASE_2_REVIEW.txt` was not modified.
+
+### Progress (2026-09-29)
+
+- **Item 2: done.** Six source-only Ash reports are witnessed at runtime by
+  `bench/corpus/ash_integration_witnesses.exs`, and `data_layer_query/2` is
+  refuted (`holdout_triage.md`).
+- **Item 3: done.** absinthe and tesla are frozen at `3b89842`
+  (`holdout2_baseline.md`, `expansion.json`).
+- **Item 1: implemented behind `--clause-local-qualification`**
+  (default `false`) and measured on all fifteen real-code corpora
+  (`bench/corpus/clause_local_qualification.md`).
+  - **Tuned corpora:** +1 true gate (`Ash.Page.page_opts/1`).
+  - **Fresh holdouts:** 0 change.
+  - **False positives:** 0.
+  - **Negative controls:** all ungated.
+
+  Still open for the Close phase:
+  - an independent adversarial review of the soundness argument;
+  - the adoption decision.
+
+- **Item 4:** unchanged.

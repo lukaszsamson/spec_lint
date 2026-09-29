@@ -18,13 +18,18 @@ defmodule SpecLint.Rule do
           evidence: Evidence.classification() | nil
         }
 
-  @typedoc "What a rule sees for one function in scope."
+  @typedoc """
+  What a rule sees for one function in scope. `clause_local_qualification`
+  is the configuration flag of that name (`SpecLint.Config`); a context
+  without it reads as `false`.
+  """
   @type function_context :: %{
-          module: Analysis.result(),
-          function: Analysis.function_result(),
-          file: String.t() | nil,
-          slices: [slice_context()],
-          severity: Issue.severity()
+          required(:module) => Analysis.result(),
+          required(:function) => Analysis.function_result(),
+          required(:file) => String.t() | nil,
+          required(:slices) => [slice_context()],
+          required(:severity) => Issue.severity(),
+          optional(:clause_local_qualification) => boolean()
         }
 
   @typedoc "What a rule sees for one module."
