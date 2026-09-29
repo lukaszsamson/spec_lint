@@ -31,7 +31,13 @@ defmodule SpecLint.ReportTest do
              envelope["beams"]
 
     assert byte_size(md5) == 32
-    assert path =~ ~r{^_build/test/lib/spec_lint/ebin/}
+    # Relative to the project root when the build is inside it (the default
+    # _build); a separate MIX_BUILD_PATH outside the root stays absolute.
+    beam = Path.join(Mix.Project.compile_path(), "#{Compare}.beam")
+    assert path == Path.relative_to(beam, File.cwd!())
+
+    unless System.get_env("MIX_BUILD_PATH"),
+      do: assert(path =~ ~r{^_build/test/lib/spec_lint/ebin/})
 
     assert %{"rule" => "SL001", "subject" => "SpecLint.Fixtures.Compare.disjoint/1"} =
              Enum.find(envelope["findings"], &(&1["rule"] == "SL001"))

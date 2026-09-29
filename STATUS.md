@@ -5,6 +5,68 @@ Date 2026-09-29. `DESIGN.md` is the authoritative design,
 Phase 4 follows the review of the Phase 3 implementation at `0cc9c50`;
 previous results below are historical and are superseded where noted.
 
+## Milestone 2: upstream Elixir 648b2a9 qualified
+
+The compiler adapter is qualified for unmodified upstream Elixir
+`648b2a94934664cfd2c788348d02d799c68faa69` (adapter id
+`1.21.0-dev+648b2a9`) next to the fork revision `c24c235`. Toolchain,
+audit and replay are in `bench/corpus/toolchain/` and
+`bench/corpus/reports/upstream-648b2a9/`.
+
+- **Build reproducibility.** `bench/corpus/toolchain/build_elixir.sh REV
+  DEST` fetches one upstream revision, builds it with `make compile` and
+  `SOURCE_DATE_EPOCH` set to the commit time, and prints a path-independent
+  identity (`identity.exs`: code and `ExCk` digests over 447 modules). A
+  fresh clone from GitHub, built under `env -i` with only OTP 28.5.0.1 on
+  `PATH`, has the same identity as a worktree build of the same commit.
+- **Audit** (`audit-648b2a9.md`, 22 rows, each with a probe or test on both
+  builds). The two revisions share `25fa6682c`; the internals SpecLint reads
+  are unchanged (same source blobs, same BEAM md5 for `Descr`, `Module.Types`,
+  `Pattern`, `ParallelChecker`, `:elixir_erl`, `Code.Typespec`,
+  `Mix.Compilers.Elixir`; the `apply_infer/2` source and `@max_clauses 16`
+  identical). Rows that differ: the revision itself; a new precise
+  `:erlang.--/2` rule (3 stdlib stored signatures change, no report
+  changes); and **the `for ... into:` narrowing**: upstream lacks the fork's
+  fix and stores `(term(), bitstring())` for a function that accepts an
+  atom, so SpecLint gates a correct spec (SL003, exit 1). This is a
+  reproduced upstream soundness violation (`UPSTREAM_BUGS.txt` item 11),
+  pinned per revision by a test and listed in the README support matrix;
+  it does not occur in the fifteen corpora.
+- **Capability probes.** `SpecLint.Compiler.V121.preflight/0` now runs nine
+  probes after the revision check (`capability_probes/0`): `Descr` exports,
+  the term layout the adapter reads (bitmap bits, atom sets, tuple, map and
+  list literals, `fun()`, `dynamic`, `term`, `none`), `Descr` semantics,
+  the checker version, the `ExCk` layout of a sample chunk, the
+  `apply_infer/2` copy against `remote_apply/7` on both sides of the cutoff,
+  the pattern checker on a dead and a live clause, the `Code.Typespec`
+  kinds, and the compile manifest reader. `preflight/1` takes the internals
+  to probe; 27 tests substitute a missing or changed internal (a dropped
+  function, a flipped map field flag, an open tuple, a moved bitmap bit,
+  covariant functions, a new chunk version, a renamed chunk key, a raised
+  cutoff, another diagnostic tag, a lost typespec kind, a changed manifest
+  sentinel, a raising probe) and check that preflight fails naming the
+  probe, and that a CI run is then incomplete with exit 2.
+- **Tests under upstream.** The whole suite (368 tests, including the
+  consumer, umbrella and build integration projects run through the Mix
+  task) passes under both compilers, with the upstream build of the
+  project in a separate `MIX_BUILD_PATH`; strict Credo, formatting,
+  Dialyzer (0 errors; upstream PLT in a separate `SPEC_LINT_PLT_DIR`) and
+  the self-check (`mix spec_lint --ci`: 288 slices, exit 0) pass under
+  both. Two test harness fixes were needed: the consumer fixtures clear an
+  inherited `MIX_BUILD_PATH`, and the report path test accepts a build
+  outside the project root. Before them, the only failure under upstream
+  was that path assertion.
+- **Replay.** The fifteen corpora, recompiled with the upstream compiler
+  into separate build paths (`compile_corpora.sh`; checkouts verified
+  clean before and after), give reports identical to `../m1_review/` except
+  the adapter id and the BEAM identities: same exit codes, 4,204 compared
+  slices, 63 findings, 9 gates, every fingerprint. The 40 differing BEAM
+  md5 values are build paths, the build date, the two changed compiler
+  modules, and nondeterministic compilation in Phoenix LiveView, Ash and
+  Nx (they also differ between two `c24c235` builds). Baselines: switching
+  compilers changes the adapter id, so a baseline must be regenerated
+  (`mix spec_lint.baseline`); its entries are unchanged.
+
 ## Milestone 1 review: rendering, union order, shadowed map keys
 
 Four review findings on `e4fc0c7`, all resolved
@@ -231,7 +293,7 @@ It has about 8,800 lines in `lib` and 5,800 in `test`:
 
 | Component | Module | State |
 | --- | --- | --- |
-| Compiler adapter | `SpecLint.Compiler`, `SpecLint.Compiler.V121` | Pinned to Elixir 1.21.0-dev `c24c235`, checker chunk `elixir_checker_v10`. Preflight, chunk decoder, every `Descr` call, a copy of `apply_infer/2` with its 16-clause cutoff, a canonical `Descr` serialisation and a printer. |
+| Compiler adapter | `SpecLint.Compiler`, `SpecLint.Compiler.V121` | Qualified for Elixir 1.21.0-dev `c24c235` (fork) and `648b2a9` (upstream), checker chunk `elixir_checker_v10`. Preflight with nine capability probes, chunk decoder, every `Descr` call, a copy of `apply_infer/2` with its 16-clause cutoff, a canonical `Descr` serialisation and a printer. |
 | BEAM reader | `SpecLint.Beam`, `SpecLint.Project` | Reads `ExCk`, `Dbgi` specs, types and debug info (including `use`-injected overridable defaults). Handles owned ebins, umbrella children and exclude globs, and checks every module the build lists has its BEAM file (compile manifest, or `<app>.app`). |
 | Translator | `SpecLint.Translate`, `SpecLint.Bound`, `SpecLint.TypeCache` | Turns spec AST into `{lo, hi}` bounds with loss records (the section 6 kinds plus `map_key_widened`) and integer intervals. `expand_opaque` is optional. |
 | Comparison | `SpecLint.Compare` | Raw per-slice relations: application, extra and missing, containment per clause (against `D_hi` and `D_lo`), overlap (certain or unknown), top-only, near-top, clause shadowing, and the dynamic probe. |
@@ -266,7 +328,8 @@ in a separate OS process:
 ## How to run
 
 Toolchain: Elixir 1.21.0-dev (`c24c235`) from `~/elixir` on `PATH`,
-Erlang/OTP 28.
+Erlang/OTP 28. Upstream `648b2a9` is qualified too; build and select it as
+`bench/corpus/toolchain/upstream-1.21-648b2a9.md` says.
 
 ```
 mix spec_lint                                 report, exit 0
@@ -578,9 +641,13 @@ documented limitations. "Sound" is not claimed.
   this phase have no `blocked` field and acknowledge as before.
 - **Top-only inference hides most evidence.** On the stdlib, 913 of 1,777
   slices are top-only.
-- **One pinned compiler revision.** Every internal used (`Descr`, the
+- **Two qualified compiler revisions.** Every internal used (`Descr`, the
   `ExCk` layout, `apply_infer/2`) is `@moduledoc false` and can change
-  without notice. Any other compiler is reported as unsupported.
+  without notice. Any other compiler is reported as unsupported, and so is
+  a qualified revision whose internals fail a capability probe. On
+  upstream `648b2a9`, `for ... into:` with a collectable that may be a
+  bitstring or a list stores an unsound signature, which can make SpecLint
+  gate a correct spec (audit row 19).
 - **Reachability is approximated.** The compiler's redundancy verdict is
   not in the chunk, so the shadowing check over-blocks clauses whose
   earlier clauses are narrowed by guards.

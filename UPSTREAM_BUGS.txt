@@ -17,6 +17,14 @@ These observations have not been requalified against current unmodified Elixir
 upstream. Library observations are also pinned revisions, not claims about
 current releases. No issue has been filed as part of this document.
 
+Update (Milestone 2, 2026-09-29): item 11 below IS a reproduced soundness
+violation, on unmodified upstream 648b2a94934664cfd2c788348d02d799c68faa69:
+a stored signature excludes an argument the function accepts at runtime. The
+fork revision c24c235 carries its fix (fork commit c24c23538, not upstream).
+Items 1 to 10 have still not been requalified one by one on upstream; the
+fifteen-corpus replay under 648b2a9 reproduces every SpecLint report of
+c24c235 (bench/corpus/reports/upstream-648b2a9/).
+
 1. ELIXIR: LOCAL HELPERS DISCARD KNOWN CALL-ARGUMENT INFORMATION
 
 Priority: high for an upstream precision discussion; not a proven bug.
@@ -343,3 +351,43 @@ Observed but NOT bugs (recorded so nobody re-investigates):
   - A closed map with an all-:y-list difference printing as
     "non_empty_list(atom()) and not non_empty_list(:y)": correct, [] is
     genuinely excluded because [] is in list(:y).
+
+--------------------------------------------------------------------------------
+11. ELIXIR (UPSTREAM 648b2a9): for ... into: NARROWS THE BODY TO bitstring()
+    WHEN THE COLLECTABLE MAY ALSO BE A LIST (reproduced, unsound signature)
+
+Compiler: upstream 648b2a94934664cfd2c788348d02d799c68faa69 (unmodified,
+built with bench/corpus/toolchain/build_elixir.sh), OTP 28.5.0.1.
+Suggested title: "for-comprehension with a bitstring-or-list :into narrows
+the body variables to bitstring()".
+
+    defmodule IntoProbe do
+      @spec f(boolean(), atom()) :: atom()
+      def f(flag, value) do
+        into = if flag, do: [], else: ""
+        _ = for _ <- [1], do: value, into: into
+        value
+      end
+    end
+
+Stored signature (ExCk) on 648b2a9:
+    (term(), bitstring()) -> dynamic(bitstring())
+On c24c235 (fork fix): (term(), term()) -> dynamic()
+Runtime: IntoProbe.f(true, :ok) returns :ok on both.
+
+The stored domain excludes :ok, which the function accepts: unsound, not a
+precision loss. A caller passing an atom gets a false type warning, and
+SpecLint reports a gating SL003 (spec_domain_rejected) on the correct spec
+above (exit 1 in CI). The same code path warns on the literal form
+`for _ <- [1], do: :ok, into: into` ("expected the body of a
+for-comprehension with into: binary() ... to be a binary"), also a false
+positive: the list path accepts any element. Cause: for_into/5 in
+lib/elixir/lib/module/types/expr.ex returns bitstring() as the body's
+expected type when the collectable may be a bitstring, even when it may also
+be an empty list; the fork commit "Fix incorrect narrowing in mixed type for
+into" returns term() for that case and only reports badbitbody when the list
+path is impossible. Regression test:
+test/spec_lint/upstream_qualification_test.exs (pinned per revision).
+Not observed in the fifteen corpora (no stored signature of their own
+applications differs between the two compilers except semantically equal
+terms).

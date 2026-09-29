@@ -1,0 +1,203 @@
+{
+  "artifacts": [
+    {
+      "beam_count": 190,
+      "path": "$BUILD/phoenix_live_view/lib/phoenix_live_view/ebin",
+      "sha256": "55e02685c6bbf4e5518a6a9dd3a817b8e9a6264884bb11ac0ce136dc3a920e30"
+    },
+    {
+      "beam_count": 3,
+      "path": "$BUILD/phoenix_live_view/lib/cc_precompiler/ebin",
+      "sha256": "1287dc1c36164c74ef44fd5686b622284af0356c39a813a15b514ae79884ffea"
+    },
+    {
+      "beam_count": 8,
+      "path": "$BUILD/phoenix_live_view/lib/elixir_make/ebin",
+      "sha256": "d672bf85831d3ec9de6482d0607687840824fb94521a5874140f746a6259b899"
+    },
+    {
+      "beam_count": 7,
+      "path": "$BUILD/phoenix_live_view/lib/file_system/ebin",
+      "sha256": "af5841ab073016d6d48ec5a24e0dd8f3ceff91b5f828a41e777e1fb15fe41936"
+    },
+    {
+      "beam_count": 15,
+      "path": "$BUILD/phoenix_live_view/lib/finch/ebin",
+      "sha256": "373ff69dcda58040c48d1df1f5dbc45656e7b310ac11752d512f3bab383b0c2c"
+    },
+    {
+      "beam_count": 1,
+      "path": "$BUILD/phoenix_live_view/lib/fine/ebin",
+      "sha256": "34834b209c51eba7eb5b6e0f66439c77d7fa26b920e6bff0a1f4099954a8c8a1"
+    },
+    {
+      "beam_count": 5,
+      "path": "$BUILD/phoenix_live_view/lib/glob_ex/ebin",
+      "sha256": "34c9ab1b85212f723cc3d73a461504c65188868a12d6457b9ea4bf589f17689b"
+    },
+    {
+      "beam_count": 4,
+      "path": "$BUILD/phoenix_live_view/lib/hpax/ebin",
+      "sha256": "036119c3436a07d113175e7437abba53d09125cc64f46fe562fb23754a8b6eea"
+    },
+    {
+      "beam_count": 2,
+      "path": "$BUILD/phoenix_live_view/lib/html_entities/ebin",
+      "sha256": "4eebbd5821153372a0c14ed68b9962b95ac64d308130b609bf7029e16e453764"
+    },
+    {
+      "beam_count": 60,
+      "path": "$BUILD/phoenix_live_view/lib/igniter/ebin",
+      "sha256": "b0c42fe7cbe723bb23b3544a610ff2bbf7f081bae78c977e49d08c0b927e4de2"
+    },
+    {
+      "beam_count": 27,
+      "path": "$BUILD/phoenix_live_view/lib/jason/ebin",
+      "sha256": "158447e65f3f87eeaa97dd0d6f967eb837e3f497900f3751b8d21b5aa7ccabba"
+    },
+    {
+      "beam_count": 5,
+      "path": "$BUILD/phoenix_live_view/lib/lazy_html/ebin",
+      "sha256": "f52169683799b895774c1dc9ad3162e0b730a7d9b7f92a77d96e2ea76330c2e1"
+    },
+    {
+      "beam_count": 1,
+      "path": "$BUILD/phoenix_live_view/lib/mime/ebin",
+      "sha256": "197aab764110e1502c6d6e37c33d5077c868b2a5ac67e69131ad06a497dc3215"
+    },
+    {
+      "beam_count": 21,
+      "path": "$BUILD/phoenix_live_view/lib/mint/ebin",
+      "sha256": "74a7985804d40129d48fa20e18ed4f4f64fe607d0f6521a946c600eb7f49f1be"
+    },
+    {
+      "beam_count": 3,
+      "path": "$BUILD/phoenix_live_view/lib/nimble_options/ebin",
+      "sha256": "6049d75c936c3332e73dee9d83745567271a3dd50c17a0c40942062d586adb1a"
+    },
+    {
+      "beam_count": 2,
+      "path": "$BUILD/phoenix_live_view/lib/nimble_pool/ebin",
+      "sha256": "3350862ff902bb3ee698927776ab96d459717a32065e13cbb2abe606385a316e"
+    },
+    {
+      "beam_count": 21,
+      "path": "$BUILD/phoenix_live_view/lib/owl/ebin",
+      "sha256": "be5e108705797956aa4109161379e207ee63269a914ca4d60e6a29061eed5a46"
+    },
+    {
+      "beam_count": 92,
+      "path": "$BUILD/phoenix_live_view/lib/phoenix/ebin",
+      "sha256": "3824dea140aebf4b517b2a8fa6488363a10c5290a32518e5d073314221d1adca"
+    },
+    {
+      "beam_count": 18,
+      "path": "$BUILD/phoenix_live_view/lib/phoenix_html/ebin",
+      "sha256": "ec5e61a9b57675b0a231a9282b2fb8f2bad17dc96d3d7f0f528e720d95bda0df"
+    },
+    {
+      "beam_count": 7,
+      "path": "$BUILD/phoenix_live_view/lib/phoenix_html_helpers/ebin",
+      "sha256": "1fd837e7be0ea0ca34256c9148ef96de02e977acfa6dafa4f09c2afa57f154c0"
+    },
+    {
+      "beam_count": 5,
+      "path": "$BUILD/phoenix_live_view/lib/phoenix_live_reload/ebin",
+      "sha256": "22fcc5cfad0766f7ac292a7227285f5f7a96e08fbf9de0334a0fc4796c044c87"
+    },
+    {
+      "beam_count": 190,
+      "path": "$BUILD/phoenix_live_view/lib/phoenix_live_view/ebin",
+      "sha256": "55e02685c6bbf4e5518a6a9dd3a817b8e9a6264884bb11ac0ce136dc3a920e30"
+    },
+    {
+      "beam_count": 13,
+      "path": "$BUILD/phoenix_live_view/lib/phoenix_pubsub/ebin",
+      "sha256": "3f0dd815a199f89e1850924c9115e754df92947a8a1a3e3f66f9d4b14a896c68"
+    },
+    {
+      "beam_count": 4,
+      "path": "$BUILD/phoenix_live_view/lib/phoenix_template/ebin",
+      "sha256": "60ece19458d6f6a4d2ea56f9da2cd5ac1aaea16637bee3ab15c5f31b13a2f364"
+    },
+    {
+      "beam_count": 2,
+      "path": "$BUILD/phoenix_live_view/lib/phoenix_view/ebin",
+      "sha256": "deddb57b04b6a77362899b595115cfbfc6d7faf0f721f103afd281979e89c662"
+    },
+    {
+      "beam_count": 60,
+      "path": "$BUILD/phoenix_live_view/lib/plug/ebin",
+      "sha256": "e31cf4c574c31c58870b891c0925b4c3795aeef54cacc0f5f9840896cf4b2eb9"
+    },
+    {
+      "beam_count": 5,
+      "path": "$BUILD/phoenix_live_view/lib/plug_crypto/ebin",
+      "sha256": "860efa91aeb975b90e798b1b60311547a5f40aedb70500fabcdf1bf6947af9de"
+    },
+    {
+      "beam_count": 24,
+      "path": "$BUILD/phoenix_live_view/lib/req/ebin",
+      "sha256": "a7d157bc1b220d0fd25bd16c5ac11bb4fc80ee09668c84afcc62bf808d1c674b"
+    },
+    {
+      "beam_count": 17,
+      "path": "$BUILD/phoenix_live_view/lib/rewrite/ebin",
+      "sha256": "1f14f09a9bd789c05a978d62728c3568fe329a24792557b4a4175e3e4ea633f4"
+    },
+    {
+      "beam_count": 12,
+      "path": "$BUILD/phoenix_live_view/lib/sourceror/ebin",
+      "sha256": "70945aca19f661b3c4db85cd78e3e3e42c2e2d1e95e8e378af312de92fe49002"
+    },
+    {
+      "beam_count": 8,
+      "path": "$BUILD/phoenix_live_view/lib/spitfire/ebin",
+      "sha256": "c6071a9ea2a42346d9646577ba7db689d34beb868384391eaaaa6ae8a9c5309c"
+    },
+    {
+      "beam_count": 5,
+      "path": "$BUILD/phoenix_live_view/lib/telemetry/ebin",
+      "sha256": "70343b871b0f1b80069202c6367dd8ad6667376e4c6c482218c7fc17c3a011eb"
+    },
+    {
+      "beam_count": 1,
+      "path": "$BUILD/phoenix_live_view/lib/text_diff/ebin",
+      "sha256": "2384e8bf57fcf8d42a2e04ba186c9dad3e2b333489c2dc19109561faf7c821f2"
+    },
+    {
+      "beam_count": 1,
+      "path": "$BUILD/phoenix_live_view/lib/websock/ebin",
+      "sha256": "e226439a2dc98185d46549ba00ef2bdb15585bb9fd7f432227a019157b0cb27f"
+    },
+    {
+      "beam_count": 3,
+      "path": "$BUILD/phoenix_live_view/lib/websock_adapter/ebin",
+      "sha256": "5eb8ecb4f181e176e8ba21ce68421200592d8a7a7e01add17c0675a8a2833638"
+    }
+  ],
+  "corpus": "phoenix_live_view",
+  "corpus_manifest_sha256": "efbece0e69e5bc1b3abfd2a9473b8552ae3b86ca027d908b999b05d0803594f8",
+  "schema": "spec_lint.corpus_provenance/1",
+  "source": {
+    "dirty": false,
+    "lockfile_sha256": "593aeeefa44f662ba594a01221be295cfe1efca4b470b9cd99786441ab157e0a",
+    "revision": "517afcb3854fc6e26b3f2caadfce6c82d76bfd7a"
+  },
+  "tool": {
+    "dirty": true,
+    "lockfile_sha256": "a23fa18ff765b9ddc4f310975ca588771fabb25d06b9fc50267b620bf8af026b",
+    "revision": "63618c2e51eede6a1edb5ff8352258e993d433e1",
+    "source_sha256": "4dd50973e4faa2df518fbcfb9c0c212c6869d3d7f83871afa634031bba05ca53"
+  },
+  "toolchain": {
+    "compiler": {
+      "dirty": false,
+      "patch_sha256": null,
+      "revision": "648b2a94934664cfd2c788348d02d799c68faa69"
+    },
+    "elixir": "Elixir 1.21.0-dev (648b2a9) (compiled with Erlang/OTP 28)",
+    "loaded_module_types_beam": "$COMPILER/bin/../lib/elixir/ebin/Elixir.Module.Types.beam",
+    "loaded_module_types_sha256": "936042d2c1d855e2860475209a50e84b5fcde38e0acb65bc4a6c8e62d09eca62"
+  }
+}

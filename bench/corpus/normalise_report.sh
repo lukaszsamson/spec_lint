@@ -21,6 +21,7 @@ oss="${SPEC_LINT_OSS:-/dev/null}"
 elixir_dir="${ELIXIR_DIR:-$HOME/elixir}"
 root="${SPEC_LINT_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)}"
 raw="${SPEC_LINT_RAW_DIR:-/dev/null}"
+build="${SPEC_LINT_CORPUS_BUILD:-/dev/null}"
 
 canonical_path() {
   if [ -d "$1" ]; then (cd "$1" && pwd -P); else printf '%s\n' "$1"; fi
@@ -30,9 +31,10 @@ jq -S --arg oss_real "$(canonical_path "$oss")" \
   --arg elixir_real "$(canonical_path "$elixir_dir")" \
   --arg root_real "$(canonical_path "$root")" --arg raw_real "$(canonical_path "$raw")" \
   --arg oss "$oss" --arg elixir "$elixir_dir" --arg root "$root" \
-  --arg raw "$raw" '
+  --arg raw "$raw" --arg build_real "$(canonical_path "$build")" --arg build "$build" '
   walk(if type == "string" then
-    (split($oss_real) | join("$OSS") | split($oss) | join("$OSS") |
+    (split($build_real) | join("$BUILD") | split($build) | join("$BUILD") |
+     split($oss_real) | join("$OSS") | split($oss) | join("$OSS") |
      split($elixir_real) | join("$ELIXIR") | split($elixir) | join("$ELIXIR") |
      split($raw_real) | join("$TMP") | split($raw) | join("$TMP") |
      split($root_real) | join("$SPEC_LINT") | split($root) | join("$SPEC_LINT"))

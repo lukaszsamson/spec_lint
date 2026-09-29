@@ -10,6 +10,11 @@
 # (for example --clause-local-qualification); the report's config records them.
 # SPEC_LINT_PRODUCT_ONLY=1 skips the experiment report, for option comparisons
 # that do not change it (the experiment has no product options).
+# SPEC_LINT_CORPUS_BUILD reads each OSS corpus from a separate build root,
+# $SPEC_LINT_CORPUS_BUILD/NAME/lib/*/ebin (toolchain/compile_corpora.sh),
+# instead of the checkout's _build/test; reports write it as $BUILD. The
+# tool itself is built where Mix puts it (MIX_BUILD_PATH, if set, or
+# _build/test), which is also where the fixtures corpus is read from.
 #
 # SPEC_LINT_OSS holds one checkout per library (jason decimal nimble_options
 # mime plug ecto), each at the revision pinned in bench/corpus/README.md and
@@ -35,6 +40,8 @@ oss="${SPEC_LINT_OSS:?set SPEC_LINT_OSS to the directory holding the corpus chec
 elixir_dir="${ELIXIR_DIR:-$HOME/elixir}"
 out="${SPEC_LINT_CORPUS_OUT:-$root/bench/corpus/reports}"
 manifest="${SPEC_LINT_CORPUS_MANIFEST:-}"
+corpus_build="${SPEC_LINT_CORPUS_BUILD:-}"
+tool_build="${MIX_BUILD_PATH:-$root/_build/test}"
 raw="$(mktemp -d)"
 trap 'rm -rf "$raw"' EXIT
 
@@ -114,10 +121,10 @@ select_corpus() {
       project_root="$root"
       source_repo="$root"
       mkdir -p "$raw/fixtures/ebin"
-      cp "$root"/_build/test/lib/spec_lint/ebin/Elixir.SpecLint.{ExperimentFixtures,Fixtures,OmissionFixtures}*.beam \
+      cp "$tool_build"/lib/spec_lint/ebin/Elixir.SpecLint.{ExperimentFixtures,Fixtures,OmissionFixtures}*.beam \
         "$raw/fixtures/ebin/"
       ebins=("$raw/fixtures/ebin")
-      codepaths=("$root/_build/test/lib/spec_lint/ebin")
+      codepaths=("$tool_build/lib/spec_lint/ebin")
       ;;
     *)
       source_repo="$oss/$1"
@@ -132,9 +139,14 @@ select_corpus() {
         ebin_rel="$(jq -r --arg name "$1" '.[$name].ebin // empty' "$manifest")"
       fi
       project_root="$source_repo/$subdir"
-      if [ -z "$ebin_rel" ]; then ebin_rel="_build/test/lib/$app/ebin"; fi
-      ebins=("$project_root/$ebin_rel")
-      for d in "$project_root"/_build/test/lib/*/ebin; do codepaths+=("$d"); done
+      local build_dir="$project_root/_build/test"
+      if [ -n "$corpus_build" ]; then build_dir="$corpus_build/$1"; fi
+      if [ -n "$ebin_rel" ]; then
+        ebins=("$project_root/$ebin_rel")
+      else
+        ebins=("$build_dir/lib/$app/ebin")
+      fi
+      for d in "$build_dir"/lib/*/ebin; do codepaths+=("$d"); done
       ;;
   esac
 }

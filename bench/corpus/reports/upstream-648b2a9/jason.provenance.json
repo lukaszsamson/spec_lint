@@ -1,0 +1,58 @@
+{
+  "artifacts": [
+    {
+      "beam_count": 28,
+      "path": "$BUILD/jason/lib/jason/ebin",
+      "sha256": "7bf3cb4877772ce7010d695c79b349e79ea1f46090bfc35473e007aa2aa07dd0"
+    },
+    {
+      "beam_count": 7,
+      "path": "$BUILD/jason/lib/decimal/ebin",
+      "sha256": "25ec8931feb7658aadac6fbfab405b14c0a6dd0b29b39716229dece94128b151"
+    },
+    {
+      "beam_count": 70,
+      "path": "$BUILD/jason/lib/dialyxir/ebin",
+      "sha256": "6f78644e1c5a8e044c56b073b2eb5f36756f14fd5a70ff91b639c0d16871c60c"
+    },
+    {
+      "beam_count": 3,
+      "path": "$BUILD/jason/lib/erlex/ebin",
+      "sha256": "4bb665e5cf28936d9cee9ff407bad4ad544053e581cf355a9d1bdd4c768cb76c"
+    },
+    {
+      "beam_count": 28,
+      "path": "$BUILD/jason/lib/jason/ebin",
+      "sha256": "7bf3cb4877772ce7010d695c79b349e79ea1f46090bfc35473e007aa2aa07dd0"
+    },
+    {
+      "beam_count": 9,
+      "path": "$BUILD/jason/lib/stream_data/ebin",
+      "sha256": "2cea345448ba685e268fb3694b0dc435a1370a29d5200021945996355dfc6d75"
+    }
+  ],
+  "corpus": "jason",
+  "corpus_manifest_sha256": "efbece0e69e5bc1b3abfd2a9473b8552ae3b86ca027d908b999b05d0803594f8",
+  "schema": "spec_lint.corpus_provenance/1",
+  "source": {
+    "dirty": false,
+    "lockfile_sha256": "efaf563b667e3cf0eff83fa9d27448ea00f9d3fc31fcbec95d50171d621001cc",
+    "revision": "4ede42858eb19f80ec9e863aab52df466eab8608"
+  },
+  "tool": {
+    "dirty": true,
+    "lockfile_sha256": "a23fa18ff765b9ddc4f310975ca588771fabb25d06b9fc50267b620bf8af026b",
+    "revision": "63618c2e51eede6a1edb5ff8352258e993d433e1",
+    "source_sha256": "4dd50973e4faa2df518fbcfb9c0c212c6869d3d7f83871afa634031bba05ca53"
+  },
+  "toolchain": {
+    "compiler": {
+      "dirty": false,
+      "patch_sha256": null,
+      "revision": "648b2a94934664cfd2c788348d02d799c68faa69"
+    },
+    "elixir": "Elixir 1.21.0-dev (648b2a9) (compiled with Erlang/OTP 28)",
+    "loaded_module_types_beam": "$COMPILER/bin/../lib/elixir/ebin/Elixir.Module.Types.beam",
+    "loaded_module_types_sha256": "936042d2c1d855e2860475209a50e84b5fcde38e0acb65bc4a6c8e62d09eca62"
+  }
+}

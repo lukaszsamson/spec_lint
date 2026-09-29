@@ -15,12 +15,23 @@ and [`EXPERIMENTS.md`](EXPERIMENTS.md).
 SpecLint reads compiler internals that change between Elixir development
 revisions, so each release supports specific compiler builds:
 
-| SpecLint | Elixir | Checker chunk |
-| --- | --- | --- |
-| 0.1.0 | 1.21.0-dev, revision `c24c235` | `elixir_checker_v10` |
+| SpecLint | Elixir | Source | Checker chunk | Adapter id | Known compiler defects |
+| --- | --- | --- | --- | --- | --- |
+| 0.1.0 | 1.21.0-dev, revision `c24c235` | fork `lukaszsamson/elixir`, branch `ls-mixed-into` | `elixir_checker_v10` | `1.21.0-dev+c24c235` | none known |
+| 0.1.0 | 1.21.0-dev, revision `648b2a9` | upstream `elixir-lang/elixir` | `elixir_checker_v10` | `1.21.0-dev+648b2a9` | `for ... into:` with a collectable that may be a bitstring or a list narrows the body to `bitstring()` in the stored signature, which can make SpecLint gate a correct spec (`bench/corpus/toolchain/audit-648b2a9.md`, row 19) |
 
-On any other compiler, `mix spec_lint` reports "unsupported compiler". In
-CI mode (`--ci`) that exits with status 2.
+Both on Erlang/OTP 28. On any other compiler, `mix spec_lint` reports
+"unsupported compiler". In CI mode (`--ci`) that exits with status 2. The
+revision alone does not qualify a build: preflight also probes every
+compiler internal SpecLint uses, and a missing or changed one is reported
+the same way. `bench/corpus/toolchain/build_elixir.sh` builds a qualified
+upstream revision from a clean clone.
+
+Baselines record the adapter id, so switching between the two revisions is
+an adapter change: a baseline written under the other one is not applied,
+and `mix spec_lint --ci` exits 2 asking you to review and regenerate it with
+`mix spec_lint.baseline`. On the fifteen benchmark corpora no fingerprint
+differs between the two revisions, so regeneration keeps the same entries.
 
 Your modules need debug info, which is the Mix default. Specs are read from
 the debug info chunk. A module compiled without it is reported as `SL008`.

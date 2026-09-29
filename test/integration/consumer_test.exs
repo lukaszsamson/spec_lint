@@ -201,7 +201,7 @@ defmodule SpecLint.Integration.ConsumerTest do
     command = "#{System.find_executable("mix")} spec_lint --format json 2> err.txt"
 
     {output, 0} =
-      System.cmd("sh", ["-c", command], cd: dir(), env: [{"MIX_ENV", "dev"}])
+      System.cmd("sh", ["-c", command], cd: dir(), env: Fixture.env())
 
     assert {:ok, %{"schema" => "spec_lint/report"}} = JSON.decode(output)
     err = File.read!(Path.join(dir(), "err.txt"))

@@ -122,6 +122,34 @@ defmodule SpecLint.CorpusReportTest do
     assert Path.join(checkout, "_build/test/lib/fake/ebin/Dummy.beam") |> File.exists?()
   end
 
+  test "corpus runner reads a separate corpus build root and writes it as $BUILD", %{
+    tmp_dir: dir
+  } do
+    {_checkout, revision, bin} = setup_mock_corpus(dir)
+    manifest = Path.join(dir, "manifest.json")
+    out = Path.join(dir, "reports")
+    File.write!(manifest, JSON.encode!(%{"fake" => %{"revision" => revision}}))
+    build = Path.join(dir, "build")
+
+    for app <- ["fake", "dep"] do
+      ebin = Path.join([build, "fake", "lib", app, "ebin"])
+      File.mkdir_p!(ebin)
+      File.write!(Path.join(ebin, "#{app}.beam"), app)
+    end
+
+    env = [{"SPEC_LINT_CORPUS_BUILD", build} | corpus_env(dir, manifest, out, bin)]
+    {message, 2} = System.cmd("bash", [@runner, "fake"], env: env, stderr_to_stdout: true)
+    assert message =~ "incomplete product run for fake"
+
+    provenance = out |> Path.join("fake.provenance.json") |> File.read!() |> JSON.decode!()
+
+    assert Enum.map(provenance["artifacts"], & &1["path"]) == [
+             "$BUILD/fake/lib/fake/ebin",
+             "$BUILD/fake/lib/dep/ebin",
+             "$BUILD/fake/lib/fake/ebin"
+           ]
+  end
+
   test "corpus runner rejects unexpected source revisions by default", %{tmp_dir: dir} do
     {_checkout, _revision, bin} = setup_mock_corpus(dir)
     manifest = Path.join(dir, "manifest.json")

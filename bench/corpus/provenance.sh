@@ -3,7 +3,8 @@
 #
 # Machine-local path prefixes are replaced as in normalise_report.sh:
 # SPEC_LINT_OSS -> $OSS, ELIXIR_DIR (default ~/elixir) -> $ELIXIR,
-# SPEC_LINT_COMPILER_REPO -> $COMPILER, SPEC_LINT_RAW_DIR -> $TMP and the
+# SPEC_LINT_COMPILER_REPO -> $COMPILER, SPEC_LINT_CORPUS_BUILD -> $BUILD,
+# SPEC_LINT_RAW_DIR -> $TMP and the
 # tool repository -> $SPEC_LINT, each in its given and its canonical
 # (symlink-resolved) spelling. Identity is carried by the sha256 values,
 # which never depend on these paths.
@@ -89,6 +90,7 @@ oss="${SPEC_LINT_OSS:-/dev/null}"
 elixir_dir="${ELIXIR_DIR:-$HOME/elixir}"
 compiler_repo="${SPEC_LINT_COMPILER_REPO:-/dev/null}"
 raw="${SPEC_LINT_RAW_DIR:-/dev/null}"
+build="${SPEC_LINT_CORPUS_BUILD:-/dev/null}"
 
 mkdir -p "$(dirname "$dest")"
 jq -nS --arg name "$name" --arg source_revision "$source_revision" \
@@ -114,9 +116,11 @@ jq -nS --arg name "$name" --arg source_revision "$source_revision" \
     --arg elixir_real "$(canonical_path "$elixir_dir")" --arg elixir "$elixir_dir" \
     --arg compiler_real "$(canonical_path "$compiler_repo")" --arg compiler "$compiler_repo" \
     --arg raw_real "$(canonical_path "$raw")" --arg raw "$raw" \
-    --arg root_real "$(canonical_path "$tool_repo")" --arg root "$tool_repo" '
+    --arg root_real "$(canonical_path "$tool_repo")" --arg root "$tool_repo" \
+    --arg build_real "$(canonical_path "$build")" --arg build "$build" '
     walk(if type == "string" then
-      (split($oss_real) | join("$OSS") | split($oss) | join("$OSS") |
+      (split($build_real) | join("$BUILD") | split($build) | join("$BUILD") |
+       split($oss_real) | join("$OSS") | split($oss) | join("$OSS") |
        split($compiler_real) | join("$COMPILER") | split($compiler) | join("$COMPILER") |
        split($elixir_real) | join("$ELIXIR") | split($elixir) | join("$ELIXIR") |
        split($raw_real) | join("$TMP") | split($raw) | join("$TMP") |

@@ -331,3 +331,17 @@ type printing was removed from classification, with provenance, a
 `summary.json` produced by `compare_replay.sh` against `reports/phase4/` (and
 against `reports/expansion/clause_local/on/` for Absinthe, which Phase 4
 lacks) and the Absinthe timings. See its README.
+
+## Upstream compiler qualification (Milestone 2)
+
+`toolchain/` holds what qualifies upstream Elixir `648b2a9` next to the
+fork revision `c24c235`: `build_elixir.sh` (clean-clone build of any
+upstream revision), `identity.exs` (path-independent build identity),
+`compile_corpora.sh` (recompiles corpus checkouts with another compiler
+into separate build paths, read by `run.sh` through
+`SPEC_LINT_CORPUS_BUILD` and written as `$BUILD`), the replay manifest
+`upstream-648b2a9.json`, the build record `upstream-1.21-648b2a9.md` and
+the internals audit `audit-648b2a9.md`. `reports/upstream-648b2a9/` holds
+the fifteen-corpus replay under the upstream compiler, compared with
+`reports/m1_review/`; see its README.
+

@@ -35,12 +35,21 @@ defmodule SpecLint.ProjectFixture do
     File.write!(full, contents)
   end
 
-  @doc "Runs `mix args` in `dir` under `MIX_ENV=dev`, returning `{output, status}`."
+  @doc """
+  The environment of a fixture's `mix` process: `MIX_ENV=dev`, and no
+  `MIX_BUILD_PATH`, which would otherwise be inherited from a test run built
+  into a separate build path (the upstream toolchain qualification) and put
+  the fixture's build there.
+  """
+  @spec env([{String.t(), String.t()}]) :: [{String.t(), String.t() | nil}]
+  def env(extra \\ []), do: [{"MIX_ENV", "dev"}, {"MIX_BUILD_PATH", nil} | extra]
+
+  @doc "Runs `mix args` in `dir` under `env/1`, returning `{output, status}`."
   @spec mix(String.t(), [String.t()], [{String.t(), String.t()}]) :: {String.t(), integer()}
   def mix(dir, args, env \\ []) do
     System.cmd(System.find_executable("mix"), args,
       cd: dir,
-      env: [{"MIX_ENV", "dev"} | env],
+      env: env(env),
       stderr_to_stdout: true
     )
   end

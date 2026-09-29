@@ -488,6 +488,21 @@ section 10 pass for that revision, not that a function is exported. The first
 release pins one 1.21 development revision and publishes a support matrix.
 Unknown combinations fail preflight in CI and report "unsupported" locally.
 
+As implemented (Milestone 2), `SpecLint.Compiler.V121` is qualified for the
+fork revision `c24c235` and upstream `648b2a9`, whose internals are the same
+(`bench/corpus/toolchain/audit-648b2a9.md`). An adapter covers several
+revisions only when the audit finds every internal it reads unchanged. Beyond
+the revision check, preflight runs one capability probe per internal
+(`capability_probes/0`): the `Descr` exports, the term layout the adapter
+reads directly, the `Descr` semantics it relies on, the checker version, the
+`ExCk` layout of a sample chunk, the `apply_infer/2` copy against
+`remote_apply/7` on both sides of the cutoff, the pattern and guard checker
+on a dead and a live clause, the `Code.Typespec` kinds and the compile
+manifest reader. A failing probe fails preflight like an unknown revision.
+Inference behaviour that no internal probe can see (such as the `for ...
+into:` narrowing of `648b2a9`, audit row 19) is pinned per revision by tests
+and listed in the support matrix.
+
 **Decision:** direct chunk reading from Fable for signatures; the
 `Module.ParallelChecker` cache is started only for body analysis and for
 the pattern and guard re-check behind `clause_reachable`

@@ -1,0 +1,38 @@
+{
+  "artifacts": [
+    {
+      "beam_count": 1,
+      "path": "$BUILD/mime/lib/mime/ebin",
+      "sha256": "a018c7cf774f7191ac012e5f8d93cd937900040b3e279770117680fc38a241a9"
+    },
+    {
+      "beam_count": 1,
+      "path": "$BUILD/mime/lib/mime/ebin",
+      "sha256": "a018c7cf774f7191ac012e5f8d93cd937900040b3e279770117680fc38a241a9"
+    }
+  ],
+  "corpus": "mime",
+  "corpus_manifest_sha256": "efbece0e69e5bc1b3abfd2a9473b8552ae3b86ca027d908b999b05d0803594f8",
+  "schema": "spec_lint.corpus_provenance/1",
+  "source": {
+    "dirty": false,
+    "lockfile_sha256": "918557143c1beb323884fa45b0e66626a8f9a0dec1d04427ce27951a1baf9ae2",
+    "revision": "23dcc1593ccc49648e33b9ed3c03bd516795f6d9"
+  },
+  "tool": {
+    "dirty": true,
+    "lockfile_sha256": "a23fa18ff765b9ddc4f310975ca588771fabb25d06b9fc50267b620bf8af026b",
+    "revision": "63618c2e51eede6a1edb5ff8352258e993d433e1",
+    "source_sha256": "4dd50973e4faa2df518fbcfb9c0c212c6869d3d7f83871afa634031bba05ca53"
+  },
+  "toolchain": {
+    "compiler": {
+      "dirty": false,
+      "patch_sha256": null,
+      "revision": "648b2a94934664cfd2c788348d02d799c68faa69"
+    },
+    "elixir": "Elixir 1.21.0-dev (648b2a9) (compiled with Erlang/OTP 28)",
+    "loaded_module_types_beam": "$COMPILER/bin/../lib/elixir/ebin/Elixir.Module.Types.beam",
+    "loaded_module_types_sha256": "936042d2c1d855e2860475209a50e84b5fcde38e0acb65bc4a6c8e62d09eca62"
+  }
+}
