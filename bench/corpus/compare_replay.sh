@@ -3,6 +3,9 @@
 # corpus by corpus and prints a JSON summary: completion, exit code, ledger,
 # findings (whole records, and without their rendered details), gates and
 # fingerprints, plus the list of top-level report keys that differ.
+# all_unchanged requires equality of every report key except beams: their
+# artifact hashes contain build paths (provenance.sh). Adapter, config,
+# scope, coverage and completion differences are never ignored.
 #
 #     compare_replay.sh NEW_DIR BASE_DIR[:corpus,...] [BASE_DIR[:corpus,...] ...]
 #
@@ -97,6 +100,7 @@ for corpus in $corpora; do
   else
     entry="$(jq -n --arg c "$corpus" --arg b "$base_dir" \
       --slurpfile n "$report" --slurpfile o "$base" '
+      def comparable(r): r | del(.beams);
       def gates(r): [r.findings[] | select(.gate) | {subject, rule, slice, clause, fingerprint}] | sort_by(.fingerprint);
       def fps(r): [r.findings[] | .fingerprint] | sort;
       def nodetails(r): [r.findings[] | del(.details)];
@@ -109,11 +113,13 @@ for corpus in $corpora; do
        findings: ($n.findings | length), previous_findings: ($o.findings | length),
        gates: (gates($n) | length), previous_gates: (gates($o) | length),
        added_gates: (gates($n) - gates($o)), removed_gates: (gates($o) - gates($n)),
+       report_unchanged: (comparable($n) == comparable($o)),
+       allowed_differing_report_keys: ["beams"],
        ledger_unchanged: ($n.ledger == $o.ledger),
        findings_unchanged: ($n.findings == $o.findings),
        findings_except_details_unchanged: (nodetails($n) == nodetails($o)),
        fingerprints_unchanged: (fps($n) == fps($o)),
-       differing_report_keys: ([($n | keys[]), ($o | keys[])] | unique | map(select($n[.] != $o[.])))}')"
+       differing_report_keys: ([($n | keys[]), ($o | keys[])] | unique | map(. as $key | select($n[$key] != $o[$key] or (($n | has($key)) != ($o | has($key))))))}')"
   fi
   entries="$(jq -n --argjson e "$entries" --argjson x "$entry" '$e + [$x]')"
 done
@@ -124,6 +130,7 @@ jq -n --argjson e "$entries" '{schema: "spec_lint.m1_replay/1", corpora: $e,
   incomplete: [$e[] | select(.status != "complete") | .corpus],
   all_unchanged: (($e | length) > 0 and
                   ([$e[] | .status == "complete" and .baseline != null
+                    and .previous_completion == "complete" and .report_unchanged
                     and .ledger_unchanged and .findings_unchanged and .fingerprints_unchanged
                     and .added_gates == [] and .removed_gates == []
                     and .exit_code == .previous_exit_code] | all))}'

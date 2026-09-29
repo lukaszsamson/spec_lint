@@ -5,6 +5,27 @@ Date 2026-09-29. `DESIGN.md` is the authoritative design,
 Phase 4 follows the review of the Phase 3 implementation at `0cc9c50`;
 previous results below are historical and are superseded where noted.
 
+## Post-release review hardening (in progress)
+
+The `a50b0d7` review found release-blocking artifact-provenance and
+qualification gaps. The older verdict below is historical, not a claim
+that the current working tree has completed a new release campaign.
+
+The current changes bind recorded artifacts to compiler production events,
+retain complete module definitions during reachability checking, reject
+stale campaign outputs and inconsistent replay cohorts, and separate
+compiler compatibility from CI qualification. Upstream `648b2a9` is now
+diagnostic-only because its reproduced inference defect can make a correct
+spec fail. It always reports an incomplete run; CI and warnings-as-errors
+exit 2, and baselines cannot waive the restriction. The fork `c24c235` and
+Elixir 1.20.4 remain the gating candidates.
+
+Validation and adversarial review are ongoing. The current results will be
+recorded separately from `release-1` and `release-2`. Linux workflow
+preparation alone does not constitute Linux qualification. The original
+missing-return goal remains open; see `NEXT_STEPS.md` for the distinction
+between an incremental improvement and completion.
+
 ## Milestone 5 delivered: experimental release (2026-09-29)
 
 Verdict in `RELEASE.md`: **release as experimental**; every Milestone 5

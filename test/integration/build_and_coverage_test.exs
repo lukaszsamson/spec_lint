@@ -33,8 +33,8 @@ defmodule SpecLint.Integration.BuildAndCoverageTest do
     dir = tmp_dir!("coverage")
     on_exit(fn -> File.rm_rf!(dir) end)
 
-    # CONSUMER_SKIP_COMPILE turns `compile` into a no-op, so a removed
-    # build directory stays removed when mix spec_lint runs.
+    # CONSUMER_SKIP_COMPILE replaces `compile` with a no-op. The public
+    # task must refuse this unsupported pipeline rather than accept no build.
     write!(dir, "mix.exs", """
     defmodule Consumer.MixProject do
       use Mix.Project
@@ -165,11 +165,12 @@ defmodule SpecLint.Integration.BuildAndCoverageTest do
     assert output =~ "Result: complete, exit 0"
     assert File.dir?(Path.join(dir, @ebin))
 
-    # A missing ebin: exit 2, never "0 specs".
+    # A missing ebin with compile disabled: exit 2, never "0 specs".
     File.rm_rf!(Path.join(dir, @ebin))
     {output, status} = mix(dir, ["spec_lint", "--ci"], [{"CONSUMER_SKIP_COMPILE", "1"}])
     assert status == 2, output
-    assert output =~ "missing build directory for consumer (#{@ebin})"
+    assert output =~ "unsupported compiler pipeline for consumer"
+    assert output =~ "alias compile"
     refute output =~ "0 specs checked"
   end
 end

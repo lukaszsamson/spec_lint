@@ -485,14 +485,16 @@ defmodule SpecLint.Run do
   defp finish(run, failures, opts) do
     inventory = Coverage.inventory(run.modules, run.evidence, run.baseline)
     regressions = Coverage.regressions(inventory, run.baseline)
+    gating_reasons = Compiler.Gating.reasons(run.capabilities)
 
     issues =
       (run_rules(run) ++ coverage_issues(run, inventory))
       |> Policy.apply_gates(run.config, regressions)
+      |> Compiler.Gating.qualify(gating_reasons)
 
     chunk_reasons = unsupported_chunks(run.modules)
     reachability_reasons = required_reachability_failures(run, issues)
-    incomplete? = incomplete?(failures, chunk_reasons, reachability_reasons)
+    incomplete? = incomplete?(failures, chunk_reasons, reachability_reasons ++ gating_reasons)
 
     {issues, decisions} =
       Baseline.decide(issues, run.baseline,
@@ -521,13 +523,20 @@ defmodule SpecLint.Run do
 
     blocking? = Enum.any?(run.issues, &Issue.blocking?/1) or violations != []
 
-    errored? = errored?(run, failures, chunk_reasons, reachability_reasons, adapter_error?)
+    errored? =
+      errored?(run, failures, chunk_reasons, reachability_reasons, adapter_error?) or
+        (gating_reasons != [] and (run.ci? or run.config.warnings_as_errors))
 
     %{
       run
       | completion: completion(run, incomplete?),
         completion_reasons:
-          failures ++ chunk_reasons ++ reachability_reasons ++ adapter_reasons ++ floor_notes,
+          failures ++
+            chunk_reasons ++
+            reachability_reasons ++
+            gating_reasons ++
+            adapter_reasons ++
+            floor_notes,
         exit_code: exit_code(run, errored?, blocking?)
     }
   end

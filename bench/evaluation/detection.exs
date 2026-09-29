@@ -12,7 +12,9 @@
 # Each report must be complete, and its sibling REPORT_DIR/CORPUS.provenance.json
 # must record the source revision the inventory pins for that corpus
 # (`corpora[*].revision`): a report built from another revision of the
-# library is not a measurement of the frozen inventory, and the script
+# library is not a measurement of the frozen inventory. Reports also need
+# unfiltered scope, clean source, matching adapter/compiler provenance and
+# one consistent adapter/configuration/tool/compiler cohort per set. The script
 # raises. Every counted finding is listed per family (`matched`: subject,
 # rule, evidence, gate, slice, clause, fingerprint and the "inferred extra"
 # or "stored signature clause" detail), so a reviewer can check that each
@@ -55,7 +57,46 @@ measure = fn dir ->
         do: raise("#{path}: report is not complete")
 
       provenance = Path.join(dir, corpus <> ".provenance.json")
-      revision = provenance |> File.read!() |> JSON.decode!() |> get_in(["source", "revision"])
+      provenance_data = provenance |> File.read!() |> JSON.decode!()
+      revision = get_in(provenance_data, ["source", "revision"])
+
+      unless provenance_data["schema"] == "spec_lint.corpus_provenance/1" and
+               provenance_data["corpus"] == corpus and
+               get_in(provenance_data, ["source", "dirty"]) == false,
+             do: raise("#{provenance}: invalid corpus identity or dirty source")
+
+      adapter = report["adapter"]
+      compiler_revision = get_in(provenance_data, ["toolchain", "identity", "revision"])
+      compiler_source_revision = get_in(provenance_data, ["toolchain", "compiler", "revision"])
+
+      unless is_binary(adapter) and is_binary(compiler_revision) and
+               String.ends_with?(adapter, "+" <> compiler_revision) and
+               is_binary(compiler_source_revision) and
+               String.starts_with?(compiler_source_revision, compiler_revision) and
+               get_in(provenance_data, ["toolchain", "compiler", "dirty"]) == false,
+             do: raise("#{path}: adapter does not match compiler provenance")
+
+      unless is_map(report["config"]) and is_binary(report["config"]["digest"]) and
+               is_binary(report["checker_version"]) and
+               report["scope"]["partial"] == false and
+               report["scope"]["app_filters"] == [] and
+               report["scope"]["module_filters"] == [] and
+               report["scope"]["exclude"] == [],
+             do: raise("#{path}: missing configuration identity or partial evaluation scope")
+
+      cohort = %{
+        adapter: adapter,
+        config: report["config"],
+        checker_version: report["checker_version"],
+        tool: provenance_data["tool"],
+        compiler: get_in(provenance_data, ["toolchain", "compiler"]),
+        identity: get_in(provenance_data, ["toolchain", "identity"])
+      }
+
+      unless is_map(cohort.tool) and is_binary(cohort.tool["source_sha256"]) and
+               is_map(cohort.identity) and is_binary(cohort.identity["code_digest"]) and
+               is_binary(cohort.identity["exck_digest"]),
+             do: raise("#{provenance}: missing tool or compiler cohort identity")
 
       unless revision == pinned_revision.(corpus),
         do:
@@ -69,9 +110,13 @@ measure = fn dir ->
          path: Path.relative_to(path, root),
          sha256: sha256.(path),
          revision: revision,
+         cohort: cohort,
          report: report
        }}
     end)
+
+  unless reports |> Map.values() |> Enum.map(& &1.cohort) |> Enum.uniq() |> length() == 1,
+    do: raise("#{dir}: mixed adapter, configuration, tool or compiler cohorts")
 
   classes =
     for family <- families do

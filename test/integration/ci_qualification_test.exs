@@ -53,6 +53,7 @@ defmodule SpecLint.Integration.CiQualificationTest do
       [
         app: :__APP__,
         version: "0.1.0",
+        elixirc_options: [debug_info: System.get_env("UMBRELLA_NO_DEBUG") != "1"],
         build_path: "../../_build",
         config_path: "../../config/config.exs",
         deps_path: "../../deps",
@@ -135,6 +136,30 @@ defmodule SpecLint.Integration.CiQualificationTest do
 
   defp beam_modules(json), do: for(beam <- json["beams"], do: beam["module"])
 
+  test "an umbrella child's custom compiler pipeline fails closed", %{dir: dir} do
+    file = Path.join(dir, "apps/app_b/mix.exs")
+    original = File.read!(file)
+    on_exit(fn -> File.write!(file, original) end)
+
+    File.write!(
+      file,
+      String.replace(
+        original,
+        "app: :app_b,",
+        "app: :app_b, compilers: Mix.compilers() ++ [:cache],"
+      )
+    )
+
+    {status, json, output} = lint(dir)
+    assert status == 2, output
+    assert json == nil
+    assert output =~ "unsupported compiler pipeline for app_b"
+
+    for app <- ~w(app_a app_b) do
+      refute File.exists?(Path.join(dir, "_build/dev/lib/#{app}/.mix/spec_lint.build"))
+    end
+  end
+
   test "umbrella: both children analysed once, an SL001 in app_b, --app is partial", %{dir: dir} do
     {status, json, output} = lint(dir)
     assert status == 0, output
@@ -202,26 +227,27 @@ defmodule SpecLint.Integration.CiQualificationTest do
     assert output =~ "--app nope matches no owned application (owned: app_a, app_b)"
   end
 
-  test "a removed child ebin exits 2 with missing_build_path, never zero specs", %{dir: dir} do
+  test "a compile alias cannot hide a removed child ebin", %{dir: dir} do
+    {0, _json, _output} = lint(dir)
     File.rm_rf!(Path.join(dir, "_build/dev/lib/app_b/ebin"))
 
     {status, json, output} = lint(dir, [], @skip_compile)
     assert status == 2, output
-    assert output =~ "missing build directory for app_b (_build/dev/lib/app_b/ebin)"
+    assert output =~ "unsupported compiler pipeline for umbrella: alias compile"
     refute output =~ "0 specs checked"
     assert json == nil
 
     # The same without --ci: a configuration error is exit 2 as well.
     {output, status} = mix(dir, ["spec_lint"], @skip_compile)
     assert status == 2, output
-    assert output =~ "missing build directory for app_b"
+    assert output =~ "unsupported compiler pipeline for umbrella: alias compile"
   end
 
   test "a build without debug info is SL008 missing_metadata, never no specs", %{dir: dir} do
     {output, status} = mix(dir, ["compile", "--force", "--no-debug-info"])
     assert status == 0, output
 
-    {status, json, output} = lint(dir, [], @skip_compile)
+    {status, json, output} = lint(dir, [], [{"UMBRELLA_NO_DEBUG", "1"}])
     assert status == 1, output
     assert beam_modules(json) == ["AppA", "AppA.Util", "AppB"]
 

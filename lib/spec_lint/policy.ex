@@ -46,6 +46,9 @@ defmodule SpecLint.Policy do
 
   defp mark_regression(issue, _regressions), do: issue
 
+  defp warnings_as_errors?(%Issue{data: %{compiler_gating_unavailable: [_ | _]}}, _config),
+    do: false
+
   defp warnings_as_errors?(%Issue{rule: "SL008"}, _config), do: false
   defp warnings_as_errors?(_issue, %Config{warnings_as_errors: value}), do: value
 
@@ -65,6 +68,8 @@ defmodule SpecLint.Policy do
 
   @doc "Whether an issue gates under the evidence policy (ignoring `warnings_as_errors`)."
   @spec gate?(Issue.t(), Config.t()) :: boolean()
+  def gate?(%Issue{data: %{compiler_gating_unavailable: [_ | _]}}, _config), do: false
+
   def gate?(%Issue{rule: rule} = issue, _config) when rule in ["SL001", "SL003"],
     do: gated_by_prerequisites?(issue) and Issue.prerequisites_met?(issue)
 
@@ -81,6 +86,10 @@ defmodule SpecLint.Policy do
   and the console report.
   """
   @spec explain(Issue.t(), Config.t()) :: String.t()
+  def explain(%Issue{data: %{compiler_gating_unavailable: [_ | _]}}, %Config{}) do
+    "reported, not gated: compiler is diagnostic-only; CI qualification is unavailable"
+  end
+
   def explain(%Issue{} = issue, %Config{} = config) do
     cond do
       warnings_as_errors?(issue, config) ->

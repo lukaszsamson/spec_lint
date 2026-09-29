@@ -3,6 +3,10 @@
 Upstream status (648b2a9): reproduces. Kind: bug in the type algebra
 (`Module.Types.Descr.list_tl/1`), latent (see impact).
 
+**Do not file a new issue: existing upstream report [#15490](https://github.com/elixir-lang/elixir/issues/15490).**
+The retained `issue.md` is a historical draft. See the
+[independent review](../review-2026-09-29.md).
+
 `list_tl/1` keeps a negated "all elements are `:y`" constraint on the tail,
 but that constraint on the whole list does not transfer to its tail. The
 result claims the achievable tail `[:y]` is impossible.

@@ -1,6 +1,7 @@
-> DRAFT, NOT FILED. Reproduces on upstream 648b2a9. Read ../CHECKLIST.md
-> before filing; this is the item most likely to be already fixed on main,
-> so re-run `repro.exs` there first. A patch is available in `fix.patch`.
+> HISTORICAL DRAFT, NOT FILED BY THIS PACKAGE. DO NOT FILE A DUPLICATE.
+> Existing upstream report: [#15950](https://github.com/elixir-lang/elixir/issues/15950) and
+> [PR #15952](https://github.com/elixir-lang/elixir/pull/15952).
+> Retained for evidence; see [the independent review](../review-2026-09-29.md).
 
 # for-comprehension with a bitstring-or-list :into narrows the body variables to bitstring()
 

@@ -62,11 +62,12 @@ defmodule SpecLint.UpstreamQualificationTest do
 
         "648b2a9" ->
           # Unsound: :ok is accepted at runtime but outside the stored
-          # domain. SpecLint then gates a correct spec (a false positive
-          # caused by the compiler, recorded in UPSTREAM_BUGS.txt).
+          # domain. Keep the diagnostic but never certify CI on this build.
           assert Compiler.equal?(value, Compiler.bitstring())
-          assert [%Issue{rule: "SL003", gate: true}] = run.issues
-          assert run.exit_code == 1
+          assert [%Issue{rule: "SL003", gate: false}] = run.issues
+          assert run.completion == :incomplete
+          assert run.exit_code == 2
+          assert Enum.any?(run.completion_reasons, &(&1 =~ "diagnostic-only"))
 
         "759443e" ->
           # Elixir 1.20.4 (Milestone 3, audit-1.20.4.md row 19): no

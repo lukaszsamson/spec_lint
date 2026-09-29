@@ -1,6 +1,6 @@
-> DRAFT, NOT FILED. Reproduces on upstream 648b2a9. Read ../CHECKLIST.md
-> before filing. The maintainers may prefer a PR with a failing test; a
-> ready-to-paste test is below.
+> HISTORICAL DRAFT, NOT FILED BY THIS PACKAGE. DO NOT FILE A DUPLICATE.
+> Existing upstream report: [#15490](https://github.com/elixir-lang/elixir/issues/15490).
+> Retained for evidence; see [the independent review](../review-2026-09-29.md).
 
 # list_tl over-excludes: tail of list(atom()) minus list(:y) drops [:y]
 

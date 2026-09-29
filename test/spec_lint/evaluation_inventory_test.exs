@@ -6,6 +6,8 @@ defmodule SpecLint.EvaluationInventoryTest do
   # release campaign without a committed detection measurement.
   use ExUnit.Case, async: true
 
+  @moduletag :tmp_dir
+
   @root Path.expand("../..", __DIR__)
   @inventory Path.join(@root, "bench/evaluation/inventory.json")
   @detection Path.join(@root, "bench/evaluation/detection.exs")
@@ -83,6 +85,42 @@ defmodule SpecLint.EvaluationInventoryTest do
     end
 
     refute Enum.any?(inventory["candidates_not_counted"], &("Ash.Query.apply_to/3" in &1["mfas"]))
+  end
+
+  test "detection rejects mixed configurations, adapters and provenance cohorts", %{tmp_dir: dir} do
+    source = Path.join(@root, "bench/corpus/reports/release-1/c24c235")
+
+    for path <- Path.wildcard(Path.join(source, "*.json")),
+        do: File.cp!(path, Path.join(dir, Path.basename(path)))
+
+    report_path = Path.join(dir, "absinthe.spec_lint.json")
+    provenance_path = Path.join(dir, "absinthe.provenance.json")
+    report = read_json!(report_path)
+    provenance = read_json!(provenance_path)
+
+    mutations = [
+      {report_path, put_in(report, ["config", "clause_local_qualification"], false),
+       "mixed adapter"},
+      {report_path, Map.put(report, "adapter", "1.21.0-dev+other"), "adapter does not match"},
+      {report_path, put_in(report, ["scope", "partial"], true), "partial evaluation scope"},
+      {provenance_path, put_in(provenance, ["tool", "source_sha256"], "changed"),
+       "mixed adapter"},
+      {provenance_path, put_in(provenance, ["toolchain", "identity", "code_digest"], "changed"),
+       "mixed adapter"},
+      {provenance_path, put_in(provenance, ["source", "dirty"], true), "dirty source"}
+    ]
+
+    for {path, changed, expected} <- mutations do
+      File.write!(report_path, JSON.encode!(report))
+      File.write!(provenance_path, JSON.encode!(provenance))
+      File.write!(path, JSON.encode!(changed))
+
+      {output, status} =
+        System.cmd("elixir", [@detection, "test=#{dir}"], cd: @root, stderr_to_stdout: true)
+
+      assert status != 0
+      assert output =~ expected
+    end
   end
 
   test "the committed release-1 detection is what detection.exs computes from the committed reports" do

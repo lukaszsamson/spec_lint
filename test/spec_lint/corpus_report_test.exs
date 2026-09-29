@@ -306,6 +306,99 @@ defmodule SpecLint.CorpusReportTest do
     for file <- earlier, do: refute(File.exists?(Path.join(out, file)), file)
   end
 
+  test "compile and early corpus failures invalidate every requested output", %{tmp_dir: dir} do
+    {_checkout, revision, bin} = setup_mock_corpus(dir)
+    manifest = Path.join(dir, "manifest.json")
+    out = Path.join(dir, "reports")
+    File.mkdir_p!(out)
+    File.write!(manifest, JSON.encode!(%{"fake" => %{"revision" => revision}}))
+
+    earlier =
+      for corpus <- ~w(fake later),
+          suffix <- ~w(spec_lint.json provenance.json resources.json json json.gz),
+          do: "#{corpus}.#{suffix}"
+
+    for failure <- ["compile", "corpus"] do
+      for file <- earlier, do: File.write!(Path.join(out, file), "{}")
+
+      env = [
+        {"MOCK_COMPILE_EXIT", if(failure == "compile", do: "2", else: "0")}
+        | corpus_env(dir, manifest, out, bin)
+      ]
+
+      assert {_, 2} =
+               System.cmd("bash", [@runner, "fake", "later"], env: env, stderr_to_stdout: true)
+
+      for file <- earlier,
+          String.starts_with?(file, "later.") or failure == "compile",
+          do: refute(File.exists?(Path.join(out, file)), file)
+    end
+  end
+
+  test "temporary directory failure invalidates every requested campaign output", %{tmp_dir: dir} do
+    out = Path.join(dir, "reports")
+    File.mkdir_p!(out)
+
+    earlier =
+      for corpus <- ~w(fake later),
+          suffix <-
+            ~w(spec_lint.json spec_lint.json.gz provenance.json resources.json json json.gz),
+          do: Path.join(out, "#{corpus}.#{suffix}")
+
+    for file <- earlier, do: File.write!(file, "{}")
+    bin = Path.join(dir, "failing-temp-bin")
+    File.mkdir_p!(bin)
+    File.write!(Path.join(bin, "mktemp"), "#!/usr/bin/env bash\nexit 1\n")
+    File.chmod!(Path.join(bin, "mktemp"), 0o755)
+
+    assert {message, 2} =
+             System.cmd("bash", [@runner, "fake", "later"],
+               env: [
+                 {"PATH", bin <> ":" <> System.get_env("PATH")},
+                 {"SPEC_LINT_CORPUS_OUT", out}
+               ],
+               stderr_to_stdout: true
+             )
+
+    assert message =~ "cannot create campaign temporary directory"
+    for file <- earlier, do: refute(File.exists?(file), file)
+  end
+
+  test "replay equality checks config, adapter and every non-artifact report key", %{tmp_dir: dir} do
+    base = Path.join(dir, "base")
+    new = Path.join(dir, "new")
+    File.mkdir_p!(base)
+    File.mkdir_p!(new)
+
+    report = %{
+      "adapter" => "old",
+      "config" => %{"digest" => "a"},
+      "completion" => %{"status" => "complete", "exit_code" => 0},
+      "ledger" => %{},
+      "findings" => [],
+      "beams" => [%{"md5" => "a"}]
+    }
+
+    File.write!(Path.join(base, "fake.spec_lint.json"), JSON.encode!(report))
+
+    for {key, value, unchanged?} <- [
+          {"adapter", "new", false},
+          {"config", %{"digest" => "b"}, false},
+          {"scope", %{"partial" => true}, false},
+          {"beams", [%{"md5" => "b"}], true}
+        ] do
+      File.write!(
+        Path.join(new, "fake.spec_lint.json"),
+        JSON.encode!(Map.put(report, key, value))
+      )
+
+      assert {output, 0} = System.cmd("bash", [@compare, new, base])
+      summary = JSON.decode!(output)
+      assert summary["all_unchanged"] == unchanged?, key
+      assert hd(summary["corpora"])["differing_report_keys"] == [key]
+    end
+  end
+
   test "compare_replay.sh treats a missing, truncated or incomplete report as a failure", %{
     tmp_dir: dir
   } do
@@ -575,7 +668,7 @@ defmodule SpecLint.CorpusReportTest do
 
     File.write!(Path.join(bin, "mix"), """
     #!/usr/bin/env bash
-    if [ "$1" = compile ]; then exit 0; fi
+    if [ "$1" = compile ]; then exit "${MOCK_COMPILE_EXIT:-0}"; fi
     while [ "$#" -gt 0 ]; do
       case "$1" in
         --out)

@@ -10,6 +10,7 @@ defmodule SpecLint.BuildRecordTest do
   import SpecLint.TestHelpers
 
   alias SpecLint.{Beam, BuildRecord, Compiler, Config, Project, Run}
+  alias SpecLint.BuildRecord.Capture
   alias SpecLint.Fixtures.Compare
   alias SpecLint.Report.Json
 
@@ -26,6 +27,35 @@ defmodule SpecLint.BuildRecordTest do
   end
 
   defp run(project), do: Run.execute(project, %Config{baseline: "missing.json"}, ci: true)
+
+  test "missing compiler evidence API fails closed with exit status 2" do
+    error =
+      assert_raise Mix.Error, ~r/compiler artifact evidence API is unavailable/, fn ->
+        Capture.start(SpecLint.MissingCompilerEvidenceAPI)
+      end
+
+    assert error.mix == 2
+  end
+
+  test "evidence rejects unproduced artifacts without replacing a record",
+       %{app: app, capabilities: capabilities} do
+    assert {:error, {:unverified_beams, [file]}} = BuildRecord.write(app, capabilities, %{})
+    assert file == "#{Compare}.beam"
+    refute File.exists?(BuildRecord.path(app))
+    assert :ok = BuildRecord.write(app, capabilities)
+    previous = File.read!(BuildRecord.path(app))
+    assert {:error, {:unverified_beams, [_]}} = BuildRecord.write(app, capabilities, %{})
+    assert File.read!(BuildRecord.path(app)) == previous
+  end
+
+  test "legacy app-wide records are not accepted as artifact evidence",
+       %{app: app, capabilities: capabilities} do
+    assert :ok = BuildRecord.write(app, capabilities)
+    record = BuildRecord.path(app) |> File.read!() |> JSON.decode!()
+    File.write!(BuildRecord.path(app), JSON.encode!(%{record | "version" => 1}))
+    assert BuildRecord.status(app, capabilities) == {:mismatch, :invalid_record}
+    assert BuildRecord.verified_beams(app, capabilities) == %{}
+  end
 
   test "a build without a record is analysed and reported as unrecorded", %{project: project} do
     assert {:ok, run} = run(project)

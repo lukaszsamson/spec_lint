@@ -1,0 +1,58 @@
+name: Clean Linux compiler qualification
+# Manual until Linux compiler identities and complete corpus inputs have
+# been reviewed. Every failed preflight/test/budget remains a failed job.
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  qualify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - compiler: 1.20.4
+            alternate: c24c235
+            mode: gating
+          - compiler: c24c235
+            alternate: 1.20.4
+            mode: gating
+          - compiler: 648b2a9
+            alternate: ''
+            mode: report-only
+    env:
+      ERL_FLAGS: '+S 4:4'
+      SPEC_LINT_CI_TIMEOUT_S: '1200'
+      SPEC_LINT_CI_MAX_RSS_KB: '6291456'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: erlef/setup-beam@v1
+        with:
+          otp-version: '28.5.0.1'
+      - name: Install qualification tools
+        run: sudo apt-get update && sudo apt-get install -y jq unzip time
+      - name: Build exact compiler inputs in empty directories
+        env:
+          COMPILER: ${{ matrix.compiler }}
+          ALTERNATE: ${{ matrix.alternate }}
+        run: |
+          mkdir -p qualification
+          bench/corpus/toolchain/install_ci_elixir.sh "$COMPILER" "$RUNNER_TEMP/compiler" > qualification/compiler.identity.json
+          echo "$RUNNER_TEMP/compiler/bin" >> "$GITHUB_PATH"
+          if [ -n "$ALTERNATE" ]; then
+            bench/corpus/toolchain/install_ci_elixir.sh "$ALTERNATE" "$RUNNER_TEMP/alternate" > qualification/alternate.identity.json
+            echo "SPEC_LINT_OTHER_ELIXIR=$RUNNER_TEMP/alternate/bin" >> "$GITHUB_ENV"
+          fi
+      - name: Validate compiler and run bounded quality checks
+        env:
+          MODE: ${{ matrix.mode }}
+        run: bench/corpus/toolchain/ci_quality.sh "$MODE" qualification
+      - name: Keep identities, logs and resource evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-${{ matrix.compiler }}-${{ matrix.mode }}
+          path: qualification
+          if-no-files-found: error

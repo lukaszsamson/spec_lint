@@ -20,8 +20,8 @@ defmodule SpecLint.Integration.BuildRecordTest do
   alias SpecLint.{Config, Project, Run}
   alias SpecLint.ProjectFixture, as: Fixture
 
-  # Audit row 19: correct under c24c235, gated (SL003) under 648b2a9, whose
-  # checker stores a narrowed domain for `value`.
+  # Audit row 19: correct under c24c235, a false SL003 under 648b2a9,
+  # whose checker is therefore restricted to diagnostic-only analysis.
   @source """
   defmodule IntoProbe do
     @spec f(boolean(), atom()) :: atom()
@@ -90,6 +90,151 @@ defmodule SpecLint.Integration.BuildRecordTest do
     assert output =~ "recompiling consumer"
     assert Fixture.baseline!(dir)["adapter"] == adapter
     assert File.exists?(record)
+  end
+
+  test "Elixir and Erlang compiler outputs both receive artifact evidence", %{
+    dir: dir,
+    record: record
+  } do
+    Fixture.write!(dir, "src/erlang_probe.erl", """
+    -module(erlang_probe).
+    -export([tag/1]).
+    tag(_) -> ok.
+    """)
+
+    {status, json, output} = Fixture.lint(dir)
+    assert_native_verdict(status, json, output)
+    assert Map.has_key?(read(record)["beams"], "erlang_probe.beam")
+    assert Map.has_key?(read(record)["beams"], "Elixir.IntoProbe.beam")
+
+    {status, json, output} = Fixture.lint(dir)
+    refute output =~ "recompiling"
+    assert_native_verdict(status, json, output)
+  end
+
+  test "a later cache compiler cannot attest overwritten Elixir output", %{
+    dir: dir,
+    record: record
+  } do
+    {_output, 0} = Fixture.mix(dir, ["compile"])
+    beam = Path.join(dir, "_build/dev/lib/consumer/ebin/Elixir.IntoProbe.beam")
+    File.cp!(beam, Path.join(dir, "cached.beam"))
+    swap_checker_version!(Path.join(dir, "cached.beam"), :elixir_checker_v0)
+
+    mix_file = Path.join(dir, "mix.exs")
+    project = File.read!(mix_file)
+
+    project =
+      String.replace(
+        project,
+        "app: :consumer,",
+        "app: :consumer, compilers: Mix.compilers() ++ [:cache],"
+      )
+
+    File.write!(
+      mix_file,
+      project <>
+        """
+
+        defmodule Mix.Tasks.Compile.Cache do
+          use Mix.Task.Compiler
+          def run(_args) do
+            File.cp!("cached.beam", Path.join(Mix.Project.compile_path(), "Elixir.IntoProbe.beam"))
+            {:ok, []}
+          end
+        end
+        """
+    )
+
+    # A cache artifact has the same module name as the output just compiled,
+    # but a distinct checker/signature payload. No event describes this copy.
+    {status, json, output} = Fixture.lint(dir)
+    assert status == 2, output
+    assert json == nil
+    assert output =~ "unsupported compiler pipeline"
+    refute File.exists?(record)
+
+    {output, status} = Fixture.mix(dir, ["spec_lint.baseline"])
+    assert status == 2, output
+    assert output =~ "unsupported compiler pipeline"
+    refute File.exists?(record)
+    refute File.exists?(Path.join(dir, ".spec_lint_baseline.json"))
+  end
+
+  test "a recorded build cannot skip Elixir compilation after a source edit", %{
+    dir: dir,
+    record: record
+  } do
+    {_status, _json, _output} = Fixture.lint(dir)
+    previous = File.read!(record)
+
+    Fixture.write!(dir, "lib/into_probe.ex", """
+    defmodule IntoProbe do
+      @spec f(boolean(), atom()) :: atom()
+      def f(_flag, _value), do: 123
+    end
+    """)
+
+    mix_file = Path.join(dir, "mix.exs")
+    original = File.read!(mix_file)
+
+    for compilers <- [[], [:erlang, :app]] do
+      File.write!(
+        mix_file,
+        String.replace(
+          original,
+          "app: :consumer,",
+          "app: :consumer, compilers: #{inspect(compilers)},"
+        )
+      )
+
+      {status, json, output} = Fixture.lint(dir)
+      assert status == 2, output
+      assert json == nil
+      assert output =~ "unsupported compiler pipeline for consumer"
+      assert File.read!(record) == previous
+    end
+  end
+
+  test "compile aliases cannot restore a cache after emitted modules", %{dir: dir, record: record} do
+    {_status, _json, _output} = Fixture.lint(dir)
+    previous = File.read!(record)
+    beam = Path.join(dir, "_build/dev/lib/consumer/ebin/Elixir.IntoProbe.beam")
+    File.cp!(beam, Path.join(dir, "cached.beam"))
+    swap_checker_version!(Path.join(dir, "cached.beam"), :elixir_checker_v0)
+
+    mix_file = Path.join(dir, "mix.exs")
+    original = File.read!(mix_file)
+
+    for task <- [:compile, :"compile.elixir"] do
+      project =
+        String.replace(
+          original,
+          "app: :consumer,",
+          "app: :consumer, aliases: [{#{inspect(task)}, [#{inspect(Atom.to_string(task))}, \"restore_cache\"]}],"
+        )
+
+      File.write!(
+        mix_file,
+        project <>
+          """
+
+          defmodule Mix.Tasks.RestoreCache do
+            use Mix.Task
+            def run(_args) do
+              File.cp!("cached.beam", Path.join(Mix.Project.compile_path(), "Elixir.IntoProbe.beam"))
+            end
+          end
+          """
+      )
+
+      {status, json, output} = Fixture.lint(dir)
+      assert status == 2, output
+      assert json == nil
+      assert output =~ "unsupported compiler pipeline for consumer: alias #{task}"
+      assert File.read!(record) == previous
+      refute File.read!(beam) == File.read!(Path.join(dir, "cached.beam"))
+    end
   end
 
   # Mix.Task.run/2 does nothing when `compile` already ran in the VM, so a
@@ -198,6 +343,50 @@ defmodule SpecLint.Integration.BuildRecordTest do
   end
 
   @tag :cross_compiler
+  test "a copied orphan from another actual compiler is never stamped as this build",
+       %{dir: dir, record: record} do
+    other_bin = System.get_env("SPEC_LINT_OTHER_ELIXIR") || flunk("set SPEC_LINT_OTHER_ELIXIR")
+    {_status, _json, _output} = Fixture.lint(dir)
+    previous = File.read!(record)
+    beam = Path.join(dir, "_build/dev/lib/consumer/ebin/Elixir.OrphanIntoProbe.beam")
+    source = String.replace(@source, "IntoProbe", "OrphanIntoProbe")
+
+    {output, 0} =
+      System.cmd(Path.join(other_bin, "elixir"), [
+        "-e",
+        "[{_, binary}] = Code.compile_string(#{inspect(source)}); " <>
+          "File.write!(#{inspect(beam)}, binary)"
+      ])
+
+    original = File.read!(beam)
+    {other_id, other_checker} = other_identity(other_bin)
+    refute other_id == adapter_id(), output
+    assert {:ok, ^other_checker} = SpecLint.Beam.checker_version(beam)
+
+    # Same-line qualified builds have identical chunk versions; the actual
+    # other compiler, rather than a synthetic chunk edit, supplies this BEAM.
+    {status, json, output} = Fixture.lint(dir)
+    assert status == 2, output
+    assert json == nil
+    assert output =~ "cannot verify compiler provenance for consumer: Elixir.OrphanIntoProbe.beam"
+    assert File.read!(beam) == original
+    assert File.read!(record) == previous
+    refute Map.has_key?(read(record)["beams"], "Elixir.OrphanIntoProbe.beam")
+
+    File.rm!(record)
+    {output, status} = Fixture.mix(dir, ["spec_lint.baseline"])
+    assert status == 2, output
+    assert output =~ "cannot verify compiler provenance"
+    refute File.exists?(record)
+    refute File.exists?(Path.join(dir, ".spec_lint_baseline.json"))
+    assert File.read!(beam) == original
+
+    File.rm!(beam)
+    {status, json, output} = Fixture.lint(dir)
+    assert_native_verdict(status, json, output)
+  end
+
+  @tag :cross_compiler
   test "a build compiled by the other qualified compiler is rebuilt before it is analysed",
        %{dir: dir, record: record} do
     case System.get_env("SPEC_LINT_OTHER_ELIXIR") do
@@ -224,7 +413,15 @@ defmodule SpecLint.Integration.BuildRecordTest do
         other_json = dir |> Path.join("other.json") |> File.read!() |> JSON.decode!()
         assert other_json["adapter"] == other_id
         assert other_json["checker_version"] == other_checker
-        assert other_status == if(other_json["findings"] == [], do: 0, else: 1)
+
+        if String.ends_with?(other_id, "+648b2a9") do
+          assert other_status == 2
+          assert other_json["completion"]["status"] == "incomplete"
+          assert Enum.all?(other_json["findings"], &(not &1["gate"]))
+        else
+          assert other_status == if(other_json["findings"] == [], do: 0, else: 1)
+        end
+
         refute other_json["artifacts"]["build_digest"] == json["artifacts"]["build_digest"]
         assert JSON.decode!(File.read!(record))["adapter"] == other_id
 
@@ -364,8 +561,9 @@ defmodule SpecLint.Integration.BuildRecordTest do
         assert json["findings"] == []
 
       "648b2a9" ->
-        assert status == 1, output
-        assert [%{"rule" => "SL003", "blocking" => true}] = json["findings"]
+        assert status == 2, output
+        assert [%{"rule" => "SL003", "blocking" => false}] = json["findings"]
+        assert json["completion"]["status"] == "incomplete"
 
       # Elixir 1.20.4 (Milestone 3): no narrowing, as on c24c235.
       "759443e" ->

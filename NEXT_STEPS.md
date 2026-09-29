@@ -4,6 +4,49 @@ The six milestones below replace the numbered lists further down, which are
 kept as history. Performance, compiler compatibility and evidence policy
 stay in separate changes. Exit criteria are copied from the plan.
 
+## Current sequence: release hardening after `a50b0d7`
+
+The historical milestone results below do not qualify the subsequent edits.
+Finish this sequence before publishing an experimental release:
+
+1. Close artifact-provenance bypasses, retain full-module context for
+   reachability checks, and make campaign comparison reject stale or mixed
+   evidence. Keep an adversarial regression for each failure.
+2. Restrict upstream `648b2a9` to diagnostics: its known unsound signature
+   can propagate to callers, so a local syntax exclusion is insufficient.
+   It cannot certify CI or write a baseline. Requalify an upstream build
+   containing the fix before restoring gating. The fork and 1.20.4 remain
+   the gating candidates.
+3. Run full quality gates and the frozen fifteen-corpus replay on the two
+   gating candidates. Keep the historical campaigns unchanged. Validate a
+   clean Linux installation with explicit resource limits; distinguish that
+   from a full Linux corpus campaign.
+4. Publish only after these checks, a repository destination and a license
+   have been settled. A local dependency and reviewed source tree are not
+   a published Hex package.
+5. Move recall work upstream. `list_tl` already has issue #15490;
+   mixed-collectable inference has issue #15950 and fix PR #15952. Do not
+   duplicate them. The independently reviewed subpattern-state reproducer
+   is a precision issue; its tempting one-line reset is not a valid fix
+   (it crashes an existing compiler test). See
+   `bench/upstream/review-2026-09-29.md`.
+
+### Completion of the original objective versus an incremental experiment
+
+The incremental criterion later in this document (one additional gated
+return-value family) is an experiment's continuation threshold. It is not
+completion of the user's missing-return objective. Completion requires at
+least **9 of the 18 frozen witnessed families gated**, zero false gates on
+an independently selected fresh holdout, and the frozen full-corpus runtime
+budgets met. Keep inventory version 2 fixed and report per adapter.
+
+Before a recall experiment, freeze the holdout selection and the association
+between each counted finding and its executable omission witness. The
+current detector counts by MFA and lists matches for manual review; an
+unrelated finding on the same MFA must not be counted as detecting the
+witness. Any automated tightening of that definition needs a versioned
+measurement alongside the original, not a silent denominator change.
+
 ## M1. Remove printing from analysis on the existing compiler: done (the 60 s criterion met since M5)
 
 *Done when:* Absinthe completes under 60 seconds under recorded
@@ -175,7 +218,7 @@ Not claimed: see `RELEASE.md`, "What is not claimed". Recall on witnessed
 omissions is low (3 of 18 gated), and raising it is the objective of the
 next work.
 
-### Frozen criterion for the missing-return objective
+### Frozen incremental criterion for a missing-return experiment
 
 Fixed now, before any Milestone 6 or later inference change is measured.
 An inference mechanism (upstream, or local and qualified against an

@@ -1,6 +1,8 @@
-> DRAFT, NOT FILED. Reproduces on upstream 648b2a9. Read ../CHECKLIST.md
-> before filing. Sound but non-deterministic in the sense described; the
-> maintainers may consider the imprecision acceptable.
+> HISTORICAL DRAFT, NOT FILED. The behavior is inference precision loss,
+> not demonstrated unsoundness or nondeterministic compilation. The simple
+> reset proposed below was challenged and crashes an existing compiler test;
+> see [the independent review](../review-2026-09-29.md). A human must review
+> current behavior and duplicates before submitting any revised report.
 
 # Module.Types: `subpatterns` is not reset between definitions, so a function's signature depends on unrelated earlier definitions
 
@@ -48,9 +50,19 @@ records `{:list, version}` in `context.subpatterns`; the guard `is_list(y)` in
 `b/1` finds an entry for the same variable version (`list_subpattern?/2` in
 `pattern.ex`) and is treated as imprecise, so clause 0 is not subtracted from
 clause 1. The result is a wider, still sound, domain, but it depends on
-definition order.
+unrelated definitions and inference order. It is deterministic for a given
+module; textual declaration order alone need not control inference order.
 
-## Question
+## Review update and question
 
-Is the leak intentional (a cheap conservative fallback)? If not, should
-`fresh_context/1` reset `subpatterns`?
+A temporary patch adding only `subpatterns: %{}` to `fresh_context/1`
+removed this witness, but crashed the existing compiler test
+`Module.Types.IntegrationTest."test ExCk chunk writes exports for implementations"/1`
+with a `MatchError` in `Module.Types.Pattern.of_pattern_var/3`. The unpatched
+compiler passed 541 tests (7 doctests, 534 tests). This refutes the draft’s
+simple reset as a validated fix direction; no safe patch is proposed.
+
+Is this precision loss intentional, or should inference state be preserved
+and restored at a different boundary? The
+[independent review](../review-2026-09-29.md) records focused controls and
+commands. No unsoundness was demonstrated.

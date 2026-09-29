@@ -1,7 +1,9 @@
 # subpatterns_leak
 
 Upstream status (648b2a9): reproduces. Also on 1.20.4. Kind: inference
-determinism; the result is sound (a wider domain) but order-dependent.
+precision; the result is sound (a wider domain) and depends on unrelated
+definitions and inference order. It is deterministic for a given module;
+textual declaration order alone need not control inference order.
 
 `Module.Types` does not reset `context.subpatterns` between clauses or
 definitions (`fresh_context/1`, `types.ex:708-710`). The `{:list, version}`
@@ -35,6 +37,15 @@ stored clauses back to source clauses (see `checker_chunk_api`). On the
 fifteen corpora the fresh head differs from the compiler's in 119 of 3,237
 functions where both were recorded.
 
-Suggested direction (untested here): reset `subpatterns` in `fresh_context/1`.
-`of_subpattern/4` uses `map_size(subpatterns)` as a key, so the maintainers
-will know whether that is safe.
+## Adversarial review update (2026-09-29)
+
+The original reset suggestion has been refuted as a validated fix direction.
+Adding only `subpatterns: %{}` to `fresh_context/1` removes this witness,
+but crashes the existing compiler test
+`Module.Types.IntegrationTest."test ExCk chunk writes exports for implementations"/1`
+with a `MatchError` in `Module.Types.Pattern.of_pattern_var/3`. The unpatched
+compiler passed 541 tests (7 doctests, 534 tests). Focused controls support
+incidental inference-state precision loss; no unsoundness was demonstrated.
+Report the behavior and ask maintainers to assess the appropriate state
+boundary. See [the independent review](../review-2026-09-29.md) for commands
+and evidence. No final fix or full-suite safety claim is made.

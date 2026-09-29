@@ -1,14 +1,26 @@
 # SpecLint 0.1.0: experimental release verdict
 
-**Verdict: release as experimental.** Every Milestone 5 exit criterion is
-met on the three qualified compiler builds, measured on tool revision
-`58fe1dd` (release campaign 2) after an independent review of release
-campaign 1. "Experimental" is a statement about what is measured, not a
-hedge: SpecLint's gates had no false positive on fifteen real-code
-corpora, but it detects few real spec omissions (3 of 18 witnessed
-omission families gated), and three quarters of the specs it compares get
-no verdict at all. Read "What is not claimed" before relying on a clean
-run.
+**Current verdict: requalification pending.** Release campaigns 1 and 2
+qualified historical tool revisions `06b7496` and `58fe1dd`. Their figures
+and exit-criterion decisions below are retained as historical evidence,
+and do not certify the current tree after compiler gating, reachability
+and artifact-provenance hardening.
+
+Upstream `648b2a9` is now **diagnostic-only**: its mixed list/bitstring
+`for ... into:` inference can gate a correct spec, including through
+callers. All findings have `gate: false`; the report is `incomplete`.
+`--ci` and `--warnings-as-errors` exit 2, a local run exits 0, and a baseline
+cannot waive the restriction or be written. `c24c235` and 1.20.4 remain CI
+candidates pending current-tree requalification. Build-record version 2
+requires per-module production evidence and rejects unverified orphan
+BEAMs without deleting them. Only built-in Mix compiler pipelines are
+supported; custom compiler configurations, including umbrella children,
+are refused with exit 2.
+
+The historical campaigns observed no gated false positives on fifteen
+corpora, detected 3 of 18 witnessed omission families, and gave no verdict
+on roughly three quarters of compared specs. Read “What is not claimed”
+before relying on a clean run.
 
 | | |
 | --- | --- |
@@ -18,7 +30,7 @@ run.
 | Machine | Apple M2 Pro, 12 cores, 32 GB, macOS 26.7, Erlang/OTP 28.5.0.1 |
 | Date | 2026-09-29 |
 
-## Exit criteria
+## Historical exit criteria (release campaigns 1 and 2)
 
 From `NEXT_STEPS.md`, Milestone 5.
 
@@ -33,25 +45,26 @@ From `NEXT_STEPS.md`, Milestone 5.
 | The README publishes the support matrix, unknown-obligation counts and gating limitations | **met** | `README.md`, "Requirements" (matrix), "What a result means" (unknown obligations per compiler, recall, gated false positives), "Rules" (gating prerequisites); `test/spec_lint/release_docs_test.exs` checks the figures against the reports and that no placeholder is left. |
 | Resource failures leave no successful result | **met** | `test/integration/resource_failure_test.exs`: an analysis crash (exit 2, report `incomplete`), an exception, an exit or a crashed linked process after the analysis (exit 2, no report), a crashed reachability check (report `incomplete`), a VM killed during the analysis (no report). CI must treat a missing or non-`complete` report as a failure; the corpus runner rejects a killed run's report. |
 
-## Support matrix
+## Current compiler policy
 
 | Elixir build | Adapter id | Checker chunk | Status |
 | --- | --- | --- | --- |
-| 1.21.0-dev `648b2a9`, upstream `elixir-lang/elixir` | `1.21.0-dev+648b2a9` | `elixir_checker_v10` | qualified; known compiler defect: `for ... into:` with a list-or-bitstring collectable stores an unsound signature, which can make SpecLint gate a correct spec (audit row 19) |
-| 1.21.0-dev `c24c235`, fork `lukaszsamson/elixir` | `1.21.0-dev+c24c235` | `elixir_checker_v10` | qualified (the development revision; fixes the `for ... into:` defect) |
-| 1.20.4 (`759443e`, the precompiled release) | `1.20.4+759443e` | `elixir_checker_v8` | qualified, with its own baselines |
+| 1.21.0-dev `648b2a9`, upstream `elixir-lang/elixir` | `1.21.0-dev+648b2a9` | `elixir_checker_v10` | diagnostic-only; all gates disabled; known compiler defect: `for ... into:` with a list-or-bitstring collectable stores an unsound signature, which previously could make SpecLint gate a correct spec (audit row 19) |
+| 1.21.0-dev `c24c235`, fork `lukaszsamson/elixir` | `1.21.0-dev+c24c235` | `elixir_checker_v10` | CI candidate; current requalification pending (fixes the `for ... into:` defect) |
+| 1.20.4 (`759443e`, the precompiled release) | `1.20.4+759443e` | `elixir_checker_v8` | CI candidate; current requalification pending, with its own baselines |
 | 1.19 and earlier, 1.20.0-1.20.3, other 1.20.x or 1.21 builds | none | | **unsupported**: the task refuses itself (exit 2 with `--ci`; checked on 1.19.4) |
 
 Erlang/OTP 28 (1.20.4 also on OTP 29). A baseline is per compiler adapter.
 The two 1.21 builds give the same fingerprints on the benchmark corpora;
 1.20.4 and 1.21 differ wherever a map or struct type is involved.
 
-## Numbers per adapter
+## Historical numbers per adapter
 
 Fifteen corpora (the Elixir standard library, jason, decimal,
 nimble_options, mime, plug, ecto, req, broadway, oban, phoenix_live_view,
 ash, nx, absinthe, tesla), default configuration. Campaigns 1 and 2 give
-identical reports.
+identical historical reports. Their `648b2a9` gates predate its current
+diagnostic-only restriction.
 
 | | 1.21 `c24c235` | 1.21 `648b2a9` | 1.20.4 |
 | --- | ---: | ---: | ---: |

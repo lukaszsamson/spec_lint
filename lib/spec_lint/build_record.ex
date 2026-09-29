@@ -32,8 +32,20 @@ defmodule SpecLint.BuildRecord do
       as an incomplete build, which a recompile must not hide.
 
   The Mix tasks recompile with `--force` unless every owned application is
-  `:verified`, so a build they did not record, or one another build
-  touched, is rebuilt by the running compiler before it is analysed.
+  `:verified`. They record only modules reported as compiled by Mix's
+  compiler events in this VM, or unchanged artifacts already verified for
+  this compiler. A successful app-wide compile does not establish who
+  produced orphan BEAM files: those cause exit 2 and are retained for the
+  user to rebuild or remove explicitly. Only Mix's complete default
+  compiler pipeline, without compile task aliases or replacements, is
+  supported. Disabling a stage could leave stale source artifacts in an
+  otherwise verified build. Events identify module names, not
+  output bytes, so a later custom compiler restoring cached BEAMs could
+  otherwise have another compiler's output recorded as this build's.
+  This is build provenance accounting, not a security boundary against
+  project code modifying artifacts during compilation.
+  Version 1 records did not establish per-artifact evidence and are
+  invalidated, requiring a rebuild before they can be recorded again.
   `SpecLint.Run` refuses an application in `{:mismatch, _}` (exit 2).
 
   Dependencies are not recorded: Mix recompiles them only when the Elixir
@@ -51,7 +63,9 @@ defmodule SpecLint.BuildRecord do
   alias SpecLint.{Beam, Compiler, Project}
 
   @file_name "spec_lint.build"
-  @version 1
+  # Version 1 stamped every file in an ebin after an app-wide successful
+  # compile, including orphan artifacts the compiler never rebuilt.
+  @version 2
 
   @typedoc "Why a record does not match the running build and the ebin."
   @type mismatch ::
@@ -67,9 +81,48 @@ defmodule SpecLint.BuildRecord do
   @spec path(Project.app()) :: String.t()
   def path(%{ebin: ebin}), do: Path.join([Path.dirname(ebin), ".mix", @file_name])
 
-  @doc "Records that the running build (`capabilities`) produced `app`'s BEAM files."
+  @doc """
+  Explicitly attests that the caller produced all of `app`'s current BEAM
+  files with `capabilities`. The Mix tasks use `write/3` with captured
+  production evidence instead of this caller-supplied attestation.
+  """
   @spec write(Project.app(), Compiler.capabilities()) :: :ok | {:error, File.posix()}
   def write(app, capabilities) do
+    write(app, capabilities, beams(app))
+  end
+
+  @doc "Writes a record only if every artifact has the supplied production evidence."
+  @spec write(Project.app(), Compiler.capabilities(), map()) ::
+          :ok | {:error, File.posix() | {:unverified_beams, [String.t()]}}
+  def write(app, capabilities, evidence) do
+    found = beams(app)
+
+    case changed(evidence, found) do
+      [] -> write_record(app, capabilities, found)
+      files -> {:error, {:unverified_beams, files}}
+    end
+  end
+
+  @doc "Unchanged artifacts previously recorded for the running compiler build."
+  @spec verified_beams(Project.app(), Compiler.capabilities()) :: map()
+  def verified_beams(app, capabilities) do
+    with {:ok, record} <- read(app),
+         true <- same_build?(record, capabilities) do
+      Map.filter(beams(app), fn {file, digest} -> record["beams"][file] == digest end)
+    else
+      _ ->
+        %{}
+    end
+  end
+
+  @doc "Digests of artifacts whose modules were emitted by this compilation."
+  @spec compiled_beams(Project.app(), MapSet.t()) :: map()
+  def compiled_beams(app, modules) do
+    files = MapSet.new(modules, &(Atom.to_string(&1) <> ".beam"))
+    Map.filter(beams(app), fn {file, _digest} -> MapSet.member?(files, file) end)
+  end
+
+  defp write_record(app, capabilities, found) do
     record = %{
       "version" => @version,
       "adapter" => capabilities.adapter_id,
@@ -77,7 +130,7 @@ defmodule SpecLint.BuildRecord do
       "elixir" => capabilities.elixir_version,
       "checker_version" => Atom.to_string(capabilities.checker_version),
       "build_digest" => Map.get(capabilities, :build_digest),
-      "beams" => beams(app)
+      "beams" => found
     }
 
     file = path(app)
@@ -171,12 +224,8 @@ defmodule SpecLint.BuildRecord do
   end
 
   defp compare(record, app, capabilities) do
-    same_build? =
-      record["adapter"] == capabilities.adapter_id and
-        record["build_digest"] == Map.get(capabilities, :build_digest)
-
     cond do
-      same_build? ->
+      same_build?(record, capabilities) ->
         case changed(record["beams"], beams(app)) do
           [] -> :verified
           files -> {:mismatch, {:changed_beams, files}}
@@ -189,6 +238,12 @@ defmodule SpecLint.BuildRecord do
       true ->
         {:mismatch, {:other_build, record["adapter"], record["build_digest"]}}
     end
+  end
+
+  defp same_build?(record, capabilities) do
+    record["adapter"] == capabilities.adapter_id and
+      record["build_digest"] == Map.get(capabilities, :build_digest) and
+      not other_line?(record, capabilities)
   end
 
   # Another compiler line: the record names another checker chunk version

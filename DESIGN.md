@@ -6,15 +6,27 @@ the drafts are marked **Decision**.
 
 ## 1. Summary
 
-SpecLint is a Hex package providing `mix spec_lint`, a Credo-style task that
+SpecLint is a Mix package providing `mix spec_lint`, a Credo-style task that
 checks Dialyzer-style `@spec` declarations against the types the Elixir
 compiler infers. It reads compiled BEAM files, translates each spec into the
 compiler's set-theoretic type lattice (`Module.Types.Descr`), compares each
 spec clause against the inferred signature stored in the `ExCk` chunk, and
 reports findings with stable rule IDs, an evidence class, and a severity. In
 CI it fails on new findings not acknowledged in a baseline and on loss of
-analysis coverage. It runs no Dialyzer, needs no PLT, and its analysis phase
-never invokes target functions.
+analysis coverage. It runs no Dialyzer and needs no PLT. It does not start
+the target application, but compilation and type-printer operations can load
+target modules, executing `@on_load` callbacks and `__info__/1`; this is not
+a security sandbox. Use trusted source and artifacts.
+
+**Current qualification policy (2026-09-29):** compiler compatibility is
+separate from permission to certify CI (`SpecLint.Compiler.Gating`).
+Upstream `648b2a9` is diagnostic-only across the whole build because
+defective comprehension signatures can also affect callers. Every finding
+is ungated, the run is incomplete, CI and warnings-as-errors exit 2, and
+local runs exit 0. Baselines cannot waive this or be written. `c24c235` and
+1.20.4 are CI candidates; current-tree requalification remains pending.
+Historical release-1/release-2 measurements below do not qualify these
+hardening changes.
 
 The prototype exists on the `ls-typespec-tightening` branch of `~/elixir` as
 `lib/elixir/scripts/compare_specs_and_signatures.exs`. SpecLint extracts its
@@ -389,7 +401,8 @@ obligation is `unknown` with the reason `top_only` or `near_top`
 | `unknown` | ledger only | ledger only |
 | Unsupported execution or capability (SL008) | execution and coverage policy | execution and coverage policy |
 
-`--warnings-as-errors` gates every *reported* finding of every enabled rule,
+On a compiler permitted to certify CI, `--warnings-as-errors` gates every
+*reported* finding of every enabled rule,
 including the report-only rows. It is an explicit user policy choice and is
 documented as overriding the evidence prerequisites; it never promotes
 `unknown` or ledger entries, and it never changes SL008, which always
@@ -568,7 +581,16 @@ unless the record names the running build and every BEAM file matches it.
 `SpecLint.Run` refuses an application whose record names another build or
 whose BEAM files were added or changed since (an incomplete build, exit 2);
 an application without a record (an explicit ebin, as in the corpus
-runner) is analysed and reported as `unrecorded`. Dependencies are not
+runner) is analysed and reported as `unrecorded`. Build-record version 2 accepts each artifact only when a per-module compiler
+event proves it was produced in this VM, or an unchanged artifact already
+has verified provenance. Version 1 records require a rebuild. An app-wide
+successful compile does not establish provenance for orphan BEAMs; the
+task refuses them with exit 2 and retains them for explicit repair.
+Only built-in Mix compiler pipelines are supported. Nonstandard custom
+compiler pipelines, including umbrella child configurations, are refused
+with exit 2 because a custom compiler can overwrite artifacts after an
+Elixir compiler event. This is stale-artifact checking for trusted project
+code, not protection against a malicious project. Dependencies are not
 recorded: Mix does not recompile them across the two builds, and their
 chunks feed the signatures the running compiler infers for the project.
 
@@ -817,8 +839,9 @@ Behaviour:
   explicitly (no `@requirements`, which would run before `run/1` and make
   `--no-compile` impossible to honour). Compile failures are turned into the
   documented exit 2 with the compiler output shown. The application is not
-  started. The promise is "analysis does not invoke target functions", not
-  "no project code runs", because compilation runs macros.
+  started. Compilation runs macros, and compiler checks or type rendering
+  may load project modules, invoking generated metadata functions and
+  `@on_load` callbacks. This is not a sandbox for untrusted projects.
 - `--no-compile` is not in the first release. When added it validates
   artifact freshness against the Mix manifest or marks the run
   artifact-only in the report.

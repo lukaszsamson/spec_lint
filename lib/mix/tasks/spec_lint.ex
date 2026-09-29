@@ -15,7 +15,8 @@ defmodule Mix.Tasks.SpecLint do
   The task parses its options first, then compiles the project with
   `Mix.Task.run("compile")` (see `compile!/0`: with `--force` when the
   build was not produced by the running compiler). It never starts the
-  application, and its analysis never invokes project functions
+  application. Compiler checks and type rendering may load project modules,
+  invoking generated metadata functions and `@on_load` callbacks
   (compilation runs macros).
   With `--format json` and no `--output`, standard output carries only the
   JSON report: compiler progress and the summary line go to standard error.
@@ -65,6 +66,7 @@ defmodule Mix.Tasks.SpecLint do
   use Mix.Task
 
   alias SpecLint.{BuildRecord, CLI, Compiler, Config, Explain, Project, Report, Run}
+  alias SpecLint.BuildRecord.Capture
   alias SpecLint.Report.Json
 
   @impl true
@@ -126,20 +128,89 @@ defmodule Mix.Tasks.SpecLint do
         {:error, _reason} -> nil
       end
 
-    force? = capabilities != nil and stale_build?(Project.current(), capabilities)
+    project = Project.current()
+    if capabilities, do: check_compiler_pipeline!()
+
+    prior =
+      if capabilities,
+        do: Map.new(project.apps, &{&1.app, BuildRecord.verified_beams(&1, capabilities)}),
+        else: %{}
+
+    force? = capabilities != nil and stale_build?(project, capabilities)
     args = if force?, do: ["--force", "--return-errors"], else: ["--return-errors"]
     if force?, do: reenable_compile()
 
-    "compile"
-    |> Mix.Task.run(args)
-    |> check_compile!(force?)
+    compile_and_record!(args, force?, capabilities, prior)
+    :ok
+  end
 
-    if capabilities do
-      check_dependencies!(Project.current(), capabilities)
-      record_build!(Project.current(), capabilities)
+  # Compiler events identify modules, not output bytes. A custom compiler
+  # can replace an earlier compiler's output from a cache without publishing
+  # an event. Final-file digests would then attest the wrong producer.
+  defp check_compiler_pipeline! do
+    check_current_compilers!()
+
+    if Mix.Project.umbrella?() do
+      for {app, path} <- Enum.sort(Mix.Project.apps_paths() || %{}) do
+        Mix.Project.in_project(app, path, fn _ -> check_current_compilers!() end)
+      end
+    end
+  end
+
+  defp check_current_compilers! do
+    compilers = Mix.Task.Compiler.compilers()
+    supported = [:yecc, :leex, :erlang, :elixir, :app]
+
+    unless compilers == supported do
+      Mix.raise(
+        "unsupported compiler pipeline for #{Mix.Project.config()[:app] || "umbrella"}: " <>
+          "#{inspect(compilers)}; compiler provenance requires Mix's built-in compilers " <>
+          "with every default stage in order because compiler events do not attest output bytes",
+        exit_status: 2
+      )
     end
 
-    :ok
+    tasks = ["compile", "compile.all" | Enum.map(supported, &"compile.#{&1}")]
+    aliases = Mix.Project.config()[:aliases] || []
+
+    for task <- tasks do
+      if Keyword.has_key?(aliases, String.to_atom(task)) do
+        Mix.raise(
+          "unsupported compiler pipeline for #{Mix.Project.config()[:app] || "umbrella"}: " <>
+            "alias #{task} can replace compiler output; compiler provenance requires " <>
+            "Mix's built-in compile tasks",
+          exit_status: 2
+        )
+      end
+
+      module = Mix.Task.get(task)
+      expected = Path.join([List.to_string(:code.lib_dir(:mix)), "ebin", "#{module}.beam"])
+
+      unless module != nil and :code.which(module) == String.to_charlist(expected) do
+        Mix.raise(
+          "unsupported compiler pipeline: task #{task} is not Mix's built-in task",
+          exit_status: 2
+        )
+      end
+    end
+  end
+
+  defp compile_and_record!(args, force?, capabilities, prior) do
+    capture = if capabilities, do: Capture.start()
+
+    try do
+      "compile"
+      |> Mix.Task.run(args)
+      |> check_compile!(force?)
+
+      if capabilities do
+        compiled = Capture.finish(capture)
+        check_dependencies!(Project.current(), capabilities)
+        record_build!(Project.current(), capabilities, prior, compiled)
+      end
+    after
+      if capture, do: Capture.stop(capture)
+    end
   end
 
   defp check_compile!({:error, _diagnostics}, _force?),
@@ -227,11 +298,27 @@ defmodule Mix.Tasks.SpecLint do
     stale != []
   end
 
-  defp record_build!(project, capabilities) do
+  defp record_build!(project, capabilities, prior, compiled) do
     for app <- project.apps, File.dir?(app.ebin) do
-      case BuildRecord.write(app, capabilities) do
+      evidence =
+        Map.merge(
+          Map.get(prior, app.app, %{}),
+          BuildRecord.compiled_beams(app, Map.get(compiled, app.app, MapSet.new()))
+        )
+
+      case BuildRecord.write(app, capabilities, evidence) do
         :ok ->
           :ok
+
+        {:error, {:unverified_beams, files}} ->
+          Mix.raise(
+            "cannot verify compiler provenance for #{app.app}: " <>
+              Enum.join(files, ", ") <>
+              "; these BEAM files were not produced by this compilation or previously " <>
+              "verified for the running build. Rebuild their sources or remove the stale " <>
+              "artifacts explicitly",
+            exit_status: 2
+          )
 
         {:error, reason} ->
           Mix.raise(

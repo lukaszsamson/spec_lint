@@ -4,6 +4,11 @@ Upstream status (648b2a9): reproduces. Absent on the fork (c24c235).
 Kind: soundness bug (a stored signature excludes an accepted argument) and
 false-positive warnings. The strongest item in this package.
 
+**Do not file a new issue: existing upstream report [#15950](https://github.com/elixir-lang/elixir/issues/15950) and
+[PR #15952](https://github.com/elixir-lang/elixir/pull/15952).**
+The retained `issue.md` is a historical draft. See the
+[independent review](../review-2026-09-29.md).
+
 `for ... into: into` where `into` may be `[]` or a bitstring narrows the
 comprehension body (and the variables in it) to `bitstring()`. The list path
 accepts any element.
@@ -18,8 +23,9 @@ suite was not re-run on 648b2a9.
 
 ## Expected vs actual
 
-`f(flag, value)` accepts any `value` and returns it; `f(true, :ok)` returns
-`:ok` at runtime.
+`f(true, value)` accepts any `value` on its list branch and returns it;
+`f(true, :ok)` returns `:ok` at runtime. The bitstring branch does not
+accept arbitrary values: `f(false, :ok)` raises `ArgumentError`.
 
 | Observation | Expected | Actual on 648b2a9 | Fork c24c235 |
 | --- | --- | --- | --- |

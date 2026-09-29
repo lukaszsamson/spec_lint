@@ -4,14 +4,18 @@ SpecLint checks Dialyzer-style `@spec` declarations against the types the
 Elixir compiler infers. It reads your compiled BEAM files, translates each
 spec clause into the compiler's set-theoretic type lattice, and compares it
 with the inferred signature the compiler stores in the `ExCk` chunk. It runs
-no Dialyzer, needs no PLT, never starts your application, and its analysis
-never calls your functions. Compilation still runs your macros.
+no Dialyzer, needs no PLT, and does not start your application. Compilation
+runs macros and may load target modules; compiler and type-printer operations
+can execute `@on_load` callbacks and `__info__/1`. This is not a security
+sandbox: run it only on code you trust.
 
 The design, evidence model and measurements are in [`DESIGN.md`](DESIGN.md)
 and [`EXPERIMENTS.md`](EXPERIMENTS.md).
 
-**Status: experimental release.** The release verdict, with the measured
-figures and what is not claimed, is [`RELEASE.md`](RELEASE.md).
+**Status: experimental; current requalification pending.** The historical
+release campaigns and their limits are in [`RELEASE.md`](RELEASE.md). The
+current tree adds compiler gating and artifact-provenance checks; the
+historical campaigns do not qualify those changes.
 
 ## Requirements
 
@@ -20,13 +24,21 @@ development revisions, so each release supports specific compiler builds:
 
 | SpecLint | Elixir | Source | Checker chunk | Adapter id | Status | Known compiler defects |
 | --- | --- | --- | --- | --- | --- | --- |
-| 0.1.0 | 1.21.0-dev, revision `648b2a9` | upstream `elixir-lang/elixir` | `elixir_checker_v10` | `1.21.0-dev+648b2a9` | qualified (`bench/corpus/toolchain/audit-648b2a9.md`) | `for ... into:` with a collectable that may be a bitstring or a list narrows the body to `bitstring()` in the stored signature, which can make SpecLint gate a correct spec (audit row 19) |
-| 0.1.0 | 1.21.0-dev, revision `c24c235` | fork `lukaszsamson/elixir`, branch `ls-mixed-into` | `elixir_checker_v10` | `1.21.0-dev+c24c235` | qualified (the development revision) | none known |
-| 0.1.0 | 1.20.4 (revision `759443e`, the precompiled release) | upstream release `v1.20.4` | `elixir_checker_v8` | `1.20.4+759443e` | qualified, with its own baselines (`bench/corpus/toolchain/audit-1.20.4.md`) | none known; Erlang `-nominal` types are left out by its `Code.Typespec` (a reference to one is an unresolved remote type) |
+| 0.1.0 | 1.21.0-dev, revision `648b2a9` | upstream `elixir-lang/elixir` | `elixir_checker_v10` | `1.21.0-dev+648b2a9` | diagnostic-only; historical compatibility audit (`bench/corpus/toolchain/audit-648b2a9.md`) | `for ... into:` with a collectable that may be a bitstring or a list narrows the body to `bitstring()` in the stored signature, which previously could make SpecLint gate a correct spec (audit row 19); current gates are disabled |
+| 0.1.0 | 1.21.0-dev, revision `c24c235` | fork `lukaszsamson/elixir`, branch `ls-mixed-into` | `elixir_checker_v10` | `1.21.0-dev+c24c235` | CI candidate; current requalification pending | none known |
+| 0.1.0 | 1.20.4 (revision `759443e`, the precompiled release) | upstream release `v1.20.4` | `elixir_checker_v8` | `1.20.4+759443e` | CI candidate; current requalification pending; historical audit (`bench/corpus/toolchain/audit-1.20.4.md`) | none known; Erlang `-nominal` types are left out by its `Code.Typespec` (a reference to one is an unresolved remote type) |
 | | 1.19 and earlier, 1.20.0 to 1.20.3 | | | | **unsupported**: the task starts and refuses itself (checked on 1.19.4: exit 2 with `--ci`, see below) | |
 | | other 1.20.x releases, other 1.21 builds | | | | **unsupported**: the same refusal (exit 2 in CI) | |
 
-All on Erlang/OTP 28 (1.20.4 also passes preflight on OTP 29). SpecLint
+**Compiler-wide gating restriction:** upstream `648b2a9` is diagnostic-only.
+Every finding has `gate: false`, and the run is `incomplete`, even if the
+project does not contain a comprehension: the defective signature can affect
+callers too. `--ci` and `--warnings-as-errors` exit 2; a local run exits 0 with
+the incomplete report. A baseline cannot waive this restriction, and
+`mix spec_lint.baseline` exits 2 without writing a baseline. Use `c24c235`
+or 1.20.4 as CI candidates while current requalification is pending.
+
+Historical campaigns ran on Erlang/OTP 28 (1.20.4 also passed preflight on OTP 29). SpecLint
 picks the adapter for the running compiler from its version and checker
 chunk version, and `bench/corpus/toolchain/build_elixir.sh` builds a
 qualified upstream revision from a clean clone.
@@ -58,6 +70,16 @@ project when you switch between them. `mix spec_lint` records which build
 produced the project's BEAM files (`_build/ENV/lib/APP/.mix/spec_lint.build`)
 and recompiles with `--force` when that is not the running build,
 including the first time it runs on a project it did not compile itself.
+Build-record version 2 records each BEAM only when a compiler event attests
+that the module was produced in this VM, or the unchanged artifact already
+has verified provenance. Version 1 records require a rebuild. An app-wide
+successful compile cannot verify orphan BEAMs: the task refuses unverified
+artifacts with exit 2 and leaves them in place for explicit repair.
+Only built-in Mix compiler pipelines are supported. A custom compiler can
+overwrite an artifact after an Elixir compiler event, so nonstandard
+compiler pipelines are refused with exit 2, including umbrella child
+configurations. These checks detect stale artifacts in trusted projects;
+they do not protect against malicious project code.
 Switching between 1.20.4 and 1.21 recompiles in any case. BEAM files of
 the other compiler line are never analysed: without the Mix task (an
 explicit ebin, `SpecLint.Run`), a build record of the other line, or its
@@ -75,7 +97,7 @@ version and is not detected.
 Baselines record the adapter id, so switching compilers is an adapter
 change: a baseline written under another one is not applied, and
 `mix spec_lint --ci` exits 2 asking you to review and regenerate it with
-`mix spec_lint.baseline`. Keep one baseline per compiler you run in CI. On
+`mix spec_lint.baseline`. Keep one baseline per compiler you run in CI. In the historical campaigns on
 the fifteen benchmark corpora no fingerprint differs between the two 1.21
 revisions. Between 1.20.4 and 1.21 the findings and gates are the same
 outside the standard library, but only 28 of the 65 finding fingerprints
@@ -89,38 +111,36 @@ the debug info chunk. A module compiled without it is reported as `SL008`.
 
 ## Installation
 
-Add SpecLint to the project that owns the specs, for development and test
-only:
+This checkout has no configured publishing remote or verified Hex release.
+Only built-in Mix compiler pipelines are currently supported; custom
+compilers in a project or umbrella child cause exit 2. Install from a local
+checkout of this repository for development and test:
 
 ```elixir
 def deps do
   [
-    {:spec_lint, "~> 0.1", only: [:dev, :test], runtime: false}
+    {:spec_lint, path: "../spec_lint", only: [:dev, :test], runtime: false}
   ]
 end
 ```
 
-A path or a git dependency works the same way (both are exercised by
-`test/integration/release/`):
-
-```elixir
-{:spec_lint, path: "../spec_lint", only: [:dev, :test], runtime: false}
-{:spec_lint, git: "https://example.com/spec_lint.git", only: [:dev, :test], runtime: false}
-```
+Adjust the path to your checkout. Path, local git and umbrella installation
+are exercised by `test/integration/release/`; those tests do not establish
+publication on Hex or a public repository URL.
 
 SpecLint's own development dependencies (Credo, Dialyxir) are not fetched
 into your project. Then:
 
 ```
 mix deps.get
-mix spec_lint            # first run: compiles, checks, changes nothing
+mix spec_lint            # first run: compiles and checks; writes no baseline
 ```
 
 The first run needs no baseline and no configuration. It compiles SpecLint
 and your project, prints the report and exits 0 (or 1 with `--ci` when
 there are gated findings); it never writes the baseline
-(`Baseline: none (.spec_lint_baseline.json not found)`). A clean project
-exits 0 in CI mode too. The next step for a project with findings is the
+(`Baseline: none (.spec_lint_baseline.json not found)`). A clean project on a CI candidate compiler
+exits 0 in CI mode too; `648b2a9` always produces an incomplete run. The next step for a project with findings is the
 [baseline workflow](#baseline).
 
 An **umbrella** project declares the dependency in the umbrella root's
@@ -237,8 +257,9 @@ gating rules below. It does not mean the spec is correct:
   checked. It is listed in the ledger, and `SL008` fails CI until the
   baseline acknowledges it.
 - **The compiler's own defects.** The stored signatures are the compiler's.
-  A defect there can make SpecLint gate a correct spec (the `for ... into:`
-  case on `648b2a9`, in the matrix above) or miss a real one.
+  A defect there can make SpecLint gate a correct spec or miss a real one.
+  The reproduced `for ... into:` defect on `648b2a9` now disables all of
+  that compiler build’s gates, as documented above.
 
 The unknown-obligation counts of the release measurement (the fifteen
 benchmark corpora, default configuration; release campaign 1,
@@ -265,6 +286,10 @@ after independent refutation (each gate survived two attempts,
 gates are one omission, a struct field left at its default `nil` outside
 its declared type; they gate like any other clause conflict.
 
+**These figures are historical release-1/release-2 measurements.** They
+precede the current compiler gating and provenance changes; `648b2a9` now
+has no gates and cannot certify CI. Current requalification is pending.
+
 **Exit statuses in CI.** Exit 1 is a verdict about your code (a new gated
 finding or a coverage violation): fix the spec or acknowledge the finding
 in the baseline. Exit 2 is SpecLint declining to give a verdict (the build
@@ -287,7 +312,10 @@ status").
 | `SL007 spec_domain_body_warning` | Needs the body analysis backend, which no supported build has. Requesting it exits 2. | off |
 | `SL008 analysis_unavailable` | A module or spec slice could not be analysed. | warning, gated unless acknowledged in the baseline |
 
-A gated finding still has to meet its prerequisites to fail the build:
+Compiler-wide qualification comes first: `648b2a9` cannot gate any rule,
+including SL008 or a finding selected by `--warnings-as-errors`. On a CI
+candidate compiler, a gated finding still has to meet its prerequisites to
+fail the build:
 
 - no untranslatable construct;
 - no overlapping spec clauses (an overload that cannot be translated counts
@@ -312,7 +340,7 @@ clauses that always raise; the reported line is the function's first line.
 Its details also name the source clause and its line (`source clause: #1,
 line 41`) when the compiler's own clause grouping determines it: the
 function has one clause, or as many stored as source clauses (every clause
-conflict on the fifteen benchmark corpora is such a function). Otherwise
+conflict on the fifteen historical benchmark corpora is such a function). Otherwise
 they say the source clause is not determined. JSON carries the same in
 `data.source_clause` and `data.clause_mapping` (`single`, `identity` or
 `ambiguous`). The mapping changes neither gating nor fingerprints: a
@@ -500,8 +528,8 @@ the run itself tells you whether the file still applies.
 
 ### Upgrading the compiler
 
-This covers a move between 1.20.4 and 1.21, between the two qualified 1.21
-revisions, and to any future qualified build. A compiler outside the
+This covers a move between 1.20.4 and 1.21, between the two compatible 1.21
+revisions (although `648b2a9` now refuses baseline writes), and to any future qualified build. A compiler outside the
 [matrix](#requirements) is refused, not upgraded to.
 
 1. Switch the toolchain and run `mix spec_lint --ci`. Nothing else needs

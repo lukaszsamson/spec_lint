@@ -3,8 +3,8 @@ defmodule SpecLint.Integration.ResourceFailureTest do
   # no successful result. Each case runs `mix spec_lint` in a separate OS
   # process on a throw-away consumer project:
   #
-  #   * an analysis crash inside the run (a corrupt checker chunk that the
-  #     comparison cannot read) exits 2, and the report it writes says
+  #   * an analysis crash inside the per-module comparison exits 2, and
+  #     the report it writes says
   #     `incomplete`, never `complete`;
   #   * an exception after the per-module analysis (injected through the
   #     configuration file, which is Elixir code evaluated in the run's VM)
@@ -34,35 +34,7 @@ defmodule SpecLint.Integration.ResourceFailureTest do
     dir = Fixture.tmp_dir!("resource")
     on_exit(fn -> File.rm_rf!(dir) end)
 
-    # CONSUMER_CORRUPT_EXCK makes a compiler that runs after the Elixir one
-    # replace Consumer's checker chunk with clauses that are not types, so
-    # the corruption is part of the build SpecLint records as verified.
     Fixture.write!(dir, "mix.exs", """
-    defmodule Mix.Tasks.Compile.CorruptExck do
-      use Mix.Task.Compiler
-
-      @impl true
-      def run(_args) do
-        if System.get_env("CONSUMER_CORRUPT_EXCK") do
-          path = String.to_charlist(Path.join(Mix.Project.compile_path(), "Elixir.Consumer.beam"))
-          {:ok, _module, chunks} = :beam_lib.all_chunks(path)
-
-          bad =
-            :erlang.term_to_binary(
-              {:elixir_erl.checker_version(),
-               %{exports: [{{:greet, 1}, %{sig: {:infer, nil, [{[:bad], :bad}]}}}], mode: :elixir}}
-            )
-
-          {:ok, binary} =
-            :beam_lib.build_module(List.keyreplace(chunks, ~c"ExCk", 0, {~c"ExCk", bad}))
-
-          File.write!(path, binary)
-        end
-
-        {:ok, []}
-      end
-    end
-
     defmodule Consumer.MixProject do
       use Mix.Project
 
@@ -70,7 +42,6 @@ defmodule SpecLint.Integration.ResourceFailureTest do
         [
           app: :consumer,
           version: "0.1.0",
-          compilers: Mix.compilers() ++ [:corrupt_exck],
           deps: [{:spec_lint, path: #{inspect(Fixture.root())}, only: [:dev, :test], runtime: false}]
         ]
       end
@@ -91,17 +62,33 @@ defmodule SpecLint.Integration.ResourceFailureTest do
 
   test "an analysis crash inside the run exits 2 and its report is not complete",
        %{dir: dir, report: report} do
-    env = [{"CONSUMER_CORRUPT_EXCK", "1"}]
+    # Inject at the comparison boundary reached by Analysis.module/2.
+    # This exercises Run's per-module rescue with an actual exception while
+    # keeping all BEAM artifacts produced by the supported compiler pipeline.
+    Fixture.write!(dir, ".spec_lint.exs", """
+    Code.compile_string(\"\"\"
+    defmodule SpecLint.Compare do
+      def function(_slices, _clauses, _arity), do: raise("injected comparison failure")
+    end
+    \"\"\")
+
+    []
+    """)
 
     for mode <- [["--ci"], []] do
       {output, status} =
-        Fixture.mix(dir, ["spec_lint", "--format", "json", "--output", report] ++ mode, env)
+        Fixture.mix(dir, ["spec_lint", "--format", "json", "--output", report] ++ mode)
 
       assert status == 2, output
       json = report |> File.read!() |> JSON.decode!()
       assert json["completion"]["status"] == "incomplete"
       assert json["completion"]["exit_code"] == 2
-      assert Enum.any?(json["completion"]["reasons"], &(&1 =~ "internal failure analysing"))
+
+      assert Enum.any?(
+               json["completion"]["reasons"],
+               &(&1 =~ "internal failure analysing Elixir.Consumer.beam" and
+                   &1 =~ "injected comparison failure")
+             )
     end
   end
 

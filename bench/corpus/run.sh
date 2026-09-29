@@ -23,7 +23,7 @@
 #
 # SPEC_LINT_OSS holds one checkout per library (jason decimal nimble_options
 # mime plug ecto), each at the revision pinned in bench/corpus/README.md and
-# compiled with `MIX_ENV=test mix deps.get && MIX_ENV=test mix compile`.
+# compiled with `MIX_ENV="test" mix deps.get && MIX_ENV="test" mix compile`.
 # ELIXIR_DIR is the Elixir checkout the toolchain was built from (default
 # ~/elixir); its lib/*/ebin directories are the stdlib corpus.
 # SPEC_LINT_STDLIB_SOURCE is the git checkout whose revision the stdlib
@@ -40,9 +40,9 @@
 # NAME.json.gz and writes a schema-checked summary to NAME.json. Per-corpus
 # NAME.provenance.json records source, toolchain and compiled artifact hashes.
 #
-# Before a corpus runs, its earlier outputs in the output directory are
-# removed, so a run that is interrupted or killed leaves no report of an
-# earlier run that could be read as this run's (compare_replay.sh reports
+# Before compilation or any corpus runs, all requested corpora's earlier
+# outputs are removed, so an interrupted or killed run leaves no earlier
+# report that could be read as this run's (compare_replay.sh reports
 # the corpus as missing).
 #
 # Resources (Milestone 5): the product run is measured with /usr/bin/time
@@ -67,14 +67,40 @@
 set -euo pipefail
 
 root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-oss="${SPEC_LINT_OSS:?set SPEC_LINT_OSS to the directory holding the corpus checkouts}"
+oss="${SPEC_LINT_OSS:-}"
 elixir_dir="${ELIXIR_DIR:-$HOME/elixir}"
 out="${SPEC_LINT_CORPUS_OUT:-$root/bench/corpus/reports}"
 manifest="${SPEC_LINT_CORPUS_MANIFEST:-}"
 corpus_build="${SPEC_LINT_CORPUS_BUILD:-}"
 tool_build="${MIX_BUILD_PATH:-$root/_build/test}"
-raw="$(mktemp -d)"
+
+if [ $# -gt 0 ]; then
+  corpora=("$@")
+else
+  corpora=(stdlib jason decimal nimble_options mime plug ecto fixtures)
+fi
+
+# Validate names before using them as output path components.
+for name in "${corpora[@]}"; do
+  case "$name" in
+    ""|*[!a-zA-Z0-9_-]*) echo "invalid corpus name: $name" >&2; exit 2 ;;
+  esac
+done
+mkdir -p "$out"
+# Invalidate the entire requested set up front: compile/config failures and
+# an early corpus failure must also invalidate every later corpus.
+for name in "${corpora[@]}"; do
+  rm -f "$out/$name.provenance.json" "$out/$name.spec_lint.json" "$out/$name.spec_lint.json.gz" \
+    "$out/$name.spec_lint.rejected.json" "$out/$name.spec_lint.rejected.json.gz" \
+    "$out/$name.spec_lint.log" "$out/$name.resources.json" "$out/$name.experiment.log"
+  if [ "${SPEC_LINT_PRODUCT_ONLY:-0}" != 1 ]; then rm -f "$out/$name.json" "$out/$name.json.gz"; fi
+done
+
+# Temporary-directory failures must not preserve a prior successful campaign.
+raw="$(mktemp -d)" || { echo "cannot create campaign temporary directory" >&2; exit 2; }
 trap 'rm -rf "$raw"' EXIT
+
+: "${oss:?set SPEC_LINT_OSS to the directory holding the corpus checkouts}"
 
 command -v jq >/dev/null || { echo "jq is required" >&2; exit 2; }
 budgets="${SPEC_LINT_BUDGETS:-$root/bench/corpus/budgets.json}"
@@ -132,12 +158,6 @@ check_revision() {
   fi
 }
 
-if [ $# -gt 0 ]; then
-  corpora=("$@")
-else
-  corpora=(stdlib jason decimal nimble_options mime plug ecto fixtures)
-fi
-
 # Every corpus with a product run needs a budget while budgets are checked:
 # a corpus missing from the file is a configuration error, not "no check".
 if [ "$budgets" != none ]; then
@@ -156,7 +176,7 @@ product_only="${SPEC_LINT_PRODUCT_ONLY:-0}"
 
 cd "$root"
 mkdir -p "$out"
-MIX_ENV=test mix compile >/dev/null
+MIX_ENV="test" mix compile >/dev/null
 
 # ebins NAME -> sets ebins=(...) codepaths=(...) project_root
 select_corpus() {
@@ -262,10 +282,6 @@ reject() {
 
 for name in "${corpora[@]}"; do
   echo "== $name" >&2
-  rm -f "$out/$name.provenance.json" "$out/$name.spec_lint.json" "$out/$name.spec_lint.json.gz" \
-    "$out/$name.spec_lint.rejected.json" "$out/$name.spec_lint.rejected.json.gz" \
-    "$out/$name.spec_lint.log" "$out/$name.resources.json" "$out/$name.experiment.log"
-  if [ "$product_only" != 1 ]; then rm -f "$out/$name.json" "$out/$name.json.gz"; fi
   select_corpus "$name"
   for e in "${ebins[@]}"; do
     [ -d "$e" ] || { echo "missing corpus ebin: $e" >&2; exit 2; }
@@ -280,7 +296,7 @@ for name in "${corpora[@]}"; do
 
   if [ "$product_only" != 1 ]; then
     set +e
-    MIX_ENV=test mix run bench/experiment.exs -- "${args[@]}" ${cp_args[@]+"${cp_args[@]}"} \
+    MIX_ENV="test" mix run bench/experiment.exs -- "${args[@]}" ${cp_args[@]+"${cp_args[@]}"} \
       --label "$name" --out "$raw/$name.json" 2>"$raw/$name.log"
     status=$?
     set -e
@@ -303,7 +319,7 @@ for name in "${corpora[@]}"; do
     fi
     [ -x "$time_tool" ] || { echo "$time_tool is required to measure the product run" >&2; exit 2; }
     set +e
-    MIX_ENV=test "$time_tool" "$time_flag" -o "$raw/$name.time" \
+    MIX_ENV="test" "$time_tool" "$time_flag" -o "$raw/$name.time" \
       mix run bench/run_on_ebin.exs -- "${args[@]}" ${cp_args[@]+"${cp_args[@]}"} \
       --root "$project_root" --ci --format json --output "$raw/$name.spec_lint.json" \
       ${baseline_args[@]+"${baseline_args[@]}"} \
@@ -347,7 +363,7 @@ for name in "${corpora[@]}"; do
       bench/corpus/normalise_report.sh "$raw/$name.spec_lint.json" "$out/$name.spec_lint.json"
     if [ -n "${SPEC_LINT_WRITE_BASELINE_DIR:-}" ]; then
       mkdir -p "$SPEC_LINT_WRITE_BASELINE_DIR"
-      MIX_ENV=test mix run bench/run_on_ebin.exs -- "${args[@]}" ${cp_args[@]+"${cp_args[@]}"} \
+      MIX_ENV="test" mix run bench/run_on_ebin.exs -- "${args[@]}" ${cp_args[@]+"${cp_args[@]}"} \
         --root "$project_root" --write-baseline "$SPEC_LINT_WRITE_BASELINE_DIR/$name.json" \
         ${product_args[@]+"${product_args[@]}"} >&2
     fi

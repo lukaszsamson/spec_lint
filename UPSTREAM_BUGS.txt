@@ -391,3 +391,24 @@ test/spec_lint/upstream_qualification_test.exs (pinned per revision).
 Not observed in the fifteen corpora (no stored signature of their own
 applications differs between the two compilers except semantically equal
 terms).
+
+--------------------------------------------------------------------------------
+2026-09-29 REVIEW STATUS (supersedes historical filing/fix suggestions above)
+
+- list_tl (item 7): do not file a duplicate; existing upstream issue #15490:
+  https://github.com/elixir-lang/elixir/issues/15490
+- for_into_narrowing (item 11): do not file a duplicate; existing issue
+  #15950 and PR #15952 (the c24c235 fix):
+  https://github.com/elixir-lang/elixir/issues/15950
+  https://github.com/elixir-lang/elixir/pull/15952
+  Historical SpecLint could gate this correct spec; current 648b2a9 runs
+  are diagnostic-only, all gates disabled, incomplete, exit 2 in CI.
+- subpatterns_leak: focused controls show sound overapproximation and
+  precision loss affected by unrelated definitions/inference order, not
+  demonstrated unsoundness or nondeterministic compilation. The naive
+  fresh_context/1 reset removed the witness but crashed an existing compiler
+  integration test with MatchError in Pattern.of_pattern_var/3. Unpatched
+  compiler: 541 passed (7 doctests, 534 tests). No safe fix is proposed.
+
+Historical drafts and frozen reproducers are retained for evidence. See
+bench/upstream/review-2026-09-29.md for commands and refutation evidence.
