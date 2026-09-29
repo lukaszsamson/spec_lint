@@ -2,25 +2,61 @@
   "ash_revision": "164a4c0d0ef7724c5fd2153876c2cf90cd938863",
   "observations": [
     {
-      "input": "false",
+      "case": "ash_page_opts_false",
+      "input": "Ash.Page.page_opts(false)",
+      "input_in_declared_domain": true,
       "mfa": "Ash.Page.page_opts/1",
-      "result": "{:ok, false}"
+      "outside_declared_return": true,
+      "result": "{:ok, false}",
+      "role": "witness",
+      "spec": "ash/lib/ash/page/page.ex:13 page_opts(page() | false | nil | Keyword.t()) :: {:ok, page()} | {:error, String.t()}",
+      "verdict": "witnessed"
     },
     {
-      "input": "nil",
+      "case": "ash_page_opts_nil",
+      "input": "Ash.Page.page_opts(nil)",
+      "input_in_declared_domain": true,
       "mfa": "Ash.Page.page_opts/1",
-      "result": "{:ok, nil}"
+      "outside_declared_return": true,
+      "result": "{:ok, nil}",
+      "role": "witness",
+      "spec": "ash/lib/ash/page/page.ex:13 page_opts(page() | false | nil | Keyword.t()) :: {:ok, page()} | {:error, String.t()}",
+      "verdict": "witnessed"
     },
     {
-      "input": "(:ok, nil, [])",
+      "case": "ash_load_ok",
+      "input": "Ash.load(:ok, nil, [])",
+      "input_in_declared_domain": true,
       "mfa": "Ash.load/3",
-      "result": "{:ok, :ok}"
+      "outside_declared_return": true,
+      "result": "{:ok, :ok}",
+      "role": "witness",
+      "spec": "ash/lib/ash.ex:2436-2448 load(record_or_records | Ash.Page.page() | {:ok, _} | {:error, term} | :ok | nil, load_statement(), Keyword.t()) :: {:ok, Ash.Resource.record() | [Ash.Resource.record()] | nil} | {:error, term}",
+      "verdict": "witnessed"
     },
     {
-      "input": "(:ok, Ash.Error.Invalid, fn _ -> false end)",
+      "case": "ash_load_nil",
+      "input": "Ash.load(nil, nil, [])",
+      "input_in_declared_domain": true,
+      "mfa": "Ash.load/3",
+      "outside_declared_return": false,
+      "result": "{:ok, nil}",
+      "role": "control",
+      "spec": "ash/lib/ash.ex:2436-2448 load(record_or_records | Ash.Page.page() | {:ok, _} | {:error, term} | :ok | nil, load_statement(), Keyword.t()) :: {:ok, Ash.Resource.record() | [Ash.Resource.record()] | nil} | {:error, term}",
+      "verdict": "control_inside"
+    },
+    {
+      "case": "ash_refute_has_error_ok",
+      "input": "Ash.Test.refute_has_error(:ok, Ash.Error.Invalid, fn _ -> false end)",
+      "input_in_declared_domain": true,
       "mfa": "Ash.Test.refute_has_error/3",
-      "result": ":ok"
+      "outside_declared_return": true,
+      "result": ":ok",
+      "role": "witness",
+      "spec": "ash/lib/ash/test.ex:109-118 refute_has_error(Ash.Changeset.t() | Ash.Query.t() | Ash.ActionInput.t() | :ok | {:ok, term} | {:error, term}, Ash.Error.class_module(), (Ash.Error.t() -> boolean)) :: Ash.Error.t() | no_return",
+      "verdict": "witnessed"
     }
   ],
-  "schema": "spec_lint/holdout_witnesses"
+  "schema": "spec_lint/holdout_witnesses",
+  "version": 2
 }

@@ -1,5 +1,6 @@
 # Controlled integration witnesses for the source-only Ash reports in
-# holdout_triage.md. It builds a minimal Ash domain with ETS-backed resources
+# holdout_triage.md. Every observation has a stable `case` id, which the
+# evaluation inventory (bench/evaluation/inventory.json) cites. It builds a minimal Ash domain with ETS-backed resources
 # from the pinned, already compiled Ash checkout and calls the public
 # functions and records, for each witness and control input, whether it
 # satisfies the declared @spec (checked by hand-written predicates over the
@@ -272,7 +273,9 @@ Mix.start()
       defp rerun?(_), do: false
 
       # Ash.Query.t() (ash/lib/ash/query/query.ex:206-246), every field whose
-      # declared type is not a function, filter or nested Ash struct. A query
+      # declared type is not a function or a nested struct's fields: `filter`
+      # (Ash.Filter.t() is `%Ash.Filter{}`, filter.ex:226) and `action` are
+      # checked by their struct (evaluation inventory version 2). A query
       # from Ash.Query.new/1 leaves distinct at nil, outside `[atom]`, and a
       # loaded calculation puts an %Ash.Query.Calculation{} where the type
       # allows only `:wat`.
@@ -280,7 +283,9 @@ Mix.start()
       def query_t?(%Ash.Query{} = query) do
         fields_valid?(query,
           __validated_for_action__: &is_atom/1,
+          action: &(is_nil(&1) or is_struct(&1, Ash.Resource.Actions.Read)),
           domain: &is_atom/1,
+          filter: &(is_nil(&1) or is_struct(&1, Ash.Filter)),
           distinct: &atoms?/1,
           resource: &is_atom/1,
           timeout: &(is_nil(&1) or pos_integer?(&1)),
@@ -402,6 +407,7 @@ witness = fn report, mfa, spec_ref, w_desc, w_fun, c_desc, c_fun, declared?, {w_
     end
 
   %{
+    case: mfa,
     report: report,
     mfa: mfa,
     spec: spec_ref,
@@ -483,6 +489,26 @@ records = Ash.read!(Post, domain: Domain)
 exploding = Ash.Query.load(in_domain_query.(Post), :exploding)
 fine = Ash.Query.load(in_domain_query.(Post), :fine)
 
+# In-domain filters for Ash.Query.apply_to/3 (evaluation inventory version
+# 2): a filter is `Ash.Filter.t() | nil` in t(), so any filter keeps the
+# query inside t(). Casting the string title to an integer, and an
+# error/2 expression, fail at runtime in Ash.Filter.Runtime.filter_matches/4,
+# and apply_to/3 returns its `{:error, _}` branch (query.ex:4366-4368).
+# Built with Code.eval_string/1 because the filter macro expands against
+# the Ash build loaded above.
+{{cast_error, error_expression, plain_filter}, _binding} =
+  Code.eval_string(~S"""
+  require Ash.Query
+  import Ash.Expr
+  query = %{Ash.Query.new(Witness.Post) | distinct: []}
+
+  {Ash.Query.filter(query, type(title, :integer) == 1),
+   Ash.Query.filter(query, error(Ash.Error.Query.InvalidFilterValue, %{value: 1, message: "witness"})),
+   Ash.Query.filter(query, title == "first")}
+  """)
+
+apply_to_in_domain? = fn q -> Support.query_t?(q) and Support.records?(records) end
+
 observations = [
   witness.(
     "Ash.read/2 SL002 domain escape",
@@ -561,12 +587,39 @@ observations = [
     fn -> Ash.Query.apply_to(fine, records, domain: Domain) end,
     &Support.apply_to_declared?/1,
     {Support.query_t?(exploding), Support.query_t?(fine)}
+  ),
+  witness.(
+    "Ash.Query.apply_to/3 SL002 domain escape",
+    "Ash.Query.apply_to/3",
+    "ash/lib/ash/query/query.ex:4344-4345 (t(), list(record), Keyword.t()) :: {:ok, list(record)}, {:error, _} branch 4366-4368; t() declares filter: Ash.Filter.t() | nil (211), Ash.Filter.t :: %Ash.Filter{} (ash/lib/ash/filter/filter.ex:226)",
+    "Ash.Query.apply_to(Ash.Query.filter(%{Ash.Query.new(Witness.Post) | distinct: []}, type(title, :integer) == 1), records read from Witness.Post, domain: Witness.Domain)",
+    fn -> Ash.Query.apply_to(cast_error, records, domain: Domain) end,
+    "Ash.Query.apply_to(Ash.Query.filter(the same query, title == \"first\"), the same records, domain: Witness.Domain)",
+    fn -> Ash.Query.apply_to(plain_filter, records, domain: Domain) end,
+    &Support.apply_to_declared?/1,
+    {apply_to_in_domain?.(cast_error), apply_to_in_domain?.(plain_filter)}
   )
+  |> Map.put(:case, "Ash.Query.apply_to/3 filter cast error"),
+  witness.(
+    "Ash.Query.apply_to/3 SL002 domain escape",
+    "Ash.Query.apply_to/3",
+    "ash/lib/ash/query/query.ex:4344-4345 (t(), list(record), Keyword.t()) :: {:ok, list(record)}, {:error, _} branch 4366-4368; t() declares filter: Ash.Filter.t() | nil (211), Ash.Filter.t :: %Ash.Filter{} (ash/lib/ash/filter/filter.ex:226)",
+    "Ash.Query.apply_to(Ash.Query.filter(%{Ash.Query.new(Witness.Post) | distinct: []}, error(Ash.Error.Query.InvalidFilterValue, %{value: 1, message: \"witness\"})), records read from Witness.Post, domain: Witness.Domain)",
+    fn -> Ash.Query.apply_to(error_expression, records, domain: Domain) end,
+    "Ash.Query.apply_to(Ash.Query.filter(the same query, title == \"first\"), the same records, domain: Witness.Domain)",
+    fn -> Ash.Query.apply_to(plain_filter, records, domain: Domain) end,
+    &Support.apply_to_declared?/1,
+    {apply_to_in_domain?.(error_expression), apply_to_in_domain?.(plain_filter)}
+  )
+  |> Map.put(:case, "Ash.Query.apply_to/3 error expression")
 ]
 
-# The verdicts are part of the claim: fail loudly if a pinned observation moves.
-# apply_to/3 escapes only for a query outside t(): any query that loads a
-# calculation is, since t() allows only :wat values in calculations.
+# The verdicts are part of the claim: fail loudly if a pinned observation
+# moves. Keyed by the stable case id the evaluation inventory cites (the MFA,
+# or the MFA and a description where one MFA has several cases). The
+# apply_to/3 query that loads a calculation is outside t(), which allows
+# only :wat values in calculations; the two filter cases are inside it
+# (inventory version 2: C01 promoted to F18).
 expected = %{
   "Ash.read/2" => :witnessed,
   "Ash.read_one/2" => :witnessed,
@@ -574,12 +627,18 @@ expected = %{
   "Ash.data_layer_query/2" => :refuted,
   "Ash.page/2" => :witnessed,
   "Ash.Policy.Policy.solve/1" => :witnessed,
-  "Ash.Query.apply_to/3" => :escape_outside_declared_domain
+  "Ash.Query.apply_to/3" => :escape_outside_declared_domain,
+  "Ash.Query.apply_to/3 filter cast error" => :witnessed,
+  "Ash.Query.apply_to/3 error expression" => :witnessed
 }
 
+unless Enum.sort(Enum.map(observations, & &1.case)) == Enum.sort(Map.keys(expected)) do
+  raise "witness case ids are not unique or not all expected"
+end
+
 for o <- observations do
-  unless o.verdict == Map.fetch!(expected, o.mfa) do
-    raise "a pinned Ash integration witness changed: #{o.mfa}: #{inspect(o)}"
+  unless o.verdict == Map.fetch!(expected, o.case) do
+    raise "a pinned Ash integration witness changed: #{o.case}: #{inspect(o)}"
   end
 end
 

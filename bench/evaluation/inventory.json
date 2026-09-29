@@ -1,8 +1,8 @@
 {
   "schema": "spec_lint/evaluation_inventory",
-  "version": 1,
+  "version": 2,
   "frozen": "2026-09-29",
-  "tool_revision_at_freeze": "62862e9",
+  "tool_revision_at_freeze": "0cd5d11",
   "document": "bench/evaluation/INVENTORY.md",
   "definitions": {
     "omission": "an MFA whose @spec return omits a value that a runtime call with arguments inside the declared argument types returns normally",
@@ -378,7 +378,7 @@
         {
           "script": "bench/corpus/holdout_witnesses.exs",
           "record": "bench/corpus/reports/expansion/holdout_witnesses.json",
-          "case": "page_opts(false)",
+          "case": "ash_page_opts_false",
           "mfa": "Ash.Page.page_opts/1",
           "input": "Ash.Page.page_opts(false)",
           "input_in_declared_domain": true,
@@ -387,7 +387,7 @@
         {
           "script": "bench/corpus/holdout_witnesses.exs",
           "record": "bench/corpus/reports/expansion/holdout_witnesses.json",
-          "case": "page_opts(nil)",
+          "case": "ash_page_opts_nil",
           "mfa": "Ash.Page.page_opts/1",
           "input": "Ash.Page.page_opts(nil)",
           "input_in_declared_domain": true,
@@ -396,7 +396,7 @@
       ],
       "stand_in": "SpecLint.OmissionFixtures.ClauseLocal.page_opts/1",
       "origin": "bench/corpus/holdout_triage.md",
-      "notes": "no in-domain input returns inside the declared return (the catch-all returns a keyword list), so there is no control; @doc false internal validator",
+      "notes": "no in-domain input returns inside the declared return (the catch-all returns a keyword list), so there is no control; @doc false internal validator; version 2: the record carries the in-domain flag",
       "status": "witnessed",
       "revision": "164a4c0d0ef7724c5fd2153876c2cf90cd938863"
     },
@@ -407,7 +407,7 @@
       "mfas": [
         "Ash.load/3"
       ],
-      "source": "lib/ash.ex:2436-2447 (spec), 2451 (load(:ok, _, _) clause); load_statement (36-41) includes atom",
+      "source": "lib/ash.ex:2436-2448 (spec), 2454 (load(:ok, _, _) clause); load_statement (36-41) includes atom",
       "declared_return": "{:ok, Ash.Resource.record() | [Ash.Resource.record()] | nil} | {:error, term}",
       "omitted": "{:ok, :ok}",
       "membership": "single MFA",
@@ -415,15 +415,18 @@
         {
           "script": "bench/corpus/holdout_witnesses.exs",
           "record": "bench/corpus/reports/expansion/holdout_witnesses.json",
-          "case": "load(:ok, nil)",
+          "case": "ash_load_ok",
           "mfa": "Ash.load/3",
           "input": "Ash.load(:ok, nil, []) (:ok is an explicit first-argument alternative; nil is in load_statement() through atom; [] is Keyword.t())",
           "input_in_declared_domain": true,
-          "observed": "{:ok, :ok}"
+          "observed": "{:ok, :ok}",
+          "control_case": "ash_load_nil",
+          "control_input": "Ash.load(nil, nil, [])",
+          "control_observed": "{:ok, nil}"
         }
       ],
       "origin": "bench/corpus/holdout_triage.md",
-      "notes": "the witness record has no in-domain flag or control; the domain was checked by hand against the spec for this inventory",
+      "notes": "version 2: the record carries the in-domain flag (hand-written predicates for the three argument types) and a control inside the declared return",
       "status": "witnessed",
       "revision": "164a4c0d0ef7724c5fd2153876c2cf90cd938863"
     },
@@ -442,7 +445,7 @@
         {
           "script": "bench/corpus/holdout_witnesses.exs",
           "record": "bench/corpus/reports/expansion/holdout_witnesses.json",
-          "case": "refute_has_error(:ok, ...)",
+          "case": "ash_refute_has_error_ok",
           "mfa": "Ash.Test.refute_has_error/3",
           "input": "Ash.Test.refute_has_error(:ok, Ash.Error.Invalid, fn _ -> false end)",
           "input_in_declared_domain": true,
@@ -450,7 +453,7 @@
         }
       ],
       "origin": "bench/corpus/holdout_triage.md",
-      "notes": "the witness record has no in-domain flag or control; the domain was checked by hand. No in-domain input returns inside the declared return, so there is no control; test helper",
+      "notes": "version 2: the record carries the in-domain flag (class_module() and a 1-ary callback). No in-domain input returns inside the declared return, so there is no control; test helper",
       "status": "witnessed",
       "revision": "164a4c0d0ef7724c5fd2153876c2cf90cd938863"
     },
@@ -675,21 +678,49 @@
       "notes": "type-contract counterexample under a broad constructor input; its usefulness as a CI warning is a usability question",
       "status": "witnessed",
       "revision": "c6e8ab1f9d1c8e1aef935a6319faa40487bb6f42"
-    }
-  ],
-  "candidates_not_counted": [
+    },
     {
-      "id": "C01-ash-query-apply-to-error",
-      "status": "source-only",
+      "id": "F18-ash-query-apply-to-error",
       "corpus": "ash",
-      "revision": "164a4c0d0ef7724c5fd2153876c2cf90cd938863",
+      "category": "return_value",
       "mfas": [
         "Ash.Query.apply_to/3"
       ],
-      "source": "lib/ash/query/query.ex:4344-4373; t() declares calculations: %{optional(atom) => :wat} (206-246)",
-      "reason": "the {:error, _} escape was observed only for a query that loads a calculation, which is outside Ash.Query.t(); no in-domain error path was found (ash_integration_witnesses.json: witness_input_in_declared_domain false)",
-      "record": "bench/corpus/reports/expansion/ash_integration_witnesses.json"
-    },
+      "source": "lib/ash/query/query.ex:4344-4345 (spec), 4366-4368 ({:error, error} -> {:error, Ash.Error.to_ash_error(error)} after Ash.Filter.Runtime.filter_matches/4); t() declares filter: Ash.Filter.t() | nil (211), Ash.Filter.t :: %Ash.Filter{} (lib/ash/filter/filter.ex:226)",
+      "declared_return": "{:ok, list(Ash.Resource.record())}",
+      "omitted": "{:error, Ash.Error.t()} (any error of runtime filter evaluation, of sorting or of loading)",
+      "membership": "single MFA",
+      "witnesses": [
+        {
+          "script": "bench/corpus/ash_integration_witnesses.exs",
+          "record": "bench/corpus/reports/expansion/ash_integration_witnesses.json",
+          "case": "Ash.Query.apply_to/3 filter cast error",
+          "mfa": "Ash.Query.apply_to/3",
+          "input": "Ash.Query.apply_to(Ash.Query.filter(%{Ash.Query.new(Witness.Post) | distinct: []}, type(title, :integer) == 1), records read from Witness.Post, domain: Witness.Domain)",
+          "input_in_declared_domain": true,
+          "observed": "{:error, %Ash.Error.Unknown.UnknownError{error: \"is invalid\"}}",
+          "control_input": "the same query filtered by title == \"first\", the same records",
+          "control_observed": "{:ok, [%Witness.Post{}]}"
+        },
+        {
+          "script": "bench/corpus/ash_integration_witnesses.exs",
+          "record": "bench/corpus/reports/expansion/ash_integration_witnesses.json",
+          "case": "Ash.Query.apply_to/3 error expression",
+          "mfa": "Ash.Query.apply_to/3",
+          "input": "Ash.Query.apply_to(Ash.Query.filter(%{Ash.Query.new(Witness.Post) | distinct: []}, error(Ash.Error.Query.InvalidFilterValue, %{value: 1, message: \"witness\"})), records read from Witness.Post, domain: Witness.Domain)",
+          "input_in_declared_domain": true,
+          "observed": "{:error, %Ash.Error.Query.InvalidFilterValue{}}",
+          "control_input": "the same query filtered by title == \"first\", the same records",
+          "control_observed": "{:ok, [%Witness.Post{}]}"
+        }
+      ],
+      "origin": "bench/corpus/holdout_triage.md (C01 in version 1); the in-domain inputs were found by the Milestone 5 review",
+      "notes": "version 1 counted this MFA as source-only because the only observed escape loaded a calculation, which is outside t() (calculations: %{optional(atom) => :wat}); that observation stays in the record with verdict escape_outside_declared_domain. Every release-1 report has an SL002 possible_domain_escape finding on it whose inferred extra is {:error, term()}.",
+      "status": "witnessed",
+      "revision": "164a4c0d0ef7724c5fd2153876c2cf90cd938863"
+    }
+  ],
+  "candidates_not_counted": [
     {
       "id": "R01-ash-data-layer-query",
       "status": "refuted",
@@ -839,5 +870,17 @@
       "every candidate examined, qualifying or not, is spent: it becomes a regression corpus and is never drawn again"
     ],
     "note": "no report of the fifteen current corpora meets the criterion: all nine SL001 findings gate under both adapters"
-  }
+  },
+  "previous_version": {
+    "version": 1,
+    "tool_revision_at_freeze": "62862e9",
+    "commit": "e464905"
+  },
+  "changes": [
+    "C01 (Ash.Query.apply_to/3) promoted to witnessed family F18: two in-domain filters (a string field cast to an integer, and an error/2 expression) return {:error, _}, outside the declared {:ok, list(record)}; version 1 had found no in-domain error path (Milestone 5 review). Denominator 17 -> 18 (return_value 14 -> 15).",
+    "F10, F11 and F12 cite stable case ids of the rewritten holdout_witnesses.exs, whose record now carries input_in_declared_domain, outside_declared_return and a verdict decided by hand-written predicates over the cited types; F11 gains a control (Ash.load(nil, nil, []) -> {:ok, nil}). Version 1 cited case ids its record did not contain and recorded no in-domain flag for F10 to F12.",
+    "ash_integration_witnesses.exs: every observation has a case id; Support.query_t?/1 also checks filter (nil or %Ash.Filter{}) and action (nil or %Ash.Resource.Actions.Read{}); the seven version-1 observations are unchanged.",
+    "F11 source citation corrected: the load(:ok, _, _) clause is line 2454 (2451 is the function head).",
+    "detection.exs checks each report's provenance revision against corpora[*].revision and lists every counted finding per family (matched), so each match can be audited; the counting rule is unchanged (by subject MFA)."
+  ]
 }

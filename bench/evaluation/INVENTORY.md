@@ -1,26 +1,76 @@
-# Frozen evaluation inventory, version 1
+# Frozen evaluation inventory, version 2
 
-Frozen on 2026-09-29 at tool revision `62862e9`, before any Milestone 5
-measurement (NEXT_STEPS.md, M5, "First task"). Every later M5 recall or
-precision number is computed against this version. Changing a family, a
-status, a witness, the family rule, the denominator or the holdout
-procedure is a new version of this file and of `inventory.json`, in its own
-commit, with the change described here.
+Version 1 was frozen on 2026-09-29 at tool revision `62862e9` (commit
+`e464905`), before any Milestone 5 measurement (NEXT_STEPS.md, M5, "First
+task"). Version 2 (2026-09-29, tool revision `0cd5d11`) is the change the
+Milestone 5 review required; it is described in "Changes in version 2"
+below. Every later recall or precision number cites the version it was
+computed against; the release campaign 1 figures are given under both
+(`bench/corpus/reports/release-1/detection_v1.json` and
+`detection_v2.json`). Changing a family, a status, a witness, the family
+rule, the denominator or the holdout procedure is a new version of this
+file and of `inventory.json`, in its own commit, with the change described
+here.
+
+## Changes in version 2
+
+1. **C01 promoted to witnessed family F18** (`Ash.Query.apply_to/3`,
+   `return_value`). Version 1 counted it as source-only because the only
+   observed `{:error, _}` came from a query that loads a calculation, which
+   is outside `Ash.Query.t()` (`calculations: %{optional(atom) => :wat}`).
+   The review found in-domain error paths: `t()` declares `filter:
+   Ash.Filter.t() | nil` and `Ash.Filter.t :: %Ash.Filter{}`, so any filter
+   keeps a query inside `t()`, and a filter that casts the string title to
+   an integer (`type(title, :integer) == 1`) or an `error/2` expression
+   makes `Ash.Filter.Runtime.filter_matches/4` fail, and `apply_to/3`
+   returns its `{:error, Ash.Error.to_ash_error(error)}` branch
+   (`query.ex:4366-4368`), outside the declared `{:ok,
+   list(Ash.Resource.record())}`. Both are now witnesses in
+   `ash_integration_witnesses.exs`, with a control (`title == "first"`,
+   `{:ok, [record]}`). **Denominator 17 -> 18** (`return_value` 14 -> 15).
+2. **Holdout witnesses carry their own domain check.** Version 1 cited
+   case ids (`page_opts(false)`, `load(:ok, nil)`, ...) that
+   `holdout_witnesses.json` did not contain, and that record had no
+   in-domain flag (for F10 as well as F11 and F12, although version 1 named
+   only F11 and F12). `holdout_witnesses.exs` now gives each observation a
+   stable case id (`ash_page_opts_false`, `ash_page_opts_nil`,
+   `ash_load_ok`, `ash_refute_has_error_ok`), and decides
+   `input_in_declared_domain` and `outside_declared_return` with
+   hand-written predicates over the cited types (`page()`, `load_statement()`,
+   `Ash.Error.class_module()`, `Ash.Error.t()`); it calls `Ash.load(:ok,
+   nil, [])` explicitly (version 1 called `load/2` through the default), and
+   F11 gains a control (`Ash.load(nil, nil, [])`, `{:ok, nil}`). The
+   verdicts are unchanged.
+3. `ash_integration_witnesses.exs`: every observation has a `case` id (the
+   MFA, or the MFA and a description where one MFA has several), and
+   `Support.query_t?/1` also checks `filter` and `action` by their struct.
+   The seven version-1 observations are unchanged.
+4. F11's source citation: the `load(:ok, _, _)` clause is line 2454 (2451
+   is the function head).
+5. `detection.exs` refuses a report whose provenance revision is not the
+   inventory pin, and lists every counted finding per family (`matched`,
+   with its fingerprint and its inferred extra or stored clause), so each
+   match can be audited. The counting rule itself is unchanged.
 
 | File | What it is |
 | --- | --- |
 | `inventory.json` | the machine-readable inventory: definitions, corpora and pins, families, candidates not counted, holdout procedure |
 | `pinned_witnesses.exs`, `pinned_witnesses.json` | runtime witnesses on the pinned library builds for the nine original omissions, `Ecto.Changeset.apply_changes/1` and `Absinthe.Blueprint.Input.parse/1` (new with this inventory; before it these had stand-in witnesses only or a witness in prose) |
 | `detection.exs` | computes gated, reported and silent per family from committed product reports |
-| `detection_v1.json` | its output on the committed reports at the freeze (section "Current detection") |
+| `detection_v1.json` | its output on the committed reports at the version 1 freeze (pre-release report sets) |
+| `../corpus/reports/release-1/detection_v1.json`, `detection_v2.json` | its output on the release campaign 1 reports under versions 1 and 2 (section "Current detection") |
 
 The other witnesses are the existing scripts and their committed outputs:
 `bench/corpus/expansion_witnesses.exs` (`reports/expansion/witnesses.json`),
 `bench/corpus/holdout_witnesses.exs` (`reports/expansion/holdout_witnesses.json`)
 and `bench/corpus/ash_integration_witnesses.exs`
-(`reports/expansion/ash_integration_witnesses.json`). All three were rerun
-for this inventory against the pinned checkouts and reproduced their
-committed outputs exactly.
+(`reports/expansion/ash_integration_witnesses.json`). For version 2 the
+holdout and Ash integration scripts were changed and their records
+regenerated against the pinned checkouts (the version-1 observations are
+unchanged); `pinned_witnesses.exs` and `expansion_witnesses.exs` were rerun
+and reproduced their committed records. `test/spec_lint/evaluation_inventory_test.exs`
+checks that every witness reference resolves to exactly one in-domain
+observation outside the declared return in its record.
 
 ## Definitions
 
@@ -73,20 +123,27 @@ denominator, and every recall figure is also given for `return_value` alone.
 
 ## Counting
 
-- **Denominator**: the number of families with status *witnessed*: **17**
-  (14 `return_value`, 1 `struct_default`, 2 `struct_field_from_input`).
+- **Denominator**: the number of families with status *witnessed*: **18**
+  (15 `return_value`, 1 `struct_default`, 2 `struct_field_from_input`;
+  version 1: 17 and 14).
 - **Gated**: at least one MFA of the family has a finding with rule `SL001`
   and `gate: true` in the product report of the family's corpus under the
   measured adapter.
 - **Reported**: not gated, and at least one MFA of the family has any
   finding (`SL001` with `gate: false`, or `SL002`).
 - **Silent**: no finding on any MFA of the family.
-- **Gated recall** = gated / 17. **Reported recall** = (gated + reported) /
-  17. Both are also given over the 14 `return_value` families.
+- **Gated recall** = gated / 18. **Reported recall** = (gated + reported) /
+  18. Both are also given over the 15 `return_value` families.
 - A finding counts by its subject MFA, whatever its slice or clause. The
   reports are the committed product reports (`*.spec_lint.json`, default
-  configuration); a measurement names the report set and its file hashes
-  (`detection.exs` records them).
+  configuration, with a provenance revision equal to the pin); a
+  measurement names the report set and its file hashes (`detection.exs`
+  records them) and lists each counted finding. The rule would let an
+  unrelated finding on a family's MFA count as a detection; none does in
+  release campaign 1: the inferred extra (SL002) or the stored clause
+  (SL001) of every counted finding contains the family's witnessed value
+  (`matched` in `detection_v2.json`). A future version may require that
+  match.
 - Source-only and refuted candidates are outside the denominator. A finding
   on a refuted candidate is a false positive for precision, not a detection.
 
@@ -119,6 +176,7 @@ Each row's control, where one exists, is in `inventory.json`.
 | F15 ash-policy-solve-unsatisfiable | ash | `Ash.Policy.Policy.solve/1` | rv | A: a repaired in-domain authorizer, two conflicting `:unknown` checks | `{:error, %Authorizer{}, :unsatisfiable}` | third element `Ash.Error.t()` |
 | F16 absinthe-input-parse-source-location | absinthe | `Absinthe.Blueprint.Input.parse/1` | sd | P: `parse/1` of `1`, `1.0`, `nil`, `"s"`, `true`, `[]`, `%{}` (clauses 1 to 7) | `Input.*` structs with `source_location: nil` | `nil \| Input.t()` (`source_location: SourceLocation.t()`) |
 | F17 req-response-new-status | req | `Req.Response.new/1` | sfi | E: `new(%{status: -1})` | `%Req.Response{status: -1}` | `Req.Response.t()` (`status: non_neg_integer()`) |
+| F18 ash-query-apply-to-error (v2) | ash | `Ash.Query.apply_to/3` | rv | A: an in-domain query (`distinct: []`) filtered by `type(title, :integer) == 1`, or by an `error/2` expression, with records read from the resource | `{:error, %Ash.Error.Unknown.UnknownError{}}`, `{:error, %Ash.Error.Query.InvalidFilterValue{}}` | `{:ok, list(Ash.Resource.record())}` |
 
 Cat.: rv `return_value`, sd `struct_default`, sfi `struct_field_from_input`.
 
@@ -128,12 +186,14 @@ Notes that do not change a status:
   every clause of `Join.escape/3` returns a 5-tuple, `page_opts/1`'s
   catch-all returns `{:ok, keyword()}`, and `refute_has_error/3` returns
   `:ok`, `nil` or raises.
-- F11 and F12: `holdout_witnesses.json` records no in-domain flag. The
-  domain was checked by hand for this inventory: `:ok` is an explicit first
-  argument alternative of both specs; `nil` is in `load_statement()` through
-  `atom` (`lib/ash.ex:36-41`); `Ash.Error.Invalid` is in
-  `Ash.Error.class_module()` (`use Splode, error_classes: [...]`); a 1-ary
-  fun is in `(Ash.Error.t() -> boolean)`.
+- F10 to F12: version 1's `holdout_witnesses.json` recorded no in-domain
+  flag and its domain check was by hand; version 2's record carries the
+  flag, decided by predicates over the same declarations: `false` and
+  `nil` are explicit alternatives of `page_opts/1`'s argument; `:ok` is an
+  explicit first argument alternative of both other specs; `nil` is in
+  `load_statement()` through `atom` (`lib/ash.ex:36-41`);
+  `Ash.Error.Invalid` is in `Ash.Error.class_module()` (`use Splode,
+  error_classes: [...]`); a 1-ary fun is in `(Ash.Error.t() -> boolean)`.
 - F10 is a `@doc false` validator, F12 a test helper, F15 an internal
   solver boundary: real omissions of less user-facing functions.
 - The stand-ins of F01 to F08 (`SpecLint.OmissionFixtures.Cases`) and of F09
@@ -144,7 +204,7 @@ Notes that do not change a status:
 
 | Id | MFA | Status | Why |
 | --- | --- | --- | --- |
-| C01 | `Ash.Query.apply_to/3` | source-only | the `{:error, _}` escape was observed only for a query loading a calculation, which is outside `Ash.Query.t()` (`calculations: %{optional(atom) => :wat}`); no in-domain error path found (`witness_input_in_declared_domain: false`) |
+| C01 | `Ash.Query.apply_to/3` | promoted to F18 in version 2 | version 1: the `{:error, _}` escape was observed only for a query loading a calculation, outside `Ash.Query.t()`; version 2 witnesses two in-domain filters |
 | R01 | `Ash.data_layer_query/2` | refuted | an in-domain witness with `return_query?: true` returned `{:ok, %{...}}`, inside the declared return |
 | R02 | `Ash.Resource.Info.sortable?/3` | refuted | source: every path returns `true` or `false` |
 | R03 | `Ash.UUIDv7.generate/0` | refuted | source: `encode/1`'s `:error` catch-all is unreachable from this caller |
@@ -169,69 +229,77 @@ The claim was checked against `holdout_triage.md`,
 `reports/expansion/ash_integration_witnesses.json`, all rerun for this
 inventory. Ash has 12 reports (11 SL002, 1 SL001).
 
-**Qualify** (a runtime witness inside the declared domain): 8 MFAs in 6
+**Qualify** (a runtime witness inside the declared domain): 9 MFAs in 7
 families: `page_opts/1` (F10), `load/3` (F11), `refute_has_error/3` (F12),
-`read/2`, `read_one/2`, `read_first/2` (F13), `page/2` (F14) and
-`Policy.solve/1` (F15).
+`read/2`, `read_one/2`, `read_first/2` (F13), `page/2` (F14),
+`Policy.solve/1` (F15) and, from version 2, `Query.apply_to/3` (F18).
 
-**Do not qualify** (4):
+**Do not qualify** (3; version 1 listed 4, with `Query.apply_to/3`, whose
+only witness then was outside `Ash.Query.t()`):
 
-- `Ash.Query.apply_to/3`: the witness input is outside `Ash.Query.t()`;
-  the escape was never observed in the declared domain (source-only).
 - `Ash.data_layer_query/2`: refuted by an in-domain witness.
 - `Ash.Resource.Info.sortable?/3`, `Ash.UUIDv7.generate/0`: refuted by
   source review; no witness.
 
 **Misses.** `page_opts/1` gates under the current default
 (`clause_local_qualification`), so it is not a miss. The witnessed Ash
-misses are **7 MFAs in 5 families** (F11 to F15), all reported as SL002,
-none gated. The claim "six" matches neither count: six is the number of
-witnessed Ash *families* including the gated `page_opts/1`. It is replaced
-by: Ash contributes 6 witnessed families to the denominator, 1 gated and 5
-reported. Two qualifying records (F11, F12) carry no in-domain flag in
-their witness output; the domain check above is by hand.
+misses are **8 MFAs in 6 families** (F11 to F15 and F18), all reported as
+SL002, none gated (version 1: 7 MFAs in 5 families). The claim "six"
+matched neither version-1 count: six was the number of witnessed Ash
+*families* including the gated `page_opts/1`. Ash contributes **7**
+witnessed families to the denominator, 1 gated and 6 reported (version 1:
+6, 1 and 5). Every qualifying record now carries its in-domain flag.
 
 ## Current detection
 
-Computed by `detection.exs` from the committed product reports only; output
-with every report's sha256 in `detection_v1.json`. Report sets: 1.21 at
-`c24c235` is `reports/elixir-1.20.4/c24c235/` (the latest 1.21 run, tool
-`f364fa1`); `reports/m1_review/` (the same compiler, tool `e4fc0c7` with uncommitted
-changes) and `reports/upstream-648b2a9/` (tool `63618c2` with uncommitted
-changes) give the identical classification of every
-family. 1.20.4 is `reports/elixir-1.20.4/` (adapter `1.20.4+759443e`, tool
-`f364fa1`).
+Computed by `detection.exs` from committed product reports only, with every
+report's sha256, provenance revision and counted findings in the output.
 
-| Family | 1.21 (`c24c235`, `648b2a9`) | 1.20.4 |
-| --- | --- | --- |
-| F01 decimal-compare-nan | silent | silent |
-| F02 plug-query-decode-initial | silent | silent |
-| F03 plug-merge-private-keys | silent | silent |
-| F04 ecto-changeset-nil-data | silent | silent |
-| F05 ecto-join-escape-stale | reported (SL002 `possible_domain_escape`) | reported |
-| F06 ecto-quoted-type-stale | reported (SL002 `possible_domain_escape`) | reported |
-| F07 ecto-assoc-query-rows | silent | silent |
-| F08 ecto-preloader-query-fun | silent | silent |
-| F09 oban-registry-via-value | **gated** (SL001 `clause_conflict`) | **gated** |
-| F10 ash-page-opts-falsy | **gated** (SL001 `clause_conflict`) | **gated** |
-| F11 ash-load-ok | reported (SL002) | reported |
-| F12 ash-refute-has-error-ok | reported (SL002) | reported |
-| F13 ash-read-return-query | reported (SL002 on all three MFAs) | reported |
-| F14 ash-page-keyset-integer | reported (SL002) | reported |
-| F15 ash-policy-solve-unsatisfiable | reported (SL002) | reported |
-| F16 absinthe-input-parse-source-location | **gated** (7 SL001 `clause_conflict`) | **gated** |
-| F17 req-response-new-status | silent | silent |
+**Release campaign 1** (`bench/corpus/reports/release-1/`, tool `06b7496`,
+all three adapters): `detection_v2.json` (this version) and
+`detection_v1.json` (version 1, the same reports). The classes are the same
+for the three adapters.
 
-| Adapter | Gated | Reported (not gated) | Silent | Gated recall | Reported recall | `return_value` only: gated / reported recall |
-| --- | ---: | ---: | ---: | --- | --- | --- |
-| 1.21 `c24c235` | 3 | 7 | 7 | 3/17 | 10/17 | 2/14, 9/14 |
-| 1.21 `648b2a9` | 3 | 7 | 7 | 3/17 | 10/17 | 2/14, 9/14 |
-| 1.20.4 | 3 | 7 | 7 | 3/17 | 10/17 | 2/14, 9/14 |
+| Family | release-1, all three adapters |
+| --- | --- |
+| F01 decimal-compare-nan | silent |
+| F02 plug-query-decode-initial | silent |
+| F03 plug-merge-private-keys | silent |
+| F04 ecto-changeset-nil-data | silent |
+| F05 ecto-join-escape-stale | reported (SL002 `possible_domain_escape`) |
+| F06 ecto-quoted-type-stale | reported (SL002 `possible_domain_escape`) |
+| F07 ecto-assoc-query-rows | silent |
+| F08 ecto-preloader-query-fun | silent |
+| F09 oban-registry-via-value | **gated** (SL001 `clause_conflict`) |
+| F10 ash-page-opts-falsy | **gated** (SL001 `clause_conflict`) |
+| F11 ash-load-ok | reported (SL002) |
+| F12 ash-refute-has-error-ok | reported (SL002) |
+| F13 ash-read-return-query | reported (SL002 on all three MFAs) |
+| F14 ash-page-keyset-integer | reported (SL002) |
+| F15 ash-policy-solve-unsatisfiable | reported (SL002) |
+| F16 absinthe-input-parse-source-location | **gated** (7 SL001 `clause_conflict`) |
+| F17 req-response-new-status | silent |
+| F18 ash-query-apply-to-error | reported (SL002 `possible_domain_escape`, inferred extra `{:error, term()}`) |
 
-By category (all adapters): `return_value` 2 gated, 7 reported, 5 silent;
-`struct_default` 1 gated (F16); `struct_field_from_input` 2 silent (F03,
-F17). Of the eight original families (F01 to F08) none is gated and two are
-reported, as before (0 of 9 and 2 of 9 by MFA).
+| Inventory | Adapter | Gated | Reported (not gated) | Silent | Gated recall | Reported recall | `return_value` only: gated / reported recall |
+| --- | --- | ---: | ---: | ---: | --- | --- | --- |
+| v2 | 1.21 `c24c235` | 3 | 8 | 7 | 3/18 | 11/18 | 2/15, 10/15 |
+| v2 | 1.21 `648b2a9` | 3 | 8 | 7 | 3/18 | 11/18 | 2/15, 10/15 |
+| v2 | 1.20.4 | 3 | 8 | 7 | 3/18 | 11/18 | 2/15, 10/15 |
+| v1 | each of the three | 3 | 7 | 7 | 3/17 | 10/17 | 2/14, 9/14 |
+
+By category (v2, all adapters): `return_value` 2 gated, 8 reported, 5
+silent; `struct_default` 1 gated (F16); `struct_field_from_input` 2 silent
+(F03, F17). Of the eight original families (F01 to F08) none is gated and
+two are reported, as before (0 of 9 and 2 of 9 by MFA).
+
+**At the version 1 freeze** (`detection_v1.json` in this directory): 1.21
+at `c24c235` from `reports/elixir-1.20.4/c24c235/` (tool `f364fa1`);
+`reports/m1_review/` (tool `e4fc0c7` with uncommitted changes) and
+`reports/upstream-648b2a9/` (tool `63618c2` with uncommitted changes) gave
+the identical classification of every family, and so did 1.20.4
+(`reports/elixir-1.20.4/`, tool `f364fa1`): 3 / 7 / 7 of 17, the same
+classes as release campaign 1 under version 1.
 
 ## Holdout selection for precision experiments
 
@@ -293,15 +361,17 @@ OSS=...        # decimal, plug, ecto checkouts (bench/corpus/README.md)
 EXPANSION=...  # oban, req, ash, absinthe checkouts (expansion.json)
 elixir bench/evaluation/pinned_witnesses.exs "$OSS" "$EXPANSION"
 elixir bench/corpus/expansion_witnesses.exs "$EXPANSION"
-elixir bench/corpus/holdout_witnesses.exs "$EXPANSION"
+elixir bench/corpus/holdout_witnesses.exs "$EXPANSION" | jq -S .   # holdout_witnesses.json
 elixir bench/corpus/ash_integration_witnesses.exs "$EXPANSION"
-R=bench/corpus/reports
+R=bench/corpus/reports/release-1
 elixir bench/evaluation/detection.exs \
-  "1.21.0-dev+c24c235=$R/elixir-1.20.4/c24c235" \
-  "1.21.0-dev+648b2a9=$R/upstream-648b2a9" \
-  "1.21.0-dev+c24c235(m1_review)=$R/m1_review" \
-  "1.20.4=$R/elixir-1.20.4"
+  "1.20.4+759443e=$R/1.20.4" "1.21.0-dev+648b2a9=$R/648b2a9" \
+  "1.21.0-dev+c24c235=$R/c24c235" | jq -S .                        # detection_v2.json
 ```
+
+The version-1 measurement at the freeze used the report sets
+`reports/elixir-1.20.4/c24c235`, `reports/upstream-648b2a9`,
+`reports/m1_review` and `reports/elixir-1.20.4`.
 
 Each witness script raises when a pinned observation or verdict changes.
 `pinned_witnesses.exs` loads only the ebin directories of the pinned
