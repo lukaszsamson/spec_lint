@@ -42,7 +42,7 @@ or path-dependent hashes, missing repository URLs, and two high findings
 (artifacts of the other build analysed under the running adapter; a
 modified build of a qualified SHA passing preflight).
 
-## M3. Add and qualify the 1.20 adapter: next
+## M3. Add and qualify the 1.20 adapter: done
 
 Keep descriptor construction, inspection and application differences inside
 the adapter. Run the same behavioral tests, then rebuild the corpus using
@@ -56,13 +56,16 @@ and artifact compatibility, not the artifact's chunk alone.
 Defer 1.19 until measurements show enough useful coverage to justify
 maintaining it. Do not advertise it as supported yet.
 
-Starting points from M2: `SpecLint.BuildRecord` already ties each owned
-application's BEAM files to the build that produced them and forces a
-recompile otherwise; dependencies are not covered yet (Mix recompiles them
-only when the Elixir version changes, which it does between 1.20 and 1.21,
-but not between two 1.21 builds). Adapter selection is still read from
-configuration (`SpecLint.Compiler.adapter/0`), not chosen per running
-compiler.
+Delivered (STATUS.md, "Milestone 3"): `SpecLint.Compiler.V120` qualified
+for Elixir 1.20.4 (`759443e`, audit `bench/corpus/toolchain/audit-1.20.4.md`,
+35 rows) next to `V121`; the adapter is selected from the running
+compiler's version and chunk version, and the build record names the
+compiler line, so the other line's artifacts are refused (exit 2) with or
+without a record. The suite passes under c24c235, 648b2a9 and 1.20.4, with
+line-dependent expectations pinned per adapter. The fifteen corpora compile
+and replay under 1.20.4 (`bench/corpus/reports/elixir-1.20.4/`) with the
+same coverage, gates and exit codes as 1.21 outside the standard library;
+fingerprints differ, so baselines are per adapter. 1.19 is not supported.
 
 ## M4. Investigate source-clause mapping
 

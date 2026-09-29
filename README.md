@@ -12,34 +12,46 @@ and [`EXPERIMENTS.md`](EXPERIMENTS.md).
 
 ## Requirements
 
-SpecLint reads compiler internals that change between Elixir development
-revisions, so each release supports specific compiler builds:
+SpecLint reads compiler internals that change between Elixir releases and
+development revisions, so each release supports specific compiler builds:
 
-| SpecLint | Elixir | Source | Checker chunk | Adapter id | Known compiler defects |
-| --- | --- | --- | --- | --- | --- |
-| 0.1.0 | 1.21.0-dev, revision `c24c235` | fork `lukaszsamson/elixir`, branch `ls-mixed-into` | `elixir_checker_v10` | `1.21.0-dev+c24c235` | none known |
-| 0.1.0 | 1.21.0-dev, revision `648b2a9` | upstream `elixir-lang/elixir` | `elixir_checker_v10` | `1.21.0-dev+648b2a9` | `for ... into:` with a collectable that may be a bitstring or a list narrows the body to `bitstring()` in the stored signature, which can make SpecLint gate a correct spec (`bench/corpus/toolchain/audit-648b2a9.md`, row 19) |
+| SpecLint | Elixir | Source | Checker chunk | Adapter id | Status | Known compiler defects |
+| --- | --- | --- | --- | --- | --- | --- |
+| 0.1.0 | 1.21.0-dev, revision `648b2a9` | upstream `elixir-lang/elixir` | `elixir_checker_v10` | `1.21.0-dev+648b2a9` | qualified (`bench/corpus/toolchain/audit-648b2a9.md`) | `for ... into:` with a collectable that may be a bitstring or a list narrows the body to `bitstring()` in the stored signature, which can make SpecLint gate a correct spec (audit row 19) |
+| 0.1.0 | 1.21.0-dev, revision `c24c235` | fork `lukaszsamson/elixir`, branch `ls-mixed-into` | `elixir_checker_v10` | `1.21.0-dev+c24c235` | qualified (the development revision) | none known |
+| 0.1.0 | 1.20.4 (revision `759443e`, the precompiled release) | upstream release `v1.20.4` | `elixir_checker_v8` | `1.20.4+759443e` | qualified, with its own baselines (`bench/corpus/toolchain/audit-1.20.4.md`) | none known; Erlang `-nominal` types are left out by its `Code.Typespec` (a reference to one is an unresolved remote type) |
+| | 1.19 and earlier, other 1.20 and 1.21 builds | | | | not supported | |
 
-Both on Erlang/OTP 28. On any other compiler, `mix spec_lint` reports
-"unsupported compiler". In CI mode (`--ci`) that exits with status 2. The
-revision alone does not qualify a build: preflight also compares the code
-of the checker modules with the qualified build's (a patched checkout of a
-qualified commit is unsupported) and probes every compiler internal
-SpecLint uses; a missing or changed one is reported the same way.
+All on Erlang/OTP 28 (1.20.4 also passes preflight on OTP 29). SpecLint
+picks the adapter for the running compiler from its version and checker
+chunk version. On any other compiler, `mix spec_lint` reports
+"unsupported compiler" and names the supported ones. In CI mode (`--ci`)
+that exits with status 2. The revision alone does not qualify a build:
+preflight also compares the code of the checker modules with the
+qualified build's (a patched checkout of a qualified commit is
+unsupported) and probes every compiler internal SpecLint uses; a missing
+or changed one is reported the same way.
 `bench/corpus/toolchain/build_elixir.sh` builds a qualified upstream
 revision from a clean clone.
 
-Both revisions are `1.21.0-dev`, so Mix does not recompile a project when
-you switch between them. `mix spec_lint` records which build produced the
-project's BEAM files (`_build/ENV/lib/APP/.mix/spec_lint.build`) and
-recompiles with `--force` when that is not the running build, including the
-first time it runs on a project it did not compile itself.
+The two 1.21 revisions are both `1.21.0-dev`, so Mix does not recompile a
+project when you switch between them. `mix spec_lint` records which build
+produced the project's BEAM files (`_build/ENV/lib/APP/.mix/spec_lint.build`)
+and recompiles with `--force` when that is not the running build,
+including the first time it runs on a project it did not compile itself.
+Switching between 1.20.4 and 1.21 recompiles in any case. BEAM files of
+the other compiler line are never analysed: without the Mix task (an
+explicit ebin, `SpecLint.Run`), a build record of the other line, or its
+checker chunks, make the run fail with exit status 2.
 
-Baselines record the adapter id, so switching between the two revisions is
-an adapter change: a baseline written under the other one is not applied,
-and `mix spec_lint --ci` exits 2 asking you to review and regenerate it with
-`mix spec_lint.baseline`. On the fifteen benchmark corpora no fingerprint
-differs between the two revisions, so regeneration keeps the same entries.
+Baselines record the adapter id, so switching compilers is an adapter
+change: a baseline written under another one is not applied, and
+`mix spec_lint --ci` exits 2 asking you to review and regenerate it with
+`mix spec_lint.baseline`. Keep one baseline per compiler you run in CI. On
+the fifteen benchmark corpora no fingerprint differs between the two 1.21
+revisions; between 1.20.4 and 1.21 the findings and gates are the same
+outside the standard library, but nearly every fingerprint differs
+(`bench/corpus/reports/elixir-1.20.4/README.md`).
 
 Your modules need debug info, which is the Mix default. Specs are read from
 the debug info chunk. A module compiled without it is reported as `SL008`.

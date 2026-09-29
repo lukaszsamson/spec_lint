@@ -503,6 +503,27 @@ Inference behaviour that no internal probe can see (such as the `for ...
 into:` narrowing of `648b2a9`, audit row 19) is pinned per revision by tests
 and listed in the support matrix.
 
+**Two compiler lines (Milestone 3).** `SpecLint.Compiler.V120` is
+qualified for Elixir 1.20.4 (revision `759443e`, checker chunk v8,
+`bench/corpus/toolchain/audit-1.20.4.md`) next to `V121`. The adapter is
+chosen per VM by `SpecLint.Compiler.select_adapter/2` from
+`System.version()` and the checker chunk version the running `:elixir_erl`
+writes; the chosen adapter's preflight then checks the revision, the
+compiler identity and the capability probes. A compiler no adapter covers
+fails preflight with the list of supported ones (1.19 is not supported).
+The code shared by both adapters is split out without a change in
+behaviour: `SpecLint.Compiler.Qualification` (preflight, the probes that
+are the same on both lines, chunk decoding, the pattern and guard
+re-check) and `SpecLint.Compiler.DescrWalk` (components, printing,
+canonical form). Everything that differs stays in the adapters: the set
+operations (`union/2` on 1.20, `opt_union/2` on 1.21), the map field and
+key domain encoding, the expansion of `term()` (1.20 has no public
+`unfold/1`) and of recursive nodes (1.20 has none), the `Descr` probes, the
+`apply_infer/2` copy, the chunk version and the pinned build digests.
+Functions that only one line's `Descr` exports are called through
+`:erlang.apply/3`, so SpecLint compiles without warnings, and passes
+Dialyzer, on both lines.
+
 **Compiler identity (Milestone 2 review).** The revision alone does not
 identify a build: Elixir takes it from `git rev-parse HEAD`, so a modified
 checkout of a qualified commit reports it too (a `c24c235` build with the
@@ -542,6 +563,19 @@ recorded: Mix does not recompile them across the two builds, and their
 chunks feed the signatures the running compiler infers for the project.
 Reports carry, per BEAM, the digest of the decoded `ExCk` chunk next to
 the `beam_lib` MD5, which leaves that chunk out.
+
+Across compiler lines (Milestone 3) artifacts fail closed three ways. Mix
+recompiles a project and its dependencies when `System.version()`
+changes, as it does between 1.20.4 and 1.21, and the Mix tasks' build
+record forces the owned applications. When SpecLint reads BEAM files
+without the Mix task (an explicit ebin, `SpecLint.Run` on a build
+directory), a record now also names the Elixir version, checker chunk
+version and adapter module, and a record of the other line is refused as
+`{:other_compiler, ...}` ("compiled by another compiler line ..., whose
+artifacts the running adapter cannot read", exit 2); without a record, the
+other line's chunk version fails decoding (`unsupported_chunk`, exit 2 in
+CI). Baselines record the adapter id, so each line has its own baselines;
+another line's baseline is not applied and CI exits 2.
 
 **Decision:** direct chunk reading from Fable for signatures; the
 `Module.ParallelChecker` cache is started only for body analysis and for
@@ -611,6 +645,32 @@ Rules:
 - Erlang records stay open tuples tagged with the record name.
 - One unsupported construct marks that slice `unsupported`; other slices of
   the same spec are still analysed.
+
+**Adapter notes (Milestone 3).** Translation is the same code on both
+compiler lines; it builds descrs only through `SpecLint.Compiler`, so the
+line differences it meets are the adapters':
+
+- Recursive types never become recursive descrs on either line: the depth
+  budget and re-entry cut them off to `term()` with `recursive_cutoff`.
+  1.20 has no recursive nodes (`recursive_types: false` in the
+  capabilities), so there is no 1.20-specific loss to record, and the
+  translator never asks for the capability.
+- Map fields: an optional field reaches `Compiler.closed_map/2` as
+  `{key, value, true}` on both lines; V120 writes it as `if_set(value)` and
+  names the domain of bitstrings that are not binaries `:bitstring`, and
+  hands components back without the `not_set()` marker. The translation
+  and its loss records do not change.
+- Nominal types: 1.20.4's `Code.Typespec.fetch_types/1` leaves Erlang
+  `-nominal` types out, so a remote reference to one translates as
+  `unresolved_remote_type` (`term()` above, `none()` below) instead of
+  `nominal_boundary`, and `expand_opaque: true` cannot expand it. The
+  bounds are the same; only the loss label differs.
+- Stored signatures differ in ways that matter for mapping, not for
+  translation: 1.20.4 keeps a source clause that always raises as a
+  stored clause returning `none()` (1.21 drops it), so stored clause
+  indexes shift, and its checker reports some compound impossible guards
+  that 1.21 does not (audit-1.20.4.md rows 34 and 35). Findings name the
+  stored clause, which the tests pin per adapter.
 
 **Decision:** no `__info__(:struct)` reconstruction. The compiler already
 expands structs on the spec path.

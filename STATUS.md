@@ -5,10 +5,102 @@ Date 2026-09-29. `DESIGN.md` is the authoritative design,
 Phase 4 follows the review of the Phase 3 implementation at `0cc9c50`;
 previous results below are historical and are superseded where noted.
 
+## Milestone 3 delivered: the Elixir 1.20 adapter (2026-09-29)
+
+`SpecLint.Compiler.V120` qualifies Elixir 1.20.4 (revision `759443e`,
+the precompiled release, checker chunk `elixir_checker_v8`, adapter id
+`1.20.4+759443e`) next to `V121` (`c24c235`, `648b2a9`). 1.19 is not
+supported. Commits `516e7e4` (adapter, selection, tests), `bfbe66f` and
+`f364fa1` (toolchain), `f0069b0` (audit), `839a415` (replay) and the
+documentation after them. Formatting and Credo were checked on the
+committed tree: the working tree also held untracked files of the
+concurrent source-clause mapping experiment (`bench/clause_mapping/`,
+not part of these commits), which fail both.
+
+| | 1.21 (`c24c235`, same tool) | 1.20.4 |
+| --- | --- | --- |
+| Test suite | 415 passed, 8 excluded (pinned to V120); the same under `648b2a9` | 418 passed, 5 excluded (pinned to V121) |
+| Dialyzer, strict Credo, formatting | 0 errors, clean (c24c235 and 648b2a9, separate PLTs) | 0 errors (own PLT), clean |
+| Self-check (`mix spec_lint --ci`) | 401 slices, exit 0 (also 648b2a9) | 401 slices, exit 0 |
+| Cross-compiler test (`SPEC_LINT_OTHER_ELIXIR`) | passes with 1.20.4 as the other compiler (under c24c235 and 648b2a9) | passes with c24c235 as the other compiler |
+| Capability probes | 11 of 11 | 11 of 11 (also on OTP 29.0.1) |
+| Corpora compiled | 14 of 14 | 14 of 14 (none fails to compile) |
+| Compared slices, fifteen corpora | 4,204 | 4,170 (the standard library differs: 1,743 against 1,777) |
+| Findings / gates | 63 / 9 | 65 / 9 |
+| Unknown obligations | 3,113 | 3,095 |
+| Absinthe `run.sh` wall time | 72 s | 66 s |
+
+- **Audit** (`bench/corpus/toolchain/audit-1.20.4.md`, 35 rows: the 25 of
+  the 648b2a9 audit and ten for the encodings the adapters read and the
+  checker behaviours the tests pin). Every row was probed on 1.20.4
+  (`audit_probe.exs`, the adapter's probes). Rows that differ: the `Descr`
+  exports (`union/2` for `opt_union/2`, no public `unfold/1`, no
+  `recursive/1`), the map field encoding (the `not_set()` marker in the
+  value) and key domains (`:bitstring` for `:bitstring_no_binary`, marked
+  values), recursive nodes (absent), the `apply_infer/2` union function,
+  the chunk version, `Code.Typespec` (leaves `-nominal` types out), the
+  build digests, a raising source clause (stored as `-> none()` by 1.20.4,
+  dropped by 1.21) and compound impossible guards (reported by the 1.20.4
+  checker, not by 1.21). Row 19 (`for ... into:`) behaves as on `c24c235`:
+  no narrowing.
+- **Adapter.** All descriptor construction, inspection, application,
+  canonical serialisation and printing differences are in the adapters.
+  The code both share moved out of `V121` without a change in behaviour
+  (`SpecLint.Compiler.Qualification`, `SpecLint.Compiler.DescrWalk`): the
+  fifteen-corpus replay under `c24c235` with the new tool equals
+  `reports/m1_review/` in every ledger, finding, gate, fingerprint, exit
+  code and BEAM MD5 (only the `exck` and `artifacts` fields added by the
+  Milestone 2 review differ; `reports/elixir-1.20.4/c24c235/summary.json`).
+  1.20 lacks recursive descrs and `unfold/1`: V120 reports
+  `recursive_types: false` and expands `term()` itself (checked equal to
+  `term()` at preflight). The translator builds no recursive descr on
+  either line (recursive typespecs are cut off with `recursive_cutoff`),
+  so no loss is specific to 1.20; its recursive-type tests pass unchanged
+  under both adapters. The one translation difference is row 18: an Erlang
+  `-nominal` type read from its BEAM translates as `unresolved_remote_type`
+  on 1.20.4 and `nominal_boundary` on 1.21, with the same bounds (a test
+  pins it per adapter).
+- **Selection and artifacts.** The adapter is chosen from
+  `System.version()` and the running checker chunk version
+  (`select_adapter/2`); revision and build identity are checked by its
+  preflight. The build record now names the Elixir version, checker chunk
+  version and adapter module. A 1.21 artifact under 1.20.4, and the
+  reverse, is recompiled by the Mix tasks, and refused (exit 2) when read
+  without them: with a record, "compiled by another compiler line
+  (1.21.0-dev+c24c235, checker elixir_checker_v10, adapter
+  SpecLint.Compiler.V121), whose artifacts the running adapter cannot
+  read"; without one, `unsupported checker chunk ... version
+  :elixir_checker_v10, the running checker writes :elixir_checker_v8`. The
+  integration test covers both directions (`SPEC_LINT_OTHER_ELIXIR`: 1.20.4
+  under c24c235, c24c235 under 1.20.4) and c24c235/648b2a9.
+- **Pinned per adapter** (tests tagged `adapter:`, or exact expectations
+  per adapter): the classes of the nine omission fixtures and the two
+  clause-local stand-ins (identical on both lines: seven `unknown`, two
+  `possible_domain_escape`; `page_opts/1` and `via/3` `clause_conflict`,
+  gated with the clause-local qualification), the stored clause of a
+  raising clause, the compound impossible guards, nominal typespecs, the
+  row 19 verdict, the report envelope, and the `Descr` probe stubs.
+- **Corpora** (`bench/corpus/reports/elixir-1.20.4/`, README there). All
+  fourteen OSS corpora compile under 1.20.4 into separate build paths. On
+  all of them coverage, obligations, unknown reasons, loss kinds, findings,
+  evidence classes, gates (subject, rule, slice and stored clause) and exit
+  codes equal the 1.21 replay: no gate differs, so none needed triage. The
+  standard library is another library (1.20.4's): 1,743 slices, 35
+  informational SL002 findings against 33, no gate on either; the three
+  findings only 1.20.4 has come from its more precise returns
+  (`DateTime.diff/3`, `NaiveDateTime.diff/3`: `dynamic(float() or
+  integer())` where 1.21 has `dynamic()`) and its stored raising clause
+  (`Float.round/2`: `(float(), term()) -> none()`). Only 28 of 65 finding
+  fingerprints are shared (0 of Absinthe's 9, including its seven gates),
+  because the canonical form of the stored and spec types differs between
+  lines. Baselines are therefore per adapter
+  (`reports/elixir-1.20.4/baselines/`); another line's baseline is not
+  applied and CI exits 2.
+
 ## Milestones 1 and 2 delivered (2026-09-29)
 
 Both milestones of the six-milestone plan (`NEXT_STEPS.md`, "Milestones")
-are delivered and reviewed; M3 (the 1.20 adapter) is next.
+are delivered and reviewed; M3 (the 1.20 adapter) followed, above.
 
 | | Before | After |
 | --- | --- | --- |
