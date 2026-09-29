@@ -1,0 +1,12 @@
+Elixir 1.21.0-dev revision c24c235 OTP 28
+type warning on mapped/0 (Enum.map): false
+type warning on comprehension/0 (for): true
+stored Enum.map/2: (not %Range{}, term()) -> dynamic()
+stored Enum.map/2: (%Range{}, term()) -> dynamic(empty_list() or non_empty_list(term(), term()))
+stored comprehension/0: () -> dynamic()
+stored mapped/0: () -> dynamic(float() or integer())
+stored tags/1: (empty_list() or non_empty_list(term(), term())) -> dynamic()
+stored tags_for/1: (empty_list() or non_empty_list(term(), term())) -> dynamic(list({term(), :tag}))
+runtime  tags([:a]) = [a: :tag]
+runtime  tags_for([:a]) = [a: :tag]
+VERDICT: reproduces

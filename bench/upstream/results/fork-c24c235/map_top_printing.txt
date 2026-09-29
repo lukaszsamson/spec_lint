@@ -1,0 +1,18 @@
+Elixir 1.21.0-dev revision c24c235 OTP 28
+equal?(m, open_map()) = true
+to_quoted_string(open_map()) = map()
+to_quoted_string(m) =
+%{
+  atom() => term(),
+  bitstring() => term(),
+  float() => term(),
+  fun() => term(),
+  integer() => term(),
+  list() => term(),
+  map() => term(),
+  pid() => term(),
+  port() => term(),
+  reference() => term(),
+  tuple() => term()
+}
+VERDICT: reproduces

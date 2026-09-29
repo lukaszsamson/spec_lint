@@ -29,7 +29,7 @@ so `deps.get` changed nothing). Both were built in place with
 
 Toolchain caveat for Tesla: its `.tool-versions` selects `elixir 1.19-otp-28`
 and `erlang 28.5`, which the asdf shims would honour. The build and all
-analysis were run with `ASDF_ELIXIR_VERSION=path:/Users/lukaszsamson/elixir`
+analysis were run with `ASDF_ELIXIR_VERSION=path:$HOME/elixir`
 and `ASDF_ERLANG_VERSION=28.5.0.1`, and `mix --version` confirmed
 `Mix 1.21.0-dev (c24c235)`. The `.tool-versions` file itself was not edited.
 Absinthe has no `.tool-versions`. Tesla's compile printed compiler warnings

@@ -1,0 +1,12 @@
+Elixir 1.21.0-dev revision c24c235 OTP 28
+type warning on with_helper/0 (helper call): false
+type warning on inlined/0 (helper body written out): true
+stored inlined/0: () -> dynamic()
+stored sign/1: (:nan) -> dynamic()
+stored sign/1: (integer()) -> :negative or :positive or :zero
+stored sign_inline/1: (:nan) -> {:error, :nan}
+stored sign_inline/1: (integer()) -> :negative or :positive or :zero
+stored with_helper/0: () -> dynamic(float() or integer())
+runtime  sign(:nan) = {:error, :nan}
+runtime  sign_inline(:nan) = {:error, :nan}
+VERDICT: reproduces

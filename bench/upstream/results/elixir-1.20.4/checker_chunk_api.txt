@@ -1,0 +1,12 @@
+Elixir 1.20.4 revision 759443e OTP 29
+diagnostic (line {14, 7}): the following clause is redundant: def redundant(:a) it has type: :a previous clauses have already matched on the following types: atom()
+checker chunk version: :elixir_checker_v8, keys: [:exports, :mode]
+dropped/1: 2 source clauses, 2 stored, export keys [:sig]
+    (:a) -> :ok
+    (:b) -> none()
+merged/1: 3 source clauses, 2 stored, export keys [:sig]
+    (:a or :b) -> integer()
+    (:c) -> :x
+redundant/1: 3 source clauses, 1 stored, export keys [:sig]
+    (term()) -> integer()
+VERDICT: reproduces

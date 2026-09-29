@@ -1,0 +1,9 @@
+Elixir 1.21.0-dev revision 648b2a9 OTP 28
+diagnostic (warning): expected the body of a for-comprehension with into: binary() (or bitstring()) to be a binary (or bitstring): :ok but got type: :ok
+diagnostic (warning): incompatible types given to f/2: f(true, :ok) given types: true, -:ok- but expected one of: term(), bitstring()
+stored caller/0: () -> dynamic()
+stored f/2: (term(), bitstring()) -> dynamic(bitstring())
+stored literal/1: (term()) -> dynamic()
+runtime  f(true, :ok) = :ok
+runtime  literal(true) = [:ok]
+VERDICT: reproduces

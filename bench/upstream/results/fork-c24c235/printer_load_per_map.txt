@@ -1,0 +1,15 @@
+Elixir 1.21.0-dev revision c24c235 OTP 28
+absent struct prints as: %{__struct__: This.Struct.Module.Does.Not.Exist, a: integer(), b: atom()}
+code path length 43
+  plain map                    6.0 us/print  undefined_function calls: 0  ensure_loaded calls: 0  (2000 prints)
+  struct, loaded               6.4 us/print  undefined_function calls: 1  ensure_loaded calls: 1  (2000 prints)
+  struct, module absent       32.0 us/print  undefined_function calls: 2000  ensure_loaded calls: 2000  (2000 prints)
+code path length 143
+  plain map                    6.2 us/print  undefined_function calls: 0  ensure_loaded calls: 0  (2000 prints)
+  struct, loaded               6.1 us/print  undefined_function calls: 0  ensure_loaded calls: 0  (2000 prints)
+  struct, module absent      685.5 us/print  undefined_function calls: 2000  ensure_loaded calls: 2000  (2000 prints)
+code path length 443
+  plain map                    5.9 us/print  undefined_function calls: 0  ensure_loaded calls: 0  (2000 prints)
+  struct, loaded               6.1 us/print  undefined_function calls: 0  ensure_loaded calls: 0  (2000 prints)
+  struct, module absent     6090.7 us/print  undefined_function calls: 2000  ensure_loaded calls: 2000  (2000 prints)
+VERDICT: reproduces
