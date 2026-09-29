@@ -28,6 +28,10 @@ False positives among new gates: 0 of 1. Negative controls: all pass,
 including the review's dead-clause controls. The holdouts had no clause
 conflict blocked by an arrow prerequisite, so they could not confirm a
 benefit; the decision rests on the soundness argument and the controls.
+Confirmation runs with the final tree and the default configuration
+(`reports/expansion/clause_local/default/`): stdlib 0 gates (exit 0),
+absinthe 7 (exit 1), tesla 0 (exit 0), matching the flag-on measurement
+finding for finding.
 
 **Independent adversarial review.** Twelve findings, all resolved
 (`clause_local_qualification.md`, "Independent review"):

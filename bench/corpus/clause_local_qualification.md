@@ -297,6 +297,25 @@ on it (the stdlib and holdout confirmation runs below, and the re-check of
 `Oban.Registry.via/3`, `Ash.Page.page_opts/1` and
 `Absinthe.Blueprint.Input.parse/1`, which report no diagnostic).
 
+## Confirmation runs (final tree, default configuration)
+
+After the decision was committed (`f71b657`), the stdlib and both fresh
+holdouts were rerun product-only with no product arguments, so with the new
+default and the compiler check of `clause_reachable`
+(`reports/expansion/clause_local/default/`; `provenance.tool.source_sha256 =
+14c684b7…82f2` in all three, tool revision `f71b657`).
+
+| Corpus | Compared slices | SL001 findings | Gates | Exit | Against `on/` |
+| --- | ---: | ---: | ---: | --- | --- |
+| stdlib | 1,777 | 0 | 0 | 0 | identical report |
+| absinthe (holdout) | 453 | 7 | 7 | 1 | same findings, fingerprints, prerequisites, data, gates and ledger; only the detail label "inferred clause" is now "stored signature clause" |
+| tesla (holdout) | 387 | 0 | 0 | 0 | identical report |
+
+The compiler check reports no pattern or guard diagnostic for
+`Absinthe.Blueprint.Input.parse/1`, so its seven gates keep
+`clause_reachable: unchecked`. The reports match the decision: no gate
+moved on the holdouts, and the stdlib stays at zero gates.
+
 ## Decision
 
 **Adopted: `clause_local_qualification` defaults to `true`, and a clause
