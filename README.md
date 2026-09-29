@@ -75,7 +75,9 @@ that the module was produced in this VM, or the unchanged artifact already
 has verified provenance. Version 1 and 2 records require a rebuild. An app-wide
 successful compile cannot verify orphan BEAMs: the task refuses unverified
 artifacts with exit 2 and leaves them in place for explicit repair.
-Only built-in Mix compiler pipelines are supported. A custom compiler can
+Only the complete built-in Mix compiler pipeline is supported. The `:leex`
+and `:yecc` generators may run in either order before `:erlang`, `:elixir`
+and `:app`, which must remain in that order. A custom compiler can
 overwrite an artifact after an Elixir compiler event, so nonstandard
 compiler pipelines are refused with exit 2, including umbrella child
 configurations. These checks detect stale artifacts in trusted projects;
@@ -131,7 +133,8 @@ Pin a commit with `ref:` for reproducible builds. For local development,
 replace `git:` with `path: "../spec_lint"`. Path, local git and umbrella
 installation are exercised by `test/integration/release/`.
 
-Only Mix's complete default compiler pipeline is supported. Custom compilers,
+Only Mix's complete built-in compiler pipeline is supported; `:leex` and
+`:yecc` may swap places before `:erlang`, `:elixir`, `:app`. Custom compilers,
 missing stages, compile-task aliases and replacement compile tasks in a
 project, umbrella child or source-backed Mix dependency cause exit 2.
 This currently includes `file_system`, used by some development tools and

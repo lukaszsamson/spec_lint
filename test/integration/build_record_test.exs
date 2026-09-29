@@ -178,7 +178,13 @@ defmodule SpecLint.Integration.BuildRecordTest do
     mix_file = Path.join(dir, "mix.exs")
     original = File.read!(mix_file)
 
-    for compilers <- [[], [:erlang, :app]] do
+    for compilers <- [
+          [],
+          [:erlang, :app],
+          [:leex, :leex, :yecc, :erlang, :elixir, :app],
+          [:leex, :yecc, :elixir, :erlang, :app],
+          [:leex, :yecc, :erlang, :app, :elixir]
+        ] do
       File.write!(
         mix_file,
         String.replace(

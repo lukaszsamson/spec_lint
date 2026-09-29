@@ -38,9 +38,11 @@ defmodule SpecLint.BuildRecord do
   produced orphan BEAM files: those cause exit 2 and are retained for the
   user to rebuild or remove explicitly. Only Mix's complete default
   compiler pipeline, without compile task aliases or replacements, is
-  supported. Disabling a stage could leave stale source artifacts in an
-  otherwise verified build. Dependency snapshots bind absolute ebin paths;
-  moving a build tree invalidates them and requires a rebuild.
+  supported, with either ordering of its two source generators before
+  the fixed Erlang, Elixir, and app stages. Disabling a stage could leave
+  stale source artifacts in an otherwise verified build. Dependency
+  snapshots bind absolute ebin paths; moving a build tree invalidates them
+  and requires a rebuild.
   Events identify module names, not
   output bytes, so a later custom compiler restoring cached BEAMs could
   otherwise have another compiler's output recorded as this build's.

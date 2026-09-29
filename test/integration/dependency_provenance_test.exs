@@ -178,6 +178,47 @@ defmodule SpecLint.Integration.DependencyProvenanceTest do
     refute File.exists?(context.record)
   end
 
+  test "both source generator orders attest owned and dependency artifacts", context do
+    for {dir, app} <- [{context.dir, :stored_consumer}, {context.dep, :stored_dependency}] do
+      file = Path.join(dir, "mix.exs")
+
+      File.write!(
+        file,
+        String.replace(
+          File.read!(file),
+          "app: #{inspect(app)},",
+          "app: #{inspect(app)}, compilers: [:leex, :yecc, :erlang, :elixir, :app],"
+        )
+      )
+
+      Fixture.write!(dir, "src/#{app}_scanner.xrl", """
+      Definitions.
+      D = [0-9]
+      Rules.
+      {D}+ : {token, {integer, TokenLine, list_to_integer(TokenChars)}}.
+      Erlang code.
+      """)
+    end
+
+    {status, json, output} = Fixture.lint(context.dir)
+    assert status == if(diagnostic_only?(), do: 2, else: 0), output
+    assert json != nil
+    assert File.exists?(context.record)
+    assert File.exists?(context.dep_record)
+
+    for app <- [:stored_consumer, :stored_dependency] do
+      assert File.exists?(
+               Path.join(context.dir, "_build/dev/lib/#{app}/ebin/#{app}_scanner.beam")
+             )
+    end
+
+    previous = File.read!(context.record)
+    {again, _json, output} = Fixture.lint(context.dir)
+    assert again == status, output
+    refute output =~ "Compiling"
+    assert File.read!(context.record) == previous
+  end
+
   test "custom cache compilation in a dependency is refused", context do
     {_status, _json, _output} = Fixture.lint(context.dir)
     file = Path.join(context.dep, "mix.exs")

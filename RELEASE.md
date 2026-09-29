@@ -13,8 +13,9 @@ callers. All findings have `gate: false`; the report is `incomplete`.
 cannot waive the restriction or be written. `c24c235` and 1.20.4 remain CI
 candidates pending current-tree requalification. Build-record version 3
 requires per-module production evidence and rejects unverified orphan
-BEAMs without deleting them. Only built-in Mix compiler pipelines are
-supported; custom compiler configurations, including umbrella children,
+BEAMs without deleting them. Only the complete built-in pipeline is
+supported, with either lexer/parser generator order before Erlang, Elixir
+and app stages; custom compiler configurations, including umbrella children,
 are refused with exit 2. Dependency provenance is also required before
 consumer compilation; the same checker chunk version does not establish
 that two compiler builds inferred the same signatures. Custom compiler-bearing

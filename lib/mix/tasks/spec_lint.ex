@@ -176,11 +176,16 @@ defmodule Mix.Tasks.SpecLint do
     compilers = Mix.Task.Compiler.compilers()
     supported = [:yecc, :leex, :erlang, :elixir, :app]
 
-    unless compilers == supported do
+    # Both generators emit only .erl source. Either order is safe before
+    # the fixed artifact-producing Erlang, Elixir, and app stages.
+    generators_swapped = [:leex, :yecc, :erlang, :elixir, :app]
+
+    unless compilers in [supported, generators_swapped] do
       Mix.raise(
         "unsupported compiler pipeline for #{Mix.Project.config()[:app] || "umbrella"}: " <>
           "#{inspect(compilers)}; compiler provenance requires Mix's built-in compilers " <>
-          "with every default stage in order because compiler events do not attest output bytes",
+          "with both generators before erlang, elixir, and app in order because " <>
+          "compiler events do not attest output bytes",
         exit_status: 2
       )
     end

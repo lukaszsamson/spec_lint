@@ -586,7 +586,11 @@ event proves it was produced in this VM, or an unchanged artifact already
 has verified provenance. Version 1 and 2 records require a rebuild. An app-wide
 successful compile does not establish provenance for orphan BEAMs; the
 task refuses them with exit 2 and retains them for explicit repair.
-Only built-in Mix compiler pipelines are supported. Nonstandard custom
+Only the complete built-in pipeline is supported: `:yecc` and `:leex`
+in either order, followed by `:erlang`, `:elixir`, `:app`. Both pinned
+generators emit `.erl` sources, so their order does not weaken BEAM
+production evidence. Omitting or duplicating stages, reordering the artifact
+compilers, and nonstandard custom
 compiler pipelines, including umbrella child configurations, are refused
 with exit 2 because a custom compiler can overwrite artifacts after an
 Elixir compiler event. This is stale-artifact checking for trusted project

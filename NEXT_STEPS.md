@@ -31,6 +31,23 @@ Finish this sequence before publishing an experimental release:
    (it crashes an existing compiler test). See
    `bench/upstream/review-2026-09-29.md`.
 
+### Public Mix projects with custom dependency compilers
+
+The copied, locked Oban project exercises a boundary the explicit-ebin corpus
+runner does not: compilation through the public Mix task. Allowing either
+built-in lexer/parser generator order removes the unnecessary refusal of
+`earmark_parser`, but the selected test environment still includes
+`file_system` and correctly exits 2 on its custom compiler. It produces no
+analysis report. Keep that negative result separate from Oban's successful
+raw-BEAM analysis and from the small installation fixtures.
+
+Before broader CI adoption, investigate artifact evidence at the compiler
+boundaries for custom dependency compilers. Do not whitelist a package name
+or infer provenance from its final files after an arbitrary compiler stage.
+Qualify actual public-task runs on prominent projects and report their
+selected Mix environments and cold/incremental compile overhead. Raw-BEAM
+replay timings cover analysis, not this new dependency verification cost.
+
 ### Memory follow-up after qualification
 
 The frozen 1.20.4 Absinthe workload was killed by the enforced local 6 GiB
