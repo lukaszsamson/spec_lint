@@ -1,0 +1,870 @@
+{
+  "adapter": "1.20.4+759443e",
+  "artifacts": {
+    "build_digest": "ab40621dc4c1ee7ce26ad192bb3ab0dd65c434816cd2dfb247faff3446e85766",
+    "recorded": [],
+    "unrecorded": [
+      "decimal"
+    ]
+  },
+  "baseline": {
+    "applied": false,
+    "baselined": 0,
+    "expired": 0,
+    "gate_changed": [],
+    "new": 2,
+    "path": ".spec_lint_baseline.json",
+    "pending_reconciliation": [],
+    "reason": "missing",
+    "stale_findings": [],
+    "stale_inventory": []
+  },
+  "beams": [
+    {
+      "exck": "cb1169889785f9160f66b97bc70ba04c32fc145909fc120d9990d6bbefa01257",
+      "md5": "0902e7d593ff625c0cf16279c24ebaa9",
+      "module": "Decimal",
+      "path": "$BUILD/decimal/lib/decimal/ebin/Elixir.Decimal.beam"
+    },
+    {
+      "exck": "dd7ae444fae6b602215162bc231099cb8d70ef6754c05dc941cf1b1d3d0deedb",
+      "md5": "26ed9e46ea0ff6638652295d2fe73ac6",
+      "module": "Decimal.Context",
+      "path": "$BUILD/decimal/lib/decimal/ebin/Elixir.Decimal.Context.beam"
+    },
+    {
+      "exck": "cd58d4f4d16df01c052b3dce05ec8bf200f74b1757f69cb0584cc4e2d3ddba2d",
+      "md5": "4d823ddaad1941eedc06527b624f9ed6",
+      "module": "Decimal.Error",
+      "path": "$BUILD/decimal/lib/decimal/ebin/Elixir.Decimal.Error.beam"
+    },
+    {
+      "exck": "722a99a1081306643aa7eb109da57ec94ffb86a604edc5272b9200667c3ee97e",
+      "md5": "961c3f1a3cbb9a07ebd2834cba66c7bd",
+      "module": "Decimal.Macros",
+      "path": "$BUILD/decimal/lib/decimal/ebin/Elixir.Decimal.Macros.beam"
+    },
+    {
+      "exck": "9f4e76356132181fb03f7ac643c8c7cf058fd7cb7ed3ce3694e5510e37802139",
+      "md5": "33c3f4f8c4cce8c2bf220b5448044412",
+      "module": "Inspect.Decimal",
+      "path": "$BUILD/decimal/lib/decimal/ebin/Elixir.Inspect.Decimal.beam"
+    },
+    {
+      "exck": "7c266fdaea32901f4d02be262e563ca1f934a58633a505b34a9d742ab477a133",
+      "md5": "d4f1b43aedde5d549432b2ec839b500f",
+      "module": "JSON.Encoder.Decimal",
+      "path": "$BUILD/decimal/lib/decimal/ebin/Elixir.JSON.Encoder.Decimal.beam"
+    },
+    {
+      "exck": "3aa47daa88f15031a49aacdfc39aa8d9cc8efed04129efba602c06f115e4808e",
+      "md5": "a7d4d5ce08184afd8eb635dc95c40813",
+      "module": "String.Chars.Decimal",
+      "path": "$BUILD/decimal/lib/decimal/ebin/Elixir.String.Chars.Decimal.beam"
+    }
+  ],
+  "capabilities": {
+    "bodies": false,
+    "body_hook": false,
+    "signatures": true
+  },
+  "checker_version": "elixir_checker_v8",
+  "completion": {
+    "blocking": 0,
+    "coverage_violations": [],
+    "exit_code": 0,
+    "reasons": [],
+    "status": "complete"
+  },
+  "config": {
+    "ci": true,
+    "clause_local_qualification": true,
+    "digest": "sha256:c95f1857e0a209121d5e3fc51e45212b3fbc95f647f4b53df9d4adc6b5dcf423",
+    "expand_opaque": false,
+    "profile": "review",
+    "require_static_return": false,
+    "rules": [
+      [
+        "SL001",
+        "warning"
+      ],
+      [
+        "SL002",
+        "warning"
+      ],
+      [
+        "SL003",
+        "warning"
+      ],
+      [
+        "SL006",
+        "warning"
+      ],
+      [
+        "SL008",
+        "warning"
+      ]
+    ],
+    "warnings_as_errors": false
+  },
+  "elixir": "1.20.4",
+  "findings": [
+    {
+      "baseline": "new",
+      "blocking": false,
+      "clause": null,
+      "data": {
+        "reasons": [
+          ":input_approximate",
+          "{:domain_escape, [0]}",
+          ":whole_kind_only"
+        ]
+      },
+      "details": [
+        [
+          "spec",
+          "to_integer(t()) :: integer()"
+        ],
+        [
+          "inferred extra",
+          "float()"
+        ],
+        [
+          "slice",
+          "(%Decimal{sign: integer(), coef: :NaN or :inf or integer(), exp: integer()})"
+        ],
+        [
+          "evidence",
+          "possible_domain_escape (signature backend, translation approximate: integer_refinement_erased)"
+        ]
+      ],
+      "evidence": "possible_domain_escape",
+      "file": "lib/decimal.ex",
+      "fingerprint": "sha256:688c55e2b54049cc3a2aa8e545f6b0e0d49d89cd8ac70797b5764af237c0fe06",
+      "gate": false,
+      "line": 2059,
+      "message": "Possible missing alternative; some contributing clauses accept inputs outside the spec.",
+      "module": "Decimal",
+      "name": "possible_missing_return",
+      "prerequisites": [
+        [
+          "no_unsupported_loss",
+          "met"
+        ],
+        [
+          "no_overlap",
+          "met"
+        ],
+        [
+          "no_arrow_in_return",
+          "met"
+        ],
+        [
+          "no_arrow_polarity_argument",
+          "met"
+        ],
+        [
+          "structured_possible",
+          "blocked"
+        ]
+      ],
+      "rule": "SL002",
+      "severity": "warning",
+      "slice": 0,
+      "subject": "Decimal.to_integer/1"
+    },
+    {
+      "baseline": "new",
+      "blocking": false,
+      "clause": null,
+      "data": {
+        "reasons": [
+          ":input_approximate",
+          "{:domain_escape, [0]}",
+          ":whole_kind_only",
+          ":return_inexact"
+        ]
+      },
+      "details": [
+        [
+          "spec",
+          "scale(t()) :: non_neg_integer()"
+        ],
+        [
+          "inferred extra",
+          "float()"
+        ],
+        [
+          "slice",
+          "(%Decimal{sign: integer(), coef: :NaN or :inf or integer(), exp: integer()})"
+        ],
+        [
+          "evidence",
+          "possible_domain_escape (signature backend, translation approximate: integer_refinement_erased)"
+        ]
+      ],
+      "evidence": "possible_domain_escape",
+      "file": "lib/decimal.ex",
+      "fingerprint": "sha256:159a5bed66b9c2597e4e5f25104a9668c224a445ea5c7a05779cc88b23190208",
+      "gate": false,
+      "line": 2157,
+      "message": "Possible missing alternative; some contributing clauses accept inputs outside the spec.",
+      "module": "Decimal",
+      "name": "possible_missing_return",
+      "prerequisites": [
+        [
+          "no_unsupported_loss",
+          "met"
+        ],
+        [
+          "no_overlap",
+          "met"
+        ],
+        [
+          "no_arrow_in_return",
+          "met"
+        ],
+        [
+          "no_arrow_polarity_argument",
+          "met"
+        ],
+        [
+          "structured_possible",
+          "blocked"
+        ]
+      ],
+      "rule": "SL002",
+      "severity": "warning",
+      "slice": 0,
+      "subject": "Decimal.scale/1"
+    }
+  ],
+  "ledger": {
+    "bodies": {
+      "completed": 0,
+      "requested": false
+    },
+    "entries": [
+      {
+        "class": "unknown",
+        "mfa": "Decimal.abs/1",
+        "module": "Decimal",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Decimal.add/2",
+        "module": "Decimal",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Decimal.apply_context/1",
+        "module": "Decimal",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Decimal.cast/1",
+        "module": "Decimal",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "no_counted_component"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Decimal.cast/2",
+        "module": "Decimal",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "no_counted_component"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Decimal.cmp/2",
+        "module": "Decimal",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Decimal.compare/2",
+        "module": "Decimal",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Decimal.compare/3",
+        "module": "Decimal",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Decimal.div/2",
+        "module": "Decimal",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Decimal.div_int/2",
+        "module": "Decimal",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Decimal.div_rem/2",
+        "module": "Decimal",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "none",
+        "mfa": "Decimal.eq?/2",
+        "module": "Decimal",
+        "notes": [],
+        "obligation": "established",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": null
+      },
+      {
+        "class": "none",
+        "mfa": "Decimal.eq?/3",
+        "module": "Decimal",
+        "notes": [],
+        "obligation": "established",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": null
+      },
+      {
+        "class": "none",
+        "mfa": "Decimal.equal?/2",
+        "module": "Decimal",
+        "notes": [],
+        "obligation": "established",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": null
+      },
+      {
+        "class": "unknown",
+        "mfa": "Decimal.from_float/1",
+        "module": "Decimal",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "no_counted_component"
+      },
+      {
+        "class": "none",
+        "mfa": "Decimal.gt?/2",
+        "module": "Decimal",
+        "notes": [],
+        "obligation": "established",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": null
+      },
+      {
+        "class": "none",
+        "mfa": "Decimal.gte?/2",
+        "module": "Decimal",
+        "notes": [],
+        "obligation": "established",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": null
+      },
+      {
+        "class": "none",
+        "mfa": "Decimal.inf?/1",
+        "module": "Decimal",
+        "notes": [],
+        "obligation": "established",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": null
+      },
+      {
+        "class": "unknown",
+        "mfa": "Decimal.integer?/1",
+        "module": "Decimal",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "none",
+        "mfa": "Decimal.lt?/2",
+        "module": "Decimal",
+        "notes": [],
+        "obligation": "established",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": null
+      },
+      {
+        "class": "none",
+        "mfa": "Decimal.lte?/2",
+        "module": "Decimal",
+        "notes": [],
+        "obligation": "established",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": null
+      },
+      {
+        "class": "unknown",
+        "mfa": "Decimal.max/2",
+        "module": "Decimal",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Decimal.min/2",
+        "module": "Decimal",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Decimal.mult/2",
+        "module": "Decimal",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "none",
+        "mfa": "Decimal.nan?/1",
+        "module": "Decimal",
+        "notes": [],
+        "obligation": "established",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": null
+      },
+      {
+        "class": "unknown",
+        "mfa": "Decimal.negate/1",
+        "module": "Decimal",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "none",
+        "mfa": "Decimal.negative?/1",
+        "module": "Decimal",
+        "notes": [],
+        "obligation": "established",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": null
+      },
+      {
+        "class": "unknown",
+        "mfa": "Decimal.new/1",
+        "module": "Decimal",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "no_counted_component"
+      },
+      {
+        "class": "none",
+        "mfa": "Decimal.new/3",
+        "module": "Decimal",
+        "notes": [],
+        "obligation": "compatible_after_approximation",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": null
+      },
+      {
+        "class": "unknown",
+        "mfa": "Decimal.normalize/1",
+        "module": "Decimal",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Decimal.parse/1",
+        "module": "Decimal",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "no_counted_component"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Decimal.parse/2",
+        "module": "Decimal",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "no_counted_component"
+      },
+      {
+        "class": "none",
+        "mfa": "Decimal.positive?/1",
+        "module": "Decimal",
+        "notes": [],
+        "obligation": "established",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": null
+      },
+      {
+        "class": "unknown",
+        "mfa": "Decimal.rem/2",
+        "module": "Decimal",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Decimal.round/3",
+        "module": "Decimal",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "possible_domain_escape",
+        "mfa": "Decimal.scale/1",
+        "module": "Decimal",
+        "notes": [],
+        "obligation": "possible_mismatch",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": null
+      },
+      {
+        "class": "unknown",
+        "mfa": "Decimal.sqrt/1",
+        "module": "Decimal",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Decimal.sub/2",
+        "module": "Decimal",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "none",
+        "mfa": "Decimal.to_float/1",
+        "module": "Decimal",
+        "notes": [],
+        "obligation": "established",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": null
+      },
+      {
+        "class": "possible_domain_escape",
+        "mfa": "Decimal.to_integer/1",
+        "module": "Decimal",
+        "notes": [],
+        "obligation": "possible_mismatch",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": null
+      },
+      {
+        "class": "unknown",
+        "mfa": "Decimal.to_string/2",
+        "module": "Decimal",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Decimal.to_string/3",
+        "module": "Decimal",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Decimal.Context.get/0",
+        "module": "Decimal.Context",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "none",
+        "mfa": "Decimal.Context.set/1",
+        "module": "Decimal.Context",
+        "notes": [],
+        "obligation": "established",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": null
+      },
+      {
+        "class": "none",
+        "mfa": "Decimal.Context.update/1",
+        "module": "Decimal.Context",
+        "notes": [],
+        "obligation": "established",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": null
+      },
+      {
+        "class": "none",
+        "mfa": "Decimal.Context.with/2",
+        "module": "Decimal.Context",
+        "notes": [],
+        "obligation": "compatible_after_approximation",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": null
+      }
+    ],
+    "functions": {
+      "compared": 46,
+      "found": 46,
+      "unavailable": 0,
+      "unsupported": 0
+    },
+    "lost_analysis": {},
+    "modules": {
+      "analysed": 7,
+      "discovered": 7,
+      "out_of_scope": {
+        "erlang_module": 0,
+        "excluded": 0
+      },
+      "unavailable": {}
+    },
+    "obligations": {
+      "compatible_after_approximation": 2,
+      "established": 14,
+      "possible_mismatch": 2,
+      "unknown": 28
+    },
+    "obligations_unknown_by_reason": {
+      "no_counted_component": 6,
+      "top_only": 22
+    },
+    "signatures": {
+      "available": 46,
+      "unavailable": {}
+    },
+    "slices": {
+      "approximate": 46,
+      "compared": 46,
+      "exact": 0,
+      "expanded": 0,
+      "found": 46,
+      "loss_kinds": {
+        "arrow_polarity": 1,
+        "integer_refinement_erased": 46,
+        "type_variable_correlation": 1
+      },
+      "unavailable": {},
+      "unsupported": {}
+    },
+    "specs_out_of_scope": {
+      "generated": 3
+    }
+  },
+  "otp": "28",
+  "project": {
+    "mix_env": null,
+    "mix_target": null,
+    "umbrella": false
+  },
+  "schema": "spec_lint/report",
+  "schema_version": 1,
+  "scope": {
+    "app_filters": [],
+    "apps": [
+      "decimal"
+    ],
+    "exclude": [],
+    "module_filters": [],
+    "partial": false
+  },
+  "tool": {
+    "name": "spec_lint",
+    "version": "0.1.0"
+  }
+}

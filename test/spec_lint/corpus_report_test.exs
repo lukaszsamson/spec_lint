@@ -370,6 +370,31 @@ defmodule SpecLint.CorpusReportTest do
     assert {_, 2} = System.cmd("bash", quiet([@gate_diff, new, base]))
   end
 
+  test "budgets.json covers the fifteen corpora and the release campaign is within it" do
+    root = Path.expand("../..", __DIR__)
+    budgets = root |> Path.join("bench/corpus/budgets.json") |> File.read!() |> JSON.decode!()
+
+    corpora =
+      ~w(stdlib jason decimal nimble_options mime plug ecto req broadway oban
+         phoenix_live_view ash nx absinthe tesla)
+
+    assert Enum.sort(Map.keys(budgets["corpora"])) == Enum.sort(corpora)
+
+    for {_corpus, %{"wall_s" => wall, "max_rss_mb" => rss}} <- budgets["corpora"] do
+      assert is_number(wall) and wall > 0 and is_number(rss) and rss > 0
+    end
+
+    measured = Path.wildcard(Path.join(root, "bench/corpus/reports/release-1/*/*.resources.json"))
+    assert length(measured) == 3 * 2 * length(corpora)
+
+    for file <- measured do
+      resources = file |> File.read!() |> JSON.decode!()
+      budget = budgets["corpora"][resources["corpus"]]
+      assert resources["wall_s"] <= budget["wall_s"], file
+      assert resources["max_rss_bytes"] <= budget["max_rss_mb"] * 1_048_576, file
+    end
+  end
+
   # bash arguments that run a script with its standard error discarded.
   defp quiet(argv), do: ["-c", ~s(exec 2>/dev/null; exec bash "$@"), "bash" | argv]
 

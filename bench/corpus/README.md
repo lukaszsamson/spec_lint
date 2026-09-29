@@ -422,4 +422,5 @@ replay manifest.
   definition is in the script), per adapter, without changing any finding
   or policy.
 
-The release campaign itself is `reports/release-1/` (see its README).
+The release campaign itself is `reports/release-1/` (see its README);
+`budgets.json` was derived from its measurements.

@@ -109,7 +109,11 @@ The 40 differing md5 values, each checked:
 Stored signatures, compared as decoded `ExCk` terms between the `c24c235`
 and `648b2a9` builds:
 
-- stdlib: 3 of 3,926 exports differ. `URI.to_string/1` (a wider domain) and
+- stdlib: 3 of 3,926 exports differ. *Correction (Milestone 5,
+  `../release-1/README.md`): a fresh `build_elixir.sh` build of `c24c235`
+  has the same `URI` and `Logger.Backends.Console` chunks as `648b2a9`;
+  those two differences came from the `~/elixir` build, not from the
+  compiler change. Only `IEx.Autocomplete.exports/1` does.* `URI.to_string/1` (a wider domain) and
   `IEx.Autocomplete.exports/1` (a narrower return), from the more precise
   `:erlang.--/2`; `Logger.Backends.Console.handle_info/2` is semantically
   equal. `URI.to_string/1` stays top-only (`dynamic()` return) and the

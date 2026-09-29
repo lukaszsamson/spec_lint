@@ -1,0 +1,818 @@
+{
+  "comparisons": [
+    {
+      "counts": {
+        "changed": 9
+      },
+      "previous": "elixir-1.20.4/c24c235",
+      "reports": "release-1/c24c235"
+    },
+    {
+      "counts": {
+        "changed": 9
+      },
+      "previous": "upstream-648b2a9",
+      "reports": "release-1/648b2a9"
+    },
+    {
+      "counts": {
+        "changed": 9
+      },
+      "previous": "elixir-1.20.4",
+      "reports": "release-1/1.20.4"
+    }
+  ],
+  "counts": {
+    "changed": 27
+  },
+  "gates": [
+    {
+      "adapter": "1.21.0-dev+c24c235",
+      "changes": [
+        "data"
+      ],
+      "clause": 1,
+      "corpus": "absinthe",
+      "evidence": "clause_conflict",
+      "fingerprint": "sha256:f0917dc8074530a76751ef66c717b72812eeca92fb88256a2b18479d10d419a2",
+      "line": 37,
+      "mfa": "Absinthe.Blueprint.Input.parse/1",
+      "previous_fingerprint": "sha256:f0917dc8074530a76751ef66c717b72812eeca92fb88256a2b18479d10d419a2",
+      "rule": "SL001",
+      "slice": 0,
+      "status": "changed",
+      "subject": "Absinthe.Blueprint.Input.parse/1"
+    },
+    {
+      "adapter": "1.21.0-dev+c24c235",
+      "changes": [
+        "data"
+      ],
+      "clause": 2,
+      "corpus": "absinthe",
+      "evidence": "clause_conflict",
+      "fingerprint": "sha256:acbbb69c878b065d0845faf3cd562c18d14d311e494da42c3907963b31f46a96",
+      "line": 37,
+      "mfa": "Absinthe.Blueprint.Input.parse/1",
+      "previous_fingerprint": "sha256:acbbb69c878b065d0845faf3cd562c18d14d311e494da42c3907963b31f46a96",
+      "rule": "SL001",
+      "slice": 0,
+      "status": "changed",
+      "subject": "Absinthe.Blueprint.Input.parse/1"
+    },
+    {
+      "adapter": "1.21.0-dev+c24c235",
+      "changes": [
+        "data"
+      ],
+      "clause": 3,
+      "corpus": "absinthe",
+      "evidence": "clause_conflict",
+      "fingerprint": "sha256:9e06666ff934efde0669a28cf7f3782fd609e50d307300634c2058a0fe938222",
+      "line": 37,
+      "mfa": "Absinthe.Blueprint.Input.parse/1",
+      "previous_fingerprint": "sha256:9e06666ff934efde0669a28cf7f3782fd609e50d307300634c2058a0fe938222",
+      "rule": "SL001",
+      "slice": 0,
+      "status": "changed",
+      "subject": "Absinthe.Blueprint.Input.parse/1"
+    },
+    {
+      "adapter": "1.21.0-dev+c24c235",
+      "changes": [
+        "data"
+      ],
+      "clause": 4,
+      "corpus": "absinthe",
+      "evidence": "clause_conflict",
+      "fingerprint": "sha256:bd77235f7deeae2b6f62a9a4e004df9f0c260b1e940b4a900481a86861f3c3fc",
+      "line": 37,
+      "mfa": "Absinthe.Blueprint.Input.parse/1",
+      "previous_fingerprint": "sha256:bd77235f7deeae2b6f62a9a4e004df9f0c260b1e940b4a900481a86861f3c3fc",
+      "rule": "SL001",
+      "slice": 0,
+      "status": "changed",
+      "subject": "Absinthe.Blueprint.Input.parse/1"
+    },
+    {
+      "adapter": "1.21.0-dev+c24c235",
+      "changes": [
+        "data"
+      ],
+      "clause": 5,
+      "corpus": "absinthe",
+      "evidence": "clause_conflict",
+      "fingerprint": "sha256:5eda241626ddbcfd99add7b8abe3df7b7c806cd0e00329b024890e4a8ecf9b4e",
+      "line": 37,
+      "mfa": "Absinthe.Blueprint.Input.parse/1",
+      "previous_fingerprint": "sha256:5eda241626ddbcfd99add7b8abe3df7b7c806cd0e00329b024890e4a8ecf9b4e",
+      "rule": "SL001",
+      "slice": 0,
+      "status": "changed",
+      "subject": "Absinthe.Blueprint.Input.parse/1"
+    },
+    {
+      "adapter": "1.21.0-dev+c24c235",
+      "changes": [
+        "data"
+      ],
+      "clause": 6,
+      "corpus": "absinthe",
+      "evidence": "clause_conflict",
+      "fingerprint": "sha256:c96e7379395b0ed28648db69a662aa231faff648d446ef0f91ee6366340ff2f1",
+      "line": 37,
+      "mfa": "Absinthe.Blueprint.Input.parse/1",
+      "previous_fingerprint": "sha256:c96e7379395b0ed28648db69a662aa231faff648d446ef0f91ee6366340ff2f1",
+      "rule": "SL001",
+      "slice": 0,
+      "status": "changed",
+      "subject": "Absinthe.Blueprint.Input.parse/1"
+    },
+    {
+      "adapter": "1.21.0-dev+c24c235",
+      "changes": [
+        "data"
+      ],
+      "clause": 7,
+      "corpus": "absinthe",
+      "evidence": "clause_conflict",
+      "fingerprint": "sha256:1d3a6590b33bbb4b0f69d1e4cee69f88946905c50d60d14a0e07ff33fd3653c2",
+      "line": 37,
+      "mfa": "Absinthe.Blueprint.Input.parse/1",
+      "previous_fingerprint": "sha256:1d3a6590b33bbb4b0f69d1e4cee69f88946905c50d60d14a0e07ff33fd3653c2",
+      "rule": "SL001",
+      "slice": 0,
+      "status": "changed",
+      "subject": "Absinthe.Blueprint.Input.parse/1"
+    },
+    {
+      "adapter": "1.21.0-dev+c24c235",
+      "changes": [
+        "data"
+      ],
+      "clause": 0,
+      "corpus": "ash",
+      "evidence": "clause_conflict",
+      "fingerprint": "sha256:27cf2ddf38f5ab151a02dd82955b4f33d857a48f961cb703645f3b401aa970e6",
+      "line": 14,
+      "mfa": "Ash.Page.page_opts/1",
+      "previous_fingerprint": "sha256:27cf2ddf38f5ab151a02dd82955b4f33d857a48f961cb703645f3b401aa970e6",
+      "rule": "SL001",
+      "slice": 0,
+      "status": "changed",
+      "subject": "Ash.Page.page_opts/1"
+    },
+    {
+      "adapter": "1.21.0-dev+c24c235",
+      "changes": [
+        "data"
+      ],
+      "clause": 1,
+      "corpus": "oban",
+      "evidence": "clause_conflict",
+      "fingerprint": "sha256:517ab74f0b8034ae2264161f3a441f7fd6f1b86c0ab705bd29b682940fd44ee2",
+      "line": 123,
+      "mfa": "Oban.Registry.via/3",
+      "previous_fingerprint": "sha256:517ab74f0b8034ae2264161f3a441f7fd6f1b86c0ab705bd29b682940fd44ee2",
+      "rule": "SL001",
+      "slice": 0,
+      "status": "changed",
+      "subject": "Oban.Registry.via/3"
+    },
+    {
+      "adapter": "1.21.0-dev+648b2a9",
+      "changes": [
+        "data"
+      ],
+      "clause": 1,
+      "corpus": "absinthe",
+      "evidence": "clause_conflict",
+      "fingerprint": "sha256:f0917dc8074530a76751ef66c717b72812eeca92fb88256a2b18479d10d419a2",
+      "line": 37,
+      "mfa": "Absinthe.Blueprint.Input.parse/1",
+      "previous_fingerprint": "sha256:f0917dc8074530a76751ef66c717b72812eeca92fb88256a2b18479d10d419a2",
+      "rule": "SL001",
+      "slice": 0,
+      "status": "changed",
+      "subject": "Absinthe.Blueprint.Input.parse/1"
+    },
+    {
+      "adapter": "1.21.0-dev+648b2a9",
+      "changes": [
+        "data"
+      ],
+      "clause": 2,
+      "corpus": "absinthe",
+      "evidence": "clause_conflict",
+      "fingerprint": "sha256:acbbb69c878b065d0845faf3cd562c18d14d311e494da42c3907963b31f46a96",
+      "line": 37,
+      "mfa": "Absinthe.Blueprint.Input.parse/1",
+      "previous_fingerprint": "sha256:acbbb69c878b065d0845faf3cd562c18d14d311e494da42c3907963b31f46a96",
+      "rule": "SL001",
+      "slice": 0,
+      "status": "changed",
+      "subject": "Absinthe.Blueprint.Input.parse/1"
+    },
+    {
+      "adapter": "1.21.0-dev+648b2a9",
+      "changes": [
+        "data"
+      ],
+      "clause": 3,
+      "corpus": "absinthe",
+      "evidence": "clause_conflict",
+      "fingerprint": "sha256:9e06666ff934efde0669a28cf7f3782fd609e50d307300634c2058a0fe938222",
+      "line": 37,
+      "mfa": "Absinthe.Blueprint.Input.parse/1",
+      "previous_fingerprint": "sha256:9e06666ff934efde0669a28cf7f3782fd609e50d307300634c2058a0fe938222",
+      "rule": "SL001",
+      "slice": 0,
+      "status": "changed",
+      "subject": "Absinthe.Blueprint.Input.parse/1"
+    },
+    {
+      "adapter": "1.21.0-dev+648b2a9",
+      "changes": [
+        "data"
+      ],
+      "clause": 4,
+      "corpus": "absinthe",
+      "evidence": "clause_conflict",
+      "fingerprint": "sha256:bd77235f7deeae2b6f62a9a4e004df9f0c260b1e940b4a900481a86861f3c3fc",
+      "line": 37,
+      "mfa": "Absinthe.Blueprint.Input.parse/1",
+      "previous_fingerprint": "sha256:bd77235f7deeae2b6f62a9a4e004df9f0c260b1e940b4a900481a86861f3c3fc",
+      "rule": "SL001",
+      "slice": 0,
+      "status": "changed",
+      "subject": "Absinthe.Blueprint.Input.parse/1"
+    },
+    {
+      "adapter": "1.21.0-dev+648b2a9",
+      "changes": [
+        "data"
+      ],
+      "clause": 5,
+      "corpus": "absinthe",
+      "evidence": "clause_conflict",
+      "fingerprint": "sha256:5eda241626ddbcfd99add7b8abe3df7b7c806cd0e00329b024890e4a8ecf9b4e",
+      "line": 37,
+      "mfa": "Absinthe.Blueprint.Input.parse/1",
+      "previous_fingerprint": "sha256:5eda241626ddbcfd99add7b8abe3df7b7c806cd0e00329b024890e4a8ecf9b4e",
+      "rule": "SL001",
+      "slice": 0,
+      "status": "changed",
+      "subject": "Absinthe.Blueprint.Input.parse/1"
+    },
+    {
+      "adapter": "1.21.0-dev+648b2a9",
+      "changes": [
+        "data"
+      ],
+      "clause": 6,
+      "corpus": "absinthe",
+      "evidence": "clause_conflict",
+      "fingerprint": "sha256:c96e7379395b0ed28648db69a662aa231faff648d446ef0f91ee6366340ff2f1",
+      "line": 37,
+      "mfa": "Absinthe.Blueprint.Input.parse/1",
+      "previous_fingerprint": "sha256:c96e7379395b0ed28648db69a662aa231faff648d446ef0f91ee6366340ff2f1",
+      "rule": "SL001",
+      "slice": 0,
+      "status": "changed",
+      "subject": "Absinthe.Blueprint.Input.parse/1"
+    },
+    {
+      "adapter": "1.21.0-dev+648b2a9",
+      "changes": [
+        "data"
+      ],
+      "clause": 7,
+      "corpus": "absinthe",
+      "evidence": "clause_conflict",
+      "fingerprint": "sha256:1d3a6590b33bbb4b0f69d1e4cee69f88946905c50d60d14a0e07ff33fd3653c2",
+      "line": 37,
+      "mfa": "Absinthe.Blueprint.Input.parse/1",
+      "previous_fingerprint": "sha256:1d3a6590b33bbb4b0f69d1e4cee69f88946905c50d60d14a0e07ff33fd3653c2",
+      "rule": "SL001",
+      "slice": 0,
+      "status": "changed",
+      "subject": "Absinthe.Blueprint.Input.parse/1"
+    },
+    {
+      "adapter": "1.21.0-dev+648b2a9",
+      "changes": [
+        "data"
+      ],
+      "clause": 0,
+      "corpus": "ash",
+      "evidence": "clause_conflict",
+      "fingerprint": "sha256:27cf2ddf38f5ab151a02dd82955b4f33d857a48f961cb703645f3b401aa970e6",
+      "line": 14,
+      "mfa": "Ash.Page.page_opts/1",
+      "previous_fingerprint": "sha256:27cf2ddf38f5ab151a02dd82955b4f33d857a48f961cb703645f3b401aa970e6",
+      "rule": "SL001",
+      "slice": 0,
+      "status": "changed",
+      "subject": "Ash.Page.page_opts/1"
+    },
+    {
+      "adapter": "1.21.0-dev+648b2a9",
+      "changes": [
+        "data"
+      ],
+      "clause": 1,
+      "corpus": "oban",
+      "evidence": "clause_conflict",
+      "fingerprint": "sha256:517ab74f0b8034ae2264161f3a441f7fd6f1b86c0ab705bd29b682940fd44ee2",
+      "line": 123,
+      "mfa": "Oban.Registry.via/3",
+      "previous_fingerprint": "sha256:517ab74f0b8034ae2264161f3a441f7fd6f1b86c0ab705bd29b682940fd44ee2",
+      "rule": "SL001",
+      "slice": 0,
+      "status": "changed",
+      "subject": "Oban.Registry.via/3"
+    },
+    {
+      "adapter": "1.20.4+759443e",
+      "changes": [
+        "data"
+      ],
+      "clause": 1,
+      "corpus": "absinthe",
+      "evidence": "clause_conflict",
+      "fingerprint": "sha256:01a369677f4311488c7b2618a1b04a7032fea1ec87d7fe69e8ebd740f239fe20",
+      "line": 37,
+      "mfa": "Absinthe.Blueprint.Input.parse/1",
+      "previous_fingerprint": "sha256:01a369677f4311488c7b2618a1b04a7032fea1ec87d7fe69e8ebd740f239fe20",
+      "rule": "SL001",
+      "slice": 0,
+      "status": "changed",
+      "subject": "Absinthe.Blueprint.Input.parse/1"
+    },
+    {
+      "adapter": "1.20.4+759443e",
+      "changes": [
+        "data"
+      ],
+      "clause": 2,
+      "corpus": "absinthe",
+      "evidence": "clause_conflict",
+      "fingerprint": "sha256:bb6ae41172269b35a782f3c263a5ed3d1885f14f92a770e2c34f869e8b515ef6",
+      "line": 37,
+      "mfa": "Absinthe.Blueprint.Input.parse/1",
+      "previous_fingerprint": "sha256:bb6ae41172269b35a782f3c263a5ed3d1885f14f92a770e2c34f869e8b515ef6",
+      "rule": "SL001",
+      "slice": 0,
+      "status": "changed",
+      "subject": "Absinthe.Blueprint.Input.parse/1"
+    },
+    {
+      "adapter": "1.20.4+759443e",
+      "changes": [
+        "data"
+      ],
+      "clause": 3,
+      "corpus": "absinthe",
+      "evidence": "clause_conflict",
+      "fingerprint": "sha256:98ac67c13899a9a8f8f30fa5e3a6d37b738a808e067f6442b01adb7a537d3b87",
+      "line": 37,
+      "mfa": "Absinthe.Blueprint.Input.parse/1",
+      "previous_fingerprint": "sha256:98ac67c13899a9a8f8f30fa5e3a6d37b738a808e067f6442b01adb7a537d3b87",
+      "rule": "SL001",
+      "slice": 0,
+      "status": "changed",
+      "subject": "Absinthe.Blueprint.Input.parse/1"
+    },
+    {
+      "adapter": "1.20.4+759443e",
+      "changes": [
+        "data"
+      ],
+      "clause": 4,
+      "corpus": "absinthe",
+      "evidence": "clause_conflict",
+      "fingerprint": "sha256:a56c9c1af998f7cb46c7c0027eee2628b90d8b96e94b31267d0a8c14c16d6b5a",
+      "line": 37,
+      "mfa": "Absinthe.Blueprint.Input.parse/1",
+      "previous_fingerprint": "sha256:a56c9c1af998f7cb46c7c0027eee2628b90d8b96e94b31267d0a8c14c16d6b5a",
+      "rule": "SL001",
+      "slice": 0,
+      "status": "changed",
+      "subject": "Absinthe.Blueprint.Input.parse/1"
+    },
+    {
+      "adapter": "1.20.4+759443e",
+      "changes": [
+        "data"
+      ],
+      "clause": 5,
+      "corpus": "absinthe",
+      "evidence": "clause_conflict",
+      "fingerprint": "sha256:011e9bc9aaae28d7fbbeb72600694e58e4dfa552b9a4d696544dc7dd559c0129",
+      "line": 37,
+      "mfa": "Absinthe.Blueprint.Input.parse/1",
+      "previous_fingerprint": "sha256:011e9bc9aaae28d7fbbeb72600694e58e4dfa552b9a4d696544dc7dd559c0129",
+      "rule": "SL001",
+      "slice": 0,
+      "status": "changed",
+      "subject": "Absinthe.Blueprint.Input.parse/1"
+    },
+    {
+      "adapter": "1.20.4+759443e",
+      "changes": [
+        "data"
+      ],
+      "clause": 6,
+      "corpus": "absinthe",
+      "evidence": "clause_conflict",
+      "fingerprint": "sha256:e4fe4386395cdc7cc09f1de09c9faaa7c7569b78691bb77c3edfcf163519dd8a",
+      "line": 37,
+      "mfa": "Absinthe.Blueprint.Input.parse/1",
+      "previous_fingerprint": "sha256:e4fe4386395cdc7cc09f1de09c9faaa7c7569b78691bb77c3edfcf163519dd8a",
+      "rule": "SL001",
+      "slice": 0,
+      "status": "changed",
+      "subject": "Absinthe.Blueprint.Input.parse/1"
+    },
+    {
+      "adapter": "1.20.4+759443e",
+      "changes": [
+        "data"
+      ],
+      "clause": 7,
+      "corpus": "absinthe",
+      "evidence": "clause_conflict",
+      "fingerprint": "sha256:94f82aedc814719ee5e70ac0cf493cc97c0a71b89cedc3bef60193dbede44fd8",
+      "line": 37,
+      "mfa": "Absinthe.Blueprint.Input.parse/1",
+      "previous_fingerprint": "sha256:94f82aedc814719ee5e70ac0cf493cc97c0a71b89cedc3bef60193dbede44fd8",
+      "rule": "SL001",
+      "slice": 0,
+      "status": "changed",
+      "subject": "Absinthe.Blueprint.Input.parse/1"
+    },
+    {
+      "adapter": "1.20.4+759443e",
+      "changes": [
+        "data"
+      ],
+      "clause": 0,
+      "corpus": "ash",
+      "evidence": "clause_conflict",
+      "fingerprint": "sha256:e8bb15ebe3aa48e257a73320a1c80861d00fabfd5d996d7eec9f24bed165073d",
+      "line": 14,
+      "mfa": "Ash.Page.page_opts/1",
+      "previous_fingerprint": "sha256:e8bb15ebe3aa48e257a73320a1c80861d00fabfd5d996d7eec9f24bed165073d",
+      "rule": "SL001",
+      "slice": 0,
+      "status": "changed",
+      "subject": "Ash.Page.page_opts/1"
+    },
+    {
+      "adapter": "1.20.4+759443e",
+      "changes": [
+        "data"
+      ],
+      "clause": 1,
+      "corpus": "oban",
+      "evidence": "clause_conflict",
+      "fingerprint": "sha256:517ab74f0b8034ae2264161f3a441f7fd6f1b86c0ab705bd29b682940fd44ee2",
+      "line": 123,
+      "mfa": "Oban.Registry.via/3",
+      "previous_fingerprint": "sha256:517ab74f0b8034ae2264161f3a441f7fd6f1b86c0ab705bd29b682940fd44ee2",
+      "rule": "SL001",
+      "slice": 0,
+      "status": "changed",
+      "subject": "Oban.Registry.via/3"
+    }
+  ],
+  "note": "every gated finding of the release-1 replay per adapter, against the previous report of that adapter (gate_diff.sh); new and changed gates are the input of the refutation phase",
+  "schema": "spec_lint.release_gates/1",
+  "to_refute": [
+    {
+      "adapter": "1.21.0-dev+c24c235",
+      "changes": [
+        "data"
+      ],
+      "clause": 1,
+      "corpus": "absinthe",
+      "fingerprint": "sha256:f0917dc8074530a76751ef66c717b72812eeca92fb88256a2b18479d10d419a2",
+      "mfa": "Absinthe.Blueprint.Input.parse/1",
+      "status": "changed",
+      "subject": "Absinthe.Blueprint.Input.parse/1"
+    },
+    {
+      "adapter": "1.21.0-dev+c24c235",
+      "changes": [
+        "data"
+      ],
+      "clause": 2,
+      "corpus": "absinthe",
+      "fingerprint": "sha256:acbbb69c878b065d0845faf3cd562c18d14d311e494da42c3907963b31f46a96",
+      "mfa": "Absinthe.Blueprint.Input.parse/1",
+      "status": "changed",
+      "subject": "Absinthe.Blueprint.Input.parse/1"
+    },
+    {
+      "adapter": "1.21.0-dev+c24c235",
+      "changes": [
+        "data"
+      ],
+      "clause": 3,
+      "corpus": "absinthe",
+      "fingerprint": "sha256:9e06666ff934efde0669a28cf7f3782fd609e50d307300634c2058a0fe938222",
+      "mfa": "Absinthe.Blueprint.Input.parse/1",
+      "status": "changed",
+      "subject": "Absinthe.Blueprint.Input.parse/1"
+    },
+    {
+      "adapter": "1.21.0-dev+c24c235",
+      "changes": [
+        "data"
+      ],
+      "clause": 4,
+      "corpus": "absinthe",
+      "fingerprint": "sha256:bd77235f7deeae2b6f62a9a4e004df9f0c260b1e940b4a900481a86861f3c3fc",
+      "mfa": "Absinthe.Blueprint.Input.parse/1",
+      "status": "changed",
+      "subject": "Absinthe.Blueprint.Input.parse/1"
+    },
+    {
+      "adapter": "1.21.0-dev+c24c235",
+      "changes": [
+        "data"
+      ],
+      "clause": 5,
+      "corpus": "absinthe",
+      "fingerprint": "sha256:5eda241626ddbcfd99add7b8abe3df7b7c806cd0e00329b024890e4a8ecf9b4e",
+      "mfa": "Absinthe.Blueprint.Input.parse/1",
+      "status": "changed",
+      "subject": "Absinthe.Blueprint.Input.parse/1"
+    },
+    {
+      "adapter": "1.21.0-dev+c24c235",
+      "changes": [
+        "data"
+      ],
+      "clause": 6,
+      "corpus": "absinthe",
+      "fingerprint": "sha256:c96e7379395b0ed28648db69a662aa231faff648d446ef0f91ee6366340ff2f1",
+      "mfa": "Absinthe.Blueprint.Input.parse/1",
+      "status": "changed",
+      "subject": "Absinthe.Blueprint.Input.parse/1"
+    },
+    {
+      "adapter": "1.21.0-dev+c24c235",
+      "changes": [
+        "data"
+      ],
+      "clause": 7,
+      "corpus": "absinthe",
+      "fingerprint": "sha256:1d3a6590b33bbb4b0f69d1e4cee69f88946905c50d60d14a0e07ff33fd3653c2",
+      "mfa": "Absinthe.Blueprint.Input.parse/1",
+      "status": "changed",
+      "subject": "Absinthe.Blueprint.Input.parse/1"
+    },
+    {
+      "adapter": "1.21.0-dev+c24c235",
+      "changes": [
+        "data"
+      ],
+      "clause": 0,
+      "corpus": "ash",
+      "fingerprint": "sha256:27cf2ddf38f5ab151a02dd82955b4f33d857a48f961cb703645f3b401aa970e6",
+      "mfa": "Ash.Page.page_opts/1",
+      "status": "changed",
+      "subject": "Ash.Page.page_opts/1"
+    },
+    {
+      "adapter": "1.21.0-dev+c24c235",
+      "changes": [
+        "data"
+      ],
+      "clause": 1,
+      "corpus": "oban",
+      "fingerprint": "sha256:517ab74f0b8034ae2264161f3a441f7fd6f1b86c0ab705bd29b682940fd44ee2",
+      "mfa": "Oban.Registry.via/3",
+      "status": "changed",
+      "subject": "Oban.Registry.via/3"
+    },
+    {
+      "adapter": "1.21.0-dev+648b2a9",
+      "changes": [
+        "data"
+      ],
+      "clause": 1,
+      "corpus": "absinthe",
+      "fingerprint": "sha256:f0917dc8074530a76751ef66c717b72812eeca92fb88256a2b18479d10d419a2",
+      "mfa": "Absinthe.Blueprint.Input.parse/1",
+      "status": "changed",
+      "subject": "Absinthe.Blueprint.Input.parse/1"
+    },
+    {
+      "adapter": "1.21.0-dev+648b2a9",
+      "changes": [
+        "data"
+      ],
+      "clause": 2,
+      "corpus": "absinthe",
+      "fingerprint": "sha256:acbbb69c878b065d0845faf3cd562c18d14d311e494da42c3907963b31f46a96",
+      "mfa": "Absinthe.Blueprint.Input.parse/1",
+      "status": "changed",
+      "subject": "Absinthe.Blueprint.Input.parse/1"
+    },
+    {
+      "adapter": "1.21.0-dev+648b2a9",
+      "changes": [
+        "data"
+      ],
+      "clause": 3,
+      "corpus": "absinthe",
+      "fingerprint": "sha256:9e06666ff934efde0669a28cf7f3782fd609e50d307300634c2058a0fe938222",
+      "mfa": "Absinthe.Blueprint.Input.parse/1",
+      "status": "changed",
+      "subject": "Absinthe.Blueprint.Input.parse/1"
+    },
+    {
+      "adapter": "1.21.0-dev+648b2a9",
+      "changes": [
+        "data"
+      ],
+      "clause": 4,
+      "corpus": "absinthe",
+      "fingerprint": "sha256:bd77235f7deeae2b6f62a9a4e004df9f0c260b1e940b4a900481a86861f3c3fc",
+      "mfa": "Absinthe.Blueprint.Input.parse/1",
+      "status": "changed",
+      "subject": "Absinthe.Blueprint.Input.parse/1"
+    },
+    {
+      "adapter": "1.21.0-dev+648b2a9",
+      "changes": [
+        "data"
+      ],
+      "clause": 5,
+      "corpus": "absinthe",
+      "fingerprint": "sha256:5eda241626ddbcfd99add7b8abe3df7b7c806cd0e00329b024890e4a8ecf9b4e",
+      "mfa": "Absinthe.Blueprint.Input.parse/1",
+      "status": "changed",
+      "subject": "Absinthe.Blueprint.Input.parse/1"
+    },
+    {
+      "adapter": "1.21.0-dev+648b2a9",
+      "changes": [
+        "data"
+      ],
+      "clause": 6,
+      "corpus": "absinthe",
+      "fingerprint": "sha256:c96e7379395b0ed28648db69a662aa231faff648d446ef0f91ee6366340ff2f1",
+      "mfa": "Absinthe.Blueprint.Input.parse/1",
+      "status": "changed",
+      "subject": "Absinthe.Blueprint.Input.parse/1"
+    },
+    {
+      "adapter": "1.21.0-dev+648b2a9",
+      "changes": [
+        "data"
+      ],
+      "clause": 7,
+      "corpus": "absinthe",
+      "fingerprint": "sha256:1d3a6590b33bbb4b0f69d1e4cee69f88946905c50d60d14a0e07ff33fd3653c2",
+      "mfa": "Absinthe.Blueprint.Input.parse/1",
+      "status": "changed",
+      "subject": "Absinthe.Blueprint.Input.parse/1"
+    },
+    {
+      "adapter": "1.21.0-dev+648b2a9",
+      "changes": [
+        "data"
+      ],
+      "clause": 0,
+      "corpus": "ash",
+      "fingerprint": "sha256:27cf2ddf38f5ab151a02dd82955b4f33d857a48f961cb703645f3b401aa970e6",
+      "mfa": "Ash.Page.page_opts/1",
+      "status": "changed",
+      "subject": "Ash.Page.page_opts/1"
+    },
+    {
+      "adapter": "1.21.0-dev+648b2a9",
+      "changes": [
+        "data"
+      ],
+      "clause": 1,
+      "corpus": "oban",
+      "fingerprint": "sha256:517ab74f0b8034ae2264161f3a441f7fd6f1b86c0ab705bd29b682940fd44ee2",
+      "mfa": "Oban.Registry.via/3",
+      "status": "changed",
+      "subject": "Oban.Registry.via/3"
+    },
+    {
+      "adapter": "1.20.4+759443e",
+      "changes": [
+        "data"
+      ],
+      "clause": 1,
+      "corpus": "absinthe",
+      "fingerprint": "sha256:01a369677f4311488c7b2618a1b04a7032fea1ec87d7fe69e8ebd740f239fe20",
+      "mfa": "Absinthe.Blueprint.Input.parse/1",
+      "status": "changed",
+      "subject": "Absinthe.Blueprint.Input.parse/1"
+    },
+    {
+      "adapter": "1.20.4+759443e",
+      "changes": [
+        "data"
+      ],
+      "clause": 2,
+      "corpus": "absinthe",
+      "fingerprint": "sha256:bb6ae41172269b35a782f3c263a5ed3d1885f14f92a770e2c34f869e8b515ef6",
+      "mfa": "Absinthe.Blueprint.Input.parse/1",
+      "status": "changed",
+      "subject": "Absinthe.Blueprint.Input.parse/1"
+    },
+    {
+      "adapter": "1.20.4+759443e",
+      "changes": [
+        "data"
+      ],
+      "clause": 3,
+      "corpus": "absinthe",
+      "fingerprint": "sha256:98ac67c13899a9a8f8f30fa5e3a6d37b738a808e067f6442b01adb7a537d3b87",
+      "mfa": "Absinthe.Blueprint.Input.parse/1",
+      "status": "changed",
+      "subject": "Absinthe.Blueprint.Input.parse/1"
+    },
+    {
+      "adapter": "1.20.4+759443e",
+      "changes": [
+        "data"
+      ],
+      "clause": 4,
+      "corpus": "absinthe",
+      "fingerprint": "sha256:a56c9c1af998f7cb46c7c0027eee2628b90d8b96e94b31267d0a8c14c16d6b5a",
+      "mfa": "Absinthe.Blueprint.Input.parse/1",
+      "status": "changed",
+      "subject": "Absinthe.Blueprint.Input.parse/1"
+    },
+    {
+      "adapter": "1.20.4+759443e",
+      "changes": [
+        "data"
+      ],
+      "clause": 5,
+      "corpus": "absinthe",
+      "fingerprint": "sha256:011e9bc9aaae28d7fbbeb72600694e58e4dfa552b9a4d696544dc7dd559c0129",
+      "mfa": "Absinthe.Blueprint.Input.parse/1",
+      "status": "changed",
+      "subject": "Absinthe.Blueprint.Input.parse/1"
+    },
+    {
+      "adapter": "1.20.4+759443e",
+      "changes": [
+        "data"
+      ],
+      "clause": 6,
+      "corpus": "absinthe",
+      "fingerprint": "sha256:e4fe4386395cdc7cc09f1de09c9faaa7c7569b78691bb77c3edfcf163519dd8a",
+      "mfa": "Absinthe.Blueprint.Input.parse/1",
+      "status": "changed",
+      "subject": "Absinthe.Blueprint.Input.parse/1"
+    },
+    {
+      "adapter": "1.20.4+759443e",
+      "changes": [
+        "data"
+      ],
+      "clause": 7,
+      "corpus": "absinthe",
+      "fingerprint": "sha256:94f82aedc814719ee5e70ac0cf493cc97c0a71b89cedc3bef60193dbede44fd8",
+      "mfa": "Absinthe.Blueprint.Input.parse/1",
+      "status": "changed",
+      "subject": "Absinthe.Blueprint.Input.parse/1"
+    },
+    {
+      "adapter": "1.20.4+759443e",
+      "changes": [
+        "data"
+      ],
+      "clause": 0,
+      "corpus": "ash",
+      "fingerprint": "sha256:e8bb15ebe3aa48e257a73320a1c80861d00fabfd5d996d7eec9f24bed165073d",
+      "mfa": "Ash.Page.page_opts/1",
+      "status": "changed",
+      "subject": "Ash.Page.page_opts/1"
+    },
+    {
+      "adapter": "1.20.4+759443e",
+      "changes": [
+        "data"
+      ],
+      "clause": 1,
+      "corpus": "oban",
+      "fingerprint": "sha256:517ab74f0b8034ae2264161f3a441f7fd6f1b86c0ab705bd29b682940fd44ee2",
+      "mfa": "Oban.Registry.via/3",
+      "status": "changed",
+      "subject": "Oban.Registry.via/3"
+    }
+  ],
+  "tool": "06b7496"
+}

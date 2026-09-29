@@ -1,0 +1,855 @@
+{
+  "adapter": "1.21.0-dev+c24c235",
+  "artifacts": {
+    "build_digest": "ae7d8dc230f53eebfc55d8370437127221b8f4caeba74f6e3ebcf4fc05c1e947",
+    "recorded": [],
+    "unrecorded": [
+      "nx"
+    ]
+  },
+  "baseline": {
+    "applied": false,
+    "baselined": 0,
+    "expired": 0,
+    "gate_changed": [],
+    "new": 0,
+    "path": ".spec_lint_baseline.json",
+    "pending_reconciliation": [],
+    "reason": "missing",
+    "stale_findings": [],
+    "stale_inventory": []
+  },
+  "beams": [
+    {
+      "exck": "e092b2ecfebc6c9e9b7f9bd36062841a6fbbf68b8a0d62493ba5e6fb2499f7de",
+      "md5": "306bea88e3b267f31f42ead71c82f307",
+      "module": "Container",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Container.beam"
+    },
+    {
+      "exck": "6bda2644265c83070a9173207cb0c6456aa38762c12f7df6a0b425d36e650814",
+      "md5": "18d5975c88b74f395ec25114490a5003",
+      "module": "DistributedServings",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.DistributedServings.beam"
+    },
+    {
+      "exck": "9503db6e115174c6467b205bdffccac01fb8cd1de17966c1e4023dd03433eecc",
+      "md5": "26f5819476e1110f82cd7c3a84d1af7c",
+      "module": "EmptyContainer",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.EmptyContainer.beam"
+    },
+    {
+      "exck": "811060fe528930983eade47fae318bce91ad85eb1fb7884958129760dc5332af",
+      "md5": "12175dbdffdfcd8d43da4c06010db493",
+      "module": "Inspect.Nx.Batch",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Inspect.Nx.Batch.beam"
+    },
+    {
+      "exck": "807ff29fd1be3e251ff14143edc0142a9ee7edd4e574fef50300a3ff28f087e9",
+      "md5": "6f6df059e070dda02de8cecb12648267",
+      "module": "Inspect.Nx.Defn.TemplateDiff",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Inspect.Nx.Defn.TemplateDiff.beam"
+    },
+    {
+      "exck": "9779d2c887111f0a655b77c3a36f2c81563180ce6adf75413801a553d740022d",
+      "md5": "ce83c2ab0d05a083d74539e3099bc2e7",
+      "module": "Inspect.Nx.Heatmap",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Inspect.Nx.Heatmap.beam"
+    },
+    {
+      "exck": "1cb76d1b18d6f83c9f01060abad46cd5f4831fe080521c774f73d3dfe6795af7",
+      "md5": "1fd18efb08afa20896271d275102078c",
+      "module": "Inspect.Nx.Tensor",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Inspect.Nx.Tensor.beam"
+    },
+    {
+      "exck": "766fd0f370e29a6358afc7cff9de299c54b42368d94e77254c8d9813ae57cf03",
+      "md5": "ac1dc03b0adc4b694847cd3736ec5de6",
+      "module": "LazyOnly",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.LazyOnly.beam"
+    },
+    {
+      "exck": "aff8fde6272182874bd627877732bb9e4c98a829bc17a1f529a32f23dad62686",
+      "md5": "5482c50a49429894c2dc82e99ac992e3",
+      "module": "LazyWrapped",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.LazyWrapped.beam"
+    },
+    {
+      "exck": "6ecebadfa59eca38ea464a9c3bfb54d24518f547a31c44900a5c8c503d34e63a",
+      "md5": "6a5155e2b6867fca1e1d593f8322b50e",
+      "module": "MagicNumber",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.MagicNumber.beam"
+    },
+    {
+      "exck": "5eb7d1858f5ae6e5a8d2b8b20e079245ea40dd9d8cf527134e0c1f1220fe9746",
+      "md5": "3a0309c33055c16e3d82512e47b588c2",
+      "module": "Nx",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.beam"
+    },
+    {
+      "exck": "f7856a4e3afb9c157ac1dec5b2277769d52e6d3407d9fa34c5313760209a1cc7",
+      "md5": "53608aef47b28265d2744c1a766347dc",
+      "module": "Nx.Application",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.Application.beam"
+    },
+    {
+      "exck": "e4f780c6a4e745031f85058ef231309bd9dc8fed75fbb72d9171d134607ecdf3",
+      "md5": "e3900d68b030262c9c238ad0e4c0a9c6",
+      "module": "Nx.Backend",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.Backend.beam"
+    },
+    {
+      "exck": "b45004274de693317625aca8842ae883bbf7b6252a83d47c989aa2eb4491a4c9",
+      "md5": "b4748f6d50d2eafbe475e32a88b29e12",
+      "module": "Nx.Batch",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.Batch.beam"
+    },
+    {
+      "exck": "5a01ced6f2adb85762ab1f2f82c87d4eae74d2666b2aab26e91514c8e7e9238e",
+      "md5": "0fa6f1b3fdd2ef7714cd023862b46628",
+      "module": "Nx.BinaryBackend",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.BinaryBackend.beam"
+    },
+    {
+      "exck": "6bee7a02c0204de828da2468e875f197180ee92fcf2935acf901d0d62ad637e8",
+      "md5": "6c454ae1c2402a8a502d38401a0e8e7a",
+      "module": "Nx.BinaryBackend.Matrix",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.BinaryBackend.Matrix.beam"
+    },
+    {
+      "exck": "38c08f8be4e962a893084e8b08807dd556aff3889fec4bafe21b97dc52cf6801",
+      "md5": "16b519183f2d93be0c53a07fb04e0433",
+      "module": "Nx.Block.AllClose",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.Block.AllClose.beam"
+    },
+    {
+      "exck": "61f6634631078bae84f41de214f44e0b50b7d23ac53ad186f5d6a35fa002de00",
+      "md5": "5a35a04dd223dbe8d88f4c9cdf04f522",
+      "module": "Nx.Block.CumulativeMax",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.Block.CumulativeMax.beam"
+    },
+    {
+      "exck": "54678ab122fa9a99106dabf4899577d631c25de1ba079e280c0fd5e3cd82addf",
+      "md5": "bcba69d4617f0e06d97d0146c134ceb1",
+      "module": "Nx.Block.CumulativeMin",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.Block.CumulativeMin.beam"
+    },
+    {
+      "exck": "eaecd33516db0c5a179b14c0826e24992ddeaceb6d39e339399cf4cf130eddd6",
+      "md5": "67a83da53a07be48ba4ac73f1dda6268",
+      "module": "Nx.Block.CumulativeProduct",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.Block.CumulativeProduct.beam"
+    },
+    {
+      "exck": "81cd623cd8a28dbe806c361bad8791d15b2b7372c3f764fd33a6984ee275cdb1",
+      "md5": "ac187f5222814e02a9f58f9b93624db8",
+      "module": "Nx.Block.CumulativeSum",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.Block.CumulativeSum.beam"
+    },
+    {
+      "exck": "838ab13813e608e155e6f43da6758432a2f46864fe6f5f6bdc359a2747fcea5f",
+      "md5": "2eb8dcafbda83ae5ca3548b0f933ad44",
+      "module": "Nx.Block.FFT2",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.Block.FFT2.beam"
+    },
+    {
+      "exck": "08683ebee6e1cca874c770a1d034317f6218517b453f078758007fd66a436106",
+      "md5": "8ac14db71110154bd0d883fa190a9335",
+      "module": "Nx.Block.IFFT2",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.Block.IFFT2.beam"
+    },
+    {
+      "exck": "8d039d05f8cdec3d75182a9e2d82d4502914ff422b1a83853589bc78bf9dd65b",
+      "md5": "f490347d9db7cd37463acba81eaed8e1",
+      "module": "Nx.Block.IRFFT",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.Block.IRFFT.beam"
+    },
+    {
+      "exck": "f593423287ce3479d8b11d8ba06279c747e17ec6b5595be2ee3c6059c7d65cc4",
+      "md5": "8059995c1ac8318d2417e747cfd1a2a4",
+      "module": "Nx.Block.LinAlg.Cholesky",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.Block.LinAlg.Cholesky.beam"
+    },
+    {
+      "exck": "991119084ea6e97342ed5b427d33f88de3173ecaeeb84560ffcd0cea27bb77cc",
+      "md5": "745562599704edeaec4efd7601ed56ed",
+      "module": "Nx.Block.LinAlg.Determinant",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.Block.LinAlg.Determinant.beam"
+    },
+    {
+      "exck": "eed267fad2f1431c9f66f8a27ad1c73636eb8cca47fdad43f99aacdfafc568a7",
+      "md5": "912e87b1b0ce727d1bbe91f414ebd3b6",
+      "module": "Nx.Block.LinAlg.Eigh",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.Block.LinAlg.Eigh.beam"
+    },
+    {
+      "exck": "45ec9482df1db86c8cee12be9ff9f9551788777f602891dfeff1c02274065aa6",
+      "md5": "1c34d23dfed8125cae1364ee38b3ea43",
+      "module": "Nx.Block.LinAlg.LU",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.Block.LinAlg.LU.beam"
+    },
+    {
+      "exck": "ba880df25a6d997269ee6563af6cc05621a4f5c83a7c2596cef0f52025b2b61c",
+      "md5": "6d09deda0c6ab3e0a40d2d215187744c",
+      "module": "Nx.Block.LinAlg.QR",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.Block.LinAlg.QR.beam"
+    },
+    {
+      "exck": "b0014bcfbbc53016294452cb5165a646ac3fc67f82d2a2fc4e3d5ce847caccd1",
+      "md5": "a38fcb582738915548473ec189380cde",
+      "module": "Nx.Block.LinAlg.SVD",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.Block.LinAlg.SVD.beam"
+    },
+    {
+      "exck": "d1a77c7b37de502d5a2425eddfa903d89f760e87405c43be25240f0be61d9acb",
+      "md5": "082027b77fd05d4be91104930e3470e4",
+      "module": "Nx.Block.LinAlg.Solve",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.Block.LinAlg.Solve.beam"
+    },
+    {
+      "exck": "9294ed947a66c91245575cb39cb43138cbf454ea886fcdb3b310d8d56424a51f",
+      "md5": "e012184edfe1943d64b154b391fb5a0e",
+      "module": "Nx.Block.LogicalNot",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.Block.LogicalNot.beam"
+    },
+    {
+      "exck": "1fcf261dfc919a2a47b2d9a3d56dcd6dd87e4c15714ea5c18c234ab717102124",
+      "md5": "d6a5ffad7b110d034ab1b1b7ebd010b9",
+      "module": "Nx.Block.Phase",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.Block.Phase.beam"
+    },
+    {
+      "exck": "90a651880566be127896db130337d15a0da3833e1f309940c406c3096a341d8f",
+      "md5": "38b306426825d29dce026d48807358b5",
+      "module": "Nx.Block.RFFT",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.Block.RFFT.beam"
+    },
+    {
+      "exck": "7f24c68247ed505f79b05b819a5dbcdc1c6556c38bf815c12df7b42bf9e098ea",
+      "md5": "ce9b5407139ae1051b2a1fb63adc2930",
+      "module": "Nx.Block.Take",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.Block.Take.beam"
+    },
+    {
+      "exck": "ca517f7e8a5eba693560af01c2492f606bfceb80fa08f1afd3460f597713379f",
+      "md5": "ddde7342e3fe2fbb10d5b7566d5a4e64",
+      "module": "Nx.Block.TakeAlongAxis",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.Block.TakeAlongAxis.beam"
+    },
+    {
+      "exck": "1833361133b4205b866bed4917732818cf44b5e3f22af62cab54e3e37e891ddc",
+      "md5": "020d13a21d77e2ce66c10a077003ab1a",
+      "module": "Nx.Block.TopK",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.Block.TopK.beam"
+    },
+    {
+      "exck": "fbb6a8ab17fa63f4bda2f61235d8b4c7885fad59adb8497af03f217443c25344",
+      "md5": "6a417dc7dcb96f4f216446502dbf116b",
+      "module": "Nx.Case",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.Case.beam"
+    },
+    {
+      "exck": "3e292ec8ec60a3979fc826d053a6c82fdee81e62996b429f1d4ad7ed224e7043",
+      "md5": "9587426f637bd5b4a7ae3f928291cb4c",
+      "module": "Nx.Constants",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.Constants.beam"
+    },
+    {
+      "exck": "a115c50216b3cbe9be5b9b4662ef1df535b918e3e63b3b28847d193aa2d915e5",
+      "md5": "4b79daac64e73dd4c473914610602c9d",
+      "module": "Nx.Container",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.Container.beam"
+    },
+    {
+      "exck": "aa0c73c46905bfe048d5e47cc184ad9eead9ab2fc162b3a51b8c4b48b1e3b862",
+      "md5": "afb4b5358be6b5282caa8918f8ae75f3",
+      "module": "Nx.Container.Any",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.Container.Any.beam"
+    },
+    {
+      "exck": "8f2cde36c9c59d92d5a307678c977e9747cfbbd95d8f7fbf214d3d9cd8f91d8b",
+      "md5": "55bfd502f94325afba989f7d1a747c80",
+      "module": "Nx.Container.Complex",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.Container.Complex.beam"
+    },
+    {
+      "exck": "4aa19b9ed3a2bd6de26696bf204a9e461e021f690eb6d933d1827872c483107a",
+      "md5": "133c2cae7be83608e34c3678a0207931",
+      "module": "Nx.Container.Container",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.Container.Container.beam"
+    },
+    {
+      "exck": "d15d66e390dc32e350988430fa4de86551c7210a72ad1e084acf4b4687ffa201",
+      "md5": "912b77babeaebba79b82af910895590a",
+      "module": "Nx.Container.EmptyContainer",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.Container.EmptyContainer.beam"
+    },
+    {
+      "exck": "ee4283bad665e982c8e711ba375ebb7d7d9a3c2ce3dc004a2b037497ca8762d5",
+      "md5": "22b2238a02ffd4fe97d60eeca3bfd57f",
+      "module": "Nx.Container.Float",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.Container.Float.beam"
+    },
+    {
+      "exck": "a33f0dfcb27894ac53ddaede7d0a31606c36b5b576c71a72e8d6ae929dd3e2aa",
+      "md5": "d0d0ba4c488d070a221fcf1b9a185bf7",
+      "module": "Nx.Container.Integer",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.Container.Integer.beam"
+    },
+    {
+      "exck": "89cbd2fd8142c45d6a9ea0182bba187016b94c617dfa53b456cb337a213c88d5",
+      "md5": "2d283610afe268598d2f9b767f996201",
+      "module": "Nx.Container.LazyWrapped",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.Container.LazyWrapped.beam"
+    },
+    {
+      "exck": "0d333e5a3c5545cbae74a1c44c00ae7c83cf7c5082f6f944de053adca3554042",
+      "md5": "db00df29010680f440f4ad9c228aa8a9",
+      "module": "Nx.Container.Map",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.Container.Map.beam"
+    },
+    {
+      "exck": "c1893bc0021b938b7c3b455ddaede2aead009716108a792c88a37f39687c753b",
+      "md5": "ddd2e04d3e7c842d78e414f7d83d17e0",
+      "module": "Nx.Container.Nx.Tensor",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.Container.Nx.Tensor.beam"
+    },
+    {
+      "exck": "4f9db70d3947855b32abe133c1334dcb8570ce77f26c6cb62489928b7c5fa361",
+      "md5": "5d20cf90938b3a68c00d71d85f8df57f",
+      "module": "Nx.Container.Tuple",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.Container.Tuple.beam"
+    },
+    {
+      "exck": "71c715743d3491daa9bd0e186899c4925cefff5e76ad42035529049557e493d7",
+      "md5": "6cb4c615075c53e5b1437b454360e533",
+      "module": "Nx.Container.UnderscoredContainer",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.Container.UnderscoredContainer.beam"
+    },
+    {
+      "exck": "3e4b5b18392be66e9b6b918db3d41b031a18c007ccbed8b64f744ca863d0ff1c",
+      "md5": "b380ef5d3053ae873b48acf9ac43f239",
+      "module": "Nx.Defn",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.Defn.beam"
+    },
+    {
+      "exck": "557a32bce170eec4b75db9fac89f3f557aa6463ad033519c9b9154d230fba366",
+      "md5": "c0374c66751a1124b970bc9d7af5b524",
+      "module": "Nx.Defn.Compiler",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.Defn.Compiler.beam"
+    },
+    {
+      "exck": "7aba3966e5c1cd86d68458c7ecf6c1f9401c1f1d21aeab11f40e5874e9fd5bdb",
+      "md5": "658364443e1b0e1f921451ad9ff2524b",
+      "module": "Nx.Defn.Composite",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.Defn.Composite.beam"
+    },
+    {
+      "exck": "79076bf82f9e941f0f54025b375ca924ae64713b9bf31f55f41723bd0edf4f8c",
+      "md5": "308127fc5721897433653cfbe5a18409",
+      "module": "Nx.Defn.Debug",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.Defn.Debug.beam"
+    },
+    {
+      "exck": "01475b9645ef2fda49480b4e12c93b35018e2a9d6c845507f683eed7b14f5b12",
+      "md5": "56727ce0dbdec71e9e21837f36498c99",
+      "module": "Nx.Defn.Evaluator",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.Defn.Evaluator.beam"
+    },
+    {
+      "exck": "6aa389bdd6ff4d20dc433154784eeb5fc5498be86246763585cddc1091d2690b",
+      "md5": "068465dd648bee3289472489a4d8396b",
+      "module": "Nx.Defn.Expr",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.Defn.Expr.beam"
+    },
+    {
+      "exck": "1a8f83dca29ae6339c687318d1f48d2d7f9b5a9a31e2015388ec09ceeea1141e",
+      "md5": "e649f825bd3f341fc48116861393aa3e",
+      "module": "Nx.Defn.Grad",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.Defn.Grad.beam"
+    },
+    {
+      "exck": "3d3e0183c89155944861c68d26074ea0d1a58679b4e254078d51544f4bcd31d6",
+      "md5": "ce490058eb4db68bafc69471d4e7b112",
+      "module": "Nx.Defn.Graph",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.Defn.Graph.beam"
+    },
+    {
+      "exck": "e3bb27484fcb5bf6c436c2f0df06ecc0279cc892a26185e790dcac7209e3aa21",
+      "md5": "0f422135f21e1d1fa68fc5830903be72",
+      "module": "Nx.Defn.Graph.Stage",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.Defn.Graph.Stage.beam"
+    },
+    {
+      "exck": "c814dbf02d9ba2c2d83bf8e3ff3d18801422a9a94a4cd3f1461c2b5cf7ce85c1",
+      "md5": "a7c890594b43d198343a191deeb5b2b7",
+      "module": "Nx.Defn.IncompatibleBackendsError",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.Defn.IncompatibleBackendsError.beam"
+    },
+    {
+      "exck": "e2fdc4a1e0295ddb396d64bb975fa435803eeb16260478ddc01a5b281e7a8fad",
+      "md5": "bcbe6626ebba0c3c44a8c4bd4fc9e5fb",
+      "module": "Nx.Defn.Kernel",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.Defn.Kernel.beam"
+    },
+    {
+      "exck": "7ebb7f18a02220539969de20913388b1d2a0f3033c30e158fe5595a078143863",
+      "md5": "88aa3e9de7440dd90e546daadbf43041",
+      "module": "Nx.Defn.TemplateDiff",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.Defn.TemplateDiff.beam"
+    },
+    {
+      "exck": "dfee91ddb44ff3788a39c4cd2624e9837515f01669eb7c2893ce41f2ca388fdd",
+      "md5": "84580ce2c4d0a76c7bb895ae46f54742",
+      "module": "Nx.Defn.Tree",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.Defn.Tree.beam"
+    },
+    {
+      "exck": "dabfe36fec0bbfa17cba0b13d18d4f330f4687535c8699ca47254503c008f316",
+      "md5": "75ec7904213f5adf16e310d6907ee96a",
+      "module": "Nx.Floating",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.Floating.beam"
+    },
+    {
+      "exck": "6dc465e9100cce9cc95604766cb5319b06755db567d3046f9d783184205789ef",
+      "md5": "40d027ee7a47d36dd1695bd18d669c3c",
+      "module": "Nx.Heatmap",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.Heatmap.beam"
+    },
+    {
+      "exck": "80b3622cea421c426151dabc526cd1aaa682c86bec77630120bcaa4ae1aceed2",
+      "md5": "c507e98277b2f742e0fbdf7328cc802f",
+      "module": "Nx.Helpers",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.Helpers.beam"
+    },
+    {
+      "exck": "6020e1f1ab86b0398c4a75c5119d66e7fa9be3ce19ab53d86a986420e29acdd0",
+      "md5": "4bfa573b909ed620119697bfa606b268",
+      "module": "Nx.HiddenServing",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.HiddenServing.beam"
+    },
+    {
+      "exck": "63b1e8a745f28e72eebeb0bbabc4e171b1355bf4c5138196fdacbeb5acb48cad",
+      "md5": "fca91f5e1a771bd170a82e5f37bff9a5",
+      "module": "Nx.LazyContainer",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.LazyContainer.beam"
+    },
+    {
+      "exck": "4c3d8b3f72c5c46e9854425dc49dd9ca21104a259028a6185443117608378e15",
+      "md5": "028fd609b91c51712553d1bf9148baf8",
+      "module": "Nx.LazyContainer.Any",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.LazyContainer.Any.beam"
+    },
+    {
+      "exck": "c4f9b2a3dece4ed9a92cfc707ada7b3c083e79b6a0981bd85653b11e5e37da81",
+      "md5": "94e72a0610a6ca92cfd18634e8b4da2c",
+      "module": "Nx.LazyContainer.Atom",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.LazyContainer.Atom.beam"
+    },
+    {
+      "exck": "56341e20871d34a8150580453275d10f1fc3a27759f132e43159b29ab1dfcd3b",
+      "md5": "81b4aa8a58197f5c8ea96664705ce873",
+      "module": "Nx.LazyContainer.Complex",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.LazyContainer.Complex.beam"
+    },
+    {
+      "exck": "bd8016c8c675c71b9a9fdfdc8817707cea310377174ae3072b37666c064b9cd1",
+      "md5": "fbcca444d73c81391471dd1ab28c6b85",
+      "module": "Nx.LazyContainer.Float",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.LazyContainer.Float.beam"
+    },
+    {
+      "exck": "46f729f148da19e089d79b433debd7a2a294573c6deea310141d52d6af36931a",
+      "md5": "b5d144eb27b196814302f03fa1fbe353",
+      "module": "Nx.LazyContainer.Integer",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.LazyContainer.Integer.beam"
+    },
+    {
+      "exck": "3b68ffd71240e66e5b3dd1adb8522e58311fcb56bc39b4567cf9df78f44a6b15",
+      "md5": "b577a161e7206be726d29fe1f51bdf74",
+      "module": "Nx.LazyContainer.LazyOnly",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.LazyContainer.LazyOnly.beam"
+    },
+    {
+      "exck": "7a474f2cc63377c137772c5b2ebf926e3e853d936daedb6c55f1865ab3462ef1",
+      "md5": "2b24b81913dee8221503a1ea9640664f",
+      "module": "Nx.LazyContainer.List",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.LazyContainer.List.beam"
+    },
+    {
+      "exck": "caf07b3e70870bee7f28c8588e48a55fae3c6dcfe922c01df36922e2caca4848",
+      "md5": "b7b63d7775a80e211073b2f086959ec3",
+      "module": "Nx.LazyContainer.MagicNumber",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.LazyContainer.MagicNumber.beam"
+    },
+    {
+      "exck": "db7f4229ce2052a9d105fdaa87e213495ec63e132aca4ccf1b148b8117607092",
+      "md5": "3e8c8e4f6dcac25ba2780603f906054e",
+      "module": "Nx.LazyContainer.Map",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.LazyContainer.Map.beam"
+    },
+    {
+      "exck": "bb1281469b3387c337cd5c090713914f201559801dd76009253ec7175f8890d1",
+      "md5": "9f9accc86105d86705d8817b13a6a5f8",
+      "module": "Nx.LazyContainer.Nx.Batch",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.LazyContainer.Nx.Batch.beam"
+    },
+    {
+      "exck": "217d479e7faee9ee532d87999a176f487f6d23a26a7b818d08af194c52020d67",
+      "md5": "dcc6d4bba5b11ed54a1c43647373a51e",
+      "module": "Nx.LazyContainer.Nx.Tensor",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.LazyContainer.Nx.Tensor.beam"
+    },
+    {
+      "exck": "7dc42fdc8fd8c4a291fb94bfc0c5d9d1c3605a8307a124e4495cf3448ca9ca7d",
+      "md5": "28b93bc8b497e6b1ca9e87c287493d2e",
+      "module": "Nx.LazyContainer.Tuple",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.LazyContainer.Tuple.beam"
+    },
+    {
+      "exck": "d4dffe454619d95a4a68c3378a069832113129a34f68e3c40a3d47c8fbb90f9c",
+      "md5": "db7c75f027b76f198c73b7bf665fa444",
+      "module": "Nx.LinAlg",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.LinAlg.beam"
+    },
+    {
+      "exck": "5810fed941a310dea84c0cdf2198f79440c464ef597cc154262da9765e7f9b16",
+      "md5": "3da3f3d22e3e76c5d2d68f4998c3e704",
+      "module": "Nx.LinAlg.BlockEigh",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.LinAlg.BlockEigh.beam"
+    },
+    {
+      "exck": "605825dd0f98c36f025bbbd63af68038eb999816d7ef90f45e5e93b7b4d34132",
+      "md5": "596c5bb290c5f4b0c602197a1152ac50",
+      "module": "Nx.LinAlg.Cholesky",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.LinAlg.Cholesky.beam"
+    },
+    {
+      "exck": "ef9a3375ec3963e8de92086cbaf76b85ee83cfc1b7db7445ff207937e69586c4",
+      "md5": "c02ed76e19116a28647f720619a99fc5",
+      "module": "Nx.LinAlg.LU",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.LinAlg.LU.beam"
+    },
+    {
+      "exck": "c1be4a22d099fc91ff1ecb8d7748e8c4a33b8eab349f96fd83fe1c5dc6a60813",
+      "md5": "babb8e7fb27aafad7c94c6758044741c",
+      "module": "Nx.LinAlg.QR",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.LinAlg.QR.beam"
+    },
+    {
+      "exck": "0777e4d6918a163ba812fceea1f6eef43d88e402a7e793f816f85b2091ffc92d",
+      "md5": "c817051e01064d6b45f74d113ad3f67a",
+      "module": "Nx.LinAlg.SVD",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.LinAlg.SVD.beam"
+    },
+    {
+      "exck": "153514a72dce05aa3a414a85e2b4126086c344c04f83b20ba35071100527654b",
+      "md5": "73093672a6261355d5ff8aec2d03c09c",
+      "module": "Nx.Mesh",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.Mesh.beam"
+    },
+    {
+      "exck": "73a7daed219128494028350c4bb214a07b2ef2731f3609124f10dc264df7d25a",
+      "md5": "875c14f6b334587f73ddde1cf1e312b0",
+      "module": "Nx.Pointer",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.Pointer.beam"
+    },
+    {
+      "exck": "2268038f4aa327055897f2dffa23acc2a48d78a0adca90c3c0a21d3d126c3294",
+      "md5": "156da883d4fb66ce8a9e9ba95558835a",
+      "module": "Nx.Random",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.Random.beam"
+    },
+    {
+      "exck": "7670933f72d4404cf0983340f0f12d3ca3515c5a2a2d70ef2b30ac230d814903",
+      "md5": "02f1e6b92bea9717c4e7244921166b37",
+      "module": "Nx.Ryu",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.Ryu.beam"
+    },
+    {
+      "exck": "d00f5553a7b4f671e51d0c1069b98a1d65cb241a557f964197df1d64becfd9ff",
+      "md5": "e77dad26a416568e2fb428513497f558",
+      "module": "Nx.Serving",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.Serving.beam"
+    },
+    {
+      "exck": "2d4957d32fed12add0b6f3b3a57d3bc81abcb4cf25f62ff80a736d3c3e787949",
+      "md5": "0379107f8e4704c707ccadb439a2b97d",
+      "module": "Nx.Serving.Default",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.Serving.Default.beam"
+    },
+    {
+      "exck": "0f4f4026a027cb353854d23d5ccfb4aa4406e77e4eb7f83d9e367a62a0c32282",
+      "md5": "daa386b69d79c9cba54f3102109bd1a1",
+      "module": "Nx.Shape",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.Shape.beam"
+    },
+    {
+      "exck": "65523555e4ced70fd772f1c994682fe9d63f53e5671b43530132148a935088bb",
+      "md5": "3bf074cbbe256728add0e74116b6ca63",
+      "module": "Nx.Shared",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.Shared.beam"
+    },
+    {
+      "exck": "694fce12d2824c3e8c6295fbe54379851ab1a6d5cb482e07ebedf906ba59973c",
+      "md5": "9c00428d9ec4cce6f5444ae455c47158",
+      "module": "Nx.TemplateBackend",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.TemplateBackend.beam"
+    },
+    {
+      "exck": "05b114c0775beb9f8904f10d3bba245bf89e91dee0b062f0808d417e42b347fe",
+      "md5": "3306247fa3d71c46edc74da58adf5cc6",
+      "module": "Nx.Tensor",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.Tensor.beam"
+    },
+    {
+      "exck": "91824d66484f580b5085e43d5e151c4d6a3ee2735433df410e0399bc488992ba",
+      "md5": "cc932521d589d84a81b3d067ace98f72",
+      "module": "Nx.Testing",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.Testing.beam"
+    },
+    {
+      "exck": "61138e41a642f09902f3f62a626d6e3804deeeeb897ef24a930d52ec936a9b04",
+      "md5": "043b7c050b5f91a9a4d77e7e1ca2e26f",
+      "module": "Nx.Type",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.Nx.Type.beam"
+    },
+    {
+      "exck": "8e7dc7cd2bd288368f438722d3dabe5055adba5cfd04a69e247794d05163122a",
+      "md5": "3af2d18e8eb8a72e4bb962ef4a43a379",
+      "module": "ProcessBackend",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.ProcessBackend.beam"
+    },
+    {
+      "exck": "4ab402f4100025bfab14cb0b9adc2df82c40610b23b87b9d92f49219c301d2a7",
+      "md5": "d807a670d59312625b8ec8972b32f578",
+      "module": "UnderscoredContainer",
+      "path": "$BUILD/nx/lib/nx/ebin/Elixir.UnderscoredContainer.beam"
+    }
+  ],
+  "capabilities": {
+    "bodies": false,
+    "body_hook": false,
+    "signatures": true
+  },
+  "checker_version": "elixir_checker_v10",
+  "completion": {
+    "blocking": 0,
+    "coverage_violations": [],
+    "exit_code": 0,
+    "reasons": [],
+    "status": "complete"
+  },
+  "config": {
+    "ci": true,
+    "clause_local_qualification": true,
+    "digest": "sha256:c95f1857e0a209121d5e3fc51e45212b3fbc95f647f4b53df9d4adc6b5dcf423",
+    "expand_opaque": false,
+    "profile": "review",
+    "require_static_return": false,
+    "rules": [
+      [
+        "SL001",
+        "warning"
+      ],
+      [
+        "SL002",
+        "warning"
+      ],
+      [
+        "SL003",
+        "warning"
+      ],
+      [
+        "SL006",
+        "warning"
+      ],
+      [
+        "SL008",
+        "warning"
+      ]
+    ],
+    "warnings_as_errors": false
+  },
+  "elixir": "1.21.0-dev",
+  "findings": [],
+  "ledger": {
+    "bodies": {
+      "completed": 0,
+      "requested": false
+    },
+    "entries": [
+      {
+        "class": "unknown",
+        "mfa": "Nx.covariance/2",
+        "module": "Nx",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Nx.covariance/2",
+        "module": "Nx",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 1,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Nx.covariance/2",
+        "module": "Nx",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 2,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Nx.covariance/3",
+        "module": "Nx",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Nx.load_numpy!/1",
+        "module": "Nx",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Nx.load_numpy_archive!/1",
+        "module": "Nx",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Nx.standard_deviation/2",
+        "module": "Nx",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Nx.variance/2",
+        "module": "Nx",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Nx.vectorize/2",
+        "module": "Nx",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      }
+    ],
+    "functions": {
+      "compared": 7,
+      "found": 7,
+      "unavailable": 0,
+      "unsupported": 0
+    },
+    "lost_analysis": {},
+    "modules": {
+      "analysed": 101,
+      "discovered": 101,
+      "out_of_scope": {
+        "erlang_module": 0,
+        "excluded": 0
+      },
+      "unavailable": {}
+    },
+    "obligations": {
+      "unknown": 9
+    },
+    "obligations_unknown_by_reason": {
+      "top_only": 9
+    },
+    "signatures": {
+      "available": 7,
+      "unavailable": {}
+    },
+    "slices": {
+      "approximate": 9,
+      "compared": 9,
+      "exact": 0,
+      "expanded": 0,
+      "found": 9,
+      "loss_kinds": {
+        "integer_refinement_erased": 9
+      },
+      "unavailable": {},
+      "unsupported": {}
+    },
+    "specs_out_of_scope": {
+      "generated": 27,
+      "protocol": 10
+    }
+  },
+  "otp": "28",
+  "project": {
+    "mix_env": null,
+    "mix_target": null,
+    "umbrella": false
+  },
+  "schema": "spec_lint/report",
+  "schema_version": 1,
+  "scope": {
+    "app_filters": [],
+    "apps": [
+      "nx"
+    ],
+    "exclude": [],
+    "module_filters": [],
+    "partial": false
+  },
+  "tool": {
+    "name": "spec_lint",
+    "version": "0.1.0"
+  }
+}

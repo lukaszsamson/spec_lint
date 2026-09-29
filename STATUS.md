@@ -5,6 +5,44 @@ Date 2026-09-29. `DESIGN.md` is the authoritative design,
 Phase 4 follows the review of the Phase 3 implementation at `0cc9c50`;
 previous results below are historical and are superseded where noted.
 
+## Milestone 5: release campaign 1, correctness and runtime (2026-09-29)
+
+Frozen tool `06b7496` (`source_sha256` `b039ce7d...8edded`), after the
+frozen evaluation inventory (`e464905`). Report:
+`bench/corpus/reports/release-1/README.md`.
+
+- **Resource failures** (`06b7496`): an exception after the per-module
+  analysis, or while rendering, is an internal failure (exit 2, no report)
+  instead of Mix's exit 1; `--output` removes an earlier report before the
+  run. Integration tests: analysis crash (exit 2, report `incomplete`),
+  exception after the analysis (exit 2, no report), VM killed during the
+  analysis (no report). An OOM-killed VM cannot promise exit 2: CI treats
+  a missing or non-`complete` report as failure (README, "Exit status").
+  `compare_replay.sh` exits 2 on a missing, truncated or incomplete report;
+  `run.sh` removes a corpus's earlier outputs first.
+- **Toolchains.** Both 1.21 compilers rebuilt from fresh clones with
+  `build_elixir.sh`; 648b2a9 reproduces its recorded identity. The fresh
+  `c24c235` differs from `~/elixir` in two stdlib checker chunks (`URI`,
+  `Logger.Backends.Console`), which equal 648b2a9's: `~/elixir` is not a
+  clean build, and the Milestone 2 attribution of those two differences to
+  the compiler change is corrected (only `IEx.Autocomplete` remains).
+- **Qualification** of the frozen tree under `c24c235`, `648b2a9` and
+  1.20.4: formatting, strict Credo, tests (439/439/442 passed), the
+  cross-compiler test, Dialyzer and the self-check (407 slices, exit 0) pass.
+- **Replay** of the fifteen corpora under the three compilers: complete,
+  4,204/4,204/4,170 slices, 3,113/3,113/3,095 unknown obligations, 63/63/65
+  findings, 9 gates each; ledgers, gates, exit codes and fingerprints equal
+  the previous reports of each adapter. A second run is byte-identical.
+- **Runtime** (`/usr/bin/time -l`, M2 Pro): Absinthe 53-58 s and 6.0-6.3 GB
+  peak RSS on every compiler; every other corpus under 4 s and 450 MB.
+  Budgets in `bench/corpus/budgets.json` (Absinthe 90 s and 8,256 MiB),
+  enforced by `run.sh` and a test; both runs are within them.
+- **Struct defaults** (counted, no policy change): 7 findings per adapter,
+  all seven `Absinthe.Blueprint.Input.parse/1` gates (F16); 2 of the 9
+  gates are not struct defaults.
+- **Gates for refutation** (`release-1/gates.json`): 27 (9 per adapter),
+  all `changed` in `data` only (Milestone 4 source-clause fields), none new.
+
 ## Milestone 4 delivered: source-clause mapping, structural classes adopted (2026-09-29)
 
 Decision (`bench/clause_mapping/README.md`, which is the report; DESIGN.md

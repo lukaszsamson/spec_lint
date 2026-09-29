@@ -1,0 +1,13 @@
+{
+  "all_unchanged": true,
+  "differing_report_keys": [],
+  "incomplete": [],
+  "note": "second run of the same campaign (budgets enforced) against these reports",
+  "schema": "spec_lint.m1_replay/1",
+  "totals": {
+    "compared_slices": 4204,
+    "findings": 63,
+    "gates": 9,
+    "previous_gates": 9
+  }
+}

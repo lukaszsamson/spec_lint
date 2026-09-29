@@ -133,6 +133,16 @@ For resource failures, require **no successful result**. Caught analysis
 failures can exit 2; an externally killed or OOM-terminated VM cannot
 reliably promise that exact exit code.
 
+Progress (2026-09-29): the frozen inventory (`e464905`) and release
+campaign 1 (`bench/corpus/reports/release-1/`, tool `06b7496`) are done:
+qualification under the three compilers, the fifteen-corpus replay with
+provenance, runtime and memory budgets (`bench/corpus/budgets.json`,
+checked by `run.sh`), the resource-failure tests, struct-default counts and
+the gate list for refutation (`release-1/gates.json`, 27 gates, none new).
+Remaining: independent refutation of the listed gates, installation and
+upgrade workflows, and the README support matrix with unknown-obligation
+counts and gating limitations.
+
 ## M6. Move inference work upstream (submission preparation): after M5
 
 Stop extending the local helper source transform. Prepare the helper and

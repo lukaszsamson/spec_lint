@@ -1,0 +1,10 @@
+{
+  "budget": null,
+  "corpus": "tesla",
+  "max_rss_bytes": 175505408,
+  "method": "/usr/bin/time -l around the product run (mix run bench/run_on_ebin.exs); wall is its real time, max_rss_bytes the maximum resident set size of the process tree it waited for (the product VM)",
+  "peak_footprint_bytes": 163513016,
+  "platform": "Darwin arm64",
+  "schema": "spec_lint.corpus_resources/1",
+  "wall_s": 0.95
+}

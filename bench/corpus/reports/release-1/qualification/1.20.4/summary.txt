@@ -1,0 +1,10 @@
+deps_compile exit 0 (2 s)
+format exit 0 (1 s)
+credo exit 0 (1 s)
+test exit 0 (73 s)
+dialyzer exit 0 (3 s)
+selfcheck exit 0 (1 s)
+Result: 442 passed, 7 excluded
+Total errors: 0, Skipped: 0, Unnecessary Skips: 0
+done (passed successfully)
+
