@@ -75,7 +75,7 @@ go to standard error, so standard output is only the JSON report.
 | --- | --- |
 | 0 | Accepted. Without `--ci` or `--warnings-as-errors`, findings never fail the run. |
 | 1 | New gated findings, or a coverage violation. |
-| 2 | Invalid options or configuration (including a configuration file that raises, throws or exits, an invalid baseline file, and an explicitly given baseline path that does not exist), compilation failure, a missing build directory (ebin) for an owned application or one that lost BEAM files its build lists, unsupported compiler or checker chunk (in CI) or backend, a filter that matches nothing, or an incomplete run (an internal failure while analysing a module). |
+| 2 | Invalid options or configuration (including a configuration file that raises, throws or exits, an invalid baseline file, and an explicitly given baseline path that does not exist), compilation failure, a missing build directory (ebin) for an owned application or one that lost BEAM files its build lists, unreadable module inventory for an owned Mix app, corrupt BEAM files or a filename/module mismatch, unsupported compiler or checker chunk (in CI) or backend, a filter that matches nothing, or an incomplete run (an internal failure while analysing a module). |
 
 ## Rules
 
@@ -288,6 +288,10 @@ MIX_ENV=test mix run bench/run_on_ebin.exs -- \
 ```
 
 ## Development
+
+Use the qualified Elixir/OTP toolchain above. The benchmark regression tests
+also require Bash, Git, jq (with `walk`), gzip and `shasum` on PATH. These
+are development requirements; the Mix lint task itself does not invoke them.
 
 ```
 mix format --check-formatted

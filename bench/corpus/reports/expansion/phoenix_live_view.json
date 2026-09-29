@@ -1,0 +1,1199 @@
+{
+  "adapter": "1.21.0-dev+c24c235",
+  "checker_version": "elixir_checker_v10",
+  "code_paths": [
+    "$OSS/phoenix_live_view/_build/test/lib/cc_precompiler/ebin",
+    "$OSS/phoenix_live_view/_build/test/lib/elixir_make/ebin",
+    "$OSS/phoenix_live_view/_build/test/lib/file_system/ebin",
+    "$OSS/phoenix_live_view/_build/test/lib/finch/ebin",
+    "$OSS/phoenix_live_view/_build/test/lib/fine/ebin",
+    "$OSS/phoenix_live_view/_build/test/lib/glob_ex/ebin",
+    "$OSS/phoenix_live_view/_build/test/lib/hpax/ebin",
+    "$OSS/phoenix_live_view/_build/test/lib/html_entities/ebin",
+    "$OSS/phoenix_live_view/_build/test/lib/igniter/ebin",
+    "$OSS/phoenix_live_view/_build/test/lib/jason/ebin",
+    "$OSS/phoenix_live_view/_build/test/lib/lazy_html/ebin",
+    "$OSS/phoenix_live_view/_build/test/lib/mime/ebin",
+    "$OSS/phoenix_live_view/_build/test/lib/mint/ebin",
+    "$OSS/phoenix_live_view/_build/test/lib/nimble_options/ebin",
+    "$OSS/phoenix_live_view/_build/test/lib/nimble_pool/ebin",
+    "$OSS/phoenix_live_view/_build/test/lib/owl/ebin",
+    "$OSS/phoenix_live_view/_build/test/lib/phoenix/ebin",
+    "$OSS/phoenix_live_view/_build/test/lib/phoenix_html/ebin",
+    "$OSS/phoenix_live_view/_build/test/lib/phoenix_html_helpers/ebin",
+    "$OSS/phoenix_live_view/_build/test/lib/phoenix_live_reload/ebin",
+    "$OSS/phoenix_live_view/_build/test/lib/phoenix_live_view/ebin",
+    "$OSS/phoenix_live_view/_build/test/lib/phoenix_pubsub/ebin",
+    "$OSS/phoenix_live_view/_build/test/lib/phoenix_template/ebin",
+    "$OSS/phoenix_live_view/_build/test/lib/phoenix_view/ebin",
+    "$OSS/phoenix_live_view/_build/test/lib/plug/ebin",
+    "$OSS/phoenix_live_view/_build/test/lib/plug_crypto/ebin",
+    "$OSS/phoenix_live_view/_build/test/lib/req/ebin",
+    "$OSS/phoenix_live_view/_build/test/lib/rewrite/ebin",
+    "$OSS/phoenix_live_view/_build/test/lib/sourceror/ebin",
+    "$OSS/phoenix_live_view/_build/test/lib/spitfire/ebin",
+    "$OSS/phoenix_live_view/_build/test/lib/telemetry/ebin",
+    "$OSS/phoenix_live_view/_build/test/lib/text_diff/ebin",
+    "$OSS/phoenix_live_view/_build/test/lib/websock/ebin",
+    "$OSS/phoenix_live_view/_build/test/lib/websock_adapter/ebin"
+  ],
+  "ebins": [
+    "$OSS/phoenix_live_view/_build/test/lib/phoenix_live_view/ebin"
+  ],
+  "fixtures": null,
+  "functions": [
+    {
+      "class": "unknown",
+      "class_static": "unknown",
+      "clause_conflict_candidate": false,
+      "clause_conflict_candidate_static": false,
+      "file": "$OSS/phoenix_live_view/lib/phoenix_component/macro_component.ex",
+      "inferred": [
+        "(binary() or empty_list() or non_empty_list(term(), term()) or {term(), term(), term(), term()}, empty_list() or non_empty_list(term(), term())) -> dynamic()"
+      ],
+      "line": 251,
+      "location": "$OSS/phoenix_live_view/lib/phoenix_component/macro_component.ex:251",
+      "mfa": "Phoenix.Component.MacroComponent.ast_to_string/2",
+      "sl002_candidate": false,
+      "sl002_candidate_static": false,
+      "slices": [
+        {
+          "applied": [
+            0
+          ],
+          "applied_return": "term()",
+          "arg_loss_kinds": [
+            "recursive_cutoff"
+          ],
+          "badapply": false,
+          "class": "unknown",
+          "class_static": "unknown",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [
+            {
+              "class": "unknown",
+              "class_static": "unknown",
+              "clause": 0,
+              "components": [],
+              "containment": "domain_escape",
+              "extra": "not binary()",
+              "reasons": [
+                "domain_escape=[0]",
+                "top_only"
+              ],
+              "static_return": false
+            }
+          ],
+          "components": [],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "domain_escape",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "not binary()",
+          "index": 0,
+          "input_approximate": true,
+          "loss_kinds": [
+            "recursive_cutoff"
+          ],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "top_only"
+          ],
+          "return_loss_kinds": [],
+          "return_relation": "superset",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "binary() or {binary(),\n list(\n   {binary(),\n    atom() or binary() or float() or integer() or list(term()) or\n      {term(), list({atom(), term()}), atom() or list(term())} or {term(), term()}}\n ), list(term()), %{closing: :self or :void}}",
+            "list({atom(), term()})"
+          ],
+          "spec_return": "binary()",
+          "status": "compared",
+          "top_only": true,
+          "union_class": "unknown",
+          "union_class_static": "unknown"
+        }
+      ],
+      "specs": [
+        "ast_to_string(heex_ast(), keyword()) :: binary()"
+      ],
+      "status": "compared"
+    },
+    {
+      "class": "unknown",
+      "class_static": "unknown",
+      "clause_conflict_candidate": false,
+      "clause_conflict_candidate_static": false,
+      "file": "$OSS/phoenix_live_view/lib/phoenix_component/macro_component.ex",
+      "inferred": [
+        "(atom(), term()) -> dynamic()"
+      ],
+      "line": 143,
+      "location": "$OSS/phoenix_live_view/lib/phoenix_component/macro_component.ex:143",
+      "mfa": "Phoenix.Component.MacroComponent.get_data/2",
+      "sl002_candidate": false,
+      "sl002_candidate_static": false,
+      "slices": [
+        {
+          "applied": [
+            0
+          ],
+          "applied_return": "term()",
+          "arg_loss_kinds": [],
+          "badapply": false,
+          "class": "unknown",
+          "class_static": "unknown",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [
+            {
+              "class": "unknown",
+              "class_static": "unknown",
+              "clause": 0,
+              "components": [],
+              "containment": "domain_escape",
+              "extra": "not (nil or list(term()))",
+              "reasons": [
+                "domain_escape=[0]",
+                "top_only"
+              ],
+              "static_return": false
+            }
+          ],
+          "components": [],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "domain_escape",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "not (nil or list(term()))",
+          "index": 0,
+          "input_approximate": false,
+          "loss_kinds": [],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "top_only"
+          ],
+          "return_loss_kinds": [],
+          "return_relation": "superset",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "atom()",
+            "atom()"
+          ],
+          "spec_return": "nil or list(term())",
+          "status": "compared",
+          "top_only": true,
+          "union_class": "unknown",
+          "union_class_static": "unknown"
+        }
+      ],
+      "specs": [
+        "get_data(module(), module()) :: [term()] | nil"
+      ],
+      "status": "compared"
+    },
+    {
+      "class": "unknown",
+      "class_static": "unknown",
+      "clause_conflict_candidate": false,
+      "clause_conflict_candidate_static": false,
+      "file": "$OSS/phoenix_live_view/lib/phoenix_live_view.ex",
+      "inferred": [
+        "(%Phoenix.LiveView.Socket{assigns: term()}, term(), term(), term()) -> dynamic()"
+      ],
+      "line": 1874,
+      "location": "$OSS/phoenix_live_view/lib/phoenix_live_view.ex:1874",
+      "mfa": "Phoenix.LiveView.stream/4",
+      "sl002_candidate": false,
+      "sl002_candidate_static": false,
+      "slices": [
+        {
+          "applied": [
+            0
+          ],
+          "applied_return": "term()",
+          "arg_loss_kinds": [
+            "integer_refinement_erased",
+            "opaque_boundary"
+          ],
+          "badapply": false,
+          "class": "unknown",
+          "class_static": "unknown",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [
+            {
+              "class": "unknown",
+              "class_static": "unknown",
+              "clause": 0,
+              "components": [],
+              "containment": "domain_escape",
+              "extra": "not (%Phoenix.LiveView.Socket{\n  id: binary(),\n  endpoint: atom(),\n  view: atom(),\n  parent_pid: nil or pid(),\n  root_pid: pid(),\n  router: atom(),\n  private: map(),\n  redirected: nil or {...},\n  host_uri:\n    %URI{\n      scheme: nil or binary(),\n      authority: nil or binary(),\n      userinfo: nil or binary(),\n      host: nil or binary(),\n      port: nil or integer(),\n      path: nil or binary(),\n      query: nil or binary(),\n      fragment: nil or binary()\n    } or :not_mounted_at_router,\n  transport_pid: nil or pid()\n})",
+              "reasons": [
+                "domain_escape=[0]",
+                "top_only"
+              ],
+              "static_return": false
+            }
+          ],
+          "components": [],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "domain_escape",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "not (%Phoenix.LiveView.Socket{\n  id: binary(),\n  endpoint: atom(),\n  view: atom(),\n  parent_pid: nil or pid(),\n  root_pid: pid(),\n  router: atom(),\n  private: map(),\n  redirected: nil or {...},\n  host_uri:\n    %URI{\n      scheme: nil or binary(),\n      authority: nil or binary(),\n      userinfo: nil or binary(),\n      host: nil or binary(),\n      port: nil or integer(),\n      path: nil or binary(),\n      query: nil or binary(),\n      fragment: nil or binary()\n    } or :not_mounted_at_router,\n  transport_pid: nil or pid()\n})",
+          "index": 0,
+          "input_approximate": true,
+          "loss_kinds": [
+            "integer_refinement_erased",
+            "opaque_boundary"
+          ],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "top_only",
+            "return_inexact"
+          ],
+          "return_loss_kinds": [
+            "integer_refinement_erased",
+            "opaque_boundary"
+          ],
+          "return_relation": "superset",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "%Phoenix.LiveView.Socket{\n  id: binary(),\n  endpoint: atom(),\n  view: atom(),\n  parent_pid: nil or pid(),\n  root_pid: pid(),\n  router: atom(),\n  private: map(),\n  redirected: nil or {...},\n  host_uri:\n    %URI{\n      scheme: nil or binary(),\n      authority: nil or binary(),\n      userinfo: nil or binary(),\n      host: nil or binary(),\n      port: nil or integer(),\n      path: nil or binary(),\n      query: nil or binary(),\n      fragment: nil or binary()\n    } or :not_mounted_at_router,\n  transport_pid: nil or pid()\n}",
+            "atom() or binary()",
+            "term()",
+            "list({atom(), term()})"
+          ],
+          "spec_return": "%Phoenix.LiveView.Socket{\n  id: binary(),\n  endpoint: atom(),\n  view: atom(),\n  parent_pid: nil or pid(),\n  root_pid: pid(),\n  router: atom(),\n  private: map(),\n  redirected: nil or {...},\n  host_uri:\n    %URI{\n      scheme: nil or binary(),\n      authority: nil or binary(),\n      userinfo: nil or binary(),\n      host: nil or binary(),\n      port: nil or integer(),\n      path: nil or binary(),\n      query: nil or binary(),\n      fragment: nil or binary()\n    } or :not_mounted_at_router,\n  transport_pid: nil or pid()\n}",
+          "status": "compared",
+          "top_only": true,
+          "union_class": "unknown",
+          "union_class_static": "unknown"
+        }
+      ],
+      "specs": [
+        "stream(\n  socket :: Phoenix.LiveView.Socket.t(),\n  name :: atom() | String.t(),\n  items :: Enumerable.t(),\n  opts :: Keyword.t()\n) :: Phoenix.LiveView.Socket.t()"
+      ],
+      "status": "compared"
+    },
+    {
+      "class": "unknown",
+      "class_static": "unknown",
+      "clause_conflict_candidate": false,
+      "clause_conflict_candidate_static": false,
+      "file": "$OSS/phoenix_live_view/lib/phoenix_live_view.ex",
+      "inferred": [
+        "(%Phoenix.LiveView.Socket{assigns: term()}, term(), empty_list() or non_empty_list(term(), term())) -> dynamic()"
+      ],
+      "line": 1913,
+      "location": "$OSS/phoenix_live_view/lib/phoenix_live_view.ex:1913",
+      "mfa": "Phoenix.LiveView.stream_configure/3",
+      "sl002_candidate": false,
+      "sl002_candidate_static": false,
+      "slices": [
+        {
+          "applied": [
+            0
+          ],
+          "applied_return": "term()",
+          "arg_loss_kinds": [
+            "integer_refinement_erased",
+            "opaque_boundary"
+          ],
+          "badapply": false,
+          "class": "unknown",
+          "class_static": "unknown",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [
+            {
+              "class": "unknown",
+              "class_static": "unknown",
+              "clause": 0,
+              "components": [],
+              "containment": "domain_escape",
+              "extra": "not (%Phoenix.LiveView.Socket{\n  id: binary(),\n  endpoint: atom(),\n  view: atom(),\n  parent_pid: nil or pid(),\n  root_pid: pid(),\n  router: atom(),\n  private: map(),\n  redirected: nil or {...},\n  host_uri:\n    %URI{\n      scheme: nil or binary(),\n      authority: nil or binary(),\n      userinfo: nil or binary(),\n      host: nil or binary(),\n      port: nil or integer(),\n      path: nil or binary(),\n      query: nil or binary(),\n      fragment: nil or binary()\n    } or :not_mounted_at_router,\n  transport_pid: nil or pid()\n})",
+              "reasons": [
+                "domain_escape=[0]",
+                "top_only"
+              ],
+              "static_return": false
+            }
+          ],
+          "components": [],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "domain_escape",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "not (%Phoenix.LiveView.Socket{\n  id: binary(),\n  endpoint: atom(),\n  view: atom(),\n  parent_pid: nil or pid(),\n  root_pid: pid(),\n  router: atom(),\n  private: map(),\n  redirected: nil or {...},\n  host_uri:\n    %URI{\n      scheme: nil or binary(),\n      authority: nil or binary(),\n      userinfo: nil or binary(),\n      host: nil or binary(),\n      port: nil or integer(),\n      path: nil or binary(),\n      query: nil or binary(),\n      fragment: nil or binary()\n    } or :not_mounted_at_router,\n  transport_pid: nil or pid()\n})",
+          "index": 0,
+          "input_approximate": true,
+          "loss_kinds": [
+            "integer_refinement_erased",
+            "opaque_boundary"
+          ],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "top_only",
+            "return_inexact"
+          ],
+          "return_loss_kinds": [
+            "integer_refinement_erased",
+            "opaque_boundary"
+          ],
+          "return_relation": "superset",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "%Phoenix.LiveView.Socket{\n  id: binary(),\n  endpoint: atom(),\n  view: atom(),\n  parent_pid: nil or pid(),\n  root_pid: pid(),\n  router: atom(),\n  private: map(),\n  redirected: nil or {...},\n  host_uri:\n    %URI{\n      scheme: nil or binary(),\n      authority: nil or binary(),\n      userinfo: nil or binary(),\n      host: nil or binary(),\n      port: nil or integer(),\n      path: nil or binary(),\n      query: nil or binary(),\n      fragment: nil or binary()\n    } or :not_mounted_at_router,\n  transport_pid: nil or pid()\n}",
+            "atom() or binary()",
+            "list({atom(), term()})"
+          ],
+          "spec_return": "%Phoenix.LiveView.Socket{\n  id: binary(),\n  endpoint: atom(),\n  view: atom(),\n  parent_pid: nil or pid(),\n  root_pid: pid(),\n  router: atom(),\n  private: map(),\n  redirected: nil or {...},\n  host_uri:\n    %URI{\n      scheme: nil or binary(),\n      authority: nil or binary(),\n      userinfo: nil or binary(),\n      host: nil or binary(),\n      port: nil or integer(),\n      path: nil or binary(),\n      query: nil or binary(),\n      fragment: nil or binary()\n    } or :not_mounted_at_router,\n  transport_pid: nil or pid()\n}",
+          "status": "compared",
+          "top_only": true,
+          "union_class": "unknown",
+          "union_class_static": "unknown"
+        }
+      ],
+      "specs": [
+        "stream_configure(\n  socket :: Phoenix.LiveView.Socket.t(),\n  name :: atom() | String.t(),\n  opts :: Keyword.t()\n) :: Phoenix.LiveView.Socket.t()"
+      ],
+      "status": "compared"
+    },
+    {
+      "class": "unknown",
+      "class_static": "unknown",
+      "clause_conflict_candidate": false,
+      "clause_conflict_candidate_static": false,
+      "file": "$OSS/phoenix_live_view/lib/phoenix_live_view.ex",
+      "inferred": [
+        "(%Phoenix.LiveView.Socket{}, term(), term()) -> dynamic()"
+      ],
+      "line": 2044,
+      "location": "$OSS/phoenix_live_view/lib/phoenix_live_view.ex:2044",
+      "mfa": "Phoenix.LiveView.stream_delete/3",
+      "sl002_candidate": false,
+      "sl002_candidate_static": false,
+      "slices": [
+        {
+          "applied": [
+            0
+          ],
+          "applied_return": "term()",
+          "arg_loss_kinds": [
+            "integer_refinement_erased",
+            "opaque_boundary"
+          ],
+          "badapply": false,
+          "class": "unknown",
+          "class_static": "unknown",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [
+            {
+              "class": "unknown",
+              "class_static": "unknown",
+              "clause": 0,
+              "components": [],
+              "containment": "domain_escape",
+              "extra": "not (%Phoenix.LiveView.Socket{\n  id: binary(),\n  endpoint: atom(),\n  view: atom(),\n  parent_pid: nil or pid(),\n  root_pid: pid(),\n  router: atom(),\n  private: map(),\n  redirected: nil or {...},\n  host_uri:\n    %URI{\n      scheme: nil or binary(),\n      authority: nil or binary(),\n      userinfo: nil or binary(),\n      host: nil or binary(),\n      port: nil or integer(),\n      path: nil or binary(),\n      query: nil or binary(),\n      fragment: nil or binary()\n    } or :not_mounted_at_router,\n  transport_pid: nil or pid()\n})",
+              "reasons": [
+                "domain_escape=[0]",
+                "top_only"
+              ],
+              "static_return": false
+            }
+          ],
+          "components": [],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "domain_escape",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "not (%Phoenix.LiveView.Socket{\n  id: binary(),\n  endpoint: atom(),\n  view: atom(),\n  parent_pid: nil or pid(),\n  root_pid: pid(),\n  router: atom(),\n  private: map(),\n  redirected: nil or {...},\n  host_uri:\n    %URI{\n      scheme: nil or binary(),\n      authority: nil or binary(),\n      userinfo: nil or binary(),\n      host: nil or binary(),\n      port: nil or integer(),\n      path: nil or binary(),\n      query: nil or binary(),\n      fragment: nil or binary()\n    } or :not_mounted_at_router,\n  transport_pid: nil or pid()\n})",
+          "index": 0,
+          "input_approximate": true,
+          "loss_kinds": [
+            "integer_refinement_erased",
+            "opaque_boundary"
+          ],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "top_only",
+            "return_inexact"
+          ],
+          "return_loss_kinds": [
+            "integer_refinement_erased",
+            "opaque_boundary"
+          ],
+          "return_relation": "superset",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "%Phoenix.LiveView.Socket{\n  id: binary(),\n  endpoint: atom(),\n  view: atom(),\n  parent_pid: nil or pid(),\n  root_pid: pid(),\n  router: atom(),\n  private: map(),\n  redirected: nil or {...},\n  host_uri:\n    %URI{\n      scheme: nil or binary(),\n      authority: nil or binary(),\n      userinfo: nil or binary(),\n      host: nil or binary(),\n      port: nil or integer(),\n      path: nil or binary(),\n      query: nil or binary(),\n      fragment: nil or binary()\n    } or :not_mounted_at_router,\n  transport_pid: nil or pid()\n}",
+            "atom() or binary()",
+            "term()"
+          ],
+          "spec_return": "%Phoenix.LiveView.Socket{\n  id: binary(),\n  endpoint: atom(),\n  view: atom(),\n  parent_pid: nil or pid(),\n  root_pid: pid(),\n  router: atom(),\n  private: map(),\n  redirected: nil or {...},\n  host_uri:\n    %URI{\n      scheme: nil or binary(),\n      authority: nil or binary(),\n      userinfo: nil or binary(),\n      host: nil or binary(),\n      port: nil or integer(),\n      path: nil or binary(),\n      query: nil or binary(),\n      fragment: nil or binary()\n    } or :not_mounted_at_router,\n  transport_pid: nil or pid()\n}",
+          "status": "compared",
+          "top_only": true,
+          "union_class": "unknown",
+          "union_class_static": "unknown"
+        }
+      ],
+      "specs": [
+        "stream_delete(socket :: Phoenix.LiveView.Socket.t(), name :: atom() | String.t(), item :: any()) ::\n  Phoenix.LiveView.Socket.t()"
+      ],
+      "status": "compared"
+    },
+    {
+      "class": "unknown",
+      "class_static": "unknown",
+      "clause_conflict_candidate": false,
+      "clause_conflict_candidate_static": false,
+      "file": "$OSS/phoenix_live_view/lib/phoenix_live_view.ex",
+      "inferred": [
+        "(%Phoenix.LiveView.Socket{}, term(), term()) -> dynamic()"
+      ],
+      "line": 2081,
+      "location": "$OSS/phoenix_live_view/lib/phoenix_live_view.ex:2081",
+      "mfa": "Phoenix.LiveView.stream_delete_by_dom_id/3",
+      "sl002_candidate": false,
+      "sl002_candidate_static": false,
+      "slices": [
+        {
+          "applied": [
+            0
+          ],
+          "applied_return": "term()",
+          "arg_loss_kinds": [
+            "integer_refinement_erased",
+            "opaque_boundary"
+          ],
+          "badapply": false,
+          "class": "unknown",
+          "class_static": "unknown",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [
+            {
+              "class": "unknown",
+              "class_static": "unknown",
+              "clause": 0,
+              "components": [],
+              "containment": "domain_escape",
+              "extra": "not (%Phoenix.LiveView.Socket{\n  id: binary(),\n  endpoint: atom(),\n  view: atom(),\n  parent_pid: nil or pid(),\n  root_pid: pid(),\n  router: atom(),\n  private: map(),\n  redirected: nil or {...},\n  host_uri:\n    %URI{\n      scheme: nil or binary(),\n      authority: nil or binary(),\n      userinfo: nil or binary(),\n      host: nil or binary(),\n      port: nil or integer(),\n      path: nil or binary(),\n      query: nil or binary(),\n      fragment: nil or binary()\n    } or :not_mounted_at_router,\n  transport_pid: nil or pid()\n})",
+              "reasons": [
+                "domain_escape=[0]",
+                "top_only"
+              ],
+              "static_return": false
+            }
+          ],
+          "components": [],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "domain_escape",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "not (%Phoenix.LiveView.Socket{\n  id: binary(),\n  endpoint: atom(),\n  view: atom(),\n  parent_pid: nil or pid(),\n  root_pid: pid(),\n  router: atom(),\n  private: map(),\n  redirected: nil or {...},\n  host_uri:\n    %URI{\n      scheme: nil or binary(),\n      authority: nil or binary(),\n      userinfo: nil or binary(),\n      host: nil or binary(),\n      port: nil or integer(),\n      path: nil or binary(),\n      query: nil or binary(),\n      fragment: nil or binary()\n    } or :not_mounted_at_router,\n  transport_pid: nil or pid()\n})",
+          "index": 0,
+          "input_approximate": true,
+          "loss_kinds": [
+            "integer_refinement_erased",
+            "opaque_boundary"
+          ],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "top_only",
+            "return_inexact"
+          ],
+          "return_loss_kinds": [
+            "integer_refinement_erased",
+            "opaque_boundary"
+          ],
+          "return_relation": "superset",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "%Phoenix.LiveView.Socket{\n  id: binary(),\n  endpoint: atom(),\n  view: atom(),\n  parent_pid: nil or pid(),\n  root_pid: pid(),\n  router: atom(),\n  private: map(),\n  redirected: nil or {...},\n  host_uri:\n    %URI{\n      scheme: nil or binary(),\n      authority: nil or binary(),\n      userinfo: nil or binary(),\n      host: nil or binary(),\n      port: nil or integer(),\n      path: nil or binary(),\n      query: nil or binary(),\n      fragment: nil or binary()\n    } or :not_mounted_at_router,\n  transport_pid: nil or pid()\n}",
+            "atom() or binary()",
+            "binary()"
+          ],
+          "spec_return": "%Phoenix.LiveView.Socket{\n  id: binary(),\n  endpoint: atom(),\n  view: atom(),\n  parent_pid: nil or pid(),\n  root_pid: pid(),\n  router: atom(),\n  private: map(),\n  redirected: nil or {...},\n  host_uri:\n    %URI{\n      scheme: nil or binary(),\n      authority: nil or binary(),\n      userinfo: nil or binary(),\n      host: nil or binary(),\n      port: nil or integer(),\n      path: nil or binary(),\n      query: nil or binary(),\n      fragment: nil or binary()\n    } or :not_mounted_at_router,\n  transport_pid: nil or pid()\n}",
+          "status": "compared",
+          "top_only": true,
+          "union_class": "unknown",
+          "union_class_static": "unknown"
+        }
+      ],
+      "specs": [
+        "stream_delete_by_dom_id(\n  socket :: Phoenix.LiveView.Socket.t(),\n  name :: atom() | String.t(),\n  id :: String.t()\n) :: Phoenix.LiveView.Socket.t()"
+      ],
+      "status": "compared"
+    },
+    {
+      "class": "unknown",
+      "class_static": "unknown",
+      "clause_conflict_candidate": false,
+      "clause_conflict_candidate_static": false,
+      "file": "$OSS/phoenix_live_view/lib/phoenix_live_view.ex",
+      "inferred": [
+        "(%Phoenix.LiveView.Socket{}, term(), term(), empty_list() or non_empty_list(term(), term())) -> dynamic()"
+      ],
+      "line": 2015,
+      "location": "$OSS/phoenix_live_view/lib/phoenix_live_view.ex:2015",
+      "mfa": "Phoenix.LiveView.stream_insert/4",
+      "sl002_candidate": false,
+      "sl002_candidate_static": false,
+      "slices": [
+        {
+          "applied": [
+            0
+          ],
+          "applied_return": "term()",
+          "arg_loss_kinds": [
+            "integer_refinement_erased",
+            "opaque_boundary"
+          ],
+          "badapply": false,
+          "class": "unknown",
+          "class_static": "unknown",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [
+            {
+              "class": "unknown",
+              "class_static": "unknown",
+              "clause": 0,
+              "components": [],
+              "containment": "domain_escape",
+              "extra": "not (%Phoenix.LiveView.Socket{\n  id: binary(),\n  endpoint: atom(),\n  view: atom(),\n  parent_pid: nil or pid(),\n  root_pid: pid(),\n  router: atom(),\n  private: map(),\n  redirected: nil or {...},\n  host_uri:\n    %URI{\n      scheme: nil or binary(),\n      authority: nil or binary(),\n      userinfo: nil or binary(),\n      host: nil or binary(),\n      port: nil or integer(),\n      path: nil or binary(),\n      query: nil or binary(),\n      fragment: nil or binary()\n    } or :not_mounted_at_router,\n  transport_pid: nil or pid()\n})",
+              "reasons": [
+                "domain_escape=[0]",
+                "top_only"
+              ],
+              "static_return": false
+            }
+          ],
+          "components": [],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "domain_escape",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "not (%Phoenix.LiveView.Socket{\n  id: binary(),\n  endpoint: atom(),\n  view: atom(),\n  parent_pid: nil or pid(),\n  root_pid: pid(),\n  router: atom(),\n  private: map(),\n  redirected: nil or {...},\n  host_uri:\n    %URI{\n      scheme: nil or binary(),\n      authority: nil or binary(),\n      userinfo: nil or binary(),\n      host: nil or binary(),\n      port: nil or integer(),\n      path: nil or binary(),\n      query: nil or binary(),\n      fragment: nil or binary()\n    } or :not_mounted_at_router,\n  transport_pid: nil or pid()\n})",
+          "index": 0,
+          "input_approximate": true,
+          "loss_kinds": [
+            "integer_refinement_erased",
+            "opaque_boundary"
+          ],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "top_only",
+            "return_inexact"
+          ],
+          "return_loss_kinds": [
+            "integer_refinement_erased",
+            "opaque_boundary"
+          ],
+          "return_relation": "superset",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "%Phoenix.LiveView.Socket{\n  id: binary(),\n  endpoint: atom(),\n  view: atom(),\n  parent_pid: nil or pid(),\n  root_pid: pid(),\n  router: atom(),\n  private: map(),\n  redirected: nil or {...},\n  host_uri:\n    %URI{\n      scheme: nil or binary(),\n      authority: nil or binary(),\n      userinfo: nil or binary(),\n      host: nil or binary(),\n      port: nil or integer(),\n      path: nil or binary(),\n      query: nil or binary(),\n      fragment: nil or binary()\n    } or :not_mounted_at_router,\n  transport_pid: nil or pid()\n}",
+            "atom() or binary()",
+            "term()",
+            "list({atom(), term()})"
+          ],
+          "spec_return": "%Phoenix.LiveView.Socket{\n  id: binary(),\n  endpoint: atom(),\n  view: atom(),\n  parent_pid: nil or pid(),\n  root_pid: pid(),\n  router: atom(),\n  private: map(),\n  redirected: nil or {...},\n  host_uri:\n    %URI{\n      scheme: nil or binary(),\n      authority: nil or binary(),\n      userinfo: nil or binary(),\n      host: nil or binary(),\n      port: nil or integer(),\n      path: nil or binary(),\n      query: nil or binary(),\n      fragment: nil or binary()\n    } or :not_mounted_at_router,\n  transport_pid: nil or pid()\n}",
+          "status": "compared",
+          "top_only": true,
+          "union_class": "unknown",
+          "union_class_static": "unknown"
+        }
+      ],
+      "specs": [
+        "stream_insert(\n  socket :: Phoenix.LiveView.Socket.t(),\n  name :: atom() | String.t(),\n  item :: any(),\n  opts :: Keyword.t()\n) :: Phoenix.LiveView.Socket.t()"
+      ],
+      "status": "compared"
+    },
+    {
+      "class": "unknown",
+      "class_static": "unknown",
+      "clause_conflict_candidate": false,
+      "clause_conflict_candidate_static": false,
+      "file": "$OSS/phoenix_live_view/lib/phoenix_live_view/test/dom.ex",
+      "inferred": [
+        "(binary()) -> dynamic()"
+      ],
+      "line": 185,
+      "location": "$OSS/phoenix_live_view/lib/phoenix_live_view/test/dom.ex:185",
+      "mfa": "Phoenix.LiveViewTest.DOM.css_escape/1",
+      "sl002_candidate": false,
+      "sl002_candidate_static": false,
+      "slices": [
+        {
+          "applied": [
+            0
+          ],
+          "applied_return": "term()",
+          "arg_loss_kinds": [],
+          "badapply": false,
+          "class": "unknown",
+          "class_static": "unknown",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [
+            {
+              "class": "unknown",
+              "class_static": "unknown",
+              "clause": 0,
+              "components": [],
+              "containment": "contained",
+              "extra": "not binary()",
+              "reasons": [
+                "top_only"
+              ],
+              "static_return": false
+            }
+          ],
+          "components": [],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "contained",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "not binary()",
+          "index": 0,
+          "input_approximate": false,
+          "loss_kinds": [],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "top_only"
+          ],
+          "return_loss_kinds": [],
+          "return_relation": "superset",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "binary()"
+          ],
+          "spec_return": "binary()",
+          "status": "compared",
+          "top_only": true,
+          "union_class": "unknown",
+          "union_class_static": "unknown"
+        }
+      ],
+      "specs": [
+        "css_escape(String.t()) :: String.t()"
+      ],
+      "status": "compared"
+    },
+    {
+      "class": "unknown",
+      "class_static": "unknown",
+      "clause_conflict_candidate": false,
+      "clause_conflict_candidate_static": false,
+      "file": "$OSS/phoenix_live_view/lib/phoenix_live_view/test/dom.ex",
+      "inferred": [
+        "(binary()) -> dynamic({%LazyHTML{}, term()})"
+      ],
+      "line": 23,
+      "location": "$OSS/phoenix_live_view/lib/phoenix_live_view/test/dom.ex:23",
+      "mfa": "Phoenix.LiveViewTest.DOM.parse_document/1",
+      "sl002_candidate": false,
+      "sl002_candidate_static": false,
+      "slices": [
+        {
+          "applied": [
+            0
+          ],
+          "applied_return": "{%LazyHTML{}, term()}",
+          "arg_loss_kinds": [],
+          "badapply": false,
+          "class": "unknown",
+          "class_static": "unknown",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [
+            {
+              "class": "unknown",
+              "class_static": "unknown",
+              "clause": 0,
+              "components": [
+                {
+                  "descr": "{%LazyHTML{resource: not reference()}, term()}",
+                  "detail": "tuple",
+                  "kind": "tuple",
+                  "label": "unknown",
+                  "payload_gradual": false,
+                  "present_in_contributing": true,
+                  "subtraction_payload": false,
+                  "tag_in_spec": false
+                },
+                {
+                  "descr": "{%LazyHTML{resource: reference()},\n not list(\n   binary() or {:comment, binary()} or {binary(), list({binary(), binary()}), list(term())}\n )}",
+                  "detail": "tuple",
+                  "kind": "tuple",
+                  "label": "unknown",
+                  "payload_gradual": false,
+                  "present_in_contributing": true,
+                  "subtraction_payload": false,
+                  "tag_in_spec": false
+                }
+              ],
+              "containment": "contained",
+              "extra": "{%LazyHTML{}, term()} and not {%LazyHTML{resource: reference()},\n list(binary() or {:comment, binary()} or {binary(), list({binary(), binary()}), list(term())})}",
+              "reasons": [
+                "unknown_components=2",
+                "no_counted_component"
+              ],
+              "static_return": false
+            }
+          ],
+          "components": [
+            {
+              "descr": "{%LazyHTML{resource: not reference()}, term()}",
+              "detail": "tuple",
+              "kind": "tuple",
+              "label": "unknown",
+              "payload_gradual": false,
+              "present_in_contributing": true,
+              "subtraction_payload": false,
+              "tag_in_spec": false
+            },
+            {
+              "descr": "{%LazyHTML{resource: reference()},\n not list(\n   binary() or {:comment, binary()} or {binary(), list({binary(), binary()}), list(term())}\n )}",
+              "detail": "tuple",
+              "kind": "tuple",
+              "label": "unknown",
+              "payload_gradual": false,
+              "present_in_contributing": true,
+              "subtraction_payload": false,
+              "tag_in_spec": false
+            }
+          ],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "contained",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "{%LazyHTML{}, term()} and not {%LazyHTML{resource: reference()},\n list(binary() or {:comment, binary()} or {binary(), list({binary(), binary()}), list(term())})}",
+          "index": 0,
+          "input_approximate": false,
+          "loss_kinds": [
+            "recursive_cutoff"
+          ],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "unknown_components=2",
+            "no_counted_component",
+            "return_inexact"
+          ],
+          "return_loss_kinds": [
+            "recursive_cutoff"
+          ],
+          "return_relation": "superset",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "binary()"
+          ],
+          "spec_return": "{%LazyHTML{resource: reference()},\n list(binary() or {:comment, binary()} or {binary(), list({binary(), binary()}), list(term())})}",
+          "status": "compared",
+          "top_only": false,
+          "union_class": "unknown",
+          "union_class_static": "unknown"
+        }
+      ],
+      "specs": [
+        "parse_document(binary()) :: {LazyHTML.t(), LazyHTML.Tree.t()}"
+      ],
+      "status": "compared"
+    },
+    {
+      "class": "unknown",
+      "class_static": "unknown",
+      "clause_conflict_candidate": false,
+      "clause_conflict_candidate_static": false,
+      "file": "$OSS/phoenix_live_view/lib/phoenix_live_view/test/dom.ex",
+      "inferred": [
+        "(binary()) -> dynamic({%LazyHTML{}, term()})"
+      ],
+      "line": 35,
+      "location": "$OSS/phoenix_live_view/lib/phoenix_live_view/test/dom.ex:35",
+      "mfa": "Phoenix.LiveViewTest.DOM.parse_fragment/1",
+      "sl002_candidate": false,
+      "sl002_candidate_static": false,
+      "slices": [
+        {
+          "applied": [
+            0
+          ],
+          "applied_return": "{%LazyHTML{}, term()}",
+          "arg_loss_kinds": [],
+          "badapply": false,
+          "class": "unknown",
+          "class_static": "unknown",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [
+            {
+              "class": "unknown",
+              "class_static": "unknown",
+              "clause": 0,
+              "components": [
+                {
+                  "descr": "{%LazyHTML{resource: not reference()}, term()}",
+                  "detail": "tuple",
+                  "kind": "tuple",
+                  "label": "unknown",
+                  "payload_gradual": false,
+                  "present_in_contributing": true,
+                  "subtraction_payload": false,
+                  "tag_in_spec": false
+                },
+                {
+                  "descr": "{%LazyHTML{resource: reference()},\n not list(\n   binary() or {:comment, binary()} or {binary(), list({binary(), binary()}), list(term())}\n )}",
+                  "detail": "tuple",
+                  "kind": "tuple",
+                  "label": "unknown",
+                  "payload_gradual": false,
+                  "present_in_contributing": true,
+                  "subtraction_payload": false,
+                  "tag_in_spec": false
+                }
+              ],
+              "containment": "contained",
+              "extra": "{%LazyHTML{}, term()} and not {%LazyHTML{resource: reference()},\n list(binary() or {:comment, binary()} or {binary(), list({binary(), binary()}), list(term())})}",
+              "reasons": [
+                "unknown_components=2",
+                "no_counted_component"
+              ],
+              "static_return": false
+            }
+          ],
+          "components": [
+            {
+              "descr": "{%LazyHTML{resource: not reference()}, term()}",
+              "detail": "tuple",
+              "kind": "tuple",
+              "label": "unknown",
+              "payload_gradual": false,
+              "present_in_contributing": true,
+              "subtraction_payload": false,
+              "tag_in_spec": false
+            },
+            {
+              "descr": "{%LazyHTML{resource: reference()},\n not list(\n   binary() or {:comment, binary()} or {binary(), list({binary(), binary()}), list(term())}\n )}",
+              "detail": "tuple",
+              "kind": "tuple",
+              "label": "unknown",
+              "payload_gradual": false,
+              "present_in_contributing": true,
+              "subtraction_payload": false,
+              "tag_in_spec": false
+            }
+          ],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "contained",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "{%LazyHTML{}, term()} and not {%LazyHTML{resource: reference()},\n list(binary() or {:comment, binary()} or {binary(), list({binary(), binary()}), list(term())})}",
+          "index": 0,
+          "input_approximate": false,
+          "loss_kinds": [
+            "recursive_cutoff"
+          ],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "unknown_components=2",
+            "no_counted_component",
+            "return_inexact"
+          ],
+          "return_loss_kinds": [
+            "recursive_cutoff"
+          ],
+          "return_relation": "superset",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "binary()"
+          ],
+          "spec_return": "{%LazyHTML{resource: reference()},\n list(binary() or {:comment, binary()} or {binary(), list({binary(), binary()}), list(term())})}",
+          "status": "compared",
+          "top_only": false,
+          "union_class": "unknown",
+          "union_class_static": "unknown"
+        }
+      ],
+      "specs": [
+        "parse_fragment(binary()) :: {LazyHTML.t(), LazyHTML.Tree.t()}"
+      ],
+      "status": "compared"
+    },
+    {
+      "class": "none",
+      "class_static": "none",
+      "clause_conflict_candidate": false,
+      "clause_conflict_candidate_static": false,
+      "file": "$OSS/phoenix_live_view/test/support/layout_view.ex",
+      "inferred": [
+        "(term(), map()) -> none()"
+      ],
+      "line": 88,
+      "location": "$OSS/phoenix_live_view/test/support/layout_view.ex:88",
+      "mfa": "Phoenix.LiveViewTest.Support.AssignsLayoutView.template_not_found/2",
+      "sl002_candidate": false,
+      "sl002_candidate_static": false,
+      "slices": [
+        {
+          "applied": [
+            0
+          ],
+          "applied_return": "none()",
+          "arg_loss_kinds": [],
+          "badapply": false,
+          "class": "none",
+          "class_static": "none",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [],
+          "components": [],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "domain_escape",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "none()",
+          "index": 0,
+          "input_approximate": false,
+          "loss_kinds": [],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "no_extra",
+            "spec_return_empty"
+          ],
+          "return_loss_kinds": [],
+          "return_relation": "empty",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "binary()",
+            "map()"
+          ],
+          "spec_return": "none()",
+          "status": "compared",
+          "top_only": false,
+          "union_class": "none",
+          "union_class_static": "none"
+        }
+      ],
+      "specs": [
+        "template_not_found(binary(), map()) :: no_return()"
+      ],
+      "status": "compared"
+    },
+    {
+      "class": "none",
+      "class_static": "none",
+      "clause_conflict_candidate": false,
+      "clause_conflict_candidate_static": false,
+      "file": "$OSS/phoenix_live_view/test/support/layout_view.ex",
+      "inferred": [
+        "(term(), map()) -> none()"
+      ],
+      "line": 2,
+      "location": "$OSS/phoenix_live_view/test/support/layout_view.ex:2",
+      "mfa": "Phoenix.LiveViewTest.Support.LayoutView.template_not_found/2",
+      "sl002_candidate": false,
+      "sl002_candidate_static": false,
+      "slices": [
+        {
+          "applied": [
+            0
+          ],
+          "applied_return": "none()",
+          "arg_loss_kinds": [],
+          "badapply": false,
+          "class": "none",
+          "class_static": "none",
+          "clause_conflict_candidate": false,
+          "clause_conflict_candidate_static": false,
+          "clauses": [],
+          "components": [],
+          "containment": [
+            {
+              "clause": 0,
+              "containment": "domain_escape",
+              "static_return": false
+            }
+          ],
+          "cutoff": false,
+          "extra": "none()",
+          "index": 0,
+          "input_approximate": false,
+          "loss_kinds": [],
+          "near_top": false,
+          "overlap": false,
+          "overlap_unknown": false,
+          "reasons": [
+            "no_extra",
+            "spec_return_empty"
+          ],
+          "return_loss_kinds": [],
+          "return_relation": "empty",
+          "sl002_candidate": false,
+          "sl002_candidate_static": false,
+          "spec_args": [
+            "binary()",
+            "map()"
+          ],
+          "spec_return": "none()",
+          "status": "compared",
+          "top_only": false,
+          "union_class": "none",
+          "union_class_static": "none"
+        }
+      ],
+      "specs": [
+        "template_not_found(binary(), map()) :: no_return()"
+      ],
+      "status": "compared"
+    }
+  ],
+  "label": "phoenix_live_view",
+  "otp_release": "28",
+  "totals": {
+    "badapply_slices": 0,
+    "clause_classes": {
+      "unknown": 10
+    },
+    "clause_classes_static": {
+      "unknown": 10
+    },
+    "clause_conflict_candidate_functions": 0,
+    "clause_conflict_candidate_functions_static": 0,
+    "component_labels": {
+      "unknown": 4
+    },
+    "function_classes": {
+      "none": 2,
+      "unknown": 10
+    },
+    "function_classes_static": {
+      "none": 2,
+      "unknown": 10
+    },
+    "functions": 12,
+    "functions_by_status": {
+      "compared": 12
+    },
+    "loss_kinds": {
+      "integer_refinement_erased": 5,
+      "opaque_boundary": 5,
+      "recursive_cutoff": 3
+    },
+    "modules": 190,
+    "modules_by_status": {
+      "ok": 190
+    },
+    "near_top_slices": 0,
+    "out_of_scope_by_reason": {
+      "generated": 13
+    },
+    "overlap_slices": 0,
+    "overlap_unknown_slices": 0,
+    "sl002_candidate_functions": 0,
+    "sl002_candidate_functions_static": 0,
+    "sl002_candidate_slices": 0,
+    "sl002_candidate_slices_tag_in_spec": 0,
+    "slice_classes": {
+      "none": 2,
+      "unknown": 10
+    },
+    "slice_classes_static": {
+      "none": 2,
+      "unknown": 10
+    },
+    "slices": 12,
+    "slices_approximate": 8,
+    "slices_compared": 12,
+    "slices_exact": 4,
+    "top_only_slices": 8,
+    "unavailable_by_reason": {},
+    "union_classes": {
+      "none": 2,
+      "unknown": 10
+    },
+    "unsupported_by_reason": {}
+  }
+}

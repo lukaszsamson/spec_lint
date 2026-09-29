@@ -1,11 +1,34 @@
 # SpecLint status
 
-Date 2026-09-28. This covers Phase 0, Phase 1, the post-Phase 1 review
+Date 2026-09-29. This covers Phase 0, Phase 1, the post-Phase 1 review
 fixes (commit `1b0fe93`), the first external review (all five findings
 closed: four fixes in `c4a8e18`, the corpus bundle in `3adadd4`), the
 body-backend experiment (`ac3a75b`) and the second external review (this
 phase, below). `DESIGN.md` is the authoritative design, `EXPERIMENTS.md`
 holds the measurements, and `README.md` is the user guide.
+
+## Follow-up delivery: broader evidence and build integrity
+
+The six-project expansion adds 1,252 eligible functions and 1,260 spec
+slices. All runs complete without unsupported/unavailable slices; 1,037
+obligations remain unknown. There are 14 findings and one CI gate, a
+confirmed return-shape omission in `Oban.Registry.via/3`. The actual Req
+path-dependency consumer also passes. Full tables and source judgments are
+in EXPERIMENTS.md and `bench/corpus/{expansion_triage,holdout_triage}.md`.
+Do not treat a clean run as evidence that the project has accurate specs.
+
+Build integrity now rejects unreadable owned-app inventories, corrupt BEAMs,
+and BEAM filename/module mismatches with exit 2. A corrupt manifest falls
+back to a valid `.app`; a valid empty manifest remains authoritative over a
+stale `.app`. Regression tests cover all of these cases.
+
+Benchmark changes enforce revision pins, retain complete compressed reports,
+validate reduced report schemas, record compiler/tool/artifact hashes, and
+fail on incomplete product runs. Body rebuilds use fresh output directories;
+metrics distinguish gates, candidates, reports and unavailable analysis. All
+nine stand-in omission fixtures now have direct runtime assertions. The
+patched body-fixture rerun does not change the decision against a production
+body backend. See NEXT_STEPS.md for the completed plan and validation.
 
 ## What exists
 
@@ -411,12 +434,22 @@ misses each would unblock (DESIGN section 11 has the same list):
 Even with items 1 and 2, at most 4 of the 8 become gateable (realistically
 3: `decode/4`, `Assoc.query/4`, `Preloader.query/7`), because input
 approximation caps `Decimal.compare/2`, `merge_private/2` and
-`apply_action/2` (and probably `cmp/2`). The SpecLint-side lever is a
-translator that keeps `D_lo` for struct and recursive types
-(`Decimal.t()`, `Plug.Conn.t()`, `Ecto.Changeset.t()`, `Macro.t()`,
-`Macro.Env.t()`), plus counted components for negated struct fields and
-list-of-lists extras. Re-measure recall on the nine reproducers after
-each (`test/spec_lint/omissions_test.exs` pins the current classes).
+`apply_action/2` (and probably `cmp/2`). The follow-up experiment narrows the SpecLint-side recommendation:
+a larger sound input lower bound alone cannot contain any of the 33
+contributing stored clause domains in the nine fixtures, because none is
+contained even in the input upper bound. Four fixture slices already have
+exact input translation. See `bench/corpus/precision_ceiling.md`; this is
+not a result about refined body signatures or all OSS code.
+
+
+The expanded cohort changes the immediate experiment priority. Before a
+broad compiler investment, investigate whether translation-loss prerequisites
+can be qualified per clause: `Ash.Page.page_opts/1` has a witnessed literal
+input/return omission, but an arrow elsewhere in the input union blocks its
+SL001 gate. Prove that the relevant clause bounds remain sound, retain
+contravariant-arrow and overlap negative controls, and validate on a fresh
+holdout. Do not globally remove `no_arrow_polarity_argument`. The other two
+witnessed Ash reports are SL002 and do not justify gating that rule.
 
 Then, in order:
 

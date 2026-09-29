@@ -175,12 +175,22 @@ defmodule SpecLint.Run do
     end
   end
 
-  # A missing ebin, or an ebin missing some of its BEAM files, is a
-  # configuration error (exit 2), never "0 specs" or a smaller project.
+  # Missing build inventory and invalid or misplaced BEAMs are configuration
+  # errors (exit 2), never "0 specs" or a smaller project.
   defp check_build_paths(project) do
     case Project.check_build_paths(project) do
       :ok ->
         :ok
+
+      {:error, :missing_module_inventory} ->
+        apps =
+          Enum.map_join(Project.missing_module_inventories(project), ", ", fn app ->
+            "#{app.app} (#{Project.relative(project, app.ebin)})"
+          end)
+
+        {:error,
+         "incomplete build: no readable module inventory for #{apps}; the compile manifest " <>
+           "and application resource file cannot establish whether BEAM files are missing"}
 
       {:error, :missing_beams} ->
         missing =
@@ -193,6 +203,27 @@ defmodule SpecLint.Run do
          "incomplete build: modules the build lists have no BEAM file, so they cannot be " <>
            "analysed: #{missing}; the compile manifest still says the build is up to " <>
            "date, so recompile with mix compile --force"}
+
+      {:error, :module_mismatch} ->
+        mismatches =
+          Enum.map_join(Project.mismatched_modules(project), "; ", fn mismatch ->
+            "#{Project.relative(project, mismatch.path)} contains #{inspect(mismatch.found)}" <>
+              " (filename names #{mismatch.expected})"
+          end)
+
+        {:error,
+         "incomplete build: BEAM filename and embedded module disagree: #{mismatches}; " <>
+           "recompile with mix compile --force"}
+
+      {:error, :invalid_beam} ->
+        files =
+          Enum.map_join(Project.invalid_beams(project), "; ", fn invalid ->
+            "#{Project.relative(project, invalid.path)} (#{inspect(invalid.reason)})"
+          end)
+
+        {:error,
+         "incomplete build: unreadable or invalid BEAM file: #{files}; " <>
+           "recompile with mix compile --force"}
 
       {:error, :missing_build_path} ->
         missing =

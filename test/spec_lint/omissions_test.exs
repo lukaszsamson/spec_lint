@@ -17,8 +17,8 @@ defmodule SpecLint.OmissionsTest do
 
   import SpecLint.TestHelpers
 
-  alias SpecLint.{Analysis, Evidence}
-  alias SpecLint.OmissionFixtures.Cases
+  alias SpecLint.{Analysis, Compiler, Evidence}
+  alias SpecLint.OmissionFixtures.{Cases, Changeset, Conn, Num}
 
   # {fixture, original MFA, current class, current class with
   #  require_static_return: true, top_only reason?, desired class}
@@ -106,5 +106,81 @@ defmodule SpecLint.OmissionsTest do
           do: mfa
 
     assert gated == []
+  end
+
+  test "all contributing inferred domains escape even the spec upper bound", %{
+    functions: functions
+  } do
+    for {_mfa, function} <- functions, slice <- function.slices do
+      lower = slice.args |> Enum.map(& &1.lo) |> Compiler.tuple()
+      upper = slice.args |> Enum.map(& &1.hi) |> Compiler.tuple()
+      assert Compiler.subtype?(lower, upper)
+      assert slice.relations.contributing != []
+
+      for clause <- slice.relations.contributing do
+        inferred = clause.args |> Enum.map(&Compiler.upper_bound/1) |> Compiler.tuple()
+
+        # Each clause still overlaps the spec domain, so this is a loss of
+        # containment, not a fully disjoint clause that could be ignored.
+        refute Compiler.disjoint?(inferred, upper)
+        refute Compiler.subtype?(inferred, upper)
+        refute Compiler.subtype?(inferred, lower)
+      end
+    end
+  end
+
+  describe "runtime witnesses for in-spec inputs and omitted returns" do
+    test "compare/2 returns a Num for a NaN input" do
+      Process.delete(:traps)
+      nan = %Num{coef: :NaN}
+
+      assert Cases.compare(nan, %Num{}) == nan
+    end
+
+    test "cmp/2 delegates the omitted NaN return" do
+      Process.delete(:traps)
+      nan = %Num{coef: :NaN}
+
+      assert Cases.cmp(nan, %Num{}) == nan
+    end
+
+    test "decode/2 returns an atom key from a permitted keyword input" do
+      assert Cases.decode("", unexpected: 1) == %{unexpected: 1}
+    end
+
+    test "merge_private/2 can put a binary key into the typed private map" do
+      assert %Conn{private: %{"unexpected" => 1}} =
+               Cases.merge_private(%Conn{}, [{"unexpected", 1}])
+    end
+
+    test "apply_action/2 can return nil inside the success tuple" do
+      changeset = %Changeset{valid?: true, data: nil, changes: %{}}
+
+      assert Cases.apply_action(changeset, :insert) == {:ok, nil}
+    end
+
+    test "join_escape/3 returns a five-tuple for a valid AST" do
+      result = Cases.join_escape(:my_schema, [], __ENV__)
+
+      assert is_tuple(result)
+      assert tuple_size(result) == 5
+    end
+
+    test "quoted_type/2 returns the undeclared :atom primitive" do
+      assert Cases.quoted_type(:example, []) == :atom
+    end
+
+    test "assoc_query/4 returns rows rather than structs" do
+      rows = [[%{id: 1}]]
+      result = Cases.assoc_query(rows, [], {}, fn row -> row end)
+
+      assert result == rows
+      refute is_struct(hd(result))
+    end
+
+    test "preloader_query/7 permits a function that returns a non-list" do
+      assert Cases.preloader_query([[1]], nil, [], %{}, [], fn _ -> :unexpected end, {%{}, []}) ==
+               [:unexpected]
+    end
   end
 end

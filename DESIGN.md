@@ -938,12 +938,15 @@ become gateable even with both compiler changes, realistically 3):
    false positive; `display/1`'s unreachable `case` branch is not a clause
    and the checker does not flag it).
 
-On the SpecLint side, the lever that lifts the input-approximation cap is a
-translator that keeps `D_lo` for struct and recursive types
-(`integer_refinement_erased` in `Decimal.t()`, `Plug.Conn.t()`;
-`map_key_widened` and `recursive_cutoff` in `Ecto.Changeset.t()`,
-`Macro.t()`, `Macro.Env.t()`), plus counted components for negated struct
-fields (`merge_private/2`) and list-of-lists extras (`Assoc.query/4`).
+The follow-up precision experiment (`bench/corpus/precision_ceiling.md`)
+limits the proposed lower-bound work. All 33 contributing stored clause
+domains in the nine fixtures extend outside `D_hi`; a larger sound `D_lo`
+alone cannot establish their containment. Four slices already have exact
+input translation. Preserving more struct or recursive lower-bound
+structure may help other cases, but is not a demonstrated recall fix here.
+Measure it after domain refinement or a compiler change, and never widen
+`D_lo` to represent a required integer literal that the lattice cannot express.
+
 The decision reopens when an upstream build provides item 1 or 2, or a
 corpus shows the body run gating at least 3 confirmed omissions the
 signature misses with no confirmed false positive.

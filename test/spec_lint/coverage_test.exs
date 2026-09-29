@@ -3,6 +3,7 @@ defmodule SpecLint.CoverageTest do
 
   import SpecLint.TestHelpers
 
+  alias Mix.Compilers.Elixir, as: ElixirCompiler
   alias SpecLint.{Baseline, Config, Coverage, Issue, Project, Run}
   alias SpecLint.Report.Console
 
@@ -339,6 +340,112 @@ defmodule SpecLint.CoverageTest do
 
       assert Console.render(run) |> IO.iodata_to_binary() =~
                "stale inventory entry: LostFx.gone/1 slice 0 (compared in the baseline"
+    end
+
+    test "an unreadable manifest falls back to the .app module list", %{tmp_dir: tmp_dir} do
+      {project, config} = setup_project(tmp_dir)
+      ebin = Path.join(tmp_dir, "ebin")
+      manifest = Path.join(tmp_dir, "compile.elixir")
+
+      File.write!(
+        Path.join(ebin, "fx.app"),
+        ~s({application,fx,[{modules,['Elixir.LostFx']},{vsn,"0.1.0"}]}.)
+      )
+
+      File.write!(manifest, "corrupt manifest")
+      project = %{project | apps: [%{app: :fx, ebin: ebin, manifest: manifest}]}
+      File.rm!(Path.join(ebin, "Elixir.LostFx.beam"))
+
+      assert Project.check_build_paths(project) == {:error, :missing_beams}
+      assert [%{modules: [LostFx]}] = Project.missing_modules(project)
+      assert {:error, message} = Run.execute(project, config, ci: true)
+      assert message =~ "incomplete build"
+    end
+
+    test "a readable empty manifest takes precedence over a stale .app module list",
+         %{tmp_dir: tmp_dir} do
+      ebin = Path.join(tmp_dir, "ebin")
+      manifest = Path.join(tmp_dir, "compile.elixir")
+      File.mkdir_p!(ebin)
+
+      File.write!(
+        Path.join(ebin, "fx.app"),
+        ~s({application,fx,[{modules,['Elixir.LostFx']},{vsn,"0.1.0"}]}.\n)
+      )
+
+      # Preserve the compiler's actual manifest version and shape while
+      # representing a successful compile with no remaining modules.
+      source_manifest = Path.join(Mix.Project.manifest_path(), "compile.elixir")
+
+      empty_manifest =
+        source_manifest
+        |> File.read!()
+        |> :erlang.binary_to_term()
+        |> put_elem(1, %{})
+        |> put_elem(2, %{})
+
+      File.write!(manifest, :erlang.term_to_binary(empty_manifest))
+      assert ElixirCompiler.read_manifest(manifest) == {%{}, %{}}
+
+      project = %{
+        Project.from_ebins([{:fx, ebin}], tmp_dir)
+        | apps: [
+            %{app: :fx, ebin: ebin, manifest: manifest}
+          ]
+      }
+
+      assert Project.check_build_paths(project) == :ok
+      assert {:ok, run} = Run.execute(project, %Config{baseline: "none"}, ci: true)
+      assert run.exit_code == 0
+      assert run.ledger["functions"]["found"] == 0
+    end
+
+    test "a BEAM with an embedded module different from its filename is incomplete",
+         %{tmp_dir: tmp_dir} do
+      {project, config} = setup_project(tmp_dir)
+      beam = Path.join(tmp_dir, "ebin/Elixir.LostFx.beam")
+      [{OtherFx, binary}] = Code.compile_string("defmodule OtherFx do; def value, do: :ok; end")
+      File.write!(beam, binary)
+
+      assert Project.check_build_paths(project) == {:error, :module_mismatch}
+
+      assert [%{app: :fx, path: ^beam, expected: "Elixir.LostFx", found: OtherFx}] =
+               Project.mismatched_modules(project)
+
+      assert {:error, message} = Run.execute(project, config, ci: true)
+      assert message =~ "BEAM filename and embedded module disagree"
+      assert message =~ "Elixir.LostFx.beam contains OtherFx"
+    end
+
+    test "a Mix app without a readable manifest or .app inventory is incomplete",
+         %{tmp_dir: tmp_dir} do
+      {project, config} = setup_project(tmp_dir)
+      ebin = Path.join(tmp_dir, "ebin")
+      manifest = Path.join(tmp_dir, "compile.elixir")
+      File.write!(manifest, "corrupt manifest")
+      owned = %{project | apps: [%{app: :fx, ebin: ebin, manifest: manifest}]}
+
+      assert Project.check_build_paths(owned) == {:error, :missing_module_inventory}
+      assert [%{app: :fx}] = Project.missing_module_inventories(owned)
+      assert {:error, message} = Run.execute(owned, config, ci: true)
+      assert message =~ "no readable module inventory for fx (ebin)"
+
+      # A standalone ebin used by benchmark scripts has no Mix manifest and
+      # may legitimately have no application resource file.
+      assert Project.check_build_paths(project) == :ok
+    end
+
+    test "a corrupt BEAM is an incomplete build, not an acknowledgeable coverage gap",
+         %{tmp_dir: tmp_dir} do
+      {project, config} = setup_project(tmp_dir)
+      beam = Path.join(tmp_dir, "ebin/Elixir.LostFx.beam")
+      File.write!(beam, "not a BEAM")
+
+      assert Project.check_build_paths(project) == {:error, :invalid_beam}
+      assert [%{path: ^beam}] = Project.invalid_beams(project)
+      assert {:error, message} = Run.execute(project, config, ci: true)
+      assert message =~ "unreadable or invalid BEAM file"
+      assert message =~ "ebin/Elixir.LostFx.beam"
     end
 
     test "only the selected applications are checked", %{tmp_dir: tmp_dir} do

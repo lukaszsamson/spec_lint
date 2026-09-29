@@ -1,0 +1,69 @@
+{
+  "observations": [
+    {
+      "case": "req_response_new_broad_map",
+      "explanation": "new/1 accepts map(); Req.Response.t() requires status: non_neg_integer().",
+      "input": "%{status: -1}",
+      "input_in_declared_domain": true,
+      "mfa": "Req.Response.new/1",
+      "observed_status": -1,
+      "output": "%Req.Response{status: -1}",
+      "output_in_declared_domain": false,
+      "revision": "c6e8ab1f9d1c8e1aef935a6319faa40487bb6f42",
+      "source": "req/lib/req/response.ex:23,54,57,72"
+    },
+    {
+      "case": "req_response_new_control",
+      "input": "%{status: 200}",
+      "input_in_declared_domain": true,
+      "mfa": "Req.Response.new/1",
+      "observed_status": 200,
+      "output_in_declared_domain": true,
+      "revision": "c6e8ab1f9d1c8e1aef935a6319faa40487bb6f42",
+      "source": "req/lib/req/response.ex:23,54,57,72"
+    },
+    {
+      "case": "oban_registry_via_non_nil_value",
+      "explanation": "The spec promises an inner two-tuple; non-nil value produces three elements.",
+      "input": "(Oban, nil, :witness)",
+      "input_in_declared_domain": true,
+      "mfa": "Oban.Registry.via/3",
+      "observed_return": "{:via, Registry, {Oban.Registry, Oban, :witness}}",
+      "output_in_declared_domain": false,
+      "revision": "23fa8176b3586ca84f5859793739fad798e69d2b",
+      "source": "oban/lib/oban/registry.ex:6-8,122-128"
+    },
+    {
+      "case": "oban_registry_via_nil_control",
+      "input": "(Oban, nil, nil)",
+      "input_in_declared_domain": true,
+      "mfa": "Oban.Registry.via/3",
+      "observed_return": "{:via, Registry, {Oban.Registry, Oban}}",
+      "output_in_declared_domain": true,
+      "revision": "23fa8176b3586ca84f5859793739fad798e69d2b",
+      "source": "oban/lib/oban/registry.ex:6-8,122-128"
+    },
+    {
+      "case": "oban_period_zero_outside_domain",
+      "explanation": "Runtime guard accepts zero, but Period.t() and the return spec require pos_integer().",
+      "input": "0",
+      "input_in_declared_domain": false,
+      "mfa": "Oban.Period.to_seconds/1",
+      "observed_return": 0,
+      "output_in_declared_domain": false,
+      "revision": "23fa8176b3586ca84f5859793739fad798e69d2b",
+      "source": "oban/lib/oban/period.ex:41,59,64,84,90"
+    },
+    {
+      "case": "oban_period_positive_control",
+      "input": "1",
+      "input_in_declared_domain": true,
+      "mfa": "Oban.Period.to_seconds/1",
+      "observed_return": 1,
+      "output_in_declared_domain": true,
+      "revision": "23fa8176b3586ca84f5859793739fad798e69d2b",
+      "source": "oban/lib/oban/period.ex:41,84,90"
+    }
+  ],
+  "schema": "spec_lint/expansion_witnesses"
+}

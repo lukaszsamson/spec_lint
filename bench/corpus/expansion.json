@@ -1,0 +1,8 @@
+{
+  "req": {"revision": "c6e8ab1f9d1c8e1aef935a6319faa40487bb6f42"},
+  "broadway": {"revision": "8debff6f4e2b92385c8bd9c60475f3daec7819f5"},
+  "oban": {"revision": "23fa8176b3586ca84f5859793739fad798e69d2b"},
+  "phoenix_live_view": {"revision": "517afcb3854fc6e26b3f2caadfce6c82d76bfd7a"},
+  "ash": {"revision": "164a4c0d0ef7724c5fd2153876c2cf90cd938863", "holdout": true},
+  "nx": {"revision": "a0076029fe98f851c0183e2fb47d58de3d4bcb34", "project_subdir": "nx", "holdout": true}
+}

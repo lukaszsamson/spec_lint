@@ -42,9 +42,11 @@
 # compiler does before writing the ExCk chunk) take the place of the
 # inferred clauses in SpecLint.Compare.slice/3 (application at D_hi,
 # containment, overlap with the translated sibling slices) and the result is
-# classified with SpecLint.Evidence.classify/1. A slice warns when it is a
-# gated SL001 clause conflict or an SL002 `structured_possible` candidate,
-# with the prerequisites of bench/experiment.exs.
+# classified with SpecLint.Evidence.classify/1. `gate` counts qualified
+# SL001 conflicts, `candidate` counts SL002 `structured_possible` candidates,
+# and `reported` counts SL001/SL002 findings. The historical `warn` field
+# remains their qualified conflict/candidate union for comparison with old
+# reports; it is not a CI gate count.
 #
 # The checker warnings of each body run are diffed against the default run
 # (by formatted message and location); the extra ones are reported per
@@ -54,10 +56,12 @@
 # signature. Wall time is measured per warnings/7 call (`body_us`,
 # `default_run_us`, `totals.cost`).
 
+Code.require_file("body_metrics.exs", __DIR__)
+
 defmodule SpecLint.BodyExperiment do
   @moduledoc false
 
-  alias SpecLint.{Analysis, Bound, Compare, Compiler, Evidence, TypeCache}
+  alias SpecLint.{Analysis, BodyMetrics, Bound, Compare, Compiler, Evidence, TypeCache}
 
   @fixtures SpecLint.ExperimentFixtures
 
@@ -164,7 +168,7 @@ defmodule SpecLint.BodyExperiment do
         end),
       totals: totals(modules, functions),
       omissions: omission_report(functions),
-      fixtures: fixture_report(functions),
+      fixtures: fixture_report(functions, opts[:label]),
       changed: changed(functions),
       functions: functions
     }
@@ -314,7 +318,11 @@ defmodule SpecLint.BodyExperiment do
       sampled: false,
       slices: slices,
       class: classes,
-      warn: Map.new(@modes, fn m -> {m, Enum.any?(slices, &get_in(&1, [m, :warn]))} end),
+      available: Map.new(@modes, fn m -> {m, Enum.all?(slices, &is_map(&1[m]))} end),
+      gate: Map.new(@modes, fn m -> {m, BodyMetrics.flag(slices, m, :gate)} end),
+      candidate: Map.new(@modes, fn m -> {m, BodyMetrics.flag(slices, m, :candidate)} end),
+      reported: Map.new(@modes, fn m -> {m, BodyMetrics.flag(slices, m, :reported)} end),
+      warn: Map.new(@modes, fn m -> {m, BodyMetrics.flag(slices, m, :warn)} end),
       omission: omission_name(mfa)
     }
   end
@@ -379,7 +387,17 @@ defmodule SpecLint.BodyExperiment do
   # clause's body into the target's signature, so its evidence is blocked.
   defp guarded(nil, _redundant), do: nil
   defp guarded(entry, 0), do: entry
-  defp guarded(entry, _redundant), do: %{entry | warn: false, guard_blocked: entry.warn}
+
+  defp guarded(entry, _redundant) do
+    %{
+      entry
+      | gate: false,
+        candidate: false,
+        reported: false,
+        warn: false,
+        guard_blocked: entry.warn
+    }
+  end
 
   defp redundant_in?({_module, warning, {_file, _meta, mfa}}, mfa)
        when is_tuple(warning) and elem(warning, 0) == :redundant,
@@ -436,29 +454,18 @@ defmodule SpecLint.BodyExperiment do
 
   defp mode_entry(relations, slice, clauses) do
     classification = Evidence.classify(relations)
-    arg_losses = slice.args |> Enum.flat_map(&Bound.loss_kinds/1) |> Enum.uniq()
-    loss_kinds = loss_kinds(slice)
-    arrow_return? = Enum.any?(Compiler.components(slice.return.hi), &(&1.kind == :fun))
-
-    # The prerequisites of bench/experiment.exs: SL001 for a per-clause
-    # conflict, SL002 for structured_possible.
-    plain? =
-      not relations.overlap? and :unsupported_construct not in loss_kinds and not arrow_return?
-
-    sl001_ok? = plain? and not relations.overlap_unknown? and :arrow_polarity not in arg_losses
-    sl002_ok? = plain? and not relations.spec_return_empty?
-
-    conflict? = reachable_conflict?(classification) and sl001_ok?
-
-    sl002? = classification.class == :structured_possible and sl002_ok?
+    flags = mode_flags(relations, slice, classification)
 
     %{
       class: classification.class,
       union_class: classification.union_class,
       reasons: Enum.map(classification.reasons, &reason_string/1),
-      clause_conflict_candidate: conflict?,
-      sl002_candidate: sl002?,
-      warn: conflict? or sl002?,
+      clause_conflict_candidate: flags.clause_conflict_candidate,
+      sl002_candidate: flags.candidate,
+      gate: flags.gate,
+      candidate: flags.candidate,
+      reported: flags.reported,
+      warn: flags.warn,
       guard_blocked: false,
       top_only: relations.top_only?,
       near_top: relations.near_top?,
@@ -484,6 +491,62 @@ defmodule SpecLint.BodyExperiment do
     }
   end
 
+  # The historical warning metric is kept separate from the actual gate and
+  # reported finding metrics. All successful runs retain their old `warn`.
+  defp mode_flags(relations, slice, classification) do
+    clause_conflict? = reachable_conflict?(classification)
+    slice_conflict? = slice_conflict?(relations)
+    sl001_ok? = eligible_sl001?(relations, slice)
+    conflict? = clause_conflict? and sl001_ok?
+
+    candidate? =
+      classification.class == :structured_possible and eligible_sl002?(relations, slice)
+
+    %{
+      clause_conflict_candidate: conflict?,
+      gate: (clause_conflict? or slice_conflict?) and sl001_ok?,
+      candidate: candidate?,
+      reported: reported?(relations, classification, slice_conflict?),
+      warn: conflict? or candidate?
+    }
+  end
+
+  defp plain?(relations, slice) do
+    arrow_return? = Enum.any?(Compiler.components(slice.return.hi), &(&1.kind == :fun))
+
+    not relations.overlap? and :unsupported_construct not in loss_kinds(slice) and
+      not arrow_return?
+  end
+
+  defp eligible_sl001?(relations, slice) do
+    arg_losses = slice.args |> Enum.flat_map(&Bound.loss_kinds/1) |> Enum.uniq()
+
+    plain?(relations, slice) and not relations.overlap_unknown? and
+      :arrow_polarity not in arg_losses
+  end
+
+  defp eligible_sl002?(relations, slice),
+    do: plain?(relations, slice) and not relations.spec_return_empty?
+
+  defp slice_conflict?(relations),
+    do:
+      relations.applied != :badapply and relations.return_relation == :disjoint and
+        not relations.spec_return_empty?
+
+  defp reported?(relations, classification, slice_conflict?) do
+    sl002? =
+      classification.class in [
+        :structured_possible,
+        :possible_gradual,
+        :possible_domain_escape,
+        :possible_input_approximate,
+        :whole_kind_possible
+      ] and not relations.spec_return_empty? and not slice_conflict?
+
+    Enum.any?(classification.clauses, &(&1.class == :clause_conflict)) or slice_conflict? or
+      sl002?
+  end
+
   defp reachable_conflict?(classification) do
     Enum.any?(classification.clauses, fn c ->
       c.class == :clause_conflict and :possibly_shadowed not in c.reasons
@@ -491,8 +554,11 @@ defmodule SpecLint.BodyExperiment do
   end
 
   defp worst_of(slices, mode) do
-    classes = for slice <- slices, entry = slice[mode], entry != nil, do: entry.class
-    if classes == [], do: nil, else: Evidence.worst(classes)
+    if Enum.any?(slices, &is_nil(&1[mode])) do
+      nil
+    else
+      slices |> Enum.map(& &1[mode].class) |> Evidence.worst()
+    end
   end
 
   defp loss_kinds(slice) do
@@ -565,6 +631,13 @@ defmodule SpecLint.BodyExperiment do
         end),
       top_only_slices:
         Map.new(@modes, fn m -> {m, Enum.count(slices, &(&1[m] && &1[m].top_only))} end),
+      unavailable_functions:
+        Map.new(@modes, fn m -> {m, Enum.count(functions, &(not &1.available[m]))} end),
+      gate_functions: Map.new(@modes, fn m -> {m, Enum.count(functions, & &1.gate[m])} end),
+      candidate_functions:
+        Map.new(@modes, fn m -> {m, Enum.count(functions, & &1.candidate[m])} end),
+      reported_functions:
+        Map.new(@modes, fn m -> {m, Enum.count(functions, & &1.reported[m])} end),
       warn_functions: Map.new(@modes, fn m -> {m, Enum.count(functions, & &1.warn[m])} end),
       extra_warning_slices: Enum.count(slices, &(&1.extra_warnings != [])),
       extra_warnings: slices |> Enum.map(&length(&1.extra_warnings)) |> Enum.sum(),
@@ -593,7 +666,14 @@ defmodule SpecLint.BodyExperiment do
         mfa: f.mfa,
         omission: f.omission,
         class: f.class,
+        available: f.available,
+        gate: f.gate,
+        candidate: f.candidate,
+        reported: f.reported,
         warn: f.warn,
+        detected_gate: f.gate.body,
+        detected_candidate: f.candidate.body,
+        detected_reported: f.reported.body,
         detected: f.warn.body,
         detected_guarded: f.warn.body_guarded,
         slices:
@@ -612,51 +692,91 @@ defmodule SpecLint.BodyExperiment do
     end
   end
 
-  defp fixture_report(functions) do
-    if Code.ensure_loaded?(@fixtures) and function_exported?(@fixtures, :expected, 0) do
+  defp fixture_report(functions, label) do
+    if label == "fixtures" and Code.ensure_loaded?(@fixtures) and
+         function_exported?(@fixtures, :expected, 0) do
       by_mfa = Map.new(functions, &{&1.mfa, &1})
 
       entries =
-        for {{mod, name, arity}, expected} <- @fixtures.expected(),
-            function = by_mfa["#{inspect(mod)}.#{name}/#{arity}"],
-            function != nil do
-          %{
-            mfa: function.mfa,
-            omission: expected.omission?,
-            expected_class: expected.class,
-            class: function.class,
-            outcome:
-              Map.new(@modes, fn m -> {m, outcome(expected.omission?, function.warn[m])} end)
-          }
+        for {{mod, name, arity}, expected} <- @fixtures.expected() do
+          mfa = "#{inspect(mod)}.#{name}/#{arity}"
+          fixture_entry(mfa, expected, by_mfa[mfa])
         end
         |> Enum.sort_by(& &1.mfa)
 
-      if entries == [] do
-        nil
-      else
-        %{
-          total: length(entries),
-          outcomes: Map.new(@modes, fn m -> {m, frequencies(entries, & &1.outcome[m])} end),
-          entries: entries
-        }
-      end
+      %{
+        total: length(entries),
+        gate_outcomes:
+          Map.new(@modes, fn m -> {m, frequencies(entries, & &1.gate_outcome[m])} end),
+        candidate_outcomes:
+          Map.new(@modes, fn m -> {m, frequencies(entries, & &1.candidate_outcome[m])} end),
+        reported_outcomes:
+          Map.new(@modes, fn m -> {m, frequencies(entries, & &1.reported_outcome[m])} end),
+        outcomes: Map.new(@modes, fn m -> {m, frequencies(entries, & &1.outcome[m])} end),
+        entries: entries
+      }
     end
   end
 
-  defp outcome(true, true), do: "detected"
-  defp outcome(true, false), do: "suppressed"
-  defp outcome(false, true), do: "false_positive"
-  defp outcome(false, false), do: "true_negative"
+  defp fixture_entry(mfa, expected, nil) do
+    unavailable = Map.new(@modes, &{&1, "unavailable"})
+
+    %{
+      mfa: mfa,
+      omission: expected.omission?,
+      expected_class: expected.class,
+      class: Map.new(@modes, &{&1, nil}),
+      available: Map.new(@modes, &{&1, false}),
+      gate_outcome: unavailable,
+      candidate_outcome: unavailable,
+      reported_outcome: unavailable,
+      outcome: unavailable
+    }
+  end
+
+  defp fixture_entry(_mfa, expected, function) do
+    %{
+      mfa: function.mfa,
+      omission: expected.omission?,
+      expected_class: expected.class,
+      class: function.class,
+      available: function.available,
+      gate_outcome:
+        Map.new(@modes, fn m ->
+          {m, BodyMetrics.outcome(expected.omission?, function.gate[m])}
+        end),
+      candidate_outcome:
+        Map.new(@modes, fn m ->
+          {m, BodyMetrics.outcome(expected.omission?, function.candidate[m])}
+        end),
+      reported_outcome:
+        Map.new(@modes, fn m ->
+          {m, BodyMetrics.outcome(expected.omission?, function.reported[m])}
+        end),
+      outcome:
+        Map.new(@modes, fn m ->
+          {m, BodyMetrics.outcome(expected.omission?, function.warn[m])}
+        end)
+    }
+  end
 
   # Functions whose class or warn/no-warn outcome differs between the
   # signature and the body run.
   defp changed(functions) do
-    for f <- functions, f.class.signature != f.class.body or f.warn.signature != f.warn.body do
+    for f <- functions,
+        f.class.signature != f.class.body or f.warn.signature != f.warn.body or
+          f.gate.signature != f.gate.body or f.reported.signature != f.reported.body do
       %{
         mfa: f.mfa,
         signature: f.class.signature,
         default: f.class.default,
         body: f.class.body,
+        gate_signature: f.gate.signature,
+        gate_body: f.gate.body,
+        candidate_signature: f.candidate.signature,
+        candidate_body: f.candidate.body,
+        reported_signature: f.reported.signature,
+        reported_body: f.reported.body,
         warn_signature: f.warn.signature,
         warn_body: f.warn.body,
         warn_body_guarded: f.warn.body_guarded
@@ -678,16 +798,23 @@ defmodule SpecLint.BodyExperiment do
         "  extra warnings: #{t.extra_warnings} on #{t.extra_warning_slices} slices"
       ] ++
         for m <- @modes do
-          "  #{m}: functions #{fmt(t.function_classes[m])}; warn #{t.warn_functions[m]}; " <>
+          "  #{m}: functions #{fmt(t.function_classes[m])}; unavailable " <>
+            "#{t.unavailable_functions[m]}, gate #{t.gate_functions[m]}, " <>
+            "candidate #{t.candidate_functions[m]}, reported #{t.reported_functions[m]}, " <>
+            "legacy warn #{t.warn_functions[m]}; " <>
             "top-only slices #{t.top_only_slices[m]}"
         end ++
         for o <- report.omissions do
           "  omission #{o.mfa}: #{o.class.signature} -> default #{o.class.default} -> " <>
-            "body #{o.class.body} (detected #{o.detected})"
+            "body #{o.class.body} (gate #{o.detected_gate}, candidate #{o.detected_candidate}, " <>
+            "reported #{o.detected_reported}, legacy detected #{o.detected})"
         end ++
         for c <- report.changed do
-          "  changed #{c.mfa}: #{c.signature} -> #{c.body} (warn #{c.warn_signature} -> " <>
-            "#{c.warn_body}, guarded #{c.warn_body_guarded})"
+          "  changed #{c.mfa}: #{c.signature} -> #{c.body} " <>
+            "(gate #{c.gate_signature} -> #{c.gate_body}, " <>
+            "candidate #{c.candidate_signature} -> #{c.candidate_body}, " <>
+            "reported #{c.reported_signature} -> #{c.reported_body}, " <>
+            "legacy warn #{c.warn_signature} -> #{c.warn_body}, guarded #{c.warn_body_guarded})"
         end ++ fixture_lines(report.fixtures) ++ ["  -> #{out}"]
 
     IO.puts(:stderr, Enum.join(lines, "\n"))
@@ -697,7 +824,10 @@ defmodule SpecLint.BodyExperiment do
 
   defp fixture_lines(fixtures) do
     for m <- @modes do
-      "  fixtures (#{fixtures.total}) #{m}: #{fmt(fixtures.outcomes[m])}"
+      "  fixtures (#{fixtures.total}) #{m}: gate #{fmt(fixtures.gate_outcomes[m])}; " <>
+        "candidate #{fmt(fixtures.candidate_outcomes[m])}; " <>
+        "reported #{fmt(fixtures.reported_outcomes[m])}; " <>
+        "legacy #{fmt(fixtures.outcomes[m])}"
     end
   end
 

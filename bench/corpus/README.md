@@ -204,3 +204,52 @@ The cost fields (`body_us`, `default_run_us`, `totals.cost`) are wall-clock
 times, so two runs differ there. Everything else is deterministic: the
 last regeneration (adding `established` and `return_exact`) left every
 other field of every report unchanged.
+
+## Expanded cohort (2026-09-29)
+
+`expansion.json` freezes Req, Broadway, Oban, Phoenix LiveView, Ash and Nx
+revisions. Ash and Nx were held out during classifier and precision work;
+no production inference or classifier change was adopted before their run.
+See `expansion_triage.md` for source judgments and independently executable
+Req/Oban counterexamples. `precision_ceiling.md` measures the limits of
+improving input lower bounds on the nine stand-in omission fixtures.
+
+Prepare separate checkouts at the manifest revisions, then run
+`MIX_ENV=test mix deps.get` and `MIX_ENV=test mix compile` under the qualified
+compiler in each project (`nx/nx` for Nx). Set PATH explicitly when a
+project's `.tool-versions` selects a different compiler. Dependency lockfiles,
+BEAM hashes and the loaded compiler's BEAM hash are recorded in provenance.
+
+```sh
+SPEC_LINT_OSS=/path/to/isolated/checkouts \
+SPEC_LINT_CORPUS_MANIFEST="$PWD/bench/corpus/expansion.json" \
+SPEC_LINT_CORPUS_OUT="$PWD/bench/corpus/reports/expansion" \
+bench/corpus/run.sh req broadway oban phoenix_live_view ash nx
+
+elixir bench/corpus/expansion_witnesses.exs /path/to/isolated/checkouts
+```
+
+The runner rejects wrong revisions unless `SPEC_LINT_ALLOW_UNPINNED=1` is
+explicitly set for an exploratory run. Exit 1 from the product is a finding,
+not a runner failure; exit 2 or incomplete results fail the benchmark and
+retain logs. Large reports retain the complete normalized JSON as `.json.gz`
+and a checked summary as `.json`. Previous historical reduced reports are
+not retroactively upgraded; regenerate them to get full detail/provenance.
+The provenance file includes machine-local artifact paths, source and lock
+identities, the loaded compiler hash, and a content digest of the tool's
+analysis scripts and implementation. A dirty flag alone is not an identity.
+
+`req.consumer.json` additionally exercises the actual Mix task. Reproduce in
+a separate Req checkout at the same revision by adding
+`{:spec_lint, path: "/path/to/spec_lint", runtime: false}` to `deps/0`, then
+run `MIX_ENV=test mix spec_lint --ci --format json --output req.consumer.json`
+under the qualified toolchain. This installs the task as a dependency;
+putting its BEAM directory on `-pa` alone does not provide a valid Mix
+consumer installation. The corpus checkouts themselves remain unchanged.
+
+The body experiment now distinguishes `gate` (SL001 prerequisites),
+`candidate` (structured SL002 evidence), and `reported` (any SL001/SL002
+finding); legacy `warn`/`detected` combine gates and structured candidates.
+Do not quote legacy `detected` as gated recall. Failed analysis is unavailable,
+not a negative result. The new `reports/expansion/body_fixtures.json` reruns
+fixtures with those metrics; older body reports retain their historical schema.

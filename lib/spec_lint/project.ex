@@ -24,19 +24,31 @@ defmodule SpecLint.Project do
   does not rebuild them: its compile manifest still says the build is up
   to date. `check_build_paths/1` reports `{:error, :missing_beams}` when a
   module the build lists has no `.beam` file in the ebin
-  (`missing_modules/1`). The build's module list comes from:
+  (`missing_modules/1`). It reports `{:error, :module_mismatch}` when a
+  BEAM file's embedded module differs from its filename, and
+  `{:error, :invalid_beam}` when a file cannot be decoded as a BEAM. The build's
+  module list comes from:
 
     * for a project from `current/0`, the Elixir compiler's manifest
       (`.mix/compile.elixir` next to the ebin), which Mix updates whenever
       it removes a module. It is read with
       `Mix.Compilers.Elixir.read_manifest/1`, an internal Mix function of
       the pinned toolchain;
-    * otherwise (no manifest, or that function is missing), the `modules`
+    * otherwise (no readable manifest, or that function is missing), the `modules`
       key of the application resource file `<app>.app` in the ebin, which
       every Mix application has. It is not used when the manifest can be
       read: Mix rewrites it only when the ebin's modification time is
       newer than its own (one-second resolution), so right after a module
-      is deleted it can still list it.
+      is deleted it can still list it. `read_manifest/1` returns `{[], []}`
+      for an invalid manifest; that result also falls back to the `.app`
+      file. A valid empty manifest returns `{%{}, %{}}` and takes precedence
+      over a possibly stale `.app` file.
+
+  An owned Mix app has a `:manifest` path in the project description. When
+  neither that manifest nor the `.app` file gives a readable module list,
+  `check_build_paths/1` reports `{:error, :missing_module_inventory}` rather
+  than treating absent BEAM files as a legitimate empty project. Explicit
+  `from_ebins/2` projects have no manifest and may have no `.app` file.
   """
 
   alias Mix.Compilers.Elixir, as: ElixirCompiler
@@ -53,6 +65,12 @@ defmodule SpecLint.Project do
 
   @typedoc "The modules of one application's build that have no BEAM file."
   @type missing :: %{app: atom(), ebin: String.t(), modules: [module()]}
+
+  @typedoc "A BEAM whose filename and embedded module disagree."
+  @type mismatch :: %{app: atom(), path: String.t(), expected: String.t(), found: module()}
+
+  @typedoc "A file with a `.beam` suffix that cannot be decoded as a BEAM."
+  @type invalid :: %{app: atom(), path: String.t(), reason: term()}
 
   @type t :: %__MODULE__{
           root: String.t(),
@@ -144,15 +162,31 @@ defmodule SpecLint.Project do
   `{:error, :missing_build_path}` when an ebin does not exist
   (`missing_build_paths/1` lists the applications), and
   `{:error, :missing_beams}` when a listed module has no BEAM file
-  (`missing_modules/1`). An existing ebin without BEAM files whose build
+  (`missing_modules/1`), and `{:error, :module_mismatch}` when an existing
+  BEAM's embedded module does not match its filename (`mismatched_modules/1`),
+  or `{:error, :invalid_beam}` for an unreadable or invalid BEAM
+  (`invalid_beams/1`).
+  An owned Mix app whose manifest and `.app` file are both unreadable has
+  `{:error, :missing_module_inventory}` (`missing_module_inventories/1`).
+  An existing ebin without BEAM files whose build
   lists no module is `:ok`: that is a project with zero specs, not a
   missing build.
   """
-  @spec check_build_paths(t()) :: :ok | {:error, :missing_build_path | :missing_beams}
+  @spec check_build_paths(t()) ::
+          :ok
+          | {:error,
+             :missing_build_path
+             | :missing_module_inventory
+             | :missing_beams
+             | :invalid_beam
+             | :module_mismatch}
   def check_build_paths(project) do
     cond do
       missing_build_paths(project) != [] -> {:error, :missing_build_path}
+      missing_module_inventories(project) != [] -> {:error, :missing_module_inventory}
       missing_modules(project) != [] -> {:error, :missing_beams}
+      invalid_beams(project) != [] -> {:error, :invalid_beam}
+      mismatched_modules(project) != [] -> {:error, :module_mismatch}
       true -> :ok
     end
   end
@@ -176,14 +210,48 @@ defmodule SpecLint.Project do
         do: %{app: app.app, ebin: app.ebin, modules: missing}
   end
 
+  @doc "Owned Mix apps for which neither the manifest nor the `.app` file gives a module list."
+  @spec missing_module_inventories(t()) :: [app()]
+  def missing_module_inventories(project) do
+    for %{manifest: _} = app <- project.apps,
+        File.dir?(app.ebin),
+        module_inventory(app) == :error,
+        do: app
+  end
+
+  @doc "Existing BEAM files whose embedded module disagrees with the filename."
+  @spec mismatched_modules(t()) :: [mismatch()]
+  def mismatched_modules(project) do
+    for {app, path} <- beams(project),
+        expected = Path.basename(path, ".beam"),
+        {:ok, {found, _info}} <- [:beam_lib.chunks(String.to_charlist(path), [:exports])],
+        Atom.to_string(found) != expected,
+        do: %{app: app, path: path, expected: expected, found: found}
+  end
+
+  @doc "Unreadable or invalid `.beam` files in the owned application ebins."
+  @spec invalid_beams(t()) :: [invalid()]
+  def invalid_beams(project) do
+    for {app, path} <- beams(project),
+        {:error, :beam_lib, reason} <- [:beam_lib.chunks(String.to_charlist(path), [:exports])],
+        do: %{app: app, path: path, reason: reason}
+  end
+
   defp missing_in(app) do
-    case manifest_modules(app) do
+    case module_inventory(app) do
       {:ok, modules} -> modules
-      :error -> app_file_modules(app)
+      :error -> []
     end
     |> Enum.uniq()
     |> Enum.reject(&File.regular?(Path.join(app.ebin, Atom.to_string(&1) <> ".beam")))
     |> Enum.sort()
+  end
+
+  defp module_inventory(app) do
+    case manifest_modules(app) do
+      {:ok, _modules} = result -> result
+      :error -> app_file_modules(app)
+    end
   end
 
   defp app_file_modules(%{app: name, ebin: ebin}) when is_atom(name) and name != nil do
@@ -191,19 +259,22 @@ defmodule SpecLint.Project do
 
     case :file.consult(String.to_charlist(path)) do
       {:ok, [{:application, ^name, properties}]} when is_list(properties) ->
-        properties |> Keyword.get(:modules, []) |> Enum.filter(&is_atom/1)
+        case Keyword.fetch(properties, :modules) do
+          {:ok, modules} when is_list(modules) -> {:ok, Enum.filter(modules, &is_atom/1)}
+          _ -> :error
+        end
 
       _ ->
-        []
+        :error
     end
   end
 
-  defp app_file_modules(_app), do: []
+  defp app_file_modules(_app), do: :error
 
   defp manifest_modules(%{manifest: path}) when is_binary(path) do
     if File.regular?(path) and Code.ensure_loaded?(ElixirCompiler) and
          function_exported?(ElixirCompiler, :read_manifest, 1) do
-      {:ok, path |> ElixirCompiler.read_manifest() |> manifest_entries()}
+      path |> ElixirCompiler.read_manifest() |> manifest_entries()
     else
       :error
     end
@@ -211,13 +282,17 @@ defmodule SpecLint.Project do
 
   defp manifest_modules(_app), do: :error
 
+  # The qualified Mix compiler returns this sentinel for unreadable or
+  # wrong-version manifests. A valid empty manifest has two empty maps.
+  defp manifest_entries({[], []}), do: :error
+
   defp manifest_entries({modules, _sources}) when is_map(modules),
-    do: modules |> Map.keys() |> Enum.filter(&is_atom/1)
+    do: {:ok, modules |> Map.keys() |> Enum.filter(&is_atom/1)}
 
   defp manifest_entries({modules, _sources}) when is_list(modules),
-    do: for({module, _} <- modules, is_atom(module), do: module)
+    do: {:ok, for({module, _} <- modules, is_atom(module), do: module)}
 
-  defp manifest_entries(_other), do: []
+  defp manifest_entries(_other), do: :error
 
   @doc """
   The BEAM files of the project, sorted, as `{app, path}`. When `modules`

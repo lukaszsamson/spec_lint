@@ -1,0 +1,82 @@
+
+**What the body experiment establishes**
+
+Not adopting the existing `warnings/7` backend is reasonable. The experiment applies the target domain correctly, creates fresh local inference state per call, and isolates ordinary body checking from spec-domain checking.
+
+Its conclusion should remain narrow:
+
+> This hook, with the current inference engine and classifier, provides insufficient additional value on the tested corpus.
+
+That supports investigating compiler precision. It does not yet establish that general call-sensitive inference or recursive fixed points are the best next investments. Those are substantial compiler projects, and the nine known omissions are now heavily used development examples.
+
+**Follow-up issues I would fix**
+
+1. **Large benchmark reports lose their summary.**  
+   bench/corpus/run.sh:103 reduces product reports over 2 MB using `summary`, `coverage`, and `exit_status`. The actual report fields are `ledger` and `completion`, among others. Applying that expression to a current report produces null summary fields.
+
+   Fix this before adding larger projects. Prefer retaining the complete compressed report plus a small, schema-validated summary.
+2. **Separate actual gates from informational candidates in experiment metrics.**  
+   bench/body\_experiment.exs:451 combines SL001 gates and SL002 candidates in its detection flag. The known **1/9** improvement happens to be an SL001 gate, but other detection and false-positive counts mix different policies.
+
+   For example, the `display/1` body false positive is an SL002 candidate, not a current CI-blocking finding. Report three separate outcomes: **gated, reported-only, unknown**.
+3. **Make the omission ground truth executable.**  
+   test/spec\_lint/omissions\_test.exs:60 tests current classifications; it does not execute the counterexamples.
+
+   Add controlled witness tests demonstrating that each fixture accepts a spec-conforming input and returns an undeclared value. Use explicit expected values/shapes, independent of the translator being tested. Where feasible, keep corresponding tests against the pinned original library. A simplified fixture matching the same classification does not necessarily preserve the same inference obstacle.
+4. **Strengthen benchmark provenance.**  
+   The regeneration script only warns about revision mismatches and analyzes existing builds. For the expanded benchmark, fail on unexpected revisions by default and record actual commits, dirty state, lockfile hashes, compiler/patch identity, and relevant artifact hashes. Treat exit 1 as findings; treat exit 2 as an incomplete experiment, not an ordinary completed corpus.
+
+There is also a smaller build-validation edge: an existing corrupt compile manifest can decode as empty and override a `.app` file listing missing modules. The reviewer reproduced this through the project API. Normal `mix compile` may repair it first, so I would treat it as a robustness fix rather than a demonstrated normal-task blocker.
+
+**Yes, expand the OSS set—but choose it for diversity**
+
+I would add approximately six projects, rather than immediately scanning dozens:
+
+| Project | Why include it |
+|---|---|
+| [Req (https://github.com/wojtekmach/req)](<https://github.com/wojtekmach/req>) | HTTP request/response transformations; useful contrast with framework internals |
+| [Broadway (https://github.com/elixir-broadway/broadway)](<https://github.com/elixir-broadway/broadway>) | Concurrent processing pipelines and callback-oriented APIs |
+| [Oban (https://github.com/oban-bg/oban)](<https://github.com/oban-bg/oban>) | Job-processing APIs and another substantial application domain |
+| [Phoenix LiveView (https://github.com/phoenixframework/phoenix\_live\_view)](<https://github.com/phoenixframework/phoenix_live_view>) | Stateful UI APIs, callbacks, and generated code |
+| [Ash (https://github.com/ash-project/ash)](<https://github.com/ash-project/ash>) | Declarative, extensible application framework; a different metaprogramming workload |
+| [Nx (https://github.com/elixir-nx/nx)](<https://github.com/elixir-nx/nx>) | Numerical code and staged definitions; a deliberately different stress case |
+
+These are workload recommendations, not claims that their current heads compile on the pinned toolchain. Pin compatible revisions and report build failures explicitly.
+
+Reserve **two projects as holdouts**: do not tune the classifier or compiler changes against them until the proposed improvement is fixed.
+
+For each project:
+
+- Run the actual Mix task as a consumer, alongside the explicit-BEAM benchmark.
+- Review every gated finding.
+- Sample informational findings **and silent/unknown functions**, using a recorded sampling method.
+- Count unique root causes separately from affected MFAs.
+- Record useful inference coverage, translation losses, unknown reasons, runtime, and integration failures.
+- Add confirmed omissions and refuted findings to the regression corpus.
+
+A large green scan is not evidence of precision when the analyzer produces almost no candidates.
+
+**Refine the compiler and translator roadmap**
+
+The four proposed compiler directions are plausible, but I would split them into smaller experiments:
+
+1. **Known-list higher-order operations**, starting with `Enum.map/2`, rather than immediately supporting arbitrary `Enumerable` implementations, reducers, and collectors.
+2. **Bounded specialization of acyclic local helpers**, with explicit budgets and conservative fallback, before general call-sensitive inference.
+3. **Reachability/provenance exposure**, distinguishing “proven redundant” from “not proven redundant.” The latter is not proof of reachability.
+4. **Recursive fixed-point inference later**, after measuring how many independent problems it would uniquely unlock.
+
+For each, first test whether improved return information would actually survive SpecLint’s translation and gating prerequisites. Otherwise a compiler improvement may reduce `dynamic()` without detecting another omission.
+
+The lower-bound recommendation also needs qualification. **An empty lower bound is sometimes unavoidable in the current lattice.** A required struct field such as `sign: 1 | -1` cannot receive `integer()` as its lower bound: that would admit invalid values. Keeping only the struct tag is likewise not a valid lower approximation of the full struct type.
+
+Finite recursive unfolding can preserve useful subsets, and some structural losses can be reduced. But distinguish those opportunities from cases requiring richer refinements. Measure that distinction before promising that “keeping `D_lo`” will unlock struct-heavy APIs.
+
+**Recommended next milestone**
+
+1. Fix benchmark reduction, metric separation, and provenance.
+2. Add runtime ground-truth tests for the known omissions.
+3. Scan the six-project expansion without changing the classifier.
+4. Build a matrix of independent blockers and which proposed change would remove each.
+5. Prototype the smallest high-value inference or translation improvement, then evaluate it on the holdouts.
+
+Keep SARIF and caching deferred. **The next milestone should demonstrate new, independently confirmed detection capability—not simply broader packaging of a gate that still misses the target bugs.**

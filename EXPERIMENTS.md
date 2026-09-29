@@ -1061,7 +1061,7 @@ Module.Types.infer_under_domains(module, file, attrs, defs, no_warn_undefined, c
   # whether it is reachable under the given domain.
   clauses: %{{atom(), arity()} => [%{clause: non_neg_integer(),
                                      signature_clause: non_neg_integer(),
-                                     reachability: :reachable | :redundant | :unused}]},
+                                     reachability: :reachable | :redundant | :unused | :unknown}]},
   diagnostics: [{module(), warning :: term(), location :: term()}]
 }
 ```
@@ -1076,7 +1076,9 @@ Contract:
 - **Signatures come in stored form.** The returned signature is compacted
   as it is when written to `ExCk`, so the SpecLint application copy
   (`apply_infer/2`, 16-clause cutoff) applies unchanged.
-- **Reachability is per source clause.** This lets a consumer drop the
+- **Reachability is per source clause.** Absence of a redundancy diagnostic
+  is `:unknown`, not proof of reachability. `:reachable` requires the API
+  contract to state what it proves under the supplied input domain. This lets a consumer drop the
   return of a clause the domain makes redundant, instead of blocking the
   slice. It also replaces the stored-domain shadowing approximation
   (DESIGN 3.1 step 7).
@@ -1107,3 +1109,96 @@ fields counted. `Decimal.cmp/2` takes the same `Decimal.t()` and is likely
 capped too, so the realistic ceiling is 3 (`decode/4`, `Assoc.query/4`,
 `Preloader.query/7`), each of which also needs its list or map extra
 recognised as a counted component.
+
+## Expanded corpus and precision ceiling (2026-09-29)
+
+Starting from `caff376`, six additional projects were frozen in
+`bench/corpus/expansion.json` and built in isolated checkouts. No production
+classifier or inference change was made. Ash and Nx were held out until the
+precision experiment and policy decision were recorded. These are pinned
+revision observations, not claims about their latest releases.
+
+| Project | Eligible functions | Compared spec slices | Unknown obligations | Findings | CI gates |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Req | 87 | 87 | 75 | 0 | 0 |
+| Broadway | 29 | 30 | 25 | 0 | 0 |
+| Oban | 127 | 130 | 115 | 2 | 1 |
+| Phoenix LiveView | 12 | 12 | 10 | 0 | 0 |
+| Ash (holdout) | 990 | 992 | 803 | 12 | 0 |
+| Nx (holdout) | 7 | 9 | 9 | 0 | 0 |
+| Total | 1,252 | 1,260 | 1,037 | 14 | 1 |
+
+All six runs completed, with no unavailable or unsupported slices. This is
+pipeline coverage, not proof of spec accuracy: 82% of obligations remain
+unknown. LiveView's 190 modules and Nx's 101 modules supply few eligible
+specs. The Req path-dependency consumer separately compared 87 slices through
+`mix spec_lint --ci`, exit 0; the corpus pipeline uses explicit ebins.
+
+The Oban gate is a confirmed return omission: `Oban.Registry.via/3` returns
+an inner three-tuple for a non-nil value, while its spec promises an inner
+two-tuple. The witness `(Oban, nil, :witness)` is inside the declared input
+domain. Its `Period.to_seconds/1` informational candidate is a false return
+candidate within the spec domain: `to_seconds({1.5, :minute})` really returns
+`90.0`, but that input is outside `Period.t()`, as is zero input. Req's broad
+`Response.new/1` constructor admits a negative-status counterexample under
+the written map input; it remains unreported and its usefulness as a default
+warning is debatable. See `bench/corpus/expansion_triage.md`, the independent
+witness script, and the holdout triage for source judgments. Unknown samples
+are source reviews, not a recall denominator.
+
+Ash holdout triage found three direct in-domain runtime counterexamples:
+`Ash.Page.page_opts/1`, `Ash.load/3`, and `Ash.Test.refute_has_error/3`.
+Four more findings have source-supported omission paths without separate
+integration witnesses; two are probable, one unconfirmed, and two refuted.
+In particular `Ash.UUIDv7.generate/0` cannot reach its callee's `:error`
+catch-all with the 128-bit binary it constructs. None gates. The real
+`page_opts/1` clause conflict is blocked by whole-slice arrow-polarity loss
+elsewhere in the input union. This motivates a **new**, separately validated
+experiment in per-clause loss qualification, not relaxing the global arrow
+safety check based on a single holdout. These holdouts are now observed;
+any policy prototype needs newly frozen validation inputs.
+
+The original nine stand-in omission fixtures now have runtime value
+assertions independent of the translator/classifier. They prove the
+stand-ins, not executions of the original dependency functions. The separate
+`bench/precision_ceiling.exs` measures 33 contributing stored clause domains:
+all overlap but extend outside `D_hi`, and none is contained in `D_lo`.
+Four slices already have exact input translation. Consequently a larger sound
+input lower bound alone cannot establish containment for these whole stored
+clauses. This does not rule out clause splitting, spec-domain inference, or
+benefit on other code. The detailed argument and per-position measurements
+are in `bench/corpus/precision_ceiling.md` and its JSON.
+
+Body experiment metrics now distinguish actual gates, structured candidates,
+and all reported findings. Unavailable analysis has its own outcome and is
+excluded from detection denominators. The fixture rerun preserves the earlier
+substantive result: only `quoted_type/2` newly gates among the nine omission
+stand-ins; `join_escape/3` is reported without gating. Two body-analysis
+fixture false positives are candidates, not CI gates. Existing historical
+`warn`/`detected` fields combine gates and candidates and must not be cited
+as gated recall. No production body backend is adopted.
+
+
+### Upstream bug qualification follow-up
+
+No compiler soundness violation has been established by these experiments.
+The retained impossible returns under the patched spec-domain hook remain
+candidates for investigation, not confirmed stock-compiler bugs. On the
+unpatched qualified `c24c235` compiler, this control correctly warns about
+the unreachable catch-all and stores only `dynamic(:ok)` as its return:
+
+```elixir
+def display(v) when is_atom(v) do
+  case v do
+    a when is_atom(a) -> :ok
+    _ -> nil
+  end
+end
+```
+
+This control differs from injecting a spec domain through the experimental
+hook. Isolate that distinction before filing upstream. Similarly, Oban's
+unguarded tuple arithmetic legitimately admits floats outside its input
+spec; its float inference is not a compiler bug. The earlier triage wording
+claiming integer-only branches was corrected after directly executing
+`Oban.Period.to_seconds({1.5, :minute})` and observing `90.0`.
