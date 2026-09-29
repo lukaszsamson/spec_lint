@@ -609,12 +609,32 @@ mix dialyzer      # PLT in priv/plts, or SPEC_LINT_PLT_DIR (one per compiler)
 Tests whose expectations legitimately differ between compiler lines are
 tagged `adapter:` and run only under that adapter's compiler; run the
 suite under each qualified compiler, each with its own `MIX_BUILD_PATH`.
-The cross-compiler integration test needs a second qualified compiler and
-is excluded (not passed) without one:
+Two environment variables name other compilers, and the tests that need
+them do not pass without them:
+
+- `SPEC_LINT_OTHER_ELIXIR`, the bin directory of a second qualified
+  compiler (1.20.4 under 1.21, a 1.21 build under 1.20.4): the
+  cross-compiler tests (tag `cross_compiler`, including the compiler
+  upgrade tests of `test/integration/release/`) are **excluded** without it;
+- `SPEC_LINT_UNSUPPORTED_ELIXIR`, the bin directory of a compiler outside
+  the support range (1.19.4 was used): the test behind the 1.19 refusal
+  described under [Requirements](#requirements)
+  (`test/integration/release/incomplete_test.exs`) is **skipped** without
+  it.
+
+A full run, as the release qualification does it (under each qualified
+compiler, naming another one):
 
 ```
-SPEC_LINT_OTHER_ELIXIR=/path/to/other/elixir/bin mix test --only cross_compiler
+SPEC_LINT_OTHER_ELIXIR=/path/to/other/elixir/bin \
+SPEC_LINT_UNSUPPORTED_ELIXIR=/path/to/elixir-1.19/bin \
+MIX_BUILD_PATH=_build/$COMPILER mix test
 ```
+
+`test/integration/release/` drives the public Mix tasks on consumer
+projects in the system temporary directory: installation as a path and a
+git dependency and in an umbrella, the baseline workflow, compiler and
+SpecLint upgrades, and incomplete builds (about 90 s).
 
 `bench/clause_mapping/` is the source-clause mapping experiment of
 Milestone 4 (its `README.md` holds the report); it runs only under
