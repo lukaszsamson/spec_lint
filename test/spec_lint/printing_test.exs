@@ -93,8 +93,18 @@ defmodule SpecLint.PrintingTest do
       if String.contains?(string, " and not "), do: "(" <> string <> ")", else: string
     end
 
+    # One change since Milestone 1 (Milestone 3 review): a line's top
+    # literal is dropped when another positive remains (intersecting with
+    # the top is the identity; 1.20.4 leaves it in some lines).
     defp line(kind, {pos, negs}) do
-      positives = if pos == [], do: [top_literal(kind)], else: pos
+      top = top_literal(kind)
+
+      positives =
+        case Enum.reject(pos, &(&1 == top)) do
+          [] -> [top]
+          rest -> rest
+        end
+
       pos_descr = positives |> Enum.map(&%{kind => &1}) |> Enum.reduce(&intersection/2)
       live = Enum.reject(negs, &Descr.disjoint?(pos_descr, %{kind => &1}))
       line = Enum.reduce(live, pos_descr, &ops().difference(&2, %{kind => &1}))
@@ -250,6 +260,37 @@ defmodule SpecLint.PrintingTest do
       assert C.to_string(C.atom([:a])) == ":a"
       assert C.to_string(term) == "term()"
       assert C.to_string(C.none()) == "none()"
+    end
+  end
+
+  # Presentation difference between the lines (audit-1.20.4.md row 27, the
+  # Milestone 3 review): 1.20.4 names the non-binary bitstring key domain
+  # :bitstring and Descr prints it as `bitstring()`, so the same string
+  # means a wider key set there. The views, which classification reads,
+  # are the same on both lines. Pinned per adapter, not rewritten: the
+  # printer shows what the running compiler's Descr prints.
+  describe "the non-binary bitstring key domain" do
+    setup do
+      domain = C.closed_map([], [{[:bitstring_no_binary], C.integer()}])
+      spec = C.closed_map([], [{[:bitstring_no_binary], C.atom()}, {[:binary], C.atom()}])
+
+      assert [%{view: {:map, :closed, [], [{[:bitstring_no_binary], value}]}}] =
+               C.components(domain)
+
+      assert C.equal?(value, C.integer())
+      %{domain: domain, spec: spec}
+    end
+
+    @tag adapter: SpecLint.Compiler.V120
+    test "prints as bitstring() on 1.20.4", %{domain: domain, spec: spec} do
+      assert C.to_string(domain) == "%{bitstring() => integer()}"
+      assert C.to_string(spec) == "%{binary() => atom(), bitstring() => atom()}"
+    end
+
+    @tag adapter: SpecLint.Compiler.V121
+    test "prints as (bitstring() and not binary()) on 1.21", %{domain: domain, spec: spec} do
+      assert C.to_string(domain) == "%{(bitstring() and not binary()) => integer()}"
+      assert C.to_string(spec) == "%{bitstring() => atom()}"
     end
   end
 

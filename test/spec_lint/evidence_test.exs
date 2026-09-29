@@ -582,4 +582,33 @@ defmodule SpecLint.EvidenceTest do
              ]
     end
   end
+
+  # 1.20.4's Descr leaves the open-map top literal as a second positive of
+  # term() - (term() - %{binary() => term()}); read as an intersection, it
+  # made a parent struct or tuple unknown (Milestone 3 review). The type is
+  # the plain domain map, and must be labelled and printed as one under
+  # every adapter.
+  describe "a DNF line that repeats the top literal" do
+    test "is the plain literal: structured parents, printed without the top" do
+      term = C.term()
+      domain_map = C.closed_map([], [{[:binary], term}])
+      twice_negated = C.difference(term, C.difference(term, domain_map))
+      assert C.equal?(twice_negated, domain_map)
+
+      field =
+        C.closed_map([{:__struct__, C.atom([Foo]), false}, {:opts, twice_negated, false}], [])
+
+      element = C.tuple([C.atom([:ok]), twice_negated])
+
+      for parent <- [field, element] do
+        assert [component] = C.components(parent)
+        assert Evidence.label(component, 2) == :structured
+      end
+
+      assert views(twice_negated) == views(domain_map)
+      assert C.to_string(twice_negated) == "%{binary() => term()}"
+      assert C.to_string(C.difference(term, twice_negated)) == "not %{binary() => term()}"
+      assert C.to_string(field) == "%{__struct__: Foo, opts: %{binary() => term()}}"
+    end
+  end
 end

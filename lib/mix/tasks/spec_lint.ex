@@ -48,8 +48,8 @@ defmodule Mix.Tasks.SpecLint do
   configuration (including an explicit baseline path that does not exist),
   compilation failure, a missing build directory for an owned application
   or one missing BEAM files its build lists, BEAM files produced by another
-  compiler build, unsupported compiler or backend in CI, or an incomplete
-  run. An existing but empty build
+  compiler build, dependencies compiled by another compiler line,
+  unsupported compiler or backend in CI, or an incomplete run. An existing but empty build
   directory is a project with zero specs: exit 0, and the report says "0
   specs checked".
   """
@@ -99,6 +99,15 @@ defmodule Mix.Tasks.SpecLint do
   `SpecLint.BuildRecord` of every owned application says the running
   build produced its current BEAM files, and a new record is written
   afterwards.
+
+  `Mix.Task.run/2` does nothing when `compile` already ran in this VM
+  (`mix do compile + spec_lint`, an alias such as
+  `["compile", "spec_lint --ci"]`, or a task defined in the project
+  itself, which Mix compiles to find it). A forced compile therefore
+  re-enables the compile tasks first, and a forced compile that still
+  compiled nothing is an error (exit 2) that writes no record: recording
+  it would name the running build as the producer of the other build's
+  BEAM files.
   """
   @spec compile!() :: :ok
   def compile! do
@@ -110,14 +119,81 @@ defmodule Mix.Tasks.SpecLint do
 
     force? = capabilities != nil and stale_build?(Project.current(), capabilities)
     args = if force?, do: ["--force", "--return-errors"], else: ["--return-errors"]
+    if force?, do: reenable_compile()
 
-    case Mix.Task.run("compile", args) do
-      {:error, _diagnostics} ->
-        Mix.raise("compilation failed; spec_lint needs a compiled project", exit_status: 2)
+    "compile"
+    |> Mix.Task.run(args)
+    |> check_compile!(force?)
 
-      _ ->
-        if capabilities, do: record_build!(Project.current(), capabilities)
+    if capabilities do
+      check_dependencies!(Project.current(), capabilities)
+      record_build!(Project.current(), capabilities)
+    end
+
+    :ok
+  end
+
+  defp check_compile!({:error, _diagnostics}, _force?),
+    do: Mix.raise("compilation failed; spec_lint needs a compiled project", exit_status: 2)
+
+  defp check_compile!(result, true) do
+    if noop?(result) do
+      Mix.raise(
+        "the build was compiled by another compiler, and the forced recompilation " <>
+          "did not run (compile already ran in this VM); run mix compile --force, " <>
+          "or mix spec_lint on its own",
+        exit_status: 2
+      )
+    end
+  end
+
+  defp check_compile!(_result, false), do: :ok
+
+  # The compile chain Mix.Task.run/2 would skip after an earlier compile in
+  # this VM: `compile`, `compile.all` and every compiler of the project.
+  defp reenable_compile do
+    compilers = for compiler <- Mix.Task.Compiler.compilers(), do: "compile.#{compiler}"
+    Enum.each(["compile", "compile.all" | compilers], &Mix.Task.reenable/1)
+  end
+
+  defp noop?(:noop), do: true
+  defp noop?({:noop, _diagnostics}), do: true
+  defp noop?(_result), do: false
+
+  # Dependencies compiled by another compiler line (another checker chunk
+  # version): the project's signatures were inferred without theirs. The
+  # owned records are removed, so the project is recompiled once the
+  # dependencies are (Mix does not recompile a caller for a runtime
+  # dependency).
+  defp check_dependencies!(project, capabilities) do
+    owned = for app <- project.apps, do: app.app
+    build = Mix.Project.build_path()
+
+    ebins =
+      for {app, _source} <- Enum.sort(Mix.Project.deps_paths()),
+          app not in owned,
+          ebin = Path.join([build, "lib", Atom.to_string(app), "ebin"]),
+          File.dir?(ebin),
+          do: {app, ebin}
+
+    case BuildRecord.foreign_dependencies(ebins, capabilities) do
+      [] ->
         :ok
+
+      foreign ->
+        Enum.each(project.apps, &File.rm(BuildRecord.path(&1)))
+
+        list =
+          Enum.map_join(foreign, ", ", fn {app, versions} ->
+            "#{app} (#{Enum.join(versions, ", ")})"
+          end)
+
+        Mix.raise(
+          "dependencies compiled by another compiler line: #{list}; the running compiler " <>
+            "(#{capabilities.adapter_id}) writes #{capabilities.checker_version} and ignores " <>
+            "their signatures. Recompile them (mix deps.compile --force) and run again",
+          exit_status: 2
+        )
     end
   end
 

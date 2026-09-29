@@ -131,7 +131,11 @@ defmodule SpecLint.ClauseLocalTest do
       assert [before] = sl001(off, mfa)
       assert %Issue{evidence: :clause_conflict, slice: 0, clause: 0, gate: false} = before
       assert Issue.blocked(before) == [:no_arrow_polarity_argument]
-      assert before.data == %{}
+      # Milestone 4: page_opts/1 has as many stored as source clauses.
+      assert %{index: 0, line: line, file: nil} = before.data.source_clause
+      assert is_integer(line)
+      mapping = %{clause_mapping: :identity, source_clause: before.data.source_clause}
+      assert before.data == mapping
 
       assert [after_] = sl001(on, mfa)
       assert %Issue{evidence: :clause_conflict, slice: 0, clause: 0, gate: true} = after_
@@ -143,13 +147,14 @@ defmodule SpecLint.ClauseLocalTest do
                clause_reachable: :unchecked
              ]
 
-      assert after_.data == %{
-               qualification: :clause_local,
-               superseded_prerequisites: [
-                 [:no_arrow_in_return, :met],
-                 [:no_arrow_polarity_argument, :blocked]
-               ]
-             }
+      assert after_.data ==
+               Map.merge(mapping, %{
+                 qualification: :clause_local,
+                 superseded_prerequisites: [
+                   [:no_arrow_in_return, :met],
+                   [:no_arrow_polarity_argument, :blocked]
+                 ]
+               })
 
       assert Policy.explain(after_, @on) =~ "gates"
 

@@ -35,12 +35,20 @@ defmodule SpecLint.BuildRecord do
   `:verified`, so a build they did not record, or one another build
   touched, is rebuilt by the running compiler before it is analysed.
   `SpecLint.Run` refuses an application in `{:mismatch, _}` (exit 2).
+
   Dependencies are not recorded: Mix recompiles them only when the Elixir
-  version changes, and their chunks can still influence the signatures
-  the running compiler infers for the project.
+  version changes, and their chunks influence the signatures the running
+  compiler infers for the project (a checker ignores a chunk of another
+  version, so calls into the dependency become `dynamic()`).
+  `foreign_dependencies/2` finds dependency BEAM files whose chunk version
+  differs from the running compiler's, which the Mix tasks refuse (exit 2;
+  such a mixed build needs `--no-deps-check`, a shared or stale build
+  directory, or vendored BEAM files). A dependency built by another build
+  of the running line writes the same chunk version and is not detected
+  (DESIGN.md 5.2).
   """
 
-  alias SpecLint.{Compiler, Project}
+  alias SpecLint.{Beam, Compiler, Project}
 
   @file_name "spec_lint.build"
   @version 1
@@ -77,6 +85,30 @@ defmodule SpecLint.BuildRecord do
     with :ok <- File.mkdir_p(Path.dirname(file)) do
       File.write(file, JSON.encode!(record))
     end
+  end
+
+  @doc """
+  The dependencies among `ebins` (`{app, ebin}` pairs) with BEAM files whose
+  checker chunk version is not the running compiler's, with those versions.
+  BEAM files without a checker chunk (Erlang modules) or that cannot be
+  read are not counted.
+  """
+  @spec foreign_dependencies([{atom(), Path.t()}], Compiler.capabilities()) ::
+          [{atom(), [String.t()]}]
+  def foreign_dependencies(ebins, capabilities) do
+    running = Atom.to_string(capabilities.checker_version)
+
+    for {app, ebin} <- ebins,
+        versions = chunk_versions(ebin) -- [running],
+        versions != [],
+        do: {app, versions}
+  end
+
+  defp chunk_versions(ebin) do
+    for path <- ebin |> Path.join("*.beam") |> Path.wildcard(),
+        {:ok, version} <- [Beam.checker_version(path)],
+        uniq: true,
+        do: version
   end
 
   @doc "The status of `app`'s artifacts against the running build (see the moduledoc)."

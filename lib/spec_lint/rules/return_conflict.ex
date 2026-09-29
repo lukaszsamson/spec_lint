@@ -39,7 +39,16 @@ defmodule SpecLint.Rules.ReturnConflict do
   a source clause: the checker drops clauses whose return is empty (such as
   one that always raises) and merges clauses with equal returns, and the
   issue line is the function's first line. The details label it "stored
-  signature clause".
+  signature clause". Since Milestone 4 the details also name the source
+  clause and its line when compiler invariants alone determine it
+  (`SpecLint.ClauseMapping`: a function with one source clause, or with as
+  many stored as source clauses), and say "not determined" otherwise; the
+  issue's `data` carries `source_clause` (`index`, `line`, `file`) when it
+  is exact and `clause_mapping` (`single`, `identity` or `ambiguous`)
+  always. The mapping changes no prerequisite: a pattern or guard
+  diagnostic anywhere in the function still blocks every clause conflict of
+  it, whatever the mapping (diagnostic lines are not attributed to
+  clauses).
 
   ## Clause-local qualification (the default)
 
@@ -75,7 +84,7 @@ defmodule SpecLint.Rules.ReturnConflict do
 
   @behaviour SpecLint.Rule
 
-  alias SpecLint.Rule
+  alias SpecLint.{ClauseMapping, Rule}
 
   @impl true
   @spec id() :: String.t()
@@ -146,8 +155,11 @@ defmodule SpecLint.Rules.ReturnConflict do
     clause_local? = Map.get(context, :clause_local_qualification, false)
     check = Map.get(context, :pattern_diagnostics, {:error, :not_checked})
 
+    mapping = Map.get(context.function, :clause_mapping)
+
     for %{class: :clause_conflict} = clause <- evidence.clauses do
       contributing = Enum.find(slice.relations.contributing, &(&1.index == clause.index))
+      source = ClauseMapping.source_clause(mapping, clause.index)
 
       Rule.function_issue(__MODULE__, context,
         slice: slice.index,
@@ -159,6 +171,7 @@ defmodule SpecLint.Rules.ReturnConflict do
           [
             {"spec", {:spec, name, slice.spec}},
             {"stored signature clause", ["##{clause.index} ", clause_text(contributing)]},
+            {"source clause", source_text(source, mapping)},
             {"slice", Rule.domain_text(slice.args)},
             {"evidence",
              "clause_conflict (signature backend, #{containment_text(clause_local?)}, " <>
@@ -168,10 +181,26 @@ defmodule SpecLint.Rules.ReturnConflict do
         data:
           clause_data(slice, clause_local?)
           |> Map.merge(check_data(check))
+          |> Map.merge(source_data(source, mapping))
           |> maybe_mark_required_check(contributing, check)
       )
     end
   end
+
+  defp source_text({:ok, source}, _mapping), do: ClauseMapping.text(source)
+
+  defp source_text(:error, {:ambiguous, :more_stored_than_source}),
+    do: "not determined (more stored than source clauses)"
+
+  defp source_text(:error, {:ambiguous, _reason}),
+    do: "not determined (the compiler may have merged or dropped clauses)"
+
+  defp source_text(:error, _mapping), do: "not determined (no debug info for the definition)"
+
+  defp source_data({:ok, source}, mapping),
+    do: %{source_clause: source, clause_mapping: ClauseMapping.class(mapping)}
+
+  defp source_data(:error, mapping), do: %{clause_mapping: ClauseMapping.class(mapping)}
 
   @superseded [:no_arrow_in_return, :no_arrow_polarity_argument]
 

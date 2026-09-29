@@ -1,0 +1,128 @@
+{
+  "focus": [
+    {
+      "focus": "Absinthe.Blueprint.Input.parse/1",
+      "found": false
+    },
+    {
+      "focus": "Ash.Page.page_opts/1",
+      "found": false
+    },
+    {
+      "focus": "Oban.Registry.via/3",
+      "found": false
+    }
+  ],
+  "label": "tesla",
+  "summary": {
+    "a1_violating_functions": 0,
+    "functions": 500,
+    "functions_with_infer_signature": 500,
+    "heads_bracketed": {
+      "nil": 401,
+      "true": 99
+    },
+    "heads_lo_equal": {
+      "false": 3,
+      "nil": 401,
+      "true": 96
+    },
+    "modules_with_errors": 0,
+    "nontrivial_functions": 18,
+    "nontrivial_stored_clauses": 29,
+    "replay": {
+      ":not_reproduced": 4,
+      ":semantic_equal": 8,
+      ":term_equal": 488
+    },
+    "stored_clauses": 599,
+    "structural": {
+      "agree": 478,
+      "functions": 482,
+      "replay_checked": 478,
+      "stored_clauses": 570,
+      "wrong": 0
+    },
+    "variants": {
+      "robust_a1": {
+        "by_class": {
+          ":ambiguous": 6,
+          ":identity": 81,
+          ":solved": 12,
+          ":super_derived": 29,
+          ":trivial_single": 372
+        },
+        "exact_claims": "unverified",
+        "replay_check": {
+          "ambiguous_sound": 9,
+          "ambiguous_unsound": 0,
+          "exact_agree": 586,
+          "exact_wrong": 0,
+          "functions": 496,
+          "no_solution": 0
+        },
+        "stored_clauses_anchor_exact": 593,
+        "stored_clauses_exact": 590
+      },
+      "robust_inv": {
+        "by_class": {
+          ":ambiguous": 8,
+          ":identity": 81,
+          ":solved": 10,
+          ":super_derived": 29,
+          ":trivial_single": 372
+        },
+        "exact_claims": "unverified",
+        "replay_check": {
+          "ambiguous_sound": 13,
+          "ambiguous_unsound": 0,
+          "exact_agree": 582,
+          "exact_wrong": 0,
+          "functions": 496,
+          "no_solution": 0
+        },
+        "stored_clauses_anchor_exact": 591,
+        "stored_clauses_exact": 586
+      },
+      "strict_a1": {
+        "by_class": {
+          ":identity": 81,
+          ":solved": 18,
+          ":super_derived": 29,
+          ":trivial_single": 372
+        },
+        "exact_claims": "unverified",
+        "replay_check": {
+          "ambiguous_sound": 0,
+          "ambiguous_unsound": 0,
+          "exact_agree": 595,
+          "exact_wrong": 0,
+          "functions": 496,
+          "no_solution": 0
+        },
+        "stored_clauses_anchor_exact": 599,
+        "stored_clauses_exact": 599
+      },
+      "strict_inv": {
+        "by_class": {
+          ":ambiguous": 5,
+          ":identity": 81,
+          ":solved": 13,
+          ":super_derived": 29,
+          ":trivial_single": 372
+        },
+        "exact_claims": "unverified",
+        "replay_check": {
+          "ambiguous_sound": 8,
+          "ambiguous_unsound": 0,
+          "exact_agree": 587,
+          "exact_wrong": 0,
+          "functions": 496,
+          "no_solution": 0
+        },
+        "stored_clauses_anchor_exact": 598,
+        "stored_clauses_exact": 591
+      }
+    }
+  }
+}

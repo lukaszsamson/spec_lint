@@ -12,10 +12,12 @@ defmodule SpecLint.Integration.ConsumerTest do
 
   alias SpecLint.ProjectFixture, as: Fixture
 
-  # One directory per test run under the system temporary directory,
-  # removed afterwards, so concurrent runs do not share a fixture. The
-  # per-test helpers read it from the process dictionary set in setup.
-  setup_all do
+  # One fresh fixture directory per test under the system temporary
+  # directory, removed afterwards. Tests change the project (sources, the
+  # baseline, the build), so a fixture shared by the module made the
+  # results depend on the test order (Milestone 3 review: seed 845457). The
+  # per-test helpers read the directory from the process dictionary.
+  setup do
     dir = Fixture.tmp_dir!("consumer")
     on_exit(fn -> File.rm_rf!(dir) end)
 
@@ -42,10 +44,6 @@ defmodule SpecLint.Integration.ConsumerTest do
 
     {output, status} = Fixture.mix(dir, ["compile"])
     assert status == 0, output
-    %{dir: dir}
-  end
-
-  setup %{dir: dir} do
     Process.put(:consumer_dir, dir)
     :ok
   end
@@ -188,7 +186,10 @@ defmodule SpecLint.Integration.ConsumerTest do
   end
 
   test "--format json without --output: stdout is only the JSON report" do
-    # A real source change, so compilation prints progress.
+    # A recorded build (so only the new file is compiled), then a real
+    # source change, so compilation prints progress.
+    {0, _json, _output} = lint()
+
     write("lib/json_stdout.ex", """
     defmodule Consumer.JsonStdout do
       @spec id(atom()) :: atom()
@@ -207,7 +208,6 @@ defmodule SpecLint.Integration.ConsumerTest do
     err = File.read!(Path.join(dir(), "err.txt"))
     assert err =~ "Compiling 1 file (.ex)"
     assert err =~ "spec_lint: "
-    File.rm!(Path.join(dir(), "lib/json_stdout.ex"))
   end
 
   test "mix spec_lint.baseline rejects rule selection and a malformed output file" do

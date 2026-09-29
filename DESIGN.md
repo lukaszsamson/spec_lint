@@ -253,7 +253,12 @@ applied return `U(D)`.
      application result. The reported clause index is the stored signature
      clause, which is not a source clause index: the checker drops clauses
      whose return is empty (a clause that always raises) and merges clauses
-     with equal returns;
+     with equal returns. Since Milestone 4 the finding also names the source
+     clause and its line where compiler invariants alone determine it
+     (`SpecLint.ClauseMapping`: one source clause, or as many stored as
+     source clauses; section 5.5), and says "not determined" otherwise. The
+     mapping changes no prerequisite: a diagnostic still blocks every clause
+     conflict of the function;
    - otherwise `extra_k = difference(R_k', S_hi)` is classified with step 5
      against `R_k` itself (structure must be present in `R_k`, never only
      in the subtraction), giving a per-clause class.
@@ -481,12 +486,17 @@ Remote types resolve through `:code.which/1` and are memoised per run by
 
 ### 5.2 `SpecLint.Compiler` adapter
 
-One module per qualified compiler revision. It owns: the chunk decoder, all
-`Descr` calls, the copy of `apply_infer/2` with its clause cutoff, and the
-optional `warnings/7` bridge. Qualification means the differential tests in
-section 10 pass for that revision, not that a function is exported. The first
-release pins one 1.21 development revision and publishes a support matrix.
-Unknown combinations fail preflight in CI and report "unsupported" locally.
+One adapter module per qualified compiler line, covering the revisions of
+that line whose audit shows every internal it reads unchanged (Milestone
+3: `V121` covers the 1.21 development revisions `c24c235` and `648b2a9`,
+`V120` covers Elixir 1.20.4). It owns: the chunk decoder, all `Descr`
+calls, the copy of `apply_infer/2` with its clause cutoff, and the optional
+`warnings/7` bridge. Qualification means the differential tests in section
+10 pass for that revision, not that a function is exported. The README
+publishes the support matrix of qualified builds. Unknown combinations fail
+preflight in CI and report "unsupported" locally; a release below the
+`elixir:` requirement of `mix.exs` (such as 1.19) is refused by Mix before
+SpecLint runs.
 
 As implemented (Milestone 2), `SpecLint.Compiler.V121` is qualified for the
 fork revision `c24c235` and upstream `648b2a9`, whose internals are the same
@@ -561,13 +571,24 @@ an application without a record (an explicit ebin, as in the corpus
 runner) is analysed and reported as `unrecorded`. Dependencies are not
 recorded: Mix does not recompile them across the two builds, and their
 chunks feed the signatures the running compiler infers for the project.
+
+`Mix.Task.run/2` does nothing when `compile` already ran in the VM (`mix
+do compile + spec_lint`, an alias, or a task defined in the project, which
+Mix compiles to find it). Before the Milestone 3 review the forced
+recompile was then a no-op and the other build's BEAM files were recorded
+as the running build's, so the wrong verdict persisted (review, high). The
+Mix tasks now re-enable `compile`, `compile.all` and every compiler before
+a forced compile, and a forced compile that still reports `:noop` is an
+error (exit 2) that writes no record; integration tests cover `mix do
+compile + spec_lint`, a task defined in the project, and (with
+`SPEC_LINT_OTHER_ELIXIR`) the other compiler.
 Reports carry, per BEAM, the digest of the decoded `ExCk` chunk next to
 the `beam_lib` MD5, which leaves that chunk out.
 
-Across compiler lines (Milestone 3) artifacts fail closed three ways. Mix
-recompiles a project and its dependencies when `System.version()`
-changes, as it does between 1.20.4 and 1.21, and the Mix tasks' build
-record forces the owned applications. When SpecLint reads BEAM files
+Across compiler lines (Milestone 3) the owned applications' artifacts fail
+closed three ways. Mix recompiles a project and its dependencies when
+`System.version()` changes, as it does between 1.20.4 and 1.21, and the Mix
+tasks' build record forces the owned applications. When SpecLint reads BEAM files
 without the Mix task (an explicit ebin, `SpecLint.Run` on a build
 directory), a record now also names the Elixir version, checker chunk
 version and adapter module, and a record of the other line is refused as
@@ -576,6 +597,21 @@ artifacts the running adapter cannot read", exit 2); without a record, the
 other line's chunk version fails decoding (`unsupported_chunk`, exit 2 in
 CI). Baselines record the adapter id, so each line has its own baselines;
 another line's baseline is not applied and CI exits 2.
+
+A dependency can still carry the other line's chunks when Mix's version
+check is bypassed (`--no-deps-check`, a shared or stale build directory,
+vendored BEAM files). The running checker ignores a chunk of another
+version, so calls into that dependency become `dynamic()` and a gate can
+disappear (review repro: an SL001 on a consumer became exit 0). The Mix
+tasks therefore read the chunk version tag of every dependency BEAM after
+compiling (`SpecLint.BuildRecord.foreign_dependencies/2`) and refuse a
+dependency whose version differs from the running compiler's (exit 2),
+removing the owned build records so the project is recompiled once the
+dependencies are (Mix does not recompile a caller for a runtime
+dependency). Documented limit: a dependency compiled by the other build of
+the same line (`c24c235` and `648b2a9`, both v10) has the same tag and is
+not detected; reports do not list dependency chunk versions. Without the
+Mix task (`SpecLint.Run` on explicit ebins) dependencies are not checked.
 
 **Decision:** direct chunk reading from Fable for signatures; the
 `Module.ParallelChecker` cache is started only for body analysis and for
@@ -597,7 +633,47 @@ consume the raw relations, so no case is lost to an early classification.
 Prints the spec clauses, translated bounds with every loss record and its
 position in the type tree, the inferred clauses, which clauses applied to
 each slice, `extra` and `missing` per slice, the evidence class, and which
-prerequisite blocked or enabled gating.
+prerequisite blocked or enabled gating. Since Milestone 4 each inferred
+clause names its source clause and line when the mapping is exact (section
+5.5), and the list ends with a note when it is not.
+
+### 5.5 Source clause mapping (Milestone 4)
+
+`SpecLint.ClauseMapping` maps each stored signature clause back to the
+source clauses it came from, only where compiler invariants alone decide
+it, from the clause counts of the debug info and the checker chunk:
+
+- **I1** (partition): the checker infers exactly one clause per source
+  clause (`infer_local_handler/7`), then drops precise clauses with an
+  empty return (1.21 only, `group_clauses/1`) and merges clauses with
+  term-equal arguments (`add_inferred/5`) or equal returns differing in one
+  argument (`group_clauses_by_return/1`); each source clause ends in at most
+  one stored clause and each stored clause has at least one source clause.
+- **I2** (order): both merges keep a clause at the position of its first
+  member, so stored clause `k`'s smallest source clause precedes stored
+  clause `k + 1`'s.
+
+Hence `:single` (one source clause: every stored clause, including the
+several clauses of a default-argument wrapper whose body is `{:super,
+...}`, comes from it) and `:identity` (as many stored as source clauses:
+stored clause `k` is source clause `k`). Everything else is `:ambiguous`.
+The invariants were checked in `lib/elixir/lib/module/types.ex` of all
+three qualified builds (`c24c235` and `648b2a9` have the same file) and
+`elixir_erl:checker_chunk/4`, which stores the grouped signature
+unchanged.
+
+A typed mapping (recomputing head types with `Pattern.of_head/8`) was
+measured and rejected (`bench/clause_mapping/README.md`): the checker's
+fresh-context heads differ from its own (the `subpatterns` leak between
+definitions, protocol implementations, gradual upper bounds widened by
+subtraction, the redundant-clause path), and the review found exact claims
+that are wrong with no compiler warning. Agreement with the replay oracle on
+the corpora does not prove exactness.
+
+Findings use the mapping only in their details (`source clause: #k, line
+L`) and in `data.source_clause` / `data.clause_mapping`; the issue line
+stays the function's first line and the fingerprint is unchanged. Blocking
+stays function-wide.
 
 ## 6. Translation
 
@@ -1275,8 +1351,11 @@ improvements listed there.
   checker re-run over debug info (section 3.1 step 7). The first
   over-blocks guarded clauses: on the stdlib 23 contributing clauses (22
   functions) are possibly shadowed, none of them a conflict. The second
-  blocks per function, not per clause, because stored clauses cannot be
-  mapped to source clauses. The additional bounded source-guard witness
+  blocks per function, not per clause: stored clauses are mapped to source
+  clauses only in the structural cases of section 5.5, and the checker's
+  diagnostics are attributed to lines, not to clauses. On the fifteen
+  corpora no clause conflict is blocked by a diagnostic (all nine are
+  gated), so per-clause blocking would change no gate there. The additional bounded source-guard witness
   check conservatively blocks unsupported or unwitnessed guarded functions,
   including contradictions the compiler does not diagnose. It is not a
   general reachability solver and does not prove that a body returns normally.

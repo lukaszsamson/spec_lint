@@ -5,6 +5,86 @@ Date 2026-09-29. `DESIGN.md` is the authoritative design,
 Phase 4 follows the review of the Phase 3 implementation at `0cc9c50`;
 previous results below are historical and are superseded where noted.
 
+## Milestone 4 delivered: source-clause mapping, structural classes adopted (2026-09-29)
+
+Decision (`bench/clause_mapping/README.md`, which is the report; DESIGN.md
+5.5): adopt only the two mapping classes the compiler's clause grouping
+forces without any type, and keep every other function ambiguous.
+
+- **Invariants.** `infer_local_handler/7` infers one clause per source
+  clause in order; `group_clauses/1` (1.21 only) drops, and `add_inferred/5`
+  and `group_clauses_by_return/1` merge into the first earlier member (I1:
+  partition; I2: first members stay ordered). Checked in `types.ex` of
+  `c24c235`, `648b2a9` (identical file) and 1.20.4, and in
+  `elixir_erl:checker_chunk/4`. Hence `:single` (one source clause, including
+  a default-argument wrapper) and `:identity` (as many stored as source
+  clauses).
+- **Measured** with an instrumented replay of `Module.Types.infer/7` as the
+  oracle on `c24c235`: the structural classes cover 20,051 of 21,439
+  functions with an inferred signature (93.5%) and 22,826 of 27,742 stored
+  clauses (82.3%) on the fifteen corpora; the replay reproduced 98.9% of the
+  signatures and agrees on all 19,825 structural functions it could check.
+  All nine corpus clause conflicts (seven Absinthe, `Ash.Page.page_opts/1`,
+  `Oban.Registry.via/3`) are identities.
+- **Not adopted:** every typed mapping (head types recomputed with
+  `Pattern.of_head/8`). Fresh heads differ from the compiler's (E1: the
+  checker's `subpatterns` leak between definitions, 119 of 3,237 functions
+  on the corpora; E2: protocol implementations; E3: gradual bounds widened
+  by subtraction), and the review found wrong exact claims on warning-free
+  fixtures (R1, fixed in the experiment; R2, `strict_a1`, not fixable
+  there). Corpus agreement is not proof.
+- **Product** (`SpecLint.ClauseMapping`, `SpecLint.Analysis`,
+  `SpecLint.Rules.ReturnConflict`, `--explain`): a clause conflict names
+  `source clause: #k, line L` or "not determined", and carries
+  `data.source_clause` and `data.clause_mapping`. The issue line,
+  prerequisites, gates and fingerprints are unchanged, and
+  `clause_reachable` blocking stays function-wide for every function:
+  diagnostic lines are not attributed to clauses, and no corpus conflict is
+  blocked by a diagnostic, so per-clause blocking would change no gate.
+  Tests: `test/spec_lint/clause_mapping_test.exs` (13, under both lines,
+  with the raising and generated-redundant shapes pinned per adapter).
+- **Experiment hygiene** (review findings): `bench/clause_mapping/` passes
+  formatting and strict Credo, exits 2 on any compiler but `c24c235`,
+  decides the structural classes before any typed solve, marks the typed
+  variants' exact claims `unverified`, holds the counterexamples as
+  fixtures, and commits its summaries (`results/`).
+
+## Milestone 3 review: sixteen findings
+
+| Finding | Severity | Outcome |
+| --- | --- | --- |
+| Forced recompile is a no-op when `compile` already ran in the VM; the other build's BEAMs recorded as verified | high | fixed: the Mix tasks re-enable `compile`, `compile.all` and every compiler before a forced compile, and a forced compile that still returns `:noop` exits 2 without a record; tests for `mix do compile + spec_lint`, a task defined in the project, and the other compiler (cross test step e) |
+| A dependency of the other compiler line silently changes the verdict | low | fixed: the Mix tasks read the chunk version tag of every dependency BEAM (`BuildRecord.foreign_dependencies/2`, `Beam.checker_version/1`) and exit 2, removing the owned records so the project recompiles once the dependency is rebuilt; integration test; DESIGN 5.2 narrows the fail-closed claim (same-line builds and `SpecLint.Run` without the Mix task are documented limits) |
+| 1.20.4 map DNF line repeating the open-map top literal read as an intersection | medium | fixed in `DescrWalk` (the top literal is dropped when another positive remains, for labels and printing); test under both lines; the Milestone 1 reference printer follows the same rule |
+| 1.20.4 prints the non-binary bitstring key domain as `bitstring()` | low | documented in audit row 27 and pinned per adapter in `printing_test.exs`; not rewritten, since the printer shows the running compiler's `Descr` output and the views are equal |
+| `robust_a1` exact and wrong on a redundant clause | high | fixed in the experiment (errored clauses get an unbounded `hi`); `Adv3.redundant/1`, `Adv4.gen_red/1` are fixtures |
+| `strict_a1` exact and wrong (leak plus generated repeated guard) | medium | documented: typed exact claims marked `unverified`; `Adv6.b/1` is a fixture (still wrong for `strict_a1`) |
+| Structural identity depends on the typed solve | low | fixed: structural classes first, non-trivial from clause counts; `Adv7.ident/1` fixture |
+| Cited REPORT.md missing | low | fixed: the report is `bench/clause_mapping/README.md` (sections Pipeline, Invariants, E1-E3, R1-R3, Fixture results), and the citations point there |
+| `bench/clause_mapping` fails format and strict Credo | medium | fixed, with no change to `.credo.exs` |
+| `bench/clause_mapping` undocumented | medium | fixed: README with purpose, invariants, results, how to run and limits; M4 status in NEXT_STEPS.md |
+| `clause_mapping` runs on any compiler | low | fixed: exits 2 unless preflight selects `V121` at `1.21.0-dev+c24c235` |
+| README: unsupported compilers | low | fixed: 1.19 and 1.20.0-1.20.3 are refused by Mix (exit 1); the exit-2 report applies inside the version range |
+| README: fingerprint divergence overstated | low | fixed: 28 of 65 shared (5 of 30 outside the standard library, none of Absinthe's 9) |
+| DESIGN 5.2: "pins one 1.21 revision" | low | fixed: one adapter per compiler line |
+| Cross-compiler test passes as a no-op | low | fixed: excluded by `test_helper.exs` without `SPEC_LINT_OTHER_ELIXIR`, fails with `--only cross_compiler` and no variable; documented in README "Development" |
+| `ConsumerTest` depends on test order | low | fixed: a fresh fixture per test; seeds 845457, 368644, 1 and 2 pass |
+| M3 commit trailers | low | no change: the trailer follows the attribution the session's harness specifies |
+
+Gates on the final tree (Milestones 3 review and 4 together):
+
+| | `c24c235` | `648b2a9` | 1.20.4 |
+| --- | --- | --- | --- |
+| Test suite | 431 passed, 10 excluded | 431 passed, 10 excluded | 434 passed, 7 excluded |
+| Cross-compiler test (`--only cross_compiler`) | passes, 1.20.4 as the other | passes, 1.20.4 as the other | passes, `c24c235` as the other |
+| Formatting, strict Credo (including `bench/clause_mapping/`) | clean | clean | clean |
+| Dialyzer (own PLT per compiler) | 0 errors | 0 errors | 0 errors |
+| Self-check (`mix spec_lint --ci`) | 407 slices, exit 0 | 407 slices, exit 0 | 407 slices, exit 0 |
+
+The excluded tests are the other line's adapter-pinned tests (the cross
+test runs separately with `SPEC_LINT_OTHER_ELIXIR`). The consumer
+integration tests pass with seeds 845457, 368644, 1 and 2.
+
 ## Milestone 3 delivered: the Elixir 1.20 adapter (2026-09-29)
 
 `SpecLint.Compiler.V120` qualifies Elixir 1.20.4 (revision `759443e`,
@@ -13,9 +93,8 @@ the precompiled release, checker chunk `elixir_checker_v8`, adapter id
 supported. Commits `516e7e4` (adapter, selection, tests), `bfbe66f` and
 `f364fa1` (toolchain), `f0069b0` (audit), `839a415` (replay) and the
 documentation after them. Formatting and Credo were checked on the
-committed tree: the working tree also held untracked files of the
-concurrent source-clause mapping experiment (`bench/clause_mapping/`,
-not part of these commits), which fail both.
+committed tree; the source-clause mapping experiment
+(`bench/clause_mapping/`), untracked then, passes both since Milestone 4.
 
 | | 1.21 (`c24c235`, same tool) | 1.20.4 |
 | --- | --- | --- |

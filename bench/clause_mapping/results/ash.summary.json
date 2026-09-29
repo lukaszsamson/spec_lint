@@ -1,0 +1,291 @@
+{
+  "focus": [
+    {
+      "focus": "Absinthe.Blueprint.Input.parse/1",
+      "found": false
+    },
+    {
+      "focus": "Ash.Page.page_opts/1",
+      "found": true,
+      "record": {
+        "arity": 1,
+        "generated": false,
+        "heads": [
+          {
+            "line": 14,
+            "precise": true,
+            "unbounded": false
+          },
+          {
+            "line": 16,
+            "precise": true,
+            "unbounded": false
+          }
+        ],
+        "line": 14,
+        "m_stored": 2,
+        "modes": {
+          "robust_a1": {
+            "class": "identity",
+            "may_drop": [],
+            "per_stored": [
+              {
+                "anchor_exact": true,
+                "exact": true,
+                "may": [
+                  0
+                ],
+                "must": [
+                  0
+                ]
+              },
+              {
+                "anchor_exact": true,
+                "exact": true,
+                "may": [
+                  1
+                ],
+                "must": [
+                  1
+                ]
+              }
+            ]
+          },
+          "robust_inv": {
+            "class": "identity",
+            "may_drop": [],
+            "per_stored": [
+              {
+                "anchor_exact": true,
+                "exact": true,
+                "may": [
+                  0
+                ],
+                "must": [
+                  0
+                ]
+              },
+              {
+                "anchor_exact": true,
+                "exact": true,
+                "may": [
+                  1
+                ],
+                "must": [
+                  1
+                ]
+              }
+            ]
+          },
+          "strict_a1": {
+            "class": "identity",
+            "may_drop": [],
+            "per_stored": [
+              {
+                "anchor_exact": true,
+                "exact": true,
+                "may": [
+                  0
+                ],
+                "must": [
+                  0
+                ]
+              },
+              {
+                "anchor_exact": true,
+                "exact": true,
+                "may": [
+                  1
+                ],
+                "must": [
+                  1
+                ]
+              }
+            ]
+          },
+          "strict_inv": {
+            "class": "identity",
+            "may_drop": [],
+            "per_stored": [
+              {
+                "anchor_exact": true,
+                "exact": true,
+                "may": [
+                  0
+                ],
+                "must": [
+                  0
+                ]
+              },
+              {
+                "anchor_exact": true,
+                "exact": true,
+                "may": [
+                  1
+                ],
+                "must": [
+                  1
+                ]
+              }
+            ]
+          }
+        },
+        "module": "Ash.Page",
+        "n_source": 2,
+        "name": "page_opts",
+        "replay": {
+          "a1_violations": [],
+          "dropped": [],
+          "empty_return": [
+            false,
+            false
+          ],
+          "handler": "infer",
+          "heads_bracketed": true,
+          "heads_lo_equal": true,
+          "members": [
+            [
+              0
+            ],
+            [
+              1
+            ]
+          ],
+          "pass": "deps",
+          "precise": [
+            true,
+            true
+          ],
+          "status": "term_equal"
+        },
+        "source_lines": [
+          14,
+          16
+        ]
+      }
+    },
+    {
+      "focus": "Oban.Registry.via/3",
+      "found": false
+    }
+  ],
+  "label": "ash",
+  "summary": {
+    "a1_violating_functions": 0,
+    "functions": 8952,
+    "functions_with_infer_signature": 8926,
+    "heads_bracketed": {
+      "nil": 7665,
+      "true": 1261
+    },
+    "heads_lo_equal": {
+      "false": 12,
+      "nil": 7665,
+      "true": 1249
+    },
+    "modules_with_errors": 0,
+    "nontrivial_functions": 428,
+    "nontrivial_stored_clauses": 1727,
+    "replay": {
+      ":not_reproduced": 73,
+      ":semantic_equal": 305,
+      ":term_equal": 8548
+    },
+    "stored_clauses": 11561,
+    "structural": {
+      "agree": 8426,
+      "functions": 8498,
+      "replay_checked": 8426,
+      "stored_clauses": 9834,
+      "wrong": 0
+    },
+    "variants": {
+      "robust_a1": {
+        "by_class": {
+          ":ambiguous": 110,
+          ":budget": 6,
+          ":identity": 839,
+          ":solved": 312,
+          ":super_derived": 1046,
+          ":trivial_single": 6613
+        },
+        "exact_claims": "unverified",
+        "replay_check": {
+          "ambiguous_sound": 150,
+          "ambiguous_unsound": 0,
+          "exact_agree": 11249,
+          "exact_wrong": 0,
+          "functions": 8847,
+          "no_solution": 0
+        },
+        "stored_clauses_anchor_exact": 11385,
+        "stored_clauses_exact": 11338
+      },
+      "robust_inv": {
+        "by_class": {
+          ":ambiguous": 181,
+          ":budget": 36,
+          ":identity": 839,
+          ":solved": 211,
+          ":super_derived": 1046,
+          ":trivial_single": 6613
+        },
+        "exact_claims": "unverified",
+        "replay_check": {
+          "ambiguous_sound": 491,
+          "ambiguous_unsound": 0,
+          "exact_agree": 10563,
+          "exact_wrong": 0,
+          "functions": 8817,
+          "no_solution": 0
+        },
+        "stored_clauses_anchor_exact": 10909,
+        "stored_clauses_exact": 10649
+      },
+      "strict_a1": {
+        "by_class": {
+          ":ambiguous": 57,
+          ":budget": 1,
+          ":identity": 839,
+          ":no_solution": 5,
+          ":solved": 365,
+          ":super_derived": 1046,
+          ":trivial_single": 6613
+        },
+        "exact_claims": "unverified",
+        "replay_check": {
+          "ambiguous_sound": 86,
+          "ambiguous_unsound": 0,
+          "exact_agree": 11360,
+          "exact_wrong": 0,
+          "functions": 8852,
+          "no_solution": 5
+        },
+        "stored_clauses_anchor_exact": 11492,
+        "stored_clauses_exact": 11449
+      },
+      "strict_inv": {
+        "by_class": {
+          ":ambiguous": 136,
+          ":budget": 28,
+          ":identity": 839,
+          ":no_solution": 5,
+          ":solved": 259,
+          ":super_derived": 1046,
+          ":trivial_single": 6613
+        },
+        "exact_claims": "unverified",
+        "replay_check": {
+          "ambiguous_sound": 436,
+          "ambiguous_unsound": 0,
+          "exact_agree": 10627,
+          "exact_wrong": 0,
+          "functions": 8825,
+          "no_solution": 5
+        },
+        "stored_clauses_anchor_exact": 10979,
+        "stored_clauses_exact": 10713
+      }
+    }
+  }
+}

@@ -28,7 +28,7 @@ defmodule SpecLint.Analysis do
   reason}}` and nothing is read or compared.
   """
 
-  alias SpecLint.{Beam, Compare, Compiler, Translate, TypeCache}
+  alias SpecLint.{Beam, ClauseMapping, Compare, Compiler, Translate, TypeCache}
 
   # Definitions the compiler emits, with a spec, under a `__` name.
   @compiler_emitted [
@@ -53,14 +53,19 @@ defmodule SpecLint.Analysis do
           relations: Compare.relations() | nil
         }
 
-  @typedoc "One analysed function."
+  @typedoc """
+  One analysed function. `clause_mapping` maps its stored clauses
+  (`inferred`) to source clauses (`SpecLint.ClauseMapping`); `nil` when
+  there is no inferred signature or no debug info for the definition.
+  """
   @type function_result :: %{
           mfa: mfa(),
           line: pos_integer() | nil,
           status: status(),
           slices: [slice()],
           inferred: [SpecLint.Compiler.clause()],
-          dynamic_probe: Compare.probe() | nil
+          dynamic_probe: Compare.probe() | nil,
+          clause_mapping: ClauseMapping.t() | nil
         }
 
   @typedoc "Why a spec'd function is outside the analysis scope."
@@ -243,11 +248,13 @@ defmodule SpecLint.Analysis do
       status: :compared,
       slices: [],
       inferred: [],
-      dynamic_probe: nil
+      dynamic_probe: nil,
+      clause_mapping: nil
     }
 
     case signature(beam, fun_arity) do
       {:ok, clauses} ->
+        base = %{base | clause_mapping: clause_mapping(beam, fun_arity, length(clauses))}
         compare(base, spec_clauses, clauses, arity, context)
 
       {:error, reason} ->
@@ -332,6 +339,15 @@ defmodule SpecLint.Analysis do
       :error -> {:error, :no_signature}
     end
   end
+
+  defp clause_mapping(%Beam{debug_info: {:ok, info}}, fun_arity, stored_count) do
+    case List.keyfind(info.definitions, fun_arity, 0) do
+      {^fun_arity, :def, _meta, clauses} -> ClauseMapping.map(clauses, stored_count, info.file)
+      _other -> nil
+    end
+  end
+
+  defp clause_mapping(%Beam{}, _fun_arity, _stored_count), do: nil
 
   defp line(%Beam{debug_info: {:ok, %{lines: lines}}}, fun_arity), do: Map.get(lines, fun_arity)
   defp line(%Beam{}, _fun_arity), do: nil

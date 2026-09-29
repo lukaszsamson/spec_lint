@@ -20,13 +20,21 @@ development revisions, so each release supports specific compiler builds:
 | 0.1.0 | 1.21.0-dev, revision `648b2a9` | upstream `elixir-lang/elixir` | `elixir_checker_v10` | `1.21.0-dev+648b2a9` | qualified (`bench/corpus/toolchain/audit-648b2a9.md`) | `for ... into:` with a collectable that may be a bitstring or a list narrows the body to `bitstring()` in the stored signature, which can make SpecLint gate a correct spec (audit row 19) |
 | 0.1.0 | 1.21.0-dev, revision `c24c235` | fork `lukaszsamson/elixir`, branch `ls-mixed-into` | `elixir_checker_v10` | `1.21.0-dev+c24c235` | qualified (the development revision) | none known |
 | 0.1.0 | 1.20.4 (revision `759443e`, the precompiled release) | upstream release `v1.20.4` | `elixir_checker_v8` | `1.20.4+759443e` | qualified, with its own baselines (`bench/corpus/toolchain/audit-1.20.4.md`) | none known; Erlang `-nominal` types are left out by its `Code.Typespec` (a reference to one is an unresolved remote type) |
-| | 1.19 and earlier, other 1.20 and 1.21 builds | | | | not supported | |
+| | 1.19 and earlier, 1.20.0 to 1.20.3 | | | | refused by Mix (exit 1, see below) | |
+| | other 1.20.x releases, other 1.21 builds | | | | not supported (exit 2 in CI) | |
 
 All on Erlang/OTP 28 (1.20.4 also passes preflight on OTP 29). SpecLint
 picks the adapter for the running compiler from its version and checker
-chunk version. On any other compiler, `mix spec_lint` reports
-"unsupported compiler" and names the supported ones. In CI mode (`--ci`)
-that exits with status 2. The revision alone does not qualify a build:
+chunk version. `mix.exs` requires `~> 1.20.4 or ~> 1.21-dev`, so on 1.19,
+1.20.0 to 1.20.3 or older releases Mix refuses to run the task before
+SpecLint starts ("You're trying to run :spec_lint on Elixir v1.19.4 but it
+has declared in its mix.exs file it supports only ...") and exits with
+status 1, the same status as new gated findings: a CI job on such a
+compiler cannot tell the two apart from the status alone. On a compiler
+inside that range that is not a qualified build (another 1.20.x release,
+another 1.21 development revision), `mix spec_lint` reports "unsupported
+compiler" and names the supported ones; in CI mode (`--ci`) that exits
+with status 2. The revision alone does not qualify a build:
 preflight also compares the code of the checker modules with the
 qualified build's (a patched checkout of a qualified commit is
 unsupported) and probes every compiler internal SpecLint uses; a missing
@@ -42,15 +50,27 @@ including the first time it runs on a project it did not compile itself.
 Switching between 1.20.4 and 1.21 recompiles in any case. BEAM files of
 the other compiler line are never analysed: without the Mix task (an
 explicit ebin, `SpecLint.Run`), a build record of the other line, or its
-checker chunks, make the run fail with exit status 2.
+checker chunks, make the run fail with exit status 2. The forced
+recompilation also runs when `compile` already ran in the same VM (`mix do
+compile + spec_lint`, an alias such as `["compile", "spec_lint --ci"]`);
+if it still compiles nothing, the task exits 2 instead of recording the
+other build's files as its own. A dependency whose BEAM files carry the
+other line's checker chunks (possible with `--no-deps-check`, a shared or
+stale build directory, or vendored BEAM files) also exits 2: the running
+checker would ignore its signatures. Recompile it with `mix deps.compile
+--force`. A dependency built by the other 1.21 build writes the same chunk
+version and is not detected.
 
 Baselines record the adapter id, so switching compilers is an adapter
 change: a baseline written under another one is not applied, and
 `mix spec_lint --ci` exits 2 asking you to review and regenerate it with
 `mix spec_lint.baseline`. Keep one baseline per compiler you run in CI. On
 the fifteen benchmark corpora no fingerprint differs between the two 1.21
-revisions; between 1.20.4 and 1.21 the findings and gates are the same
-outside the standard library, but nearly every fingerprint differs
+revisions. Between 1.20.4 and 1.21 the findings and gates are the same
+outside the standard library, but only 28 of the 65 finding fingerprints
+are shared (5 of 30 outside the standard library, none of Absinthe's 9):
+they differ wherever a map or struct type is involved, because the two
+lines encode those types differently
 (`bench/corpus/reports/elixir-1.20.4/README.md`).
 
 Your modules need debug info, which is the Mix default. Specs are read from
@@ -107,7 +127,7 @@ go to standard error, so standard output is only the JSON report.
 | --- | --- |
 | 0 | Accepted. Without `--ci` or `--warnings-as-errors`, findings never fail the run. |
 | 1 | New gated findings, or a coverage violation. |
-| 2 | Invalid options or configuration (including a configuration file that raises, throws or exits, an invalid baseline file, and an explicitly given baseline path that does not exist), compilation failure, a missing build directory (ebin) for an owned application or one that lost BEAM files its build lists, unreadable module inventory for an owned Mix app, corrupt BEAM files or a filename/module mismatch, BEAM files recorded as produced by another compiler build or changed since, unsupported compiler or checker chunk (in CI) or backend, a filter that matches nothing, or an incomplete run (an internal failure while analysing a module). |
+| 2 | Invalid options or configuration (including a configuration file that raises, throws or exits, an invalid baseline file, and an explicitly given baseline path that does not exist), compilation failure, a missing build directory (ebin) for an owned application or one that lost BEAM files its build lists, unreadable module inventory for an owned Mix app, corrupt BEAM files or a filename/module mismatch, BEAM files recorded as produced by another compiler build or changed since (and a forced recompilation that could not run), dependencies compiled by another compiler line, unsupported compiler or checker chunk (in CI) or backend, a filter that matches nothing, or an incomplete run (an internal failure while analysing a module). |
 
 ## Rules
 
@@ -144,6 +164,15 @@ A gated finding still has to meet its prerequisites to fail the build:
 A per-clause finding names the stored signature clause (`clause #k`),
 which the compiler may have merged with others or renumbered by dropping
 clauses that always raise; the reported line is the function's first line.
+Its details also name the source clause and its line (`source clause: #1,
+line 41`) when the compiler's own clause grouping determines it: the
+function has one clause, or as many stored as source clauses (every clause
+conflict on the fifteen benchmark corpora is such a function). Otherwise
+they say the source clause is not determined. JSON carries the same in
+`data.source_clause` and `data.clause_mapping` (`single`, `identity` or
+`ambiguous`). The mapping changes neither gating nor fingerprints: a
+pattern or guard diagnostic anywhere in the function still blocks every
+clause conflict of it.
 
 Per-clause conflicts additionally require a bounded witness for each
 guarded source clause in the function, accounting for earlier clauses. Unsupported
@@ -357,5 +386,19 @@ are development requirements; the Mix lint task itself does not invoke them.
 mix format --check-formatted
 mix credo --strict
 mix test          # includes the consumer integration test (test/integration)
-mix dialyzer      # PLT in priv/plts
+mix dialyzer      # PLT in priv/plts, or SPEC_LINT_PLT_DIR (one per compiler)
 ```
+
+Tests whose expectations legitimately differ between compiler lines are
+tagged `adapter:` and run only under that adapter's compiler; run the
+suite under each qualified compiler, each with its own `MIX_BUILD_PATH`.
+The cross-compiler integration test needs a second qualified compiler and
+is excluded (not passed) without one:
+
+```
+SPEC_LINT_OTHER_ELIXIR=/path/to/other/elixir/bin mix test --only cross_compiler
+```
+
+`bench/clause_mapping/` is the source-clause mapping experiment of
+Milestone 4 (its `README.md` holds the report); it runs only under
+`c24c235`.

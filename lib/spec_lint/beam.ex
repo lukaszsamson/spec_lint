@@ -131,6 +131,40 @@ defmodule SpecLint.Beam do
     end
   end
 
+  @doc """
+  The version tag of the checker chunk of the BEAM file at `path`, as a
+  string (`"elixir_checker_v10"`): the first element of its `ExCk` term,
+  read from the term's header without decoding the signatures when the
+  chunk is uncompressed. `:none` when the file has no checker chunk (an
+  Erlang module), `:error` when it cannot be read or decoded.
+  """
+  @spec checker_version(Path.t()) :: {:ok, String.t()} | :none | :error
+  def checker_version(path) do
+    with {:ok, binary} <- File.read(path),
+         {:ok, {_module, [{~c"ExCk", bytes}]}} <-
+           binary_chunks(binary, [~c"ExCk"], [:allow_missing_chunks]) do
+      chunk_tag(bytes)
+    else
+      _ -> :error
+    end
+  end
+
+  # {Tag, Data} in the external term format: 131, SMALL_TUPLE_EXT of arity
+  # 2, then the tag as SMALL_ATOM_UTF8_EXT or ATOM_UTF8_EXT. Anything else
+  # (a compressed chunk, another encoding) is decoded in full.
+  defp chunk_tag(:missing_chunk), do: :none
+  defp chunk_tag(<<131, 104, 2, 119, size, tag::binary-size(size), _::binary>>), do: {:ok, tag}
+
+  defp chunk_tag(<<131, 104, 2, 118, size::16, tag::binary-size(size), _::binary>>),
+    do: {:ok, tag}
+
+  defp chunk_tag(bytes) when is_binary(bytes) do
+    case decode_term(bytes) do
+      {:ok, {tag, _data}} when is_atom(tag) -> {:ok, Atom.to_string(tag)}
+      _ -> :error
+    end
+  end
+
   defp hex(nil), do: nil
   defp hex(bytes), do: Base.encode16(bytes, case: :lower)
 

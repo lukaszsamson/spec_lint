@@ -11,7 +11,7 @@ defmodule SpecLint.Explain do
   its prerequisites, the policy outcome and the baseline decision.
   """
 
-  alias SpecLint.{Bound, Compiler, Issue, Policy, Rule, Run}
+  alias SpecLint.{Bound, ClauseMapping, Compiler, Issue, Policy, Rule, Run}
 
   @doc """
   Parses `Mod.fun/arity` into an MFA. The module is an Elixir alias
@@ -83,7 +83,7 @@ defmodule SpecLint.Explain do
       "\nTranslated bounds:\n",
       Enum.map(function.slices, &bounds_text/1),
       "\nInferred clauses (stored in the checker chunk):\n",
-      inferred_text(function.inferred),
+      inferred_text(function.inferred, Map.get(function, :clause_mapping)),
       Enum.map(function.slices, &slice_text(&1, Map.get(run.evidence, {function.mfa, &1.index}))),
       "\nFindings:\n",
       findings_text(issues, run)
@@ -149,12 +149,36 @@ defmodule SpecLint.Explain do
   defp segment({:type, module, name, arity}), do: "#{inspect(module)}.#{name}/#{arity}"
   defp segment(other), do: inspect(other)
 
-  defp inferred_text([]), do: "  none (no inferred signature)\n"
+  defp inferred_text([], _mapping), do: "  none (no inferred signature)\n"
 
-  defp inferred_text(clauses) do
-    for {{_args, return} = clause, index} <- Enum.with_index(clauses) do
-      precision = if Compiler.gradual?(return), do: "gradual", else: "static"
-      "  ##{index} #{Rule.clause_string(clause)}  [#{precision} return]\n"
+  # Each stored clause with its source clause when compiler invariants
+  # determine it (SpecLint.ClauseMapping), otherwise one note after them.
+  defp inferred_text(clauses, mapping) do
+    lines =
+      for {{_args, return} = clause, index} <- Enum.with_index(clauses) do
+        precision = if Compiler.gradual?(return), do: "gradual", else: "static"
+
+        source =
+          case ClauseMapping.source_clause(mapping, index) do
+            {:ok, source} -> "  [source clause #{ClauseMapping.text(source)}]"
+            :error -> ""
+          end
+
+        "  ##{index} #{Rule.clause_string(clause)}  [#{precision} return]#{source}\n"
+      end
+
+    case mapping do
+      {:exact, _class, _per_stored} ->
+        lines
+
+      {:ambiguous, _reason} ->
+        [
+          lines,
+          "  (source clauses not determined: the compiler may have merged or dropped clauses)\n"
+        ]
+
+      nil ->
+        [lines, "  (source clauses not determined: no debug info for the definition)\n"]
     end
   end
 

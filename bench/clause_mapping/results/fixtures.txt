@@ -1,0 +1,31 @@
+all_raise/1                stored=1 replay=term_equal/true robust_a1=solved:1/1:wrong0 robust_inv=solved:1/1:wrong0 strict_a1=solved:1/1:wrong0 strict_inv=solved:1/1:wrong0
+dup_raise/1                stored=1 replay=term_equal/true robust_a1=solved:1/1:wrong0 robust_inv=ambiguous:0/1:wrong0 strict_a1=solved:1/1:wrong0 strict_inv=ambiguous:0/1:wrong0
+gen/1                      stored=2 replay=term_equal/true robust_a1=ambiguous:1/2:wrong0 robust_inv=ambiguous:0/2:wrong0 strict_a1=solved:2/2:wrong0 strict_inv=solved:2/2:wrong0
+guarded/1                  stored=4 replay=term_equal/true robust_a1=identity:4/4:wrong0 robust_inv=identity:4/4:wrong0 strict_a1=identity:4/4:wrong0 strict_inv=identity:4/4:wrong0
+guarded_imprecise/1        stored=2 replay=term_equal/true robust_a1=ambiguous:1/2:wrong0 robust_inv=ambiguous:0/2:wrong0 strict_a1=ambiguous:1/2:wrong0 strict_inv=ambiguous:0/2:wrong0
+%{fun: "mac/1", pass: true, expected: "not_stored", stored: false}
+many_atoms/1               stored=20 replay=term_equal/true robust_a1=identity:20/20:wrong0 robust_inv=identity:20/20:wrong0 strict_a1=identity:20/20:wrong0 strict_inv=identity:20/20:wrong0
+many_ints/1                stored=1 replay=term_equal/true robust_a1=solved:1/1:wrong0 robust_inv=solved:1/1:wrong0 strict_a1=solved:1/1:wrong0 strict_inv=solved:1/1:wrong0
+many_raising/1             stored=17 replay=term_equal/true robust_a1=solved:17/17:wrong0 robust_inv=ambiguous:3/17:wrong0 strict_a1=solved:17/17:wrong0 strict_inv=ambiguous:3/17:wrong0
+merged_chain/2             stored=2 replay=term_equal/true robust_a1=solved:2/2:wrong0 robust_inv=solved:2/2:wrong0 strict_a1=solved:2/2:wrong0 strict_inv=solved:2/2:wrong0
+merged_equal/1             stored=2 replay=term_equal/true robust_a1=solved:2/2:wrong0 robust_inv=solved:2/2:wrong0 strict_a1=solved:2/2:wrong0 strict_inv=solved:2/2:wrong0
+overlap/1                  stored=1 replay=term_equal/true robust_a1=ambiguous:0/1:wrong0 robust_inv=ambiguous:0/1:wrong0 strict_a1=ambiguous:0/1:wrong0 strict_inv=ambiguous:0/1:wrong0
+overlap2/2                 stored=2 replay=term_equal/true robust_a1=identity:2/2:wrong0 robust_inv=identity:2/2:wrong0 strict_a1=identity:2/2:wrong0 strict_inv=identity:2/2:wrong0
+raising_between/1          stored=2 replay=term_equal/true robust_a1=solved:2/2:wrong0 robust_inv=ambiguous:0/2:wrong0 strict_a1=solved:2/2:wrong0 strict_inv=ambiguous:0/2:wrong0
+raising_merged/1           stored=1 replay=term_equal/true robust_a1=solved:1/1:wrong0 robust_inv=ambiguous:0/1:wrong0 strict_a1=solved:1/1:wrong0 strict_inv=ambiguous:0/1:wrong0
+refined/1                  stored=2 replay=term_equal/true robust_a1=identity:2/2:wrong0 robust_inv=identity:2/2:wrong0 strict_a1=identity:2/2:wrong0 strict_inv=identity:2/2:wrong0
+shadowed/1                 stored=2 replay=term_equal/true robust_a1=identity:2/2:wrong0 robust_inv=identity:2/2:wrong0 strict_a1=identity:2/2:wrong0 strict_inv=identity:2/2:wrong0
+shadowed_same/1            stored=1 replay=term_equal/true robust_a1=ambiguous:0/1:wrong0 robust_inv=ambiguous:0/1:wrong0 strict_a1=ambiguous:0/1:wrong0 strict_inv=ambiguous:0/1:wrong0
+single/1                   stored=1 replay=term_equal/true robust_a1=trivial_single:1/1:wrong0 robust_inv=trivial_single:1/1:wrong0 strict_a1=trivial_single:1/1:wrong0 strict_inv=trivial_single:1/1:wrong0
+via_helper/1               stored=2 replay=term_equal/true robust_a1=solved:2/2:wrong0 robust_inv=ambiguous:0/2:wrong0 strict_a1=solved:2/2:wrong0 strict_inv=ambiguous:0/2:wrong0
+%{fun: "with_default/1", pass: true, modes: %{strict_inv: :super_derived, strict_a1: :super_derived, robust_inv: :super_derived, robust_a1: :super_derived}, expected: "super: every stored clause -> [0]", replay: :term_equal, m_stored: 1}
+with_default/2             stored=3 replay=term_equal/true robust_a1=identity:3/3:wrong0 robust_inv=identity:3/3:wrong0 strict_a1=identity:3/3:wrong0 strict_inv=identity:3/3:wrong0
+Adv3.redundant/1           stored=2 replay=term_equal/true robust_a1=ambiguous:0/2:wrong0 robust_inv=ambiguous:0/2:wrong0 strict_a1=ambiguous:1/2:wrong0 strict_inv=ambiguous:0/2:wrong0
+Adv4.gen_red/1             stored=2 replay=term_equal/true robust_a1=ambiguous:0/2:wrong0 robust_inv=ambiguous:0/2:wrong0 strict_a1=ambiguous:1/2:wrong0 strict_inv=ambiguous:0/2:wrong0
+Adv6.a/1                   stored=1 replay=term_equal/true robust_a1=trivial_single:1/1:wrong0 robust_inv=trivial_single:1/1:wrong0 strict_a1=trivial_single:1/1:wrong0 strict_inv=trivial_single:1/1:wrong0
+Adv6.b/1                   stored=2 replay=term_equal/true robust_a1=ambiguous:0/2:wrong0 robust_inv=ambiguous:0/2:wrong0 strict_a1=ambiguous:1/2:wrong2 strict_inv=ambiguous:0/2:wrong0
+Adv7.ident/1               stored=3 replay=term_equal/true robust_a1=identity:3/3:wrong0 robust_inv=identity:3/3:wrong0 strict_a1=identity:3/3:wrong0 strict_inv=identity:3/3:wrong0
+robust_a1: 0 wrong exact claims or unsound brackets over the fixtures
+robust_inv: 0 wrong exact claims or unsound brackets over the fixtures
+strict_a1: 2 wrong exact claims or unsound brackets over the fixtures
+strict_inv: 0 wrong exact claims or unsound brackets over the fixtures

@@ -1,0 +1,133 @@
+{
+  "focus": [
+    {
+      "focus": "Absinthe.Blueprint.Input.parse/1",
+      "found": false
+    },
+    {
+      "focus": "Ash.Page.page_opts/1",
+      "found": false
+    },
+    {
+      "focus": "Oban.Registry.via/3",
+      "found": false
+    }
+  ],
+  "label": "phoenix_live_view",
+  "summary": {
+    "a1_violating_functions": 0,
+    "functions": 1350,
+    "functions_with_infer_signature": 1350,
+    "heads_bracketed": {
+      "nil": 1108,
+      "true": 242
+    },
+    "heads_lo_equal": {
+      "false": 3,
+      "nil": 1108,
+      "true": 239
+    },
+    "modules_with_errors": 0,
+    "nontrivial_functions": 166,
+    "nontrivial_stored_clauses": 267,
+    "replay": {
+      ":not_reproduced": 9,
+      ":semantic_equal": 1,
+      ":term_equal": 1340
+    },
+    "stored_clauses": 1550,
+    "structural": {
+      "agree": 1175,
+      "functions": 1184,
+      "replay_checked": 1175,
+      "stored_clauses": 1283,
+      "wrong": 0
+    },
+    "variants": {
+      "robust_a1": {
+        "by_class": {
+          ":ambiguous": 96,
+          ":budget": 4,
+          ":identity": 76,
+          ":solved": 66,
+          ":super_derived": 60,
+          ":trivial_single": 1048
+        },
+        "exact_claims": "unverified",
+        "replay_check": {
+          "ambiguous_sound": 126,
+          "ambiguous_unsound": 0,
+          "exact_agree": 1402,
+          "exact_wrong": 0,
+          "functions": 1337,
+          "no_solution": 0
+        },
+        "stored_clauses_anchor_exact": 1434,
+        "stored_clauses_exact": 1411
+      },
+      "robust_inv": {
+        "by_class": {
+          ":ambiguous": 102,
+          ":budget": 5,
+          ":identity": 76,
+          ":solved": 59,
+          ":super_derived": 60,
+          ":trivial_single": 1048
+        },
+        "exact_claims": "unverified",
+        "replay_check": {
+          "ambiguous_sound": 139,
+          "ambiguous_unsound": 0,
+          "exact_agree": 1371,
+          "exact_wrong": 0,
+          "functions": 1336,
+          "no_solution": 0
+        },
+        "stored_clauses_anchor_exact": 1409,
+        "stored_clauses_exact": 1380
+      },
+      "strict_a1": {
+        "by_class": {
+          ":ambiguous": 54,
+          ":budget": 1,
+          ":identity": 76,
+          ":solved": 111,
+          ":super_derived": 60,
+          ":trivial_single": 1048
+        },
+        "exact_claims": "unverified",
+        "replay_check": {
+          "ambiguous_sound": 75,
+          "ambiguous_unsound": 0,
+          "exact_agree": 1461,
+          "exact_wrong": 0,
+          "functions": 1340,
+          "no_solution": 0
+        },
+        "stored_clauses_anchor_exact": 1488,
+        "stored_clauses_exact": 1470
+      },
+      "strict_inv": {
+        "by_class": {
+          ":ambiguous": 94,
+          ":budget": 4,
+          ":identity": 76,
+          ":solved": 68,
+          ":super_derived": 60,
+          ":trivial_single": 1048
+        },
+        "exact_claims": "unverified",
+        "replay_check": {
+          "ambiguous_sound": 128,
+          "ambiguous_unsound": 0,
+          "exact_agree": 1384,
+          "exact_wrong": 0,
+          "functions": 1337,
+          "no_solution": 0
+        },
+        "stored_clauses_anchor_exact": 1458,
+        "stored_clauses_exact": 1393
+      }
+    }
+  }
+}

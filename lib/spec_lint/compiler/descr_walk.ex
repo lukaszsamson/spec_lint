@@ -205,7 +205,7 @@ defmodule SpecLint.Compiler.DescrWalk do
   end
 
   defp line(ops, kind, {pos, negs}, memo) do
-    positives = if pos == [], do: [top_literal(kind)], else: pos
+    positives = positives(kind, pos)
     pos_descr = positives |> Enum.map(&%{kind => &1}) |> Enum.reduce(&ops.intersection/2)
     live = Enum.reject(negs, &Descr.disjoint?(pos_descr, %{kind => &1}))
     line = Enum.reduce(live, pos_descr, &ops.difference(&2, %{kind => &1}))
@@ -326,7 +326,7 @@ defmodule SpecLint.Compiler.DescrWalk do
   end
 
   defp line_components(ops, kind, pos, negs) do
-    positives = if pos == [], do: [top_literal(kind)], else: pos
+    positives = positives(kind, pos)
     pos_descr = positives |> Enum.map(&%{kind => &1}) |> Enum.reduce(&ops.intersection/2)
     line = Enum.reduce(negs, pos_descr, &ops.difference(&2, %{kind => &1}))
 
@@ -341,6 +341,22 @@ defmodule SpecLint.Compiler.DescrWalk do
         [literal] = positives
         live = Enum.reject(negs, &Descr.disjoint?(pos_descr, %{kind => &1}))
         eliminate(ops, kind, literal, live, line)
+    end
+  end
+
+  # The positive literals of a DNF line, without the kind's top literal when
+  # another positive remains: intersecting with the top is the identity.
+  # 1.20.4 leaves the open-map top as a second positive of
+  # term() - (term() - %{binary() => term()}), which would otherwise read
+  # as an intersection (unknown) and print as `... and map()`.
+  defp positives(kind, []), do: [top_literal(kind)]
+
+  defp positives(kind, pos) do
+    top = top_literal(kind)
+
+    case Enum.reject(pos, &(&1 == top)) do
+      [] -> [top]
+      rest -> rest
     end
   end
 

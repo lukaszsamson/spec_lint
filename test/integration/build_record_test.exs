@@ -6,10 +6,12 @@ defmodule SpecLint.Integration.BuildRecordTest do
   # and reported that build's verdict under the running adapter's id (exit
   # 0 where the running build gates, and the reverse).
   #
-  # The cross-compiler test runs only when SPEC_LINT_OTHER_ELIXIR names the
-  # bin directory of another qualified compiler: the other 1.21 build
+  # The cross-compiler test (tag :cross_compiler) needs SPEC_LINT_OTHER_ELIXIR,
+  # the bin directory of another qualified compiler: the other 1.21 build
   # (Milestone 2), or the other compiler line, 1.20.4 under 1.21 and the
-  # reverse (Milestone 3).
+  # reverse (Milestone 3). test_helper.exs excludes it when the variable is
+  # unset, so the summary counts it as excluded instead of passed; with
+  # `--only cross_compiler` and no variable it fails.
   use ExUnit.Case, async: false
 
   @moduletag :integration
@@ -90,12 +92,117 @@ defmodule SpecLint.Integration.BuildRecordTest do
     assert File.exists?(record)
   end
 
+  # Mix.Task.run/2 does nothing when `compile` already ran in the VM, so a
+  # forced recompile after `mix do compile + spec_lint` (or an alias, or a
+  # task defined in the project, which Mix compiles to find it) used to be a
+  # no-op, and the other build's BEAM files were then recorded as the running
+  # build's (Milestone 3 review, high).
+  test "the forced recompile runs even when compile already ran in the VM",
+       %{dir: dir, record: record} do
+    {_status, _json, _output} = Fixture.lint(dir)
+    other_build!(record)
+
+    {output, status} =
+      Fixture.mix(dir, ["do", "compile", "+", "spec_lint", "--ci"] ++ json_output(dir))
+
+    assert_recompiled(output)
+    assert_native_verdict(status, report(dir), output)
+    assert_recorded_as_built(dir, record)
+
+    # The same through a task defined in the project (the self-check's shape:
+    # Mix compiles the project to find the task before the task runs).
+    Fixture.write!(dir, "lib/mix/tasks/lint_here.ex", """
+    defmodule Mix.Tasks.LintHere do
+      use Mix.Task
+      def run(args), do: Mix.Tasks.SpecLint.run(args)
+    end
+    """)
+
+    {_output, 0} = Fixture.mix(dir, ["compile"])
+    {_status, _json, _output} = Fixture.lint(dir)
+    other_build!(record)
+    {output, status} = Fixture.mix(dir, ["lint_here", "--ci"] ++ json_output(dir))
+    assert_recompiled(output)
+    assert_native_verdict(status, report(dir), output)
+    assert_recorded_as_built(dir, record)
+  end
+
+  # A dependency BEAM of another compiler line (another checker chunk
+  # version) is ignored by the running checker, so calls into it become
+  # dynamic() and a gate disappears (Milestone 3 review). Mix keeps such a
+  # BEAM with --no-deps-check, a shared or stale build directory or vendored
+  # files; the test swaps the chunk version in place.
+  test "a dependency compiled by another compiler line fails closed" do
+    dir = Fixture.tmp_dir!("foreign-dep")
+    on_exit(fn -> File.rm_rf!(dir) end)
+    dep = Path.join(dir, "dep_a")
+    consumer = Path.join(dir, "consumer")
+
+    Fixture.write!(dep, "mix.exs", """
+    defmodule DepA.MixProject do
+      use Mix.Project
+      def project, do: [app: :dep_a, version: "0.1.0"]
+    end
+    """)
+
+    Fixture.write!(dep, "lib/dep_a.ex", """
+    defmodule DepA do
+      def tag(x) when is_integer(x), do: :ok
+    end
+    """)
+
+    Fixture.write!(consumer, "mix.exs", """
+    defmodule Consumer.MixProject do
+      use Mix.Project
+
+      def project do
+        [
+          app: :consumer,
+          version: "0.1.0",
+          deps: [
+            {:dep_a, path: "../dep_a"},
+            {:spec_lint, path: #{inspect(Fixture.root())}, only: [:dev, :test], runtime: false}
+          ]
+        ]
+      end
+    end
+    """)
+
+    Fixture.write!(consumer, "lib/consumer.ex", """
+    defmodule Consumer do
+      @spec f(integer()) :: binary()
+      def f(x), do: DepA.tag(x)
+    end
+    """)
+
+    {status, json, output} = Fixture.lint(consumer)
+    assert status == 1, output
+    assert [%{"rule" => "SL001"}] = json["findings"]
+
+    beam = Path.join(consumer, "_build/dev/lib/dep_a/ebin/Elixir.DepA.beam")
+    swap_checker_version!(beam, :elixir_checker_v0)
+
+    {status, json, output} = Fixture.lint(consumer)
+    assert status == 2, output
+    assert json == nil
+    assert output =~ "dependencies compiled by another compiler line: dep_a (elixir_checker_v0)"
+    refute File.exists?(Path.join(consumer, "_build/dev/lib/consumer/.mix/spec_lint.build"))
+
+    # Once the dependency is rebuilt, the project is recompiled (its record
+    # was removed) and the native verdict returns.
+    {_output, 0} = Fixture.mix(consumer, ["deps.compile", "dep_a", "--force"])
+    {status, json, output} = Fixture.lint(consumer)
+    assert output =~ "recompiling consumer", output
+    assert status == 1, output
+    assert [%{"rule" => "SL001"}] = json["findings"]
+  end
+
   @tag :cross_compiler
   test "a build compiled by the other qualified compiler is rebuilt before it is analysed",
        %{dir: dir, record: record} do
     case System.get_env("SPEC_LINT_OTHER_ELIXIR") do
       nil ->
-        :ok
+        flunk("set SPEC_LINT_OTHER_ELIXIR to the bin directory of another qualified compiler")
 
       other_bin ->
         other = other_compiler(other_bin, dir)
@@ -155,7 +262,64 @@ defmodule SpecLint.Integration.BuildRecordTest do
         {status, json, output} = Fixture.lint(dir)
         assert output =~ "recompiling consumer", output
         assert_native_verdict(status, json, output)
+
+        # (e) compiled by the other compiler, then `mix do compile +
+        # spec_lint` by this one: compile already ran in the VM when the
+        # forced recompile starts (Milestone 3 review).
+        {_output, 0} = other.(["compile", "--force"])
+
+        {output, status} =
+          Fixture.mix(dir, ["do", "compile", "+", "spec_lint", "--ci"] ++ json_output(dir))
+
+        assert_recompiled(output)
+        assert_native_verdict(status, report(dir), output)
+        assert_recorded_as_built(dir, record)
     end
+  end
+
+  defp swap_checker_version!(beam, version) do
+    {:ok, _module, chunks} = :beam_lib.all_chunks(String.to_charlist(beam))
+    {_tag, data} = :erlang.binary_to_term(:proplists.get_value(~c"ExCk", chunks))
+
+    chunks =
+      List.keyreplace(chunks, ~c"ExCk", 0, {~c"ExCk", :erlang.term_to_binary({version, data})})
+
+    {:ok, binary} = :beam_lib.build_module(chunks)
+    File.write!(beam, binary)
+  end
+
+  # Marks the record as written by another build of the running line.
+  defp other_build!(record) do
+    File.write!(
+      record,
+      JSON.encode!(%{read(record) | "build_digest" => String.duplicate("0", 64)})
+    )
+  end
+
+  defp json_output(dir), do: ["--format", "json", "--output", Path.join(dir, "report.json")]
+  defp report(dir), do: dir |> Path.join("report.json") |> File.read!() |> JSON.decode!()
+
+  # The announced recompilation compiled the project.
+  defp assert_recompiled(output) do
+    assert [_, after_notice] = String.split(output, "spec_lint: recompiling consumer", parts: 2),
+           output
+
+    assert after_notice =~ ~r/Compiling \d+ files? \(\.ex\)/, output
+  end
+
+  # The record names the running build and the BEAM files now in the ebin.
+  defp assert_recorded_as_built(dir, record) do
+    ebin = Path.join(dir, "_build/dev/lib/consumer/ebin")
+
+    beams =
+      for path <- Path.wildcard(Path.join(ebin, "*.beam")), into: %{} do
+        {Path.basename(path),
+         :sha256 |> :crypto.hash(File.read!(path)) |> Base.encode16(case: :lower)}
+      end
+
+    assert %{"adapter" => adapter, "beams" => ^beams} = read(record)
+    assert adapter == adapter_id()
+    assert read(record)["build_digest"] == report(dir)["artifacts"]["build_digest"]
   end
 
   defp other_compiler(other_bin, dir) do

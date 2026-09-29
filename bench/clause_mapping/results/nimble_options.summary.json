@@ -1,0 +1,124 @@
+{
+  "focus": [
+    {
+      "focus": "Absinthe.Blueprint.Input.parse/1",
+      "found": false
+    },
+    {
+      "focus": "Ash.Page.page_opts/1",
+      "found": false
+    },
+    {
+      "focus": "Oban.Registry.via/3",
+      "found": false
+    }
+  ],
+  "label": "nimble_options",
+  "summary": {
+    "a1_violating_functions": 0,
+    "functions": 18,
+    "functions_with_infer_signature": 18,
+    "heads_bracketed": {
+      "nil": 12,
+      "true": 6
+    },
+    "heads_lo_equal": {
+      "nil": 12,
+      "true": 6
+    },
+    "modules_with_errors": 0,
+    "nontrivial_functions": 3,
+    "nontrivial_stored_clauses": 13,
+    "replay": {
+      ":term_equal": 18
+    },
+    "stored_clauses": 31,
+    "structural": {
+      "agree": 15,
+      "functions": 15,
+      "replay_checked": 15,
+      "stored_clauses": 18,
+      "wrong": 0
+    },
+    "variants": {
+      "robust_a1": {
+        "by_class": {
+          ":ambiguous": 1,
+          ":identity": 3,
+          ":solved": 2,
+          ":super_derived": 1,
+          ":trivial_single": 11
+        },
+        "exact_claims": "unverified",
+        "replay_check": {
+          "ambiguous_sound": 2,
+          "ambiguous_unsound": 0,
+          "exact_agree": 29,
+          "exact_wrong": 0,
+          "functions": 18,
+          "no_solution": 0
+        },
+        "stored_clauses_anchor_exact": 29,
+        "stored_clauses_exact": 29
+      },
+      "robust_inv": {
+        "by_class": {
+          ":ambiguous": 1,
+          ":identity": 3,
+          ":solved": 2,
+          ":super_derived": 1,
+          ":trivial_single": 11
+        },
+        "exact_claims": "unverified",
+        "replay_check": {
+          "ambiguous_sound": 11,
+          "ambiguous_unsound": 0,
+          "exact_agree": 20,
+          "exact_wrong": 0,
+          "functions": 18,
+          "no_solution": 0
+        },
+        "stored_clauses_anchor_exact": 29,
+        "stored_clauses_exact": 20
+      },
+      "strict_a1": {
+        "by_class": {
+          ":identity": 3,
+          ":solved": 3,
+          ":super_derived": 1,
+          ":trivial_single": 11
+        },
+        "exact_claims": "unverified",
+        "replay_check": {
+          "ambiguous_sound": 0,
+          "ambiguous_unsound": 0,
+          "exact_agree": 31,
+          "exact_wrong": 0,
+          "functions": 18,
+          "no_solution": 0
+        },
+        "stored_clauses_anchor_exact": 31,
+        "stored_clauses_exact": 31
+      },
+      "strict_inv": {
+        "by_class": {
+          ":identity": 3,
+          ":solved": 3,
+          ":super_derived": 1,
+          ":trivial_single": 11
+        },
+        "exact_claims": "unverified",
+        "replay_check": {
+          "ambiguous_sound": 0,
+          "ambiguous_unsound": 0,
+          "exact_agree": 31,
+          "exact_wrong": 0,
+          "functions": 18,
+          "no_solution": 0
+        },
+        "stored_clauses_anchor_exact": 31,
+        "stored_clauses_exact": 31
+      }
+    }
+  }
+}

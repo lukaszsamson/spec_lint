@@ -67,7 +67,16 @@ and replay under 1.20.4 (`bench/corpus/reports/elixir-1.20.4/`) with the
 same coverage, gates and exit codes as 1.21 outside the standard library;
 fingerprints differ, so baselines are per adapter. 1.19 is not supported.
 
-## M4. Investigate source-clause mapping
+The Milestone 3 review (STATUS.md) found one high defect, fixed: a forced
+recompile after `compile` already ran in the VM (`mix do compile +
+spec_lint`, an alias, the self-check) was a no-op, and the other build's
+BEAM files were recorded as the running build's. The Mix tasks now
+re-enable the compile chain and fail closed (exit 2) when the forced
+compile still does nothing; dependencies compiled by another compiler line
+are refused (exit 2). Two 1.20.4 presentation and classification
+differences in `DescrWalk` were fixed or pinned.
+
+## M4. Investigate source-clause mapping: done, structural classes adopted
 
 Start with a diagnostic experiment, separately from production gating.
 Exercise merged clauses, omitted raising clauses, guards, defaults, macros
@@ -80,7 +89,31 @@ feasibility still do not establish normal return. This milestone should not
 block an explicitly documented experimental release if it proves
 impractical.
 
-## M5. Freeze the evaluation and run the release campaign
+Delivered (STATUS.md, "Milestone 4"; `bench/clause_mapping/README.md`, the
+report). Adopted: the two classes the compiler's grouping invariants force
+without any type, a function with one source clause and a function with as
+many stored as source clauses (`SpecLint.ClauseMapping`, checked in the
+source of all three qualified builds and tested under both lines). They
+cover 93.5% of the 21,439 functions with an inferred signature on the
+fifteen corpora, with no disagreement from the compiler replay on the
+19,825 it could check, and all nine corpus clause conflicts. They only name
+the source clause and line in a clause conflict's details and data; gates,
+prerequisites and fingerprints are unchanged, and `clause_reachable`
+blocking stays function-wide for every function (diagnostic lines are not
+attributed to clauses; no corpus conflict is blocked by one). Not adopted:
+every typed mapping (recomputed head types), which is not exact (the
+checker's `subpatterns` leak, protocol implementations, gradual bounds
+widened by subtraction, the redundant-clause path) and gives wrong exact
+claims on warning-free fixtures.
+
+## M5. Freeze the evaluation and run the release campaign: next
+
+**First task: the frozen evaluation inventory.** Before any M5
+measurement, commit one inventory file that freezes the executable
+witnesses, the omission-family identities, the recall denominator and the
+holdout-selection procedure, with the audit of the proposed "six witnessed
+Ash misses" against the witness records. Every later M5 number is computed
+against that commit; changing it is a new, documented freeze.
 
 Freeze executable witnesses, omission-family identities, the recall
 denominator and holdout-selection procedure now. Audit the proposed "six
@@ -100,7 +133,7 @@ For resource failures, require **no successful result**. Caught analysis
 failures can exit 2; an externally killed or OOM-terminated VM cannot
 reliably promise that exact exit code.
 
-## M6. Move inference work upstream (submission preparation)
+## M6. Move inference work upstream (submission preparation): after M5
 
 Stop extending the local helper source transform. Prepare the helper and
 collection counterexamples, recheck the `list_tl` finding on upstream, and
@@ -109,7 +142,11 @@ include the printer profile. Submission is a separate authorized action.
 Resume local inference experiments only around an upstream mechanism that
 can be qualified against the frozen evaluation. The `for ... into:`
 narrowing of 648b2a9 (`UPSTREAM_BUGS.txt` item 11, audit row 19) belongs in
-the same package.
+the same package, and so do the Milestone 4 findings for the checker API:
+the `subpatterns` leak between definitions
+(`bench/clause_mapping/subpatterns_leak.ex`) and the request for a
+per-source-clause mapping and reachability verdict in the checker chunk,
+which the structural classes cannot replace for merged or dropped clauses.
 
 # Current next steps after Phase 4
 
@@ -255,7 +292,9 @@ phase commits that follow them).
    checker's clause grouping from debug info on a qualified compiler
    revision, and measure whether it maps every stored clause back to its
    source clauses on the fixtures and the corpora. Adopt it only if it is
-   exact on all of them; otherwise keep the stored-clause labelling.
+   exact on all of them; otherwise keep the stored-clause labelling. (Done
+   as Milestone 4: only the structural classes are exact by construction
+   and were adopted; the typed recomputation is not exact.)
 3. **A holdout with power for the qualification.** Choose a third holdout
    by a criterion fixed in advance: projects whose baseline run has clause
    conflicts blocked by an arrow prerequisite with the qualification off.
