@@ -1,17 +1,45 @@
 # SpecLint 0.1.0: experimental release verdict
 
-**Current verdict: requalification pending.** Release campaigns 1 and 2
-qualified historical tool revisions `06b7496` and `58fe1dd`. Their figures
-and exit-criterion decisions below are retained as historical evidence,
-and do not certify the current tree after compiler gating, reachability
-and artifact-provenance hardening.
+**Current verdict: qualified for experimental release**, with the compiler
+and build-pipeline restrictions below. Implementation `1bb9594` passed the
+final [quality gates](bench/corpus/toolchain/quality-1bb9594/README.md) and
+[hardening campaign 2](bench/corpus/reports/hardening-2/README.md) on
+2026-09-30. All thirty corpus reports are byte-identical to release campaign
+2, with nine unchanged gates on three functions per compiler. All runs met
+the frozen budgets. No new gates required refutation; the existing independent
+refutations remain applicable to the unchanged evidence.
+
+| Final quality check | Fork c24c235 | Release 1.20.4 |
+| --- | --- | --- |
+| Tests | 497 passed, 1 skipped, 9 excluded | 499 passed, 1 skipped, 7 excluded |
+| Format, full strict Credo, Dialyzer | Pass | Pass |
+| Production public-task self-check | 419 specs, 0 findings, complete, exit 0 | 419 specs, 0 findings, complete, exit 0 |
+| Fifteen-corpus replay and frozen budgets | Pass | Pass |
+| Absinthe analysis wall time | 75.71 seconds | 67.99 seconds |
+
+Adapter-specific exclusions and the diagnostic-only skipped test are
+explained in the quality evidence. The diagnostic test passed separately
+on actual upstream 648b2a9. Absinthe meets the frozen 90-second budget;
+the earlier 60-second aspiration is not met on this host. Raw corpus
+analysis timings exclude the public task's dependency compilation overhead.
+
+[Linux evidence](bench/corpus/toolchain/linux-results.md) records earlier full
+quality suites and final targeted regressions, not a final full Linux corpus
+campaign. The local 6 GiB Absinthe stress run was killed without producing a
+report; that cap is below the frozen 8,256 MiB acceptance budget. The manual
+Ubuntu workflow is separate from these local results.
+
+The original missing-return objective remains unmet: 3 of 18 witnessed
+families are gated, 8 additionally reported and 7 silent; approximately 74%
+of obligations remain unknown. Release campaigns 1 and 2 below describe
+historical revisions, retained for comparison.
 
 Upstream `648b2a9` is now **diagnostic-only**: its mixed list/bitstring
 `for ... into:` inference can gate a correct spec, including through
 callers. All findings have `gate: false`; the report is `incomplete`.
 `--ci` and `--warnings-as-errors` exit 2, a local run exits 0, and a baseline
-cannot waive the restriction or be written. `c24c235` and 1.20.4 remain CI
-candidates pending current-tree requalification. Build-record version 3
+cannot waive the restriction or be written. `c24c235` and the exact 1.20.4
+release build are qualified for experimental CI. Build-record version 3
 requires per-module production evidence and rejects unverified orphan
 BEAMs without deleting them. Only the complete built-in pipeline is
 supported, with either lexer/parser generator order before Erlang, Elixir
@@ -56,8 +84,8 @@ From `NEXT_STEPS.md`, Milestone 5.
 | Elixir build | Adapter id | Checker chunk | Status |
 | --- | --- | --- | --- |
 | 1.21.0-dev `648b2a9`, upstream `elixir-lang/elixir` | `1.21.0-dev+648b2a9` | `elixir_checker_v10` | diagnostic-only; all gates disabled; known compiler defect: `for ... into:` with a list-or-bitstring collectable stores an unsound signature, which previously could make SpecLint gate a correct spec (audit row 19) |
-| 1.21.0-dev `c24c235`, fork `lukaszsamson/elixir` | `1.21.0-dev+c24c235` | `elixir_checker_v10` | CI candidate; current requalification pending (fixes the `for ... into:` defect) |
-| 1.20.4 (`759443e`, the precompiled release) | `1.20.4+759443e` | `elixir_checker_v8` | CI candidate; current requalification pending, with its own baselines |
+| 1.21.0-dev `c24c235`, fork `lukaszsamson/elixir` | `1.21.0-dev+c24c235` | `elixir_checker_v10` | qualified for experimental CI (fixes the `for ... into:` defect) |
+| 1.20.4 (`759443e`, the precompiled release) | `1.20.4+759443e` | `elixir_checker_v8` | qualified for experimental CI, with its own baselines |
 | 1.19 and earlier, 1.20.0-1.20.3, other 1.20.x or 1.21 builds | none | | **unsupported**: the task refuses itself (exit 2 with `--ci`; checked on 1.19.4) |
 
 Erlang/OTP 28 (1.20.4 also on OTP 29). A baseline is per compiler adapter.

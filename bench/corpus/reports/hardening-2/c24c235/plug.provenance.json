@@ -1,0 +1,60 @@
+{
+  "artifacts": [
+    {
+      "beam_count": 62,
+      "path": "$BUILD/plug/lib/plug/ebin",
+      "sha256": "5aaf7d9b1bdb248a8f9ab2fe323ac07d1b3f88f4e5097dd5cb555a6d7086c40c"
+    },
+    {
+      "beam_count": 2,
+      "path": "$BUILD/plug/lib/mime/ebin",
+      "sha256": "fbdf4f72e0726911f6089093a8960f272b68a35680da0b7448c2d8f6f2f9d7f8"
+    },
+    {
+      "beam_count": 62,
+      "path": "$BUILD/plug/lib/plug/ebin",
+      "sha256": "5aaf7d9b1bdb248a8f9ab2fe323ac07d1b3f88f4e5097dd5cb555a6d7086c40c"
+    },
+    {
+      "beam_count": 5,
+      "path": "$BUILD/plug/lib/plug_crypto/ebin",
+      "sha256": "d29363e3611995ee96998d363b7bea8682432707651ad2dae6799fc87f7ce1f7"
+    },
+    {
+      "beam_count": 4,
+      "path": "$BUILD/plug/lib/telemetry/ebin",
+      "sha256": "5b2d94fe300985c684dec3893726a30845cffbaaa21322b9acfe484bd7bbceed"
+    }
+  ],
+  "corpus": "plug",
+  "corpus_manifest_sha256": null,
+  "schema": "spec_lint.corpus_provenance/1",
+  "source": {
+    "dirty": false,
+    "lockfile_sha256": "6dccd3737d663f64f09e57cc4af6981bf56bf85ff87f6781fdcf85584cfa9aa2",
+    "revision": "73404f851852a00ffb2014be95d4598900fa77b8"
+  },
+  "tool": {
+    "dirty": false,
+    "lockfile_sha256": "a23fa18ff765b9ddc4f310975ca588771fabb25d06b9fc50267b620bf8af026b",
+    "revision": "1bb95947c709a467bc89a65ed61d5829c220086f",
+    "source_sha256": "3e1484003bde47d1278aa929a687ea4683f32a267d6f1b8f2657b84c7451d978"
+  },
+  "toolchain": {
+    "compiler": {
+      "dirty": false,
+      "patch_sha256": null,
+      "revision": "c24c23538d521d25edd6a9a7a66fc5206caab70e"
+    },
+    "elixir": "Elixir 1.21.0-dev (c24c235) (compiled with Erlang/OTP 28)",
+    "identity": {
+      "code_digest": "59b3bff89d67a058d3e57e54e4b3ec4b0f463cc9cc506546ee6d2b363ccc500b",
+      "exck_digest": "08604ec6a828b5a15925ff3adc2ee9e7666e1e444f3ef95875554b7a0154da96",
+      "modules": 447,
+      "otp_version": "28.5.0.1",
+      "revision": "c24c235"
+    },
+    "loaded_module_types_beam": "$COMPILER/bin/../lib/elixir/ebin/Elixir.Module.Types.beam",
+    "loaded_module_types_sha256": "67af52fc2fd99fa60b47602b8d62edf29fe140ae2ff124cb6a8b10962ae1e839"
+  }
+}

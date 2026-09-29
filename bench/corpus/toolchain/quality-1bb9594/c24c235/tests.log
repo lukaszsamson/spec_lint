@@ -1,0 +1,13 @@
+Compiling 3 files (.ex)
+Running ExUnit with seed: 684354, max_cases: 24
+Excluding tags: [adapter: SpecLint.Compiler.V120]
+
+..................
+00:36:18.584 [error] Process #PID<0.566.0> raised an exception
+** (ErlangError) Erlang error: {:nocatch, :ball}
+    test/spec_lint/isolated_test.exs:19: anonymous fn/0 in SpecLint.IsolatedTest."test a crash comes back as a value, and the caller is not linked to it"/1
+    (spec_lint 0.1.0) lib/spec_lint/isolated.ex:25: anonymous fn/3 in SpecLint.Isolated.run/1
+...........................................................................................................................................................................................................................................................................................................................................................................*....................................................................................................................
+Finished in 324.9 seconds (58.0s async, 266.8s sync)
+
+Result: 497 passed, 1 skipped, 9 excluded

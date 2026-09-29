@@ -12,10 +12,13 @@ sandbox: run it only on code you trust.
 The design, evidence model and measurements are in [`DESIGN.md`](DESIGN.md)
 and [`EXPERIMENTS.md`](EXPERIMENTS.md).
 
-**Status: experimental; current requalification pending.** The historical
-release campaigns and their limits are in [`RELEASE.md`](RELEASE.md). The
-current tree adds compiler gating and artifact-provenance checks; the
-historical campaigns do not qualify those changes.
+**Status: experimental, qualified on the exact fork and 1.20.4 builds below.**
+The final hardening campaign passed all 30 corpus runs within the frozen
+budgets, with unchanged reports, gates and fingerprints. See
+[`RELEASE.md`](RELEASE.md) for qualification scope and limitations. SpecLint
+detects a supported subset of spec inconsistencies; no finding does not mean
+a correct spec. About 74% of compared obligations remain unknown, and only
+3 of 18 witnessed omission families are gated.
 
 ## Requirements
 
@@ -25,8 +28,8 @@ development revisions, so each release supports specific compiler builds:
 | SpecLint | Elixir | Source | Checker chunk | Adapter id | Status | Known compiler defects |
 | --- | --- | --- | --- | --- | --- | --- |
 | 0.1.0 | 1.21.0-dev, revision `648b2a9` | upstream `elixir-lang/elixir` | `elixir_checker_v10` | `1.21.0-dev+648b2a9` | diagnostic-only; historical compatibility audit (`bench/corpus/toolchain/audit-648b2a9.md`) | `for ... into:` with a collectable that may be a bitstring or a list narrows the body to `bitstring()` in the stored signature, which previously could make SpecLint gate a correct spec (audit row 19); current gates are disabled |
-| 0.1.0 | 1.21.0-dev, revision `c24c235` | fork `lukaszsamson/elixir`, branch `ls-mixed-into` | `elixir_checker_v10` | `1.21.0-dev+c24c235` | CI candidate; current requalification pending | none known |
-| 0.1.0 | 1.20.4 (revision `759443e`, the precompiled release) | upstream release `v1.20.4` | `elixir_checker_v8` | `1.20.4+759443e` | CI candidate; current requalification pending; historical audit (`bench/corpus/toolchain/audit-1.20.4.md`) | none known; Erlang `-nominal` types are left out by its `Code.Typespec` (a reference to one is an unresolved remote type) |
+| 0.1.0 | 1.21.0-dev, revision `c24c235` | fork `lukaszsamson/elixir`, branch `ls-mixed-into` | `elixir_checker_v10` | `1.21.0-dev+c24c235` | qualified for experimental CI | none known |
+| 0.1.0 | 1.20.4 (revision `759443e`, the precompiled release) | upstream release `v1.20.4` | `elixir_checker_v8` | `1.20.4+759443e` | qualified for experimental CI; historical audit (`bench/corpus/toolchain/audit-1.20.4.md`) | none known; Erlang `-nominal` types are left out by its `Code.Typespec` (a reference to one is an unresolved remote type) |
 | | 1.19 and earlier, 1.20.0 to 1.20.3 | | | | **unsupported**: the task starts and refuses itself (checked on 1.19.4: exit 2 with `--ci`, see below) | |
 | | other 1.20.x releases, other 1.21 builds | | | | **unsupported**: the same refusal (exit 2 in CI) | |
 
@@ -36,7 +39,7 @@ project does not contain a comprehension: the defective signature can affect
 callers too. `--ci` and `--warnings-as-errors` exit 2; a local run exits 0 with
 the incomplete report. A baseline cannot waive this restriction, and
 `mix spec_lint.baseline` exits 2 without writing a baseline. Use `c24c235`
-or 1.20.4 as CI candidates while current requalification is pending.
+or the exact qualified 1.20.4 build for experimental CI.
 
 Historical campaigns ran on Erlang/OTP 28 (1.20.4 also passed preflight on OTP 29). SpecLint
 picks the adapter for the running compiler from its version and checker
@@ -159,7 +162,7 @@ mix spec_lint            # first run: compiles and checks; writes no baseline
 The first run needs no baseline and no configuration. It compiles SpecLint
 and your project, prints the report and exits 0 (or 1 with `--ci` when
 there are gated findings); it never writes the baseline
-(`Baseline: none (.spec_lint_baseline.json not found)`). A clean project on a CI candidate compiler
+(`Baseline: none (.spec_lint_baseline.json not found)`). A clean project on a qualified CI compiler
 exits 0 in CI mode too; `648b2a9` always produces an incomplete run. The next step for a project with findings is the
 [baseline workflow](#baseline).
 
@@ -264,7 +267,8 @@ gating rules below. It does not mean the spec is correct:
   omission families, each witnessed at runtime to return a value its spec
   leaves out for an input inside the spec's domain) the release reports
   gate **3**, report **8** without failing CI and are silent on **7**,
-  identically under each of the three compilers (version 1, 17 families:
+  in the historical three-compiler campaign, and unchanged in the final
+  two-gating-compiler replay (version 1, 17 families:
   3, 7 and 7). Over the 15 families where the returned value itself is
   undeclared: 2 gated, 8 reported, 5 silent. A clean run says nothing
   about the rest.
@@ -308,7 +312,9 @@ its declared type; they gate like any other clause conflict.
 
 **These figures are historical release-1/release-2 measurements.** They
 precede the current compiler gating and provenance changes; `648b2a9` now
-has no gates and cannot certify CI. Current requalification is pending.
+has no gates and cannot certify CI. The final hardening campaign on c24c235
+and 1.20.4 preserved these reports byte for byte; see
+[`hardening-2`](bench/corpus/reports/hardening-2/README.md).
 
 **Exit statuses in CI.** Exit 1 is a verdict about your code (a new gated
 finding or a coverage violation): fix the spec or acknowledge the finding
@@ -334,7 +340,7 @@ status").
 
 Compiler-wide qualification comes first: `648b2a9` cannot gate any rule,
 including SL008 or a finding selected by `--warnings-as-errors`. On a CI
-candidate compiler, a gated finding still has to meet its prerequisites to
+qualified compiler, a gated finding still has to meet its prerequisites to
 fail the build:
 
 - no untranslatable construct;

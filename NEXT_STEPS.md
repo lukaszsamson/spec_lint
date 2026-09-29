@@ -6,29 +6,29 @@ stay in separate changes. Exit criteria are copied from the plan.
 
 ## Current sequence: release hardening after `a50b0d7`
 
-The historical milestone results below do not qualify the subsequent edits.
-Finish this sequence before publishing an experimental release:
+The implementation at `1bb9594` completes local release hardening: artifact
+and dependency provenance, complete reachability context, compiler-wide
+648b2a9 quarantine, adversarial regressions, full quality gates on both
+gating compilers, and thirty unchanged corpus reports within frozen budgets.
+See `RELEASE.md` for the exact scope; local Linux checks are not a full
+final Linux corpus campaign.
 
-1. Close artifact-provenance bypasses, retain full-module context for
-   reachability checks, and make campaign comparison reject stale or mixed
-   evidence. Keep an adversarial regression for each failure.
-2. Restrict upstream `648b2a9` to diagnostics: its known unsound signature
-   can propagate to callers, so a local syntax exclusion is insufficient.
-   It cannot certify CI or write a baseline. Requalify an upstream build
-   containing the fix before restoring gating. The fork and 1.20.4 remain
-   the gating candidates.
-3. Run full quality gates and the frozen fifteen-corpus replay on the two
-   gating candidates. Keep the historical campaigns unchanged. Validate a
-   clean Linux installation with explicit resource limits; distinguish that
-   from a full Linux corpus campaign.
-4. Publish only after these checks, a repository destination and a license
-   have been settled. A local dependency and reviewed source tree are not
-   a published Hex package.
-5. Move recall work upstream. `list_tl` already has issue #15490;
-   mixed-collectable inference has issue #15950 and fix PR #15952. Do not
-   duplicate them. The independently reviewed subpattern-state reproducer
-   is a precision issue; its tempting one-line reset is not a valid fix
-   (it crashes an existing compiler test). See
+1. Publish the qualified experimental source at `lukaszsamson/spec_lint`
+   under Apache-2.0, preserving Elixir notices. Run the manual Ubuntu
+   qualification workflow and retain its outcome separately from local Linux
+   evidence. Git publication is not a Hex release.
+2. Qualify public Mix task adoption on prominent projects, starting with
+   the custom dependency compiler boundary below. Preserve fail-closed
+   provenance; do not turn the raw-BEAM corpus into an installation claim.
+3. Reduce retained analysis memory and replay unchanged evidence against
+   the frozen budgets before adopting a streaming implementation.
+4. Requalify an upstream compiler containing the mixed-collectable fix
+   before restoring upstream gating. Move inference work upstream and
+   measure it against the frozen real-omission objective and fresh holdout.
+   `list_tl` already has issue #15490; mixed-collectable inference has issue
+   #15950 and fix PR #15952. Do not duplicate them. The reviewed
+   subpattern-state reproducer is a precision issue; a naive context reset
+   crashes an existing compiler test and is not a valid fix. See
    `bench/upstream/review-2026-09-29.md`.
 
 ### Public Mix projects with custom dependency compilers

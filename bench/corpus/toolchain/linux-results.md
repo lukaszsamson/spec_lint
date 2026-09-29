@@ -252,3 +252,26 @@ Measurements are in
 The full Linux suites, Dialyzer and full corpus campaigns were **not repeated**
 after this dependency fix. The earlier full-suite evidence remains explicitly
 pre-fix; this section certifies only the listed focused post-fix checks.
+
+## Targeted follow-up for built-in source generator order
+
+Commit `1bb95947c709a467bc89a65ed61d5829c220086f` permits exactly the two
+orders of Mix's built-in `:yecc` and `:leex` source generators before the
+fixed `:erlang`, `:elixir`, `:app` stages. Custom or missing stages remain
+blocked. At `2026-09-29T22:37:50Z`, its two production and two integration
+test changes were copied into the same Linux environment. The delta archive
+SHA-256 is
+`58e1b83a25c344bff88ab2daa179c8a30b0246582212fa80f4aa4d2a767be411`.
+
+Both gating compilers passed warnings-as-errors compile, format and strict
+Credo. The actual `.xrl` regression named "both source generator orders
+attest owned and dependency artifacts" passed once on each compiler, with
+5 other tests excluded by location selection and none skipped. GNU time
+measured 3.63 seconds / 127,480 KiB on the fork and 4.38 seconds / 132,744 KiB
+on the release. Every captured command status was 0. Linux production and
+test source bytes exactly matched the frozen commit after validation.
+Portable measurements are in
+[`linux-evidence/generator-order-resources.json`](linux-evidence/generator-order-resources.json).
+
+This was targeted generator validation only. No full Linux suite, Dialyzer,
+corpus campaign or additional memory experiment was repeated for this change.

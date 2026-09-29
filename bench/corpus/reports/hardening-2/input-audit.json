@@ -1,0 +1,400 @@
+{
+  "adapters": {
+    "1.20.4": [
+      {
+        "artifacts_unchanged": true,
+        "compiler_compiler_unchanged": true,
+        "compiler_identity_unchanged": true,
+        "corpus": "absinthe",
+        "source_unchanged": true,
+        "tool": {
+          "dirty": false,
+          "lockfile_sha256": "a23fa18ff765b9ddc4f310975ca588771fabb25d06b9fc50267b620bf8af026b",
+          "revision": "1bb95947c709a467bc89a65ed61d5829c220086f",
+          "source_sha256": "3e1484003bde47d1278aa929a687ea4683f32a267d6f1b8f2657b84c7451d978"
+        }
+      },
+      {
+        "artifacts_unchanged": true,
+        "compiler_compiler_unchanged": true,
+        "compiler_identity_unchanged": true,
+        "corpus": "ash",
+        "source_unchanged": true,
+        "tool": {
+          "dirty": false,
+          "lockfile_sha256": "a23fa18ff765b9ddc4f310975ca588771fabb25d06b9fc50267b620bf8af026b",
+          "revision": "1bb95947c709a467bc89a65ed61d5829c220086f",
+          "source_sha256": "3e1484003bde47d1278aa929a687ea4683f32a267d6f1b8f2657b84c7451d978"
+        }
+      },
+      {
+        "artifacts_unchanged": true,
+        "compiler_compiler_unchanged": true,
+        "compiler_identity_unchanged": true,
+        "corpus": "broadway",
+        "source_unchanged": true,
+        "tool": {
+          "dirty": false,
+          "lockfile_sha256": "a23fa18ff765b9ddc4f310975ca588771fabb25d06b9fc50267b620bf8af026b",
+          "revision": "1bb95947c709a467bc89a65ed61d5829c220086f",
+          "source_sha256": "3e1484003bde47d1278aa929a687ea4683f32a267d6f1b8f2657b84c7451d978"
+        }
+      },
+      {
+        "artifacts_unchanged": true,
+        "compiler_compiler_unchanged": true,
+        "compiler_identity_unchanged": true,
+        "corpus": "decimal",
+        "source_unchanged": true,
+        "tool": {
+          "dirty": false,
+          "lockfile_sha256": "a23fa18ff765b9ddc4f310975ca588771fabb25d06b9fc50267b620bf8af026b",
+          "revision": "1bb95947c709a467bc89a65ed61d5829c220086f",
+          "source_sha256": "3e1484003bde47d1278aa929a687ea4683f32a267d6f1b8f2657b84c7451d978"
+        }
+      },
+      {
+        "artifacts_unchanged": true,
+        "compiler_compiler_unchanged": true,
+        "compiler_identity_unchanged": true,
+        "corpus": "ecto",
+        "source_unchanged": true,
+        "tool": {
+          "dirty": false,
+          "lockfile_sha256": "a23fa18ff765b9ddc4f310975ca588771fabb25d06b9fc50267b620bf8af026b",
+          "revision": "1bb95947c709a467bc89a65ed61d5829c220086f",
+          "source_sha256": "3e1484003bde47d1278aa929a687ea4683f32a267d6f1b8f2657b84c7451d978"
+        }
+      },
+      {
+        "artifacts_unchanged": true,
+        "compiler_compiler_unchanged": true,
+        "compiler_identity_unchanged": true,
+        "corpus": "jason",
+        "source_unchanged": true,
+        "tool": {
+          "dirty": false,
+          "lockfile_sha256": "a23fa18ff765b9ddc4f310975ca588771fabb25d06b9fc50267b620bf8af026b",
+          "revision": "1bb95947c709a467bc89a65ed61d5829c220086f",
+          "source_sha256": "3e1484003bde47d1278aa929a687ea4683f32a267d6f1b8f2657b84c7451d978"
+        }
+      },
+      {
+        "artifacts_unchanged": true,
+        "compiler_compiler_unchanged": true,
+        "compiler_identity_unchanged": true,
+        "corpus": "mime",
+        "source_unchanged": true,
+        "tool": {
+          "dirty": false,
+          "lockfile_sha256": "a23fa18ff765b9ddc4f310975ca588771fabb25d06b9fc50267b620bf8af026b",
+          "revision": "1bb95947c709a467bc89a65ed61d5829c220086f",
+          "source_sha256": "3e1484003bde47d1278aa929a687ea4683f32a267d6f1b8f2657b84c7451d978"
+        }
+      },
+      {
+        "artifacts_unchanged": true,
+        "compiler_compiler_unchanged": true,
+        "compiler_identity_unchanged": true,
+        "corpus": "nimble_options",
+        "source_unchanged": true,
+        "tool": {
+          "dirty": false,
+          "lockfile_sha256": "a23fa18ff765b9ddc4f310975ca588771fabb25d06b9fc50267b620bf8af026b",
+          "revision": "1bb95947c709a467bc89a65ed61d5829c220086f",
+          "source_sha256": "3e1484003bde47d1278aa929a687ea4683f32a267d6f1b8f2657b84c7451d978"
+        }
+      },
+      {
+        "artifacts_unchanged": true,
+        "compiler_compiler_unchanged": true,
+        "compiler_identity_unchanged": true,
+        "corpus": "nx",
+        "source_unchanged": true,
+        "tool": {
+          "dirty": false,
+          "lockfile_sha256": "a23fa18ff765b9ddc4f310975ca588771fabb25d06b9fc50267b620bf8af026b",
+          "revision": "1bb95947c709a467bc89a65ed61d5829c220086f",
+          "source_sha256": "3e1484003bde47d1278aa929a687ea4683f32a267d6f1b8f2657b84c7451d978"
+        }
+      },
+      {
+        "artifacts_unchanged": true,
+        "compiler_compiler_unchanged": true,
+        "compiler_identity_unchanged": true,
+        "corpus": "oban",
+        "source_unchanged": true,
+        "tool": {
+          "dirty": false,
+          "lockfile_sha256": "a23fa18ff765b9ddc4f310975ca588771fabb25d06b9fc50267b620bf8af026b",
+          "revision": "1bb95947c709a467bc89a65ed61d5829c220086f",
+          "source_sha256": "3e1484003bde47d1278aa929a687ea4683f32a267d6f1b8f2657b84c7451d978"
+        }
+      },
+      {
+        "artifacts_unchanged": true,
+        "compiler_compiler_unchanged": true,
+        "compiler_identity_unchanged": true,
+        "corpus": "phoenix_live_view",
+        "source_unchanged": true,
+        "tool": {
+          "dirty": false,
+          "lockfile_sha256": "a23fa18ff765b9ddc4f310975ca588771fabb25d06b9fc50267b620bf8af026b",
+          "revision": "1bb95947c709a467bc89a65ed61d5829c220086f",
+          "source_sha256": "3e1484003bde47d1278aa929a687ea4683f32a267d6f1b8f2657b84c7451d978"
+        }
+      },
+      {
+        "artifacts_unchanged": true,
+        "compiler_compiler_unchanged": true,
+        "compiler_identity_unchanged": true,
+        "corpus": "plug",
+        "source_unchanged": true,
+        "tool": {
+          "dirty": false,
+          "lockfile_sha256": "a23fa18ff765b9ddc4f310975ca588771fabb25d06b9fc50267b620bf8af026b",
+          "revision": "1bb95947c709a467bc89a65ed61d5829c220086f",
+          "source_sha256": "3e1484003bde47d1278aa929a687ea4683f32a267d6f1b8f2657b84c7451d978"
+        }
+      },
+      {
+        "artifacts_unchanged": true,
+        "compiler_compiler_unchanged": true,
+        "compiler_identity_unchanged": true,
+        "corpus": "req",
+        "source_unchanged": true,
+        "tool": {
+          "dirty": false,
+          "lockfile_sha256": "a23fa18ff765b9ddc4f310975ca588771fabb25d06b9fc50267b620bf8af026b",
+          "revision": "1bb95947c709a467bc89a65ed61d5829c220086f",
+          "source_sha256": "3e1484003bde47d1278aa929a687ea4683f32a267d6f1b8f2657b84c7451d978"
+        }
+      },
+      {
+        "artifacts_unchanged": true,
+        "compiler_compiler_unchanged": true,
+        "compiler_identity_unchanged": true,
+        "corpus": "stdlib",
+        "source_unchanged": true,
+        "tool": {
+          "dirty": false,
+          "lockfile_sha256": "a23fa18ff765b9ddc4f310975ca588771fabb25d06b9fc50267b620bf8af026b",
+          "revision": "1bb95947c709a467bc89a65ed61d5829c220086f",
+          "source_sha256": "3e1484003bde47d1278aa929a687ea4683f32a267d6f1b8f2657b84c7451d978"
+        }
+      },
+      {
+        "artifacts_unchanged": true,
+        "compiler_compiler_unchanged": true,
+        "compiler_identity_unchanged": true,
+        "corpus": "tesla",
+        "source_unchanged": true,
+        "tool": {
+          "dirty": false,
+          "lockfile_sha256": "a23fa18ff765b9ddc4f310975ca588771fabb25d06b9fc50267b620bf8af026b",
+          "revision": "1bb95947c709a467bc89a65ed61d5829c220086f",
+          "source_sha256": "3e1484003bde47d1278aa929a687ea4683f32a267d6f1b8f2657b84c7451d978"
+        }
+      }
+    ],
+    "c24c235": [
+      {
+        "artifacts_unchanged": true,
+        "compiler_compiler_unchanged": true,
+        "compiler_identity_unchanged": true,
+        "corpus": "absinthe",
+        "source_unchanged": true,
+        "tool": {
+          "dirty": false,
+          "lockfile_sha256": "a23fa18ff765b9ddc4f310975ca588771fabb25d06b9fc50267b620bf8af026b",
+          "revision": "1bb95947c709a467bc89a65ed61d5829c220086f",
+          "source_sha256": "3e1484003bde47d1278aa929a687ea4683f32a267d6f1b8f2657b84c7451d978"
+        }
+      },
+      {
+        "artifacts_unchanged": true,
+        "compiler_compiler_unchanged": true,
+        "compiler_identity_unchanged": true,
+        "corpus": "ash",
+        "source_unchanged": true,
+        "tool": {
+          "dirty": false,
+          "lockfile_sha256": "a23fa18ff765b9ddc4f310975ca588771fabb25d06b9fc50267b620bf8af026b",
+          "revision": "1bb95947c709a467bc89a65ed61d5829c220086f",
+          "source_sha256": "3e1484003bde47d1278aa929a687ea4683f32a267d6f1b8f2657b84c7451d978"
+        }
+      },
+      {
+        "artifacts_unchanged": true,
+        "compiler_compiler_unchanged": true,
+        "compiler_identity_unchanged": true,
+        "corpus": "broadway",
+        "source_unchanged": true,
+        "tool": {
+          "dirty": false,
+          "lockfile_sha256": "a23fa18ff765b9ddc4f310975ca588771fabb25d06b9fc50267b620bf8af026b",
+          "revision": "1bb95947c709a467bc89a65ed61d5829c220086f",
+          "source_sha256": "3e1484003bde47d1278aa929a687ea4683f32a267d6f1b8f2657b84c7451d978"
+        }
+      },
+      {
+        "artifacts_unchanged": true,
+        "compiler_compiler_unchanged": true,
+        "compiler_identity_unchanged": true,
+        "corpus": "decimal",
+        "source_unchanged": true,
+        "tool": {
+          "dirty": false,
+          "lockfile_sha256": "a23fa18ff765b9ddc4f310975ca588771fabb25d06b9fc50267b620bf8af026b",
+          "revision": "1bb95947c709a467bc89a65ed61d5829c220086f",
+          "source_sha256": "3e1484003bde47d1278aa929a687ea4683f32a267d6f1b8f2657b84c7451d978"
+        }
+      },
+      {
+        "artifacts_unchanged": true,
+        "compiler_compiler_unchanged": true,
+        "compiler_identity_unchanged": true,
+        "corpus": "ecto",
+        "source_unchanged": true,
+        "tool": {
+          "dirty": false,
+          "lockfile_sha256": "a23fa18ff765b9ddc4f310975ca588771fabb25d06b9fc50267b620bf8af026b",
+          "revision": "1bb95947c709a467bc89a65ed61d5829c220086f",
+          "source_sha256": "3e1484003bde47d1278aa929a687ea4683f32a267d6f1b8f2657b84c7451d978"
+        }
+      },
+      {
+        "artifacts_unchanged": true,
+        "compiler_compiler_unchanged": true,
+        "compiler_identity_unchanged": true,
+        "corpus": "jason",
+        "source_unchanged": true,
+        "tool": {
+          "dirty": false,
+          "lockfile_sha256": "a23fa18ff765b9ddc4f310975ca588771fabb25d06b9fc50267b620bf8af026b",
+          "revision": "1bb95947c709a467bc89a65ed61d5829c220086f",
+          "source_sha256": "3e1484003bde47d1278aa929a687ea4683f32a267d6f1b8f2657b84c7451d978"
+        }
+      },
+      {
+        "artifacts_unchanged": true,
+        "compiler_compiler_unchanged": true,
+        "compiler_identity_unchanged": true,
+        "corpus": "mime",
+        "source_unchanged": true,
+        "tool": {
+          "dirty": false,
+          "lockfile_sha256": "a23fa18ff765b9ddc4f310975ca588771fabb25d06b9fc50267b620bf8af026b",
+          "revision": "1bb95947c709a467bc89a65ed61d5829c220086f",
+          "source_sha256": "3e1484003bde47d1278aa929a687ea4683f32a267d6f1b8f2657b84c7451d978"
+        }
+      },
+      {
+        "artifacts_unchanged": true,
+        "compiler_compiler_unchanged": true,
+        "compiler_identity_unchanged": true,
+        "corpus": "nimble_options",
+        "source_unchanged": true,
+        "tool": {
+          "dirty": false,
+          "lockfile_sha256": "a23fa18ff765b9ddc4f310975ca588771fabb25d06b9fc50267b620bf8af026b",
+          "revision": "1bb95947c709a467bc89a65ed61d5829c220086f",
+          "source_sha256": "3e1484003bde47d1278aa929a687ea4683f32a267d6f1b8f2657b84c7451d978"
+        }
+      },
+      {
+        "artifacts_unchanged": true,
+        "compiler_compiler_unchanged": true,
+        "compiler_identity_unchanged": true,
+        "corpus": "nx",
+        "source_unchanged": true,
+        "tool": {
+          "dirty": false,
+          "lockfile_sha256": "a23fa18ff765b9ddc4f310975ca588771fabb25d06b9fc50267b620bf8af026b",
+          "revision": "1bb95947c709a467bc89a65ed61d5829c220086f",
+          "source_sha256": "3e1484003bde47d1278aa929a687ea4683f32a267d6f1b8f2657b84c7451d978"
+        }
+      },
+      {
+        "artifacts_unchanged": true,
+        "compiler_compiler_unchanged": true,
+        "compiler_identity_unchanged": true,
+        "corpus": "oban",
+        "source_unchanged": true,
+        "tool": {
+          "dirty": false,
+          "lockfile_sha256": "a23fa18ff765b9ddc4f310975ca588771fabb25d06b9fc50267b620bf8af026b",
+          "revision": "1bb95947c709a467bc89a65ed61d5829c220086f",
+          "source_sha256": "3e1484003bde47d1278aa929a687ea4683f32a267d6f1b8f2657b84c7451d978"
+        }
+      },
+      {
+        "artifacts_unchanged": true,
+        "compiler_compiler_unchanged": true,
+        "compiler_identity_unchanged": true,
+        "corpus": "phoenix_live_view",
+        "source_unchanged": true,
+        "tool": {
+          "dirty": false,
+          "lockfile_sha256": "a23fa18ff765b9ddc4f310975ca588771fabb25d06b9fc50267b620bf8af026b",
+          "revision": "1bb95947c709a467bc89a65ed61d5829c220086f",
+          "source_sha256": "3e1484003bde47d1278aa929a687ea4683f32a267d6f1b8f2657b84c7451d978"
+        }
+      },
+      {
+        "artifacts_unchanged": true,
+        "compiler_compiler_unchanged": true,
+        "compiler_identity_unchanged": true,
+        "corpus": "plug",
+        "source_unchanged": true,
+        "tool": {
+          "dirty": false,
+          "lockfile_sha256": "a23fa18ff765b9ddc4f310975ca588771fabb25d06b9fc50267b620bf8af026b",
+          "revision": "1bb95947c709a467bc89a65ed61d5829c220086f",
+          "source_sha256": "3e1484003bde47d1278aa929a687ea4683f32a267d6f1b8f2657b84c7451d978"
+        }
+      },
+      {
+        "artifacts_unchanged": true,
+        "compiler_compiler_unchanged": true,
+        "compiler_identity_unchanged": true,
+        "corpus": "req",
+        "source_unchanged": true,
+        "tool": {
+          "dirty": false,
+          "lockfile_sha256": "a23fa18ff765b9ddc4f310975ca588771fabb25d06b9fc50267b620bf8af026b",
+          "revision": "1bb95947c709a467bc89a65ed61d5829c220086f",
+          "source_sha256": "3e1484003bde47d1278aa929a687ea4683f32a267d6f1b8f2657b84c7451d978"
+        }
+      },
+      {
+        "artifacts_unchanged": true,
+        "compiler_compiler_unchanged": true,
+        "compiler_identity_unchanged": true,
+        "corpus": "stdlib",
+        "source_unchanged": true,
+        "tool": {
+          "dirty": false,
+          "lockfile_sha256": "a23fa18ff765b9ddc4f310975ca588771fabb25d06b9fc50267b620bf8af026b",
+          "revision": "1bb95947c709a467bc89a65ed61d5829c220086f",
+          "source_sha256": "3e1484003bde47d1278aa929a687ea4683f32a267d6f1b8f2657b84c7451d978"
+        }
+      },
+      {
+        "artifacts_unchanged": true,
+        "compiler_compiler_unchanged": true,
+        "compiler_identity_unchanged": true,
+        "corpus": "tesla",
+        "source_unchanged": true,
+        "tool": {
+          "dirty": false,
+          "lockfile_sha256": "a23fa18ff765b9ddc4f310975ca588771fabb25d06b9fc50267b620bf8af026b",
+          "revision": "1bb95947c709a467bc89a65ed61d5829c220086f",
+          "source_sha256": "3e1484003bde47d1278aa929a687ea4683f32a267d6f1b8f2657b84c7451d978"
+        }
+      }
+    ]
+  },
+  "reference": "bench/corpus/reports/hardening-1",
+  "schema": "spec_lint.hardening_input_audit/1"
+}

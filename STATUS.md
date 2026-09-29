@@ -1,30 +1,44 @@
 # SpecLint status
 
-Date 2026-09-29. `DESIGN.md` is the authoritative design,
+Date 2026-09-30. `DESIGN.md` is the authoritative design,
 `EXPERIMENTS.md` holds measurements, and `README.md` is the user guide.
 Phase 4 follows the review of the Phase 3 implementation at `0cc9c50`;
 previous results below are historical and are superseded where noted.
 
-## Post-release review hardening (in progress)
+## Post-release review hardening completed (2026-09-30)
 
-The `a50b0d7` review found release-blocking artifact-provenance and
-qualification gaps. The older verdict below is historical, not a claim
-that the current working tree has completed a new release campaign.
+Implementation `1bb9594` is qualified for experimental CI on the exact
+c24c235 fork and 1.20.4 release builds. Full quality gates passed with
+497 / 499 tests, strict Credo, format, Dialyzer and production self-checks
+(419 specs, zero findings). The final thirty-run campaign passed every
+frozen budget and preserved every product report byte for byte. Evidence:
+[quality](bench/corpus/toolchain/quality-1bb9594/README.md),
+[campaign](bench/corpus/reports/hardening-2/README.md), and
+[current verdict](RELEASE.md).
 
-The current changes bind recorded artifacts to compiler production events,
-retain complete module definitions during reachability checking, reject
-stale campaign outputs and inconsistent replay cohorts, and separate
-compiler compatibility from CI qualification. Upstream `648b2a9` is now
-diagnostic-only because its reproduced inference defect can make a correct
-spec fail. It always reports an incomplete run; CI and warnings-as-errors
-exit 2, and baselines cannot waive the restriction. The fork `c24c235` and
-Elixir 1.20.4 remain the gating candidates.
+Adversarial review closed a real false-gate path: cached dependencies built
+by an unsound compiler could contaminate a consumer compiled by a qualified
+one. Build-record v3 now binds dependency artifacts and production events;
+checker-only changes force downstream rebuilding. Unverified orphan outputs,
+custom compiler pipelines and stale or mixed campaign evidence fail closed.
+Both built-in lexer/parser generator orders are accepted. Reachability
+checks retain full-module context. Upstream 648b2a9 is diagnostic-only:
+its unsound stored signatures propagate to callers, so all gates are disabled
+and CI exits 2, regardless of baseline acknowledgements.
 
-Validation and adversarial review are ongoing. The current results will be
-recorded separately from `release-1` and `release-2`. Linux workflow
-preparation alone does not constitute Linux qualification. The original
-missing-return goal remains open; see `NEXT_STEPS.md` for the distinction
-between an incremental improvement and completion.
+Linux qualification has a narrower scope than macOS; see the explicit
+full-suite/targeted-check distinction and the failed 6 GiB Absinthe stress
+run in [Linux results](bench/corpus/toolchain/linux-results.md). The complete
+macOS Absinthe replays took 75.71 / 67.99 seconds within the frozen 90-second
+budget, not the earlier 60-second aspiration.
+
+Publication is authorized at `lukaszsamson/spec_lint` under Apache-2.0.
+Elixir-derived code carries source and modification notices. No Hex release
+or new upstream issue has been published as part of this qualification.
+The original objective remains open: 3 / 8 / 7 gated / additionally reported /
+silent families out of 18. Future priorities are public-task adoption with
+custom dependency compilers, lower retained memory, and compiler inference
+work judged on independently witnessed real omissions.
 
 ## Milestone 5 delivered: experimental release (2026-09-29)
 

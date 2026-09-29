@@ -1,0 +1,64 @@
+{
+  "commit": "1bb95947c709a467bc89a65ed61d5829c220086f",
+  "delta_archive_sha256": "58e1b83a25c344bff88ab2daa179c8a30b0246582212fa80f4aa4d2a767be411",
+  "delta_utc": "2026-09-29T22:37:50Z",
+  "full_linux_suite_repeated": false,
+  "test_results": {
+    "c24_actual_generator_orders": {
+      "passed": 1,
+      "excluded": 5,
+      "skipped": 0
+    },
+    "release_actual_generator_orders": {
+      "passed": 1,
+      "excluded": 5,
+      "skipped": 0
+    }
+  },
+  "resources": {
+    "generator-order-c24": {
+      "compile": {
+        "captured_status": 0,
+        "wall": "0:01.27",
+        "rss_kib": "165976"
+      },
+      "credo": {
+        "captured_status": 0,
+        "wall": "0:02.39",
+        "rss_kib": "239228"
+      },
+      "format": {
+        "captured_status": 0,
+        "wall": "0:00.51",
+        "rss_kib": "136400"
+      },
+      "selected": {
+        "captured_status": 0,
+        "wall": "0:03.63",
+        "rss_kib": "127480"
+      }
+    },
+    "generator-order-release": {
+      "compile": {
+        "captured_status": 0,
+        "wall": "0:00.80",
+        "rss_kib": "168544"
+      },
+      "credo": {
+        "captured_status": 0,
+        "wall": "0:03.86",
+        "rss_kib": "244216"
+      },
+      "format": {
+        "captured_status": 0,
+        "wall": "0:00.81",
+        "rss_kib": "132416"
+      },
+      "selected": {
+        "captured_status": 0,
+        "wall": "0:04.38",
+        "rss_kib": "132744"
+      }
+    }
+  }
+}

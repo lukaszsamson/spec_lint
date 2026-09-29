@@ -1,0 +1,22 @@
+Compiling 3 files (.ex)
+Finding suitable PLTs
+Checking PLT...
+[:compiler, :elixir, :kernel, :logger, :mix, :spec_lint, :stdlib]
+PLT is up to date!
+No :ignore_warnings opt specified in mix.exs and default does not exist.
+
+Starting Dialyzer
+[
+  check_plt: false,
+  init_plt: ~c"$QUALIFICATION_PATH/dialyxir_erlang-28.5.0.1_elixir-1.21.0-dev_deps-dev.plt",
+  files: [~c"$QUALIFICATION_PATH/Elixir.SpecLint.Compiler.Gating.beam",
+   ~c"$QUALIFICATION_PATH/Elixir.SpecLint.Explain.beam",
+   ~c"$QUALIFICATION_PATH/Elixir.SpecLint.Compiler.V120.beam",
+   ~c"$QUALIFICATION_PATH/Elixir.SpecLint.Rules.PossibleMissingReturn.beam",
+   ~c"$QUALIFICATION_PATH/Elixir.SpecLint.Compiler.beam",
+   ...],
+  ...
+]
+Total errors: 0, Skipped: 0, Unnecessary Skips: 0
+done in 0m1.56s
+done (passed successfully)
