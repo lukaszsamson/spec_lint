@@ -1,6 +1,11 @@
 # Before filing anything (human checklist)
 
-Nothing in this directory has been filed, posted or sent. Every step below
+This package has not submitted anything. The later
+[adversarial review](review-2026-09-29.md) found existing reports for
+`list_tl` (#15490) and `for_into_narrowing` (#15950, fix PR #15952); do not
+file duplicates. It also refuted the naive subpatterns-reset patch.
+
+Every step below
 is a human action. Do them in order for each item; skip an item if a step
 says so.
 
@@ -27,8 +32,8 @@ says so.
    - For correctness changes to the compiler or type system, a human must
      validate the finding, and the policy asks for a separate set of agents
      that argue against and try to invalidate it. The reproducers here were
-     re-run on the upstream build, but no adversarial pass over the drafts'
-     claims was done in this package.
+     re-run on the upstream build, and the later adversarial review covers `for_into_narrowing` and
+     `subpatterns_leak`; the other drafts still need that review.
    - Bug-fix pull requests need a test that fails before the fix and passes
      after; performance pull requests need a benchmark script with inputs
      and results in the description (benchee recommended).
@@ -62,9 +67,9 @@ says so.
 
 | Item | Verdict on 648b2a9 | Search terms | Extra step before filing |
 | --- | --- | --- | --- |
-| `for_into_narrowing` | reproduces | `for into bitstring`, `badbitbody`, `into: []` | Strongest item. Re-run on `main` first: it is the most likely to be fixed already. Run the Elixir test suite (`make test_stdlib` or the `module/types` tests) with `fix.patch` applied to a scratch clone; that was done on the fork only. |
-| `list_tl` | reproduces | `list_tl`, `list difference tail`, `Descr` | Add the four-line probe as a failing test in `descr_test.exs` in a scratch clone and run it; the test text in `issue.md` was not run inside the Elixir test suite. Check `list_hd` and other projections for the dual problem before claiming it is limited to `list_tl`. Re-run the verification branch's fuzzer if you want to assert more. |
-| `subpatterns_leak` | reproduces | `subpatterns`, `fresh_context`, `imprecise list guard` | Try resetting `subpatterns` in `fresh_context/1` in a scratch clone (untested): confirm the two signatures then agree and the suite still passes. |
+| `for_into_narrowing` | reproduces | `for into bitstring`, `badbitbody`, `into: []` | Already reported as #15950 with fix PR #15952. Do not file a duplicate; requalify the merged upstream build when available. |
+| `list_tl` | reproduces | `list_tl`, `list difference tail`, `Descr` | Already reported as #15490. Do not file a duplicate. No source-level inference trigger has been established here. |
+| `subpatterns_leak` | reproduces | `subpatterns`, `fresh_context`, `imprecise list guard` | The naive reset fixes the witness but crashes an existing compiler integration test. Do not propose it as a validated fix. Report the precision behavior after human validation and discussion/archive duplicate checks. |
 | `helper_insensitivity` | reproduces | `local function inference`, `private function dynamic`, `specialization` | Precision request: expect a discussion, not a fix. Check the type-system roadmap and blog posts for planned call-site specialization first. Consider filing after `enum_map_result` in the same thread only if maintainers ask. |
 | `enum_map_result` | reproduces | `Enum.map dynamic`, `parametric`, `higher-order`, `polymorphic` | Precision request: check whether generics or per-function special cases are planned. Keep separate from `helper_insensitivity`. |
 | `fun_printing` | reproduces | `fun(2)`, `none() -> term()`, `to_quoted_string` | Ask which side is intended (printer shorthand or distinct types) rather than asserting a bug. Consider bundling with `map_top_printing` as one printer issue. |
@@ -72,9 +77,10 @@ says so.
 | `printer_load_per_map` | reproduces | `maybe_struct`, `__info__(:struct)`, `to_quoted_string` performance | Decide whether to file: the compiler rarely prints types in bulk, so upstream may see little value. Re-measure on your own machine and code path before quoting numbers; the Absinthe profile was taken on the old SpecLint and the absent-module fraction was not measured. |
 | `checker_chunk_api` | gap exists | `ExCk`, `checker chunk`, `Module.Types.infer`, `clause reachability` | Feature request: start a discussion asking whether extending the chunk is acceptable before any patch. Read the current chunk version and consumers (`Module.Types.Apply`, `mix xref`, ElixirLS, `dialyzer`-style tools) so the request is precise. |
 
-## Things this package did not do
+## Original package limitations (superseded where the later review says so)
 
-- No network access: no issue search, no check of `main`.
+- The original package did no issue search or check of `main`. The later
+  review performed both; discussion/archive duplicate checks remain open.
 - The upstream build (`648b2a9`) has untracked files from earlier
   experiments (`lib/elixir/scripts/*.exs`); no tracked file differs from the
   commit. The reproducers use only `Module.Types`, `Code` and `:beam_lib`.

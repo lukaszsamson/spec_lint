@@ -1,3 +1,12 @@
+# SPDX-License-Identifier: Apache-2.0
+# SPDX-FileCopyrightText: 2021 The Elixir Team
+# SPDX-FileCopyrightText: 2012 Plataformatec
+#
+# Contains adapted grouping helpers from Elixir c24c235 Module.Types.
+# Modified: compiler operations are routed through SpecLint.Compiler;
+# the surrounding body experiment and metrics are SpecLint code.
+# Source attribution and license: THIRD_PARTY_NOTICES.md and LICENSE.
+
 # Body-backend experiment (DESIGN.md section 7, STATUS.md next step 1).
 #
 # Re-runs the compiler's type checker over each spec'd function under the

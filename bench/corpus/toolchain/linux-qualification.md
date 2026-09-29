@@ -19,6 +19,9 @@ qualification is refused and runs only the compiler gating and upstream
 qualification regression tests, alongside compile, format, Credo and preflight.
 A successful diagnostic entry does not certify upstream CI gating.
 
+Compilation and tests use `MIX_ENV=test`. Dialyzer uses `MIX_ENV=dev` and
+a separate build directory so deliberately invalid test fixtures are excluded.
+
 Each command has a 1,200-second hard timeout with a 15-second kill grace period
 and an independently checked 6 GiB peak RSS budget. RSS is checked after command
 completion; it is not an OS allocation limit. The entire job has a 60-minute
@@ -26,6 +29,8 @@ limit. The logs identify timeout, failure and excessive RSS explicitly. These
 quality-check budgets are separate from the per-corpus budgets in
 `bench/corpus/budgets.json`.
 
+Use a checkout with full Git history: the historical upgrade consumer tests
+need their pinned previous revisions. The workflow fetches complete history.
 Run the same checks in a fresh Linux checkout after installing OTP and the
 Linux tools (`git`, `make`, `curl`, `unzip`, `jq`, GNU `time`, GNU `timeout`):
 

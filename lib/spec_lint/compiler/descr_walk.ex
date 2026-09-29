@@ -1,3 +1,10 @@
+# SPDX-License-Identifier: Apache-2.0
+# SPDX-FileCopyrightText: 2021 The Elixir Team
+#
+# Adapted compiler type-layout handling from Elixir Module.Types.Descr.
+# Modified: SpecLint component views, bounded printer, and canonicalization.
+# Source attribution and license: THIRD_PARTY_NOTICES.md and LICENSE.
+
 defmodule SpecLint.Compiler.DescrWalk do
   @moduledoc """
   The walk over `Module.Types.Descr` terms that the adapters share:

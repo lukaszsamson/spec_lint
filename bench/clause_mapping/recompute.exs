@@ -1,3 +1,12 @@
+# SPDX-License-Identifier: Apache-2.0
+# SPDX-FileCopyrightText: 2021 The Elixir Team
+# SPDX-FileCopyrightText: 2012 Plataformatec
+#
+# Contains an instrumented adaptation of Elixir c24c235 Module.Types.
+# Modified: records source-clause mappings and inference modes, handles missing
+# local definitions, and provides the surrounding diagnostic solver/report.
+# Source attribution and license: THIRD_PARTY_NOTICES.md and LICENSE.
+
 # Source-clause mapping diagnostic (Milestone 4). Not part of the product.
 #
 # For every public function of a module, maps each clause of the signature

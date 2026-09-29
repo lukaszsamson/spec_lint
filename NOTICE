@@ -1,0 +1,14 @@
+SpecLint
+
+Distributed under the Apache License, Version 2.0. See LICENSE.
+
+This project contains portions copied or adapted from Elixir:
+Copyright 2021 The Elixir Team
+Copyright 2012 Plataformatec
+
+Elixir source: https://github.com/elixir-lang/elixir
+License: Apache License, Version 2.0
+
+The adapted files identify their upstream sources and modifications.
+See THIRD_PARTY_NOTICES.md for the file and revision inventory.
+These attribution notices do not modify the license or imply endorsement.

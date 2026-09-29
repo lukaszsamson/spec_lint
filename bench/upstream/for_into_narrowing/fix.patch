@@ -1,3 +1,12 @@
+# SPDX-License-Identifier: Apache-2.0
+# SPDX-FileCopyrightText: 2021 The Elixir Team
+# SPDX-FileCopyrightText: 2012 Plataformatec
+#
+# Patch against Elixir 648b2a9 Module.Types.Expr and ExprTest.
+# Modified: preserves list alternatives during for-into inference and adds tests.
+# The upstream test file carries Copyright 2021 The Elixir Team.
+# Source attribution and license: THIRD_PARTY_NOTICES.md and LICENSE.
+
 diff --git a/lib/elixir/lib/module/types/expr.ex b/lib/elixir/lib/module/types/expr.ex
 index d6a4da581..74bebbff6 100644
 --- a/lib/elixir/lib/module/types/expr.ex

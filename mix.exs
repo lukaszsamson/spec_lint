@@ -5,6 +5,9 @@ defmodule SpecLint.MixProject do
     [
       app: :spec_lint,
       version: "0.1.0",
+      description: "Checks Elixir @spec declarations against compiler-inferred signatures",
+      source_url: "https://github.com/lukaszsamson/spec_lint",
+      package: package(),
       elixir: "~> 1.20.4 or ~> 1.21-dev",
       start_permanent: Mix.env() == :prod,
       elixirc_paths: elixirc_paths(Mix.env()),
@@ -17,6 +20,24 @@ defmodule SpecLint.MixProject do
         plt_core_path: plt_dir(),
         plt_local_path: plt_dir(),
         flags: [:unmatched_returns, :error_handling, :underspecs]
+      ]
+    ]
+  end
+
+  defp package do
+    [
+      licenses: ["Apache-2.0"],
+      links: %{"GitHub" => "https://github.com/lukaszsamson/spec_lint"},
+      files: [
+        "lib",
+        "mix.exs",
+        ".formatter.exs",
+        "README.md",
+        "DESIGN.md",
+        "RELEASE.md",
+        "LICENSE",
+        "NOTICE",
+        "THIRD_PARTY_NOTICES.md"
       ]
     ]
   end

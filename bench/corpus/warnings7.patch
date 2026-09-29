@@ -1,3 +1,11 @@
+# SPDX-License-Identifier: Apache-2.0
+# SPDX-FileCopyrightText: 2021 The Elixir Team
+# SPDX-FileCopyrightText: 2012 Plataformatec
+#
+# Patch against Elixir c24c235 lib/elixir/lib/module/types.ex.
+# Modified: adds domain-directed warnings/7 and returns inferred signatures.
+# Source attribution and license: THIRD_PARTY_NOTICES.md and LICENSE.
+
 diff --git a/lib/elixir/lib/module/types.ex b/lib/elixir/lib/module/types.ex
 index de0d26e1f..c140441f2 100644
 --- a/lib/elixir/lib/module/types.ex

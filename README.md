@@ -111,22 +111,30 @@ the debug info chunk. A module compiled without it is reported as `SL008`.
 
 ## Installation
 
-This checkout has no configured publishing remote or verified Hex release.
-Only built-in Mix compiler pipelines are currently supported; custom
-compilers in a project or umbrella child cause exit 2. Install from a local
-checkout of this repository for development and test:
+SpecLint is not published on Hex. Install from the source repository:
 
 ```elixir
 def deps do
   [
-    {:spec_lint, path: "../spec_lint", only: [:dev, :test], runtime: false}
+    {:spec_lint,
+     git: "https://github.com/lukaszsamson/spec_lint.git",
+     only: [:dev, :test],
+     runtime: false}
   ]
 end
 ```
 
-Adjust the path to your checkout. Path, local git and umbrella installation
-are exercised by `test/integration/release/`; those tests do not establish
-publication on Hex or a public repository URL.
+Pin a commit with `ref:` for reproducible builds. For local development,
+replace `git:` with `path: "../spec_lint"`. Path, local git and umbrella
+installation are exercised by `test/integration/release/`.
+
+Only Mix's complete default compiler pipeline is supported. Custom compilers,
+missing stages, compile-task aliases and replacement compile tasks in a
+project or umbrella child cause exit 2.
+
+The project uses [Apache 2.0](LICENSE); [NOTICE](NOTICE) and
+[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) preserve attribution for
+copied and adapted Elixir code.
 
 SpecLint's own development dependencies (Credo, Dialyxir) are not fetched
 into your project. Then:

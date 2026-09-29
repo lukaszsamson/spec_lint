@@ -1,3 +1,12 @@
+# SPDX-License-Identifier: Apache-2.0
+# SPDX-FileCopyrightText: 2021 The Elixir Team
+# SPDX-FileCopyrightText: 2012 Plataformatec
+#
+# Adapted from Elixir c24c235 / 648b2a9, lib/elixir/lib/module/types/apply.ex.
+# Modified: adapter interface, qualified compiler checks, and surrounding operations;
+# apply_infer/2 and its private helpers retain the upstream application rule.
+# Source attribution and license: THIRD_PARTY_NOTICES.md and LICENSE.
+
 defmodule SpecLint.Compiler.V121 do
   @moduledoc """
   Compiler adapter for Elixir 1.21 development builds with checker chunk

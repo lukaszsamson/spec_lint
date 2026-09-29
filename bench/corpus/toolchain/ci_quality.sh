@@ -39,7 +39,9 @@ if [ "$mode" = gating ]; then
   # Explicit --only prevents an accidentally excluded cross-compiler suite
   # from appearing as successful qualification.
   run cross_compiler mix test --only cross_compiler
-  run dialyzer mix dialyzer
+  # Fixtures intentionally carry invalid specs; analyze production modules
+  # in a separate dev build so test/support is never part of the target.
+  run dialyzer env MIX_ENV=dev MIX_BUILD_PATH="${MIX_BUILD_PATH}-dialyzer" mix dialyzer
 else
   # The upstream compiler is a diagnostic lane, not CI gating qualification.
   run upstream_diagnostics mix test test/spec_lint/compiler_gating_test.exs test/spec_lint/upstream_qualification_test.exs test/integration/report_only_compiler_test.exs
