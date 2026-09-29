@@ -156,9 +156,13 @@ Headline numbers of the current reports (functions / classes):
 | ecto | 165 | unknown 137, none 24, possible_domain_escape 4 |
 | fixtures | 94 | clause_conflict 15, structured_possible 6, possible_domain_escape 8, possible_input_approximate 5, unknown 28, none 32 |
 
-No corpus of real code has a `clause_conflict` function, which is the one
-gating class: gating recall on the nine known real omissions is 0 of 9
-(see `omissions/README.md`). The fixtures row was regenerated for the
+None of the corpora in this table (stdlib and the six original libraries)
+has a `clause_conflict` function, which is the one gating class: gating
+recall on the nine known real omissions is 0 of 9 (see
+`omissions/README.md`). The expansion cohort does: `Oban.Registry.via/3`,
+`Ash.Page.page_opts/1` and seven clauses of `Absinthe.Blueprint.Input.parse/1`
+(`expansion_triage.md`, `holdout2_baseline.md`,
+`clause_local_qualification.md`). The fixtures row was regenerated for the
 clause-local qualification experiment: it adds the two clause-local omission
 stand-ins and nine control functions (`SpecLint.Fixtures.ClauseLocal`),
 which account for all 11 new functions; the classes of the 83 earlier
@@ -243,9 +247,13 @@ not a runner failure; exit 2 or incomplete results fail the benchmark and
 retain logs. Large reports retain the complete normalized JSON as `.json.gz`
 and a checked summary as `.json`. Previous historical reduced reports are
 not retroactively upgraded; regenerate them to get full detail/provenance.
-The provenance file includes machine-local artifact paths, source and lock
-identities, the loaded compiler hash, and a content digest of the tool's
-analysis scripts and implementation. A dirty flag alone is not an identity.
+The provenance file includes artifact paths, source and lock identities, the
+loaded compiler hash, and a content digest of the tool's analysis scripts and
+implementation. A dirty flag alone is not an identity. Paths are written with
+the same placeholders as the reports (`$OSS`, `$ELIXIR`, `$COMPILER`, `$TMP`,
+`$SPEC_LINT`); the sha256 values carry the identity and do not depend on
+them. Provenance files written before 2026-09-29 were rewritten to these
+placeholders in place, with no other change.
 
 `req.consumer.json` additionally exercises the actual Mix task. Reproduce in
 a separate Req checkout at the same revision by adding
@@ -286,4 +294,24 @@ bench/corpus/run.sh req broadway oban phoenix_live_view ash nx absinthe tesla
 Leave out `SPEC_LINT_PRODUCT_ARGS` and write to `off/` for the baseline
 reading. Tesla needs the qualified compiler selected explicitly (its
 `.tool-versions` names 1.19; see `holdout2_baseline.md`). Results and triage:
-`clause_local_qualification.md`.
+`clause_local_qualification.md`. Since the Close phase the qualification is
+the default, so `SPEC_LINT_PRODUCT_ARGS=--no-clause-local-qualification`
+gives the `off/` reading on the current tree.
+
+`reports/expansion/clause_local/default/` holds the confirmation runs of the
+Close phase: product-only reports with the final tree and the default
+configuration (qualification on, compiler check of `clause_reachable`), for
+the stdlib and the two fresh holdouts, written with
+`SPEC_LINT_CORPUS_OUT=.../clause_local/default` and no product arguments.
+The top-level `reports/NAME.spec_lint.json` and
+`reports/expansion/NAME.spec_lint.json` were not regenerated; they are the
+Phase 2 baselines, taken with the qualification off.
+
+## Other artefacts of the 2026-09-29 Close phase
+
+- `reports/expansion/ash_integration_witnesses.json`: the output of
+  `elixir bench/corpus/ash_integration_witnesses.exs /tmp/spec-lint-expansion`
+  after the review repaired its inputs (`holdout_triage.md`).
+- `compiler_counterexamples/`: minimal modules, with a self-checking
+  script, for the two compiler inference limits behind most known misses
+  (helper insensitivity and `Enum.map/2` results).

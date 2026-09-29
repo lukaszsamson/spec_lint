@@ -15,17 +15,39 @@ defmodule SpecLint.Rules.ReturnConflict do
   Prerequisites (`SpecLint.Rule.sl001_prerequisites/1`): no `unsupported`
   loss, no overlap tag, no arrow in the return and no argument translated
   with an `arrow_polarity` loss. For the clause form, containment is part of
-  the evidence, and `clause_reachable` approximates "the compiler did not
-  flag the clause unreachable", which the checker chunk does not record: it
-  is `:blocked` when the clause's domain is covered by the clauses before it
-  (`SpecLint.Compare.shadowed/1`, which over-approximates and so never
-  misses a clause the compiler reports as redundant) and `:unchecked`
-  otherwise. A `no_return()` spec is `SL006`'s case.
+  the evidence, and `clause_reachable` stands for "the compiler did not
+  flag the clause unreachable", which the checker chunk does not record. It
+  is `:blocked` when either of two checks flags the clause:
 
-  ## Clause-local qualification (experiment, off by default)
+    * the compiler's own type checker, re-run over the function's debug info
+      (`SpecLint.Reachability`), reports a pattern or guard diagnostic
+      anywhere in the function (a guard that can never succeed, a head that
+      cannot match, a redundant clause). Stored clauses cannot be mapped to
+      source clauses, so one diagnostic blocks every clause conflict of the
+      function, and its lines are kept in `data.pattern_diagnostic_lines`;
+    * the clause's stored domain is covered by the stored clauses before it
+      (`SpecLint.Compare.shadowed/1`), which also covers clauses quoted with
+      `generated: true`, whose diagnostics the type checker suppresses.
+
+  Otherwise it is `:unchecked`: the type checker reported nothing, but a dead
+  clause it cannot see (a contradictory numeric guard, say) is not ruled
+  out. When the re-check could not run (`data.reachability_check`), the
+  state is `:unchecked` for the slice-wide form of the prerequisites and
+  `:blocked` under the clause-local qualification. A `no_return()` spec is
+  `SL006`'s case.
+
+  The reported `clause` is the index of the stored signature clause, not of
+  a source clause: the checker drops clauses whose return is empty (such as
+  one that always raises) and merges clauses with equal returns, and the
+  issue line is the function's first line. The details label it "stored
+  signature clause".
+
+  ## Clause-local qualification (the default)
 
   With `clause_local_qualification: true` in the function context
-  (`SpecLint.Config`), a clause-level finding replaces the slice-wide
+  (`SpecLint.Config`, where it defaults to `true` since the Close-phase
+  decision; a hand-built context without the key reads as `false`), a
+  clause-level finding replaces the slice-wide
   prerequisites `no_arrow_in_return` and `no_arrow_polarity_argument` by
   `clause_contained_in_lo`: the clause's whole domain tuple is non-empty
   and contained in the tuple of the spec's argument lower bounds `D_lo`
@@ -123,6 +145,7 @@ defmodule SpecLint.Rules.ReturnConflict do
   defp clause_issues(context, slice, evidence) do
     name = Rule.function_name(context)
     clause_local? = Map.get(context, :clause_local_qualification, false)
+    check = Map.get(context, :pattern_diagnostics, {:error, :not_checked})
 
     for %{class: :clause_conflict} = clause <- evidence.clauses do
       contributing = Enum.find(slice.relations.contributing, &(&1.index == clause.index))
@@ -133,28 +156,29 @@ defmodule SpecLint.Rules.ReturnConflict do
         inferred: [clause.index],
         evidence: :clause_conflict,
         message: "the clause matching this domain returns only values outside the spec",
-        details: [
-          {"spec", Rule.spec_string(name, slice.spec)},
-          {"inferred clause", "##{clause.index} " <> clause_text(contributing)},
-          {"slice", Rule.domain_string(slice.args)},
-          {"evidence",
-           "clause_conflict (signature backend, #{containment_text(clause_local?)}, " <>
-             "#{Rule.translation_string(slice)})"}
-        ],
-        prerequisites: clause_prerequisites(slice, contributing, clause_local?),
-        data: clause_data(slice, clause_local?)
+        details:
+          [
+            {"spec", Rule.spec_string(name, slice.spec)},
+            {"stored signature clause", "##{clause.index} " <> clause_text(contributing)},
+            {"slice", Rule.domain_string(slice.args)},
+            {"evidence",
+             "clause_conflict (signature backend, #{containment_text(clause_local?)}, " <>
+               "#{Rule.translation_string(slice)})"}
+          ] ++ check_details(check),
+        prerequisites: clause_prerequisites(slice, contributing, check, clause_local?),
+        data: Map.merge(clause_data(slice, clause_local?), check_data(check))
       )
     end
   end
 
   @superseded [:no_arrow_in_return, :no_arrow_polarity_argument]
 
-  defp clause_prerequisites(slice, contributing, false) do
+  defp clause_prerequisites(slice, contributing, check, false) do
     Rule.sl001_prerequisites(slice) ++
-      [{:clause_contained, :met}, {:clause_reachable, reachable(contributing)}]
+      [{:clause_contained, :met}, {:clause_reachable, reachable(contributing, check, false)}]
   end
 
-  defp clause_prerequisites(slice, contributing, true) do
+  defp clause_prerequisites(slice, contributing, check, true) do
     kept =
       for {name, _state} = pair <- Rule.sl001_prerequisites(slice),
           name not in @superseded,
@@ -163,7 +187,7 @@ defmodule SpecLint.Rules.ReturnConflict do
     kept ++
       [
         {:clause_contained_in_lo, Rule.state(contributing.contained_lo?)},
-        {:clause_reachable, reachable(contributing)}
+        {:clause_reachable, reachable(contributing, check, true)}
       ]
   end
 
@@ -176,11 +200,30 @@ defmodule SpecLint.Rules.ReturnConflict do
     %{qualification: :clause_local, superseded_prerequisites: superseded}
   end
 
+  defp check_data({:ok, []}), do: %{}
+  defp check_data({:ok, lines}), do: %{pattern_diagnostic_lines: lines}
+  defp check_data({:error, reason}), do: %{reachability_check: "unavailable: " <> inspect(reason)}
+
+  defp check_details({:ok, [_ | _] = lines}),
+    do: [{"compiler pattern diagnostics", "lines " <> Enum.map_join(lines, ", ", &line_text/1)}]
+
+  defp check_details(_check), do: []
+
+  defp line_text(nil), do: "?"
+  defp line_text(line), do: Integer.to_string(line)
+
   defp containment_text(false), do: "clause contained"
   defp containment_text(true), do: "clause contained in the spec lower bound"
 
   defp clause_text(%{args: args, return: return}), do: Rule.clause_string({args, return})
 
-  defp reachable(%{shadowed?: true}), do: :blocked
-  defp reachable(_contributing), do: :unchecked
+  # clause_reachable: blocked when shadowed or when the compiler's type
+  # checker flags the function's patterns or guards; unchecked when it
+  # reports nothing. A check that could not run blocks only under the
+  # clause-local qualification.
+  defp reachable(%{shadowed?: true}, _check, _clause_local?), do: :blocked
+  defp reachable(_contributing, {:ok, []}, _clause_local?), do: :unchecked
+  defp reachable(_contributing, {:ok, [_ | _]}, _clause_local?), do: :blocked
+  defp reachable(_contributing, {:error, _reason}, true), do: :blocked
+  defp reachable(_contributing, {:error, _reason}, false), do: :unchecked
 end

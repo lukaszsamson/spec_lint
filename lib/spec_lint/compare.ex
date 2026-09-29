@@ -303,13 +303,7 @@ defmodule SpecLint.Compare do
     end
   end
 
-  # Contributing clauses, in clause order. Containment is decided on whole
-  # argument tuples. Not contained in D_hi means not contained in D (D ⊆ D_hi),
-  # so an escape is certain even with losses. Containment in D_lo implies
-  # containment in D (D_lo ⊆ D); containment in D_hi alone implies it only
-  # when no argument lost precision (then D_lo = D = D_hi). `contained_lo?`
-  # records containment in D_lo itself, for a non-empty clause domain (an
-  # empty one is contained in anything and says nothing about any input).
+  # Contributing clauses, in clause order (see clause_containment/4).
   defp contributing(clauses, used, spec_domain, input_approximate?, d_lo) do
     used_set = MapSet.new(used)
     spec_domain_lo = Compiler.tuple(d_lo)
@@ -318,19 +312,8 @@ defmodule SpecLint.Compare do
     for {{args, return}, index} <- Enum.with_index(clauses), MapSet.member?(used_set, index) do
       clause_domain = args |> Enum.map(&Compiler.upper_bound/1) |> Compiler.tuple()
 
-      # D_lo ⊆ D_hi, so containment in D_lo is only tested inside D_hi, and
-      # without losses D_lo = D_hi.
-      in_hi? = Compiler.subtype?(clause_domain, spec_domain)
-
-      in_lo? =
-        in_hi? and (not input_approximate? or Compiler.subtype?(clause_domain, spec_domain_lo))
-
-      containment =
-        cond do
-          not in_hi? -> :domain_escape
-          in_lo? -> :contained
-          true -> :containment_unknown
-        end
+      {containment, contained_lo?} =
+        clause_containment(clause_domain, spec_domain, spec_domain_lo, input_approximate?)
 
       %{
         index: index,
@@ -338,10 +321,44 @@ defmodule SpecLint.Compare do
         return: return,
         static_return?: not Compiler.gradual?(return),
         containment: containment,
-        contained_lo?: in_lo? and not Compiler.empty?(clause_domain),
+        contained_lo?: contained_lo?,
         shadowed?: MapSet.member?(shadowed, index)
       }
     end
+  end
+
+  @doc """
+  Containment of one clause's whole domain tuple in a spec slice's domain,
+  given the tuples of the argument upper bounds (`D_hi`) and lower bounds
+  (`D_lo`) and whether any argument lost precision. Returns the clause's
+  containment and `contained_lo?`.
+
+  Not contained in `D_hi` means not contained in `D` (`D ⊆ D_hi`), so an
+  escape is certain even with losses. Containment in `D_lo` implies
+  containment in `D` (`D_lo ⊆ D`); containment in `D_hi` alone implies it
+  only when no argument lost precision (then `D_lo = D = D_hi`).
+  `contained_lo?` is containment in `D_lo` itself for a non-empty clause
+  domain: an empty one is contained in anything and says nothing about any
+  input, so it is never `contained_lo?`.
+  """
+  @spec clause_containment(Compiler.descr(), Compiler.descr(), Compiler.descr(), boolean()) ::
+          {containment(), boolean()}
+  def clause_containment(clause_domain, spec_domain_hi, spec_domain_lo, input_approximate?) do
+    # D_lo ⊆ D_hi, so containment in D_lo is only tested inside D_hi, and
+    # without losses D_lo = D_hi.
+    in_hi? = Compiler.subtype?(clause_domain, spec_domain_hi)
+
+    in_lo? =
+      in_hi? and (not input_approximate? or Compiler.subtype?(clause_domain, spec_domain_lo))
+
+    containment =
+      cond do
+        not in_hi? -> :domain_escape
+        in_lo? -> :contained
+        true -> :containment_unknown
+      end
+
+    {containment, in_lo? and not Compiler.empty?(clause_domain)}
   end
 
   @doc """
@@ -350,11 +367,18 @@ defmodule SpecLint.Compare do
   unreachable"): clause `k` is shadowed when the upper bound of its domain
   tuple is a subtype of the union of the domain tuples of clauses `0..k-1`.
 
-  The checker chunk does not record reachability, and stored clause
-  domains over-approximate guarded clauses, so this over-reports: it never
-  misses a clause the compiler reports as redundant, and it may flag a
-  clause whose earlier clauses only match part of their stored domain
-  because of guards.
+  The checker chunk does not record reachability. This is one of the two
+  checks behind `clause_reachable`; the other re-runs the compiler's type
+  checker (`SpecLint.Reachability`). Alone it misses dead clauses: a clause
+  whose guard contradicts its own pattern is stored with its pattern domain
+  (minus the earlier clauses), which no earlier clause covers. Stored
+  clauses are also not in source order (the checker drops clauses with an
+  empty return and merges clauses with equal returns into an earlier
+  entry), so "earlier" is the stored order. What it adds is coverage for
+  clauses quoted with `generated: true`, whose diagnostics the type checker
+  suppresses. Stored clause domains over-approximate guarded clauses, so it
+  may also flag a clause whose earlier clauses match only part of their
+  stored domain because of guards.
   """
   @spec shadowed([Compiler.clause()]) :: [non_neg_integer()]
   def shadowed(clauses) do

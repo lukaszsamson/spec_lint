@@ -21,7 +21,10 @@ defmodule Mix.Tasks.SpecLint.Baseline do
   may not exist yet.
 
   Options: `--output PATH` (default: the configured baseline), `--config`,
-  `--profile`, `--require-static-return`. Filters (`--module`, `--app`)
+  `--profile`, `--require-static-return`, `--[no-]clause-local-qualification`.
+  The last two change which findings gate, and a baseline records the gate
+  state of each finding (`SpecLint.Baseline`, "Gate state"), so write the
+  baseline under the configuration CI uses. Filters (`--module`, `--app`)
   and rule selection (`--rules`, `--except`) are rejected: a baseline from
   a partial run or a narrower rule set would drop entries. Findings of
   rules the configuration turns `:off` are kept from the previous baseline

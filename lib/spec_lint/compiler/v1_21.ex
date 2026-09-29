@@ -8,8 +8,9 @@ defmodule SpecLint.Compiler.V121 do
   chunk version, because `Descr` and `apply_infer/2` change between
   revisions without a chunk version bump.
 
-  This is the only module in SpecLint that calls `Module.Types.Descr` or
-  `:elixir_erl`. `apply_infer/2` is a line-by-line copy of the private
+  This is the only module in SpecLint that calls `Module.Types`,
+  `Module.Types.Descr`, `Module.ParallelChecker` or `:elixir_erl`.
+  `apply_infer/2` is a line-by-line copy of the private
   `Module.Types.Apply.apply_infer/2` of the qualified revision, including its
   clause cutoff; differential tests compare it with the compiler's own
   application through `Module.Types.Apply.remote_apply/7`.
@@ -274,6 +275,59 @@ defmodule SpecLint.Compiler.V121 do
   @impl true
   @spec max_clauses() :: 16
   def max_clauses, do: @max_clauses
+
+  # Re-runs Module.Types.warnings/6, what Module.ParallelChecker runs over
+  # every module after compilation, with a private checker cache for remote
+  # lookups (read from object code on the code path, never loaded). Only the
+  # warnings Module.Types.Pattern emits are kept (clause heads and guards,
+  # including patterns and guards inside the body), plus unused private
+  # clauses. The checker may load a struct module that a pattern names to
+  # read its fields, as compilation already did to expand the struct.
+  @impl true
+  @spec pattern_diagnostics(module(), String.t() | nil, keyword(), [tuple()]) ::
+          {:ok, [SpecLint.Compiler.pattern_diagnostic()]} | {:error, term()}
+  def pattern_diagnostics(module, file, attributes, definitions) do
+    if function_exported?(Module.Types, :warnings, 6) and
+         function_exported?(Module.ParallelChecker, :start_link, 1) do
+      run_checker(module, file, attributes, definitions)
+    else
+      {:error, :checker_unavailable}
+    end
+  end
+
+  defp run_checker(module, file, attributes, definitions) do
+    {:ok, cache} = Module.ParallelChecker.start_link([])
+
+    try do
+      warnings =
+        Module.Types.warnings(module, file || "nofile", attributes, definitions, [], cache)
+
+      {:ok, warnings |> Enum.flat_map(&pattern_diagnostic/1) |> Enum.uniq() |> Enum.sort()}
+    rescue
+      error -> {:error, {:checker_failed, Exception.message(error)}}
+    catch
+      kind, reason -> {:error, {:checker_failed, {kind, reason}}}
+    after
+      :ok = Module.ParallelChecker.stop(cache)
+    end
+  end
+
+  defp pattern_diagnostic({Module.Types.Pattern, _warning, {_file, meta, {_mod, fun, arity}}}),
+    do: [{{fun, arity}, line(meta)}]
+
+  defp pattern_diagnostic(
+         {Module.Types, {:unused_clause, _kind, _fun_arity}, {_file, meta, {_mod, fun, arity}}}
+       ),
+       do: [{{fun, arity}, line(meta)}]
+
+  defp pattern_diagnostic(_warning), do: []
+
+  defp line(meta) do
+    case Keyword.get(meta, :line) do
+      line when is_integer(line) and line > 0 -> line
+      _ -> nil
+    end
+  end
 
   # Copy of Module.Types.Apply.apply_infer/2 (Elixir c24c235). Keep the
   # clause order, the reverse accumulation and the reduce direction: they

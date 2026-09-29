@@ -1,5 +1,12 @@
 #!/usr/bin/env bash
 # Write reproducible corpus input identity alongside its reports.
+#
+# Machine-local path prefixes are replaced as in normalise_report.sh:
+# SPEC_LINT_OSS -> $OSS, ELIXIR_DIR (default ~/elixir) -> $ELIXIR,
+# SPEC_LINT_COMPILER_REPO -> $COMPILER, SPEC_LINT_RAW_DIR -> $TMP and the
+# tool repository -> $SPEC_LINT, each in its given and its canonical
+# (symlink-resolved) spelling. Identity is carried by the sha256 values,
+# which never depend on these paths.
 set -euo pipefail
 
 if [ "$#" -lt 5 ]; then
@@ -74,6 +81,15 @@ if [ -n "${SPEC_LINT_COMPILER_REPO:-}" ]; then
       patch_sha256: (if $patch == "null" then null else $patch end)}')"
 fi
 
+canonical_path() {
+  if [ -d "$1" ]; then (cd "$1" && pwd -P); else printf '%s\n' "$1"; fi
+}
+
+oss="${SPEC_LINT_OSS:-/dev/null}"
+elixir_dir="${ELIXIR_DIR:-$HOME/elixir}"
+compiler_repo="${SPEC_LINT_COMPILER_REPO:-/dev/null}"
+raw="${SPEC_LINT_RAW_DIR:-/dev/null}"
+
 mkdir -p "$(dirname "$dest")"
 jq -nS --arg name "$name" --arg source_revision "$source_revision" \
   --arg tool_revision "$tool_revision" --argjson source_dirty "$source_dirty" \
@@ -93,4 +109,16 @@ jq -nS --arg name "$name" --arg source_revision "$source_revision" \
       loaded_module_types_beam: $compiler_beam,
       loaded_module_types_sha256: $compiler_beam_hash},
     corpus_manifest_sha256: (if $manifest_hash == "null" then null else $manifest_hash end),
-    artifacts: $ebins}' >"$dest"
+    artifacts: $ebins}' |
+  jq -S --arg oss_real "$(canonical_path "$oss")" --arg oss "$oss" \
+    --arg elixir_real "$(canonical_path "$elixir_dir")" --arg elixir "$elixir_dir" \
+    --arg compiler_real "$(canonical_path "$compiler_repo")" --arg compiler "$compiler_repo" \
+    --arg raw_real "$(canonical_path "$raw")" --arg raw "$raw" \
+    --arg root_real "$(canonical_path "$tool_repo")" --arg root "$tool_repo" '
+    walk(if type == "string" then
+      (split($oss_real) | join("$OSS") | split($oss) | join("$OSS") |
+       split($compiler_real) | join("$COMPILER") | split($compiler) | join("$COMPILER") |
+       split($elixir_real) | join("$ELIXIR") | split($elixir) | join("$ELIXIR") |
+       split($raw_real) | join("$TMP") | split($raw) | join("$TMP") |
+       split($root_real) | join("$SPEC_LINT") | split($root) | join("$SPEC_LINT"))
+    else . end)' >"$dest"

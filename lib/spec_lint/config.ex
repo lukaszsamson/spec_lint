@@ -17,7 +17,7 @@ defmodule SpecLint.Config do
     exclude: ["lib/generated/**"],
     expand_opaque: false,
     require_static_return: false,
-    clause_local_qualification: false,
+    clause_local_qualification: true,
     warnings_as_errors: false
   ]
   ```
@@ -32,11 +32,12 @@ defmodule SpecLint.Config do
   `require_static_return` defaults to `false`, the Phase 1 rerun decision
   (DESIGN.md section 4, `EXPERIMENTS.md`).
 
-  `clause_local_qualification` (default `false`) is an experiment, not an
-  adopted policy (DESIGN.md section 4, `bench/corpus/clause_local_qualification.md`):
-  with it, an `SL001` `clause_conflict` needs its clause's whole domain
-  contained in the spec's argument lower bounds instead of the slice-wide
-  arrow prerequisites (`SpecLint.Rules.ReturnConflict`).
+  `clause_local_qualification` defaults to `true`, the Close-phase decision
+  of 2026-09-29 (DESIGN.md section 4, `bench/corpus/clause_local_qualification.md`):
+  an `SL001` `clause_conflict` needs its clause's whole domain contained in
+  the spec's argument lower bounds instead of the slice-wide arrow
+  prerequisites (`SpecLint.Rules.ReturnConflict`), in both profiles.
+  `false` restores the slice-wide arrow prerequisites.
 
   A baseline path given explicitly (`baseline:` in the file, or
   `--baseline`) sets `baseline_explicit`: `SpecLint.Run` then treats a
@@ -75,7 +76,7 @@ defmodule SpecLint.Config do
             exclude: [],
             expand_opaque: false,
             require_static_return: false,
-            clause_local_qualification: false,
+            clause_local_qualification: true,
             warnings_as_errors: false,
             baseline_explicit: false,
             source: nil

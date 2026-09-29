@@ -78,12 +78,20 @@ declared return rejects, next to an in-domain control it accepts.
 
 | Fixture (`ClauseLocal`), spec line | Original MFA | Corpus revision | Original file:line | Shape reproduced | Class (union / static) | SL001 gate without / with the flag |
 | --- | --- | --- | --- | --- | --- | --- |
-| `page_opts/1`, line 285 | `Ash.Page.page_opts/1` | ash `164a4c0` | `lib/ash/page/page.ex:13-14` | `false` and `nil` are in the input spec and their clause returns `{:ok, false}` or `{:ok, nil}`; an inexact arrow inside the page struct gives the slice an `arrow_polarity` loss | clause_conflict / possible_gradual | no (`no_arrow_polarity_argument`) / yes |
+| `page_opts/1`, line 285 | `Ash.Page.page_opts/1` | ash `164a4c0` | `lib/ash/page/page.ex:13-14` | `false` and `nil` are in the input spec and their clause returns `{:ok, false}` or `{:ok, nil}`; an inexact arrow inside the page struct gives the slice an `arrow_polarity` loss | clause_conflict / possible_gradual | no (`no_arrow_polarity_argument`) / yes (the default since the Close phase) |
 | `via/3`, line 302 | `Oban.Registry.via/3` | oban `23fa817` | `lib/oban/registry.ex:122-125` | a non-nil value adds a third element to the inner tuple; exact translation | clause_conflict / possible_gradual | yes / yes |
 
-Unlike the nine above, both are `clause_conflict` already; the experiment
+Unlike the nine above, both are `clause_conflict` already; the qualification
 only changes whether `page_opts/1` gates. The stand-in drops Ash's option
-validation (its catch-all clause returns a literal page or an error).
+validation (its catch-all clause returns a literal page or an error), so its
+in-spec control `[limit: 1] -> {:ok, %Page{}}` is synthetic: in Ash the
+catch-all returns `{:ok, mod.to_options(value)}`, a keyword list, which is
+also outside `{:ok, page()}` (`[limit: 1]` returns `{:ok, [limit: 1]}` on the
+pinned build), so the real function has no in-spec success input at all and
+its only in-domain control is the error path. SpecLint does not report the
+catch-all (its stored domain is wider than the spec's, `domain_escape`, and
+its `{:ok, _}` payload is gradual, `payload_gradual`); the stand-in models the
+one clause SpecLint does report.
 
 ## Adding or changing a reproducer
 

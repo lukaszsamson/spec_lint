@@ -1,9 +1,15 @@
 # Clause-local translation-loss qualification
 
 This is NEXT_STEPS.md "Next experiment", item 1, run on 2026-09-29 from
-`10970dc`. It ships behind `clause_local_qualification: true`
-(`--clause-local-qualification`). The default is `false`, and nothing here
-changes the default policy. The Close phase decides whether to adopt it.
+`10970dc` behind `clause_local_qualification: true`
+(`--clause-local-qualification`), first with the default `false`.
+
+**Decision (Close phase, 2026-09-29): adopted as the default, gating in both
+profiles** (section "Decision" below). An independent adversarial review
+found a reachability hole that the qualification would have exposed
+(section "Independent review"); it was fixed for both settings before the
+decision, and `--no-clause-local-qualification` restores the slice-wide
+arrow prerequisites.
 
 ## What changes
 
@@ -18,7 +24,8 @@ With the flag, a clause-level finding has these prerequisites:
 - `no_unsupported_loss`, kept;
 - `no_overlap`, kept;
 - `clause_contained_in_lo`, new, replacing both arrow prerequisites;
-- `clause_reachable`, kept.
+- `clause_reachable`, kept (since the review also decided by the
+  compiler's own pattern and guard check, `SpecLint.Reachability`).
 
 `clause_contained_in_lo` holds when the clause's whole stored domain tuple
 is non-empty and a subtype of `tuple(D_lo)`. The comparison is tuple-wise
@@ -55,8 +62,13 @@ and does not acknowledge the finding once it gates (tested).
   arity, or a non-function.
 - **Conclusion.** Any normal return of that clause, for inputs inside the
   spec, is outside the spec. The clause must return normally for some input,
-  and whether it is reachable is still `clause_reachable`: an approximation
-  that is unchecked, or blocked when the clause is possibly shadowed.
+  and whether it is reachable is still `clause_reachable`: blocked when the
+  compiler's type checker, re-run over the function's debug info, reports a
+  pattern or guard diagnostic in the function, or when the clause is
+  possibly shadowed; unchecked otherwise. A dead clause the type checker
+  cannot see (a contradictory numeric guard) is the residual risk. It is
+  the risk the slice-wide policy already accepts on arrow-free slices; the
+  qualification extends it to clauses of slices with an arrow elsewhere.
 
 In the current `Compare`/`Evidence` pipeline, the class `clause_conflict`
 already requires containment. That means `contained_lo? = true` whenever the
@@ -65,7 +77,10 @@ emitted finding `clause_contained_in_lo` is `met`, and the measured effect of
 the flag is exactly the removal of the two arrow prerequisites for
 clause-level findings. The new prerequisite is recorded as the explicit
 claim. It guards the rule against a future change of the containment logic
-and also rejects an empty clause domain.
+and also rejects an empty clause domain. Both halves are tested since the
+review (`clause_local_test.exs`, "clause_contained_in_lo is checked, not
+assumed"): `Compare.clause_containment/4` on an empty clause domain, and a
+rule-level context whose contained clause has `contained_lo?: false`.
 
 ## Fixtures and tests
 
@@ -94,8 +109,15 @@ and also rejects an empty clause domain.
 | `other_arity/1` | same spec, clause `:b` returns a 2-ary function | **gates**: a real violation, witnessed (`is_function(other_arity(:b), 2)`, control `:a` is 1-ary). Without the flag it is blocked by `no_arrow_in_return` |
 | `gradual/1` | contained clause returning `dynamic()` (`apply/3`) | top-only, no finding |
 | `near_top/1` | contained clause returning `dynamic(not :undefined)` (`Process.put/2`) | near-top, no finding |
-| `redundant/1` | contained clause covered by an earlier `is_atom/1` clause | `clause_conflict`, blocked by `clause_reachable` |
+| `redundant/1` | contained clause covered by an earlier `is_atom/1` clause | `clause_conflict`, blocked by `clause_reachable` (the clause is quoted with `generated: true`, so the type checker's diagnostic is suppressed and the shadowing check blocks it) |
 | `Fixtures.Review.apply_it/2` | slice-level conflict with an inexact arrow argument | still blocked by `no_arrow_polarity_argument` |
+| `ClauseLocalProbe.Dead.g/1` (review) | inexact arrow argument; clause `def g(:b = x) when is_integer(x)` can never match, stored as `(:b) -> {:error, :b}` and covered by no earlier clause | `clause_conflict`, blocked by `clause_reachable` with and without the flag (the compiler reports "this guard will never succeed"; `data.pattern_diagnostic_lines`). Before the fix it **gated with the flag**: a false positive. Runtime: `g(:b)` returns `:fine` |
+| `ClauseLocalProbe.Dead.h/1` (review) | the same dead clause without an arrow | blocked by `clause_reachable`; before the fix it gated even without the flag |
+| `ClauseLocalProbe.Index.idx/1` (review) | source clause 0 always raises and is dropped from the stored signature | gates (true positive, `idx(:b)` returns `{:error, :b}`); the finding names "stored signature clause #0", which is source clause 1 |
+
+The three review probes are compiled out of process in the test (the
+compiler warns about the dead clauses), so they are not in
+`reports/fixtures.json`.
 
 With `require_static_return: true`, the gradual `dynamic({:ok, false or
 nil})` clause return of `page_opts/1` is `possible_gradual` (SL002, not
@@ -171,6 +193,17 @@ There is exactly one:
 - **Caveat.** The function is `@doc false`, a custom NimbleOptions-style
   validator, where `{:ok, false}` and `{:ok, nil}` mean "no pagination". It
   is a real spec omission of an internal helper, not a user-facing bug.
+- **The rest of the function also escapes (review).** The catch-all clause
+  returns `{:ok, mod.to_options(value)}` from `validate_or_error/2`, a
+  keyword list, never a page: on the pinned build `[limit: 1]` returned
+  `{:ok, [limit: 1]}`, `[offset: 2, limit: 1]` returned
+  `{:ok, [offset: 2, limit: 1]}` and `[after: "x", limit: 1]` returned
+  `{:ok, [after: "x", limit: 1]}`. No input returns `{:ok, page()}`: the
+  declared return is wrong as a whole, not only for `false` and `nil`.
+  SpecLint does not report the catch-all (its stored domain is wider than
+  the spec's and its payload is gradual), a silent false negative. The
+  stand-in's in-spec control `[limit: 1] -> {:ok, %Page{}}` is therefore
+  synthetic (`omissions/README.md`). The verdict for clause 0 stands.
 
 No other finding changed gate state in any corpus, tuned or holdout.
 
@@ -222,9 +255,8 @@ in both holdout provenance files.
 
 ## Review
 
-No independent reviewer was available to this run. The review was
-adversarial self-review plus mutation checks of the new tests: each of these
-deliberate breakages of `ReturnConflict` made
+**Self-review (experiment phase).** Mutation checks of the new tests: each
+of these deliberate breakages of `ReturnConflict` made
 `clause_local_test.exs`/`omissions_test.exs` fail:
 
 - also dropping `no_overlap` (2 failures);
@@ -232,22 +264,72 @@ deliberate breakages of `ReturnConflict` made
 - ignoring the flag (7);
 - keeping `no_arrow_in_return` (2).
 
-An independent adversarial review of the soundness argument is still
-recommended before adoption, in particular of the claim that every
-translation loss only shrinks `D_lo`. That claim is inherited from the
-translator's existing bound tests, not re-proved here.
+Two mutants survived then and were not reported: replacing
+`Rule.state(contributing.contained_lo?)` by `:met`, and dropping the
+non-empty condition of `contained_lo?`. Both are killed since the review.
 
-## Summary for the Close phase
+## Independent review
 
-- **Benefit.** +1 witnessed true gate (`Ash.Page.page_opts/1`) on the tuned
-  corpora, 0 on the fresh holdouts, and 0 false positives anywhere.
-- **Controls.** All negative controls hold. A function returned at another
-  arity than an inexact arrow return now gates, which is correct.
-- **Risk.** Low. The argument depends only on `D_lo` being a sound lower
-  bound and `S_hi` a sound upper bound, which the translator already
-  guarantees and tests. The flag moves no evidence class and no
-  fingerprint.
-- **Limitation.** The measured benefit is one function. The flag does not
-  address the dominant unknown reasons (`top_only`, `no_counted_component`).
-  Adoption would be justified by its soundness and zero observed noise, not
-  by recall.
+An independent adversarial review (Close phase, 2026-09-29) attacked the
+soundness argument, the triage, the witnesses and the evidence files. It
+did not dispute that a translation loss only shrinks `D_lo` or that `S_hi`
+stays an upper bound. Its findings and their outcomes:
+
+| Finding | Severity | Outcome |
+| --- | --- | --- |
+| `clause_reachable` missed a clause whose guard contradicts its pattern (stored with its pattern domain and body return, covered by no earlier clause), so the flag gated a dead clause (`g/1`), and the slice-wide policy gated the arrow-free twin (`h/1`); the "never misses a clause the compiler reports" wording was false | medium | Fixed for both settings: `SpecLint.Reachability` re-runs the compiler's type checker (`Module.Types.warnings/6` through `SpecLint.Compiler.pattern_diagnostics/4`) over the debug info of every function with a clause conflict, and any pattern or guard diagnostic blocks `clause_reachable` for the function. A check that cannot run blocks under the qualification. Wording corrected in `ReturnConflict`, `Compare.shadowed/1` and DESIGN. Regression tests: the `g/1`/`h/1` probes, compiled out of process, with runtime witnesses |
+| The reported clause index is the stored signature clause, not the source clause (a raising clause is dropped, equal returns merge) | low | The detail is now labelled "stored signature clause #k", and README, DESIGN and the `ReturnConflict` moduledoc say what the index and line mean. Mapping back to a source clause needs the checker's clause mapping, which the chunk does not store (DESIGN section 12). Regression test: the `idx/1` probe |
+| `Ash.Query.apply_to/3` witness input is outside `Ash.Query.t()` | medium | Downgraded to probable: any query that loads a calculation is outside `t()` (`calculations: %{optional(atom) => :wat}`), and no in-domain error path was found (`holdout_triage.md`). The script now records whether each input is in the declared domain |
+| `Ash.page/2` and `Policy.solve/1` witness inputs are outside their declared types | medium | Inputs repaired (`distinct: []`, `timeout: nil`; `subject` and the scenario lists), checked by `Support.query_t?/1`, `authorizer_t?/1` and `valid_keyset_page?/1`; both verdicts stand with in-domain inputs. Output: `reports/expansion/ash_integration_witnesses.json` |
+| `page_opts/1` triage missed that the catch-all also escapes; the stand-in's control is synthetic | low | Documented here, in `holdout_triage.md` and in `omissions/README.md` |
+| `clause_contained_in_lo` and its non-empty condition were untested (two surviving mutants) | medium | `Compare.clause_containment/4` extracted and tested on an empty domain; a rule-level test blocks a clause with `contained_lo?: false`. Mutants re-run: both killed, and so are three new ones (ignoring a compiler diagnostic, not blocking an unavailable check, checking no definitions) |
+| DESIGN sections 4, 6 and 9.1 said arrow slices are excluded from SL001 unconditionally | low | Updated |
+| NEXT_STEPS said results were uncommitted | low | Updated |
+| `bench/corpus/README.md` said no real corpus has a clause conflict | low | Scoped to the original corpora |
+| Provenance files held session and machine paths | low | `provenance.sh` writes the report placeholders (`$OSS`, `$ELIXIR`, `$COMPILER`, `$TMP`, `$SPEC_LINT`); the 40 committed provenance files were rewritten in place, with no hash changed |
+| `mix spec_lint.baseline` accepted the option without documenting it | low | Documented, with the advice to write the baseline under the CI setting |
+| Stray `erl_crash.dump` | low | Deleted (it was ignored and never committed) |
+
+The reachability fix also changes the slice-wide policy: before it, a
+clause conflict in a clause the compiler reports as unable to match gated
+whenever the slice had no arrow. On the real-code corpora no gate depends
+on it (the stdlib and holdout confirmation runs below, and the re-check of
+`Oban.Registry.via/3`, `Ash.Page.page_opts/1` and
+`Absinthe.Blueprint.Input.parse/1`, which report no diagnostic).
+
+## Decision
+
+**Adopted: `clause_local_qualification` defaults to `true`, and a clause
+conflict it qualifies gates in both profiles**, as every other SL001
+`clause_conflict` does.
+
+The rule set for the decision: default on only if every newly gating
+finding on the fresh holdouts and tuned corpora is a triaged true positive
+that survived review, and every negative control passes.
+
+- **Newly gating findings.** One on 3,364 tuned-corpus slices,
+  `Ash.Page.page_opts/1`, a witnessed true positive whose verdict the
+  review confirmed (and found the rest of the function wrong too). None on
+  the 840 fresh-holdout slices.
+- **False positives.** 0 of 1 on real code.
+- **Negative controls.** All pass: the nine experiment controls, and the
+  review's dead-clause controls once `clause_reachable` consults the
+  compiler. Before that fix one control (`g/1`) failed, so the fix was a
+  precondition of the decision, not a follow-up.
+- **Holdouts.** They agree and cannot disagree: neither had a clause
+  conflict blocked by an arrow prerequisite, so the qualification moves
+  nothing there. The decision rests on the argument and the controls, not
+  on measured recall.
+- **Why not review-profile only.** A profile split is for evidence that is
+  useful but not trusted to fail CI (SL006). A qualified clause conflict
+  has the same evidence and the same reachability prerequisite as an
+  unqualified one; only a prerequisite that was irrelevant to the clause
+  is dropped. Gating it in one profile only would treat equal evidence
+  differently.
+- **Why not off.** The argument is a proof over sound bounds, the only
+  counterexample the review found was a reachability hole shared with the
+  existing policy and is now closed, and the benefit, though small, is a
+  real omission.
+- **Limitation.** The measured benefit is one function. The qualification
+  does not address the dominant unknown reasons (`top_only`,
+  `no_counted_component`); see `compiler_counterexamples/`.

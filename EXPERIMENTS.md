@@ -1203,10 +1203,11 @@ spec; its float inference is not a compiler bug. The earlier triage wording
 claiming integer-only branches was corrected after directly executing
 `Oban.Period.to_seconds({1.5, :minute})` and observing `90.0`.
 
-## Clause-local qualification (2026-09-29, not adopted)
+## Clause-local qualification (2026-09-29, adopted in the Close phase)
 
 `--clause-local-qualification` (config `clause_local_qualification`, default
-`false`) lets an `SL001` `clause_conflict` replace `no_arrow_in_return` and
+`false` during the experiment, `true` since the Close phase) lets an `SL001`
+`clause_conflict` replace `no_arrow_in_return` and
 `no_arrow_polarity_argument` with `clause_contained_in_lo`. That new
 prerequisite holds when the clause's whole domain is contained in the spec's
 argument lower bounds, compared tuple-wise. The slice-level form is
@@ -1236,5 +1237,16 @@ The one new gate is `Ash.Page.page_opts/1`, a witnessed true omission.
   a default `source_location: nil` against a struct type.
 
 Full tables, the soundness argument and the triage are in
-`bench/corpus/clause_local_qualification.md`. Adoption is left to the Close
-phase.
+`bench/corpus/clause_local_qualification.md`.
+
+**Close phase.** An independent adversarial review found that
+`clause_reachable`, decided from stored clause domains only, missed a clause
+whose guard contradicts its own pattern. With the flag such a clause gated
+on a slice with an arrow argument, and without it on an arrow-free slice.
+`clause_reachable` now also consults the compiler's own pattern and guard
+diagnostics, re-run over debug info (`SpecLint.Reachability`), in both
+settings. With that fix every negative control passes and the one new gate
+stands as a true positive, so the qualification is the default and gates in
+both profiles (`clause_local_qualification.md`, "Decision"). The confirmation
+runs on the stdlib and both holdouts with the final tree and the default
+configuration are in `bench/corpus/reports/expansion/clause_local/default/`.

@@ -34,6 +34,7 @@ defmodule SpecLint.Run do
     Issue,
     Policy,
     Project,
+    Reachability,
     TypeCache
   }
 
@@ -63,6 +64,7 @@ defmodule SpecLint.Run do
           modules: [Analysis.result()],
           excluded: [Analysis.result()],
           evidence: Coverage.evidence_map(),
+          reachability: %{optional(mfa()) => Reachability.result()},
           beams: [{String.t(), String.t(), String.t() | nil}],
           issues: [Issue.t()],
           inventory: [Coverage.entry()],
@@ -87,6 +89,7 @@ defmodule SpecLint.Run do
             modules: [],
             excluded: [],
             evidence: %{},
+            reachability: %{},
             beams: [],
             issues: [],
             inventory: [],
@@ -309,6 +312,7 @@ defmodule SpecLint.Run do
       | modules: modules,
         excluded: excluded,
         evidence: evidence,
+        reachability: Reachability.check(modules, evidence),
         beams: beam_list(run.project, results)
     }
 
@@ -558,7 +562,8 @@ defmodule SpecLint.Run do
       file: file,
       slices: slices,
       severity: severity,
-      clause_local_qualification: run.config.clause_local_qualification
+      clause_local_qualification: run.config.clause_local_qualification,
+      pattern_diagnostics: Map.get(run.reachability, function.mfa, {:error, :not_checked})
     }
   end
 end

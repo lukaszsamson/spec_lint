@@ -3,24 +3,67 @@
 Date 2026-09-29. This covers Phase 0, Phase 1, the post-Phase 1 review
 fixes (commit `1b0fe93`), the first external review (all five findings
 closed: four fixes in `c4a8e18`, the corpus bundle in `3adadd4`), the
-body-backend experiment (`ac3a75b`) and the second external review (this
-phase, below). `DESIGN.md` is the authoritative design, `EXPERIMENTS.md`
+body-backend experiment (`ac3a75b`), the second external review, the
+follow-up delivery, and the Close phase of the clause-local qualification
+experiment (first section). `DESIGN.md` is the authoritative design, `EXPERIMENTS.md`
 holds the measurements, and `README.md` is the user guide.
 
-## Clause-local qualification experiment (not adopted)
+## Close phase (2026-09-29): clause-local qualification adopted
 
-`--clause-local-qualification` (default `false`) qualifies an SL001 clause
-conflict by containment of its clause domain in the spec's argument lower
-bounds, instead of by the slice-wide arrow prerequisites.
+**Decision.** `clause_local_qualification` now defaults to `true`, and the
+clause conflicts it qualifies gate in both profiles. An SL001 clause
+conflict is qualified by its own clause: its whole domain must be inside
+the spec's argument lower bounds (`clause_contained_in_lo`), and an arrow
+elsewhere in the slice no longer blocks it. `--no-clause-local-qualification`
+or `clause_local_qualification: false` restores the slice-wide arrow
+prerequisites. Rationale and the decision rule are in
+`bench/corpus/clause_local_qualification.md`, "Decision".
 
-- **Tuned corpora:** it adds one witnessed true gate (`Ash.Page.page_opts/1`)
-  across stdlib, the six original libraries and the six expansion projects.
-- **Fresh holdouts:** absinthe and tesla, frozen before the change, are
-  unchanged: 7 and 0 gates.
-- **False positives:** none were found, and every negative control stays
-  ungated.
+| Corpora | Compared slices | SL001 findings | SL001 gates, flag off → on | New gates triaged |
+| --- | ---: | ---: | --- | --- |
+| stdlib, 6 original libraries, 6 expansion projects (tuned) | 3,364 | 2 | 1 → 2 | `Ash.Page.page_opts/1`: true positive, witnessed |
+| absinthe, tesla (fresh holdouts, frozen before the experiment) | 840 | 7 | 7 → 7 | none |
 
-See `bench/corpus/clause_local_qualification.md`.
+False positives among new gates: 0 of 1. Negative controls: all pass,
+including the review's dead-clause controls. The holdouts had no clause
+conflict blocked by an arrow prerequisite, so they could not confirm a
+benefit; the decision rests on the soundness argument and the controls.
+
+**Independent adversarial review.** Twelve findings, all resolved
+(`clause_local_qualification.md`, "Independent review"):
+
+- **`clause_reachable` missed dead clauses** whose guard contradicts their
+  pattern (a false positive with the flag, and in the existing policy on
+  arrow-free slices). It is now also decided by the compiler's own pattern
+  and guard check, re-run over debug info (`SpecLint.Reachability`), for
+  both settings.
+- **Clause findings name the stored signature clause**, which the details
+  now say ("stored signature clause #k").
+- **`clause_contained_in_lo` is now tested**, including an empty clause
+  domain.
+- **Three Ash integration witnesses** used inputs outside the declared
+  struct types. `page/2` and `Policy.solve/1` keep their verdicts with
+  repaired inputs; `Query.apply_to/3` is downgraded to probable
+  (`holdout_triage.md`).
+- **`Ash.Page.page_opts/1`'s catch-all also escapes** (it returns a keyword
+  list, never a page). SpecLint does not report it.
+- **Provenance paths** now use placeholders, and the docs are corrected.
+
+**Remaining open items.**
+
+- `clause_reachable` is `unchecked`, not proven, when the type checker
+  reports nothing: a dead clause it cannot see (a contradictory numeric
+  guard, a clause only the Erlang compiler reports) could still gate. A
+  per-source-clause reachability verdict in the checker chunk would close
+  it (DESIGN section 12).
+- The re-check blocks per function, not per clause, and findings cannot
+  name their source clause or line, because the chunk does not store the
+  source-to-stored clause mapping.
+- `Ash.Query.apply_to/3` has no in-domain witness; `page_opts/1`'s
+  catch-all is a silent false negative.
+- Recall is unchanged in substance (gated recall on the nine known
+  omissions is 0 of 9). The two compiler limits behind most misses now have
+  minimal counterexamples in `bench/corpus/compiler_counterexamples/`.
 
 ## Follow-up delivery: broader evidence and build integrity
 
@@ -59,7 +102,8 @@ It has about 8,800 lines in `lib` and 5,800 in `test`:
 | Compiler adapter | `SpecLint.Compiler`, `SpecLint.Compiler.V121` | Pinned to Elixir 1.21.0-dev `c24c235`, checker chunk `elixir_checker_v10`. Preflight, chunk decoder, every `Descr` call, a copy of `apply_infer/2` with its 16-clause cutoff, a canonical `Descr` serialisation and a printer. |
 | BEAM reader | `SpecLint.Beam`, `SpecLint.Project` | Reads `ExCk`, `Dbgi` specs, types and debug info (including `use`-injected overridable defaults). Handles owned ebins, umbrella children and exclude globs, and checks every module the build lists has its BEAM file (compile manifest, or `<app>.app`). |
 | Translator | `SpecLint.Translate`, `SpecLint.Bound`, `SpecLint.TypeCache` | Turns spec AST into `{lo, hi}` bounds with loss records (the section 6 kinds plus `map_key_widened`) and integer intervals. `expand_opaque` is optional. |
-| Comparison | `SpecLint.Compare` | Raw per-slice relations: application, extra and missing, containment per clause, overlap (certain or unknown), top-only, near-top, clause shadowing, and the dynamic probe. |
+| Comparison | `SpecLint.Compare` | Raw per-slice relations: application, extra and missing, containment per clause (against `D_hi` and `D_lo`), overlap (certain or unknown), top-only, near-top, clause shadowing, and the dynamic probe. |
+| Reachability | `SpecLint.Reachability` | For functions with a clause conflict only: re-runs the compiler's type checker over debug info and keeps its pattern and guard diagnostics, which block `clause_reachable`. |
 | Evidence | `SpecLint.Evidence` | The DESIGN 3.1 classifier, steps 1 to 9: union level plus per-clause evidence, the F1 subtraction check with widening, near-top handling, and gradual payloads. |
 | Rules | `SpecLint.Rules.*` | SL001 (slice and clause conflict), SL002 (informational), SL003, SL004 and SL005 (hints, off by default), SL006, SL007 (a stub, since no backend exists), SL008. |
 | Policy | `SpecLint.Policy` | Gating by evidence for the `review` and `soundness` profiles, `--warnings-as-errors` (which never touches SL008), and the coverage policy. |
@@ -110,13 +154,14 @@ MIX_ENV=test mix run bench/run_on_ebin.exs -- --ebin DIR [--code-path DIR ...] \
 MIX_ENV=test mix run bench/experiment.exs -- --ebin DIR ... --label NAME --out FILE.json
 ```
 
-Quality gates, all green after the second external review fixes:
+Quality gates, all green on the Close-phase tree (2026-09-29):
 
 ```
 mix format --check-formatted
-mix credo --strict            # no issues
-mix test                      # 255 tests, 0 failures (includes test/integration)
+mix credo --strict            # no issues (70 checks)
+mix test                      # 311 tests, 0 failures (includes test/integration)
 mix dialyzer                  # 0 errors (PLT in priv/plts)
+mix spec_lint --ci            # self-check: 276 slices compared, exit 0
 ```
 
 ## Measured numbers

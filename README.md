@@ -68,7 +68,7 @@ go to standard error, so standard output is only the JSON report.
 | `--rules ID,...` | Run only these rules (IDs or names). Enables rules that are off by default. |
 | `--except ID,...` | Do not run these rules. Coverage is still checked when `SL008` is left out. |
 | `--require-static-return` | Treat structured evidence supported only by gradual clause returns as `possible_gradual`. |
-| `--clause-local-qualification` | Experiment, off by default and not adopted: an `SL001` clause conflict gates when its clause's whole domain is inside the spec's argument lower bounds, instead of requiring the whole slice to be free of arrow losses. See `bench/corpus/clause_local_qualification.md`. |
+| `--[no-]clause-local-qualification` | On by default (Close-phase decision, 2026-09-29): an `SL001` clause conflict gates when its clause's whole domain is inside the spec's argument lower bounds, instead of requiring the whole slice to be free of arrow losses. `--no-clause-local-qualification` restores the slice-wide arrow prerequisites. Also accepted by `mix spec_lint.baseline`: write the baseline under the setting CI uses, because the baseline records gate states. See `bench/corpus/clause_local_qualification.md`. |
 
 ### Exit status
 
@@ -97,10 +97,22 @@ A gated finding still has to meet its prerequisites to fail the build:
 - no overlapping spec clauses (an overload that cannot be translated counts
   as possibly overlapping, unless the arguments that can be translated
   show it disjoint);
-- no function type in the return;
-- no function-type argument that translated inexactly (`arrow_polarity`);
-- for a per-clause conflict, the clause is not covered by the clauses
-  before it (a clause the compiler reports as redundant never gates).
+- no function type in the return, and no function-type argument that
+  translated inexactly (`arrow_polarity`), for a whole-slice conflict;
+- for a per-clause conflict, instead of those two: the clause's whole
+  domain is inside the spec's argument lower bounds
+  (`clause_contained_in_lo`), so an arrow elsewhere in the slice does not
+  block it (`clause_local_qualification`, the default);
+- for a per-clause conflict, the clause is reachable as far as the compiler
+  can tell: it is not covered by the clauses before it, and the compiler's
+  own type checker, re-run over the function's debug info, reports no
+  pattern or guard diagnostic in the function (a guard that never
+  succeeds, a redundant clause). A dead clause the type checker cannot see,
+  such as a contradictory numeric guard, is not ruled out.
+
+A per-clause finding names the stored signature clause (`clause #k`),
+which the compiler may have merged with others or renumbered by dropping
+clauses that always raise; the reported line is the function's first line.
 
 `--explain` prints which prerequisite blocked gating. A rule's severity
 only changes how a finding is printed, never whether it gates.
@@ -134,7 +146,7 @@ under `--warnings-as-errors`.
   exclude: ["lib/generated/**"],
   expand_opaque: false,
   require_static_return: false,
-  clause_local_qualification: false,
+  clause_local_qualification: true,
   warnings_as_errors: false
 ]
 ```
@@ -156,10 +168,13 @@ under `--warnings-as-errors`.
   structurally. It is shown in the report header, in each finding's
   translation (`translation exact (opaque expanded)`), in the ledger and
   in the JSON `config`.
-- **`clause_local_qualification: true`** is the experiment of
-  `--clause-local-qualification` (default `false`). It is shown in the JSON
-  `config`, and each affected finding lists `clause_contained_in_lo`
-  among its prerequisites.
+- **`clause_local_qualification`** (default `true`) qualifies an `SL001`
+  clause conflict by its own clause: the clause's whole domain must be
+  inside the spec's argument lower bounds, and an arrow elsewhere in the
+  slice no longer blocks it. It is shown in the JSON `config`; each clause
+  conflict lists `clause_contained_in_lo` among its prerequisites and keeps
+  the superseded arrow prerequisites in `data`. `false` restores the
+  slice-wide arrow prerequisites.
 - Command-line options override the file.
 
 ## Baseline

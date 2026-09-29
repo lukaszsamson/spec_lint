@@ -55,7 +55,7 @@ Dialyzer (zero errors), and `mix spec_lint --ci` on itself all pass. The self
 check compared 272 slices and exited 0. Canonical-path normalization also has
 a regression test. Reports are in `bench/corpus/reports/expansion/`.
 
-## Next experiment, not silently adopted
+## Next experiment, not silently adopted (delivered 2026-09-29)
 
 1. Investigate clause-local translation-loss qualification using the witnessed
    `Ash.Page.page_opts/1` omission. Establish the bound/polarity proof and keep
@@ -69,26 +69,67 @@ a regression test. Reports are in `bench/corpus/reports/expansion/`.
    sensitivity and higher-order collection results. Retain the current decision
    against a production body backend until recall improves measurably.
 
-Source changes and results are left uncommitted for review. The pre-existing
-`PHASE_2_REVIEW.txt` was not modified.
+### Delivered
 
-### Progress (2026-09-29)
+All four items are done and committed (`10970dc`, `1126a5b` and the Close
+phase commits that follow them).
 
-- **Item 2: done.** Six source-only Ash reports are witnessed at runtime by
-  `bench/corpus/ash_integration_witnesses.exs`, and `data_layer_query/2` is
-  refuted (`holdout_triage.md`).
-- **Item 3: done.** absinthe and tesla are frozen at `3b89842`
-  (`holdout2_baseline.md`, `expansion.json`).
-- **Item 1: implemented behind `--clause-local-qualification`**
-  (default `false`) and measured on all fifteen real-code corpora
-  (`bench/corpus/clause_local_qualification.md`).
-  - **Tuned corpora:** +1 true gate (`Ash.Page.page_opts/1`).
-  - **Fresh holdouts:** 0 change.
-  - **False positives:** 0.
-  - **Negative controls:** all ungated.
+- **Item 1: adopted as the default.** `clause_local_qualification: true`,
+  gating in both profiles (`bench/corpus/clause_local_qualification.md`,
+  "Decision"). On 15 real-code corpora (4,204 compared slices) it adds
+  one gate, `Ash.Page.page_opts/1`, a witnessed true positive, and no false
+  positive. An independent adversarial review found that `clause_reachable`
+  missed clauses whose guard contradicts their pattern. That is fixed for
+  both settings: the compiler's own pattern and guard check is re-run over
+  debug info (`SpecLint.Reachability`). All twelve review findings are
+  resolved.
+- **Item 2: done, then corrected by the review.** Five source-only Ash
+  reports are witnessed with inputs checked against their declared types.
+  `Query.apply_to/3` is probable, because its escape was only observed
+  outside `Ash.Query.t()`, and `data_layer_query/2` is refuted
+  (`holdout_triage.md`, `reports/expansion/ash_integration_witnesses.json`).
+- **Item 3: done.** absinthe and tesla were frozen at `3b89842`
+  (`holdout2_baseline.md`, `expansion.json`) before the experiment ran.
+  They had no arrow-blocked clause conflict, so they agree with the tuned
+  corpora but cannot show a benefit.
+- **Item 4: counterexamples written.**
+  `bench/corpus/compiler_counterexamples/` holds minimal modules for helper
+  insensitivity and `Enum.map/2` results, with a self-checking script
+  (`check.exs`) and a README. They have not been sent upstream yet. The
+  decision against a production body backend stands.
 
-  Still open for the Close phase:
-  - an independent adversarial review of the soundness argument;
-  - the adoption decision.
+## Next experiments, not silently adopted
 
-- **Item 4:** unchanged.
+1. **Upstream discussion.** Take `compiler_counterexamples/` to the
+   compiler maintainers. Also ask for two checker-chunk additions: a
+   per-source-clause reachability verdict, and the mapping from source
+   clauses to stored clauses. The mapping would let `clause_reachable` block
+   per clause instead of per function, and let findings name their source
+   clause and line.
+2. **Source clause mapping without upstream.** Prototype recomputing the
+   checker's clause grouping from debug info on a qualified compiler
+   revision, and measure whether it maps every stored clause back to its
+   source clauses on the fixtures and the corpora. Adopt it only if it is
+   exact on all of them; otherwise keep the stored-clause labelling.
+3. **A holdout with power for the qualification.** Choose a third holdout
+   by a criterion fixed in advance: projects whose baseline run has clause
+   conflicts blocked by an arrow prerequisite with the qualification off.
+   Freeze it, then measure new gates and false positives with the default.
+   The two current holdouts could not test it.
+4. **Dead clauses the type checker cannot see.** Build fixtures with
+   contradictory numeric guards and with clauses only the Erlang compiler
+   reports, and count how often they occur in the corpora. If they occur in
+   real code, consider requiring a static guard-free clause for
+   `clause_reachable: met`.
+5. **Default-`nil` struct fields.** The seven absinthe gates on
+   `Absinthe.Blueprint.Input.parse/1` are real violations of the declared
+   struct types, but they are a usability question for CI (like Req's
+   `Response.new/1`). Measure how many gates on all corpora come from
+   default-`nil` fields before deciding whether they need their own
+   evidence class. Do not change the policy without that data.
+6. **Silent false negatives and open witnesses found by the review.**
+   `Ash.Page.page_opts/1`'s catch-all returns `{:ok, keyword}`, never a
+   page, but SpecLint is silent because the stored payload is gradual
+   (`mod.to_options/1` on a variable module). Record it as a known miss
+   next to the nine. Search for an in-domain error path of
+   `Ash.Query.apply_to/3`, or record that there is none.

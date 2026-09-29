@@ -1,28 +1,47 @@
 defmodule SpecLint.ClauseLocalTest do
   @moduledoc """
-  The clause-local qualification experiment (`clause_local_qualification`,
-  `SpecLint.Rules.ReturnConflict`, bench/corpus/clause_local_qualification.md).
+  The clause-local qualification (`clause_local_qualification`, default
+  `true` since the Close-phase decision, `SpecLint.Rules.ReturnConflict`,
+  bench/corpus/clause_local_qualification.md), and the compiler check
+  behind `clause_reachable` (`SpecLint.Reachability`).
 
   With the flag, an SL001 clause conflict needs its clause's whole domain
   contained in the spec's argument lower bounds instead of the slice-wide
   arrow prerequisites. The positive stand-ins are
   `SpecLint.OmissionFixtures.ClauseLocal` (Ash.Page.page_opts/1 and
   Oban.Registry.via/3, pinned in test/spec_lint/omissions_test.exs); the
-  controls are `SpecLint.Fixtures.ClauseLocal`.
+  controls are `SpecLint.Fixtures.ClauseLocal` and the dead-clause probes
+  below, which are compiled out of process because the compiler warns
+  about them.
   """
 
   use ExUnit.Case, async: true
 
   import SpecLint.TestHelpers
 
-  alias SpecLint.{Analysis, Baseline, CLI, Compiler, Config, Issue, Policy, Project, Run}
+  alias SpecLint.{
+    Analysis,
+    Baseline,
+    CLI,
+    Compare,
+    Compiler,
+    Config,
+    Evidence,
+    Issue,
+    Policy,
+    Project,
+    Reachability,
+    Run
+  }
+
   alias SpecLint.Fixtures.{ClauseLocal, Review}
   alias SpecLint.OmissionFixtures.ClauseLocal, as: Omission
   alias SpecLint.Report.Json
+  alias SpecLint.Rules.ReturnConflict
 
   @moduletag :tmp_dir
 
-  @off %Config{baseline: "tmp/none.json"}
+  @off %Config{baseline: "tmp/none.json", clause_local_qualification: false}
   @on %Config{baseline: "tmp/none.json", clause_local_qualification: true}
 
   setup_all do
@@ -35,8 +54,8 @@ defmodule SpecLint.ClauseLocalTest do
   defp sl001(run, mfa), do: run |> issues(mfa) |> Enum.filter(&(&1.rule == "SL001"))
 
   describe "configuration" do
-    test "defaults to off, is validated, and is overridden by the command line" do
-      refute %Config{}.clause_local_qualification
+    test "defaults to on, is validated, and is overridden by the command line" do
+      assert %Config{}.clause_local_qualification
 
       assert {:ok, %Config{clause_local_qualification: true}} =
                Config.from_keyword(clause_local_qualification: true)
@@ -49,10 +68,15 @@ defmodule SpecLint.ClauseLocalTest do
       assert {:ok, config} = Config.merge_cli(%Config{}, CLI.config_overrides(cli))
       assert config.clause_local_qualification
 
-      assert {:ok, cli} = CLI.parse([])
+      assert {:ok, cli} = CLI.parse(["--no-clause-local-qualification"])
+      refute cli.clause_local_qualification
       assert {:ok, config} = Config.merge_cli(%Config{}, CLI.config_overrides(cli))
       refute config.clause_local_qualification
-      refute Config.digest(%Config{}) == Config.digest(%Config{clause_local_qualification: true})
+
+      assert {:ok, cli} = CLI.parse([])
+      assert {:ok, config} = Config.merge_cli(@off, CLI.config_overrides(cli))
+      refute config.clause_local_qualification
+      refute Config.digest(%Config{}) == Config.digest(%Config{clause_local_qualification: false})
     end
 
     test "the JSON report records the setting", %{off: off, on: on} do
@@ -232,7 +256,7 @@ defmodule SpecLint.ClauseLocalTest do
 
     project = Project.from_ebins([{:fx, ebin}], tmp_dir)
     path = Path.join(tmp_dir, "baseline.json")
-    off = %Config{baseline: "baseline.json"}
+    off = %Config{baseline: "baseline.json", clause_local_qualification: false}
 
     {:ok, first} = Run.execute(project, off, ci: true)
     adapter = first.capabilities.adapter_id
@@ -256,5 +280,177 @@ defmodule SpecLint.ClauseLocalTest do
 
     result = Analysis.module(beam_path(ClauseLocal))
     assert Enum.all?(result.functions, &(&1.status == :compared))
+  end
+
+  describe "clause_contained_in_lo is checked, not assumed" do
+    test "an empty clause domain is contained in anything but never contained_lo?" do
+      empty = Compiler.tuple([Compiler.none()])
+      spec = Compiler.tuple([Compiler.atom([:a])])
+
+      assert Compare.clause_containment(empty, spec, spec, false) == {:contained, false}
+      assert Compare.clause_containment(empty, spec, spec, true) == {:contained, false}
+
+      clause = Compiler.tuple([Compiler.atom([:a])])
+      assert Compare.clause_containment(clause, spec, spec, true) == {:contained, true}
+
+      # Inside D_hi only: containment unknown, not contained in D_lo.
+      assert Compare.clause_containment(clause, spec, empty, true) ==
+               {:containment_unknown, false}
+
+      assert Compare.clause_containment(spec, clause, clause, false) == {:contained, true}
+      other = Compiler.tuple([Compiler.atom([:b])])
+      assert Compare.clause_containment(other, spec, spec, false) == {:domain_escape, false}
+    end
+
+    test "a clause conflict whose clause is not contained_lo? is blocked by it" do
+      context = rule_context(Omission, :page_opts, 1, true, {:ok, []})
+      assert [issue] = ReturnConflict.check_function(context)
+      assert {:clause_contained_in_lo, :met} in issue.prerequisites
+      assert Policy.gate?(issue, @on)
+
+      [%{slice: slice} = slice_context] = context.slices
+      contributing = Enum.map(slice.relations.contributing, &%{&1 | contained_lo?: false})
+      slice = put_in(slice.relations.contributing, contributing)
+      context = %{context | slices: [%{slice_context | slice: slice}]}
+
+      assert [issue] = ReturnConflict.check_function(context)
+      assert %Issue{evidence: :clause_conflict, clause: 0} = issue
+      assert Issue.blocked(issue) == [:clause_contained_in_lo]
+      refute Policy.gate?(issue, @on)
+    end
+  end
+
+  describe "clause_reachable follows the compiler's own pattern and guard check" do
+    @dead_source """
+    defmodule SpecLint.ClauseLocalProbe.Dead do
+      @moduledoc false
+      # Clause :b can never match: its guard contradicts its pattern, and the
+      # compiler warns "this guard will never succeed". The checker stores it
+      # as (:b) -> {:error, :b}, and no earlier clause covers it.
+      @spec g(:a | :b | (pos_integer() -> atom())) :: :ok | :fine
+      def g(:a), do: :ok
+      def g(:b = x) when is_integer(x), do: {:error, x}
+      def g(x) when is_atom(x), do: :fine
+      def g(f) when is_function(f, 1), do: :ok
+
+      # The same without the arrow: it gated under the slice-wide
+      # prerequisites before the compiler check existed.
+      @spec h(:a | :b) :: :ok | :fine
+      def h(:a), do: :ok
+      def h(:b = x) when is_integer(x), do: {:error, x}
+      def h(x) when is_atom(x), do: :fine
+    end
+
+    defmodule SpecLint.ClauseLocalProbe.Index do
+      @moduledoc false
+      # Source clause 0 always raises, so the checker drops it: source
+      # clause 1 is stored, and reported, as stored clause 0.
+      @spec idx(:a | :b | :c | (pos_integer() -> atom())) :: :ok
+      def idx(:a), do: raise(ArgumentError, "no :a")
+      def idx(:b), do: {:error, :b}
+      def idx(:c), do: :ok
+      def idx(f) when is_function(f, 1), do: :ok
+    end
+    """
+
+    setup %{tmp_dir: tmp_dir} do
+      ebin = elixirc!(tmp_dir, @dead_source)
+      project = Project.from_ebins([{:probe, ebin}], tmp_dir)
+      {:ok, off} = Run.execute(project, %{@off | baseline: "none.json"}, ci: true)
+      {:ok, on} = Run.execute(project, %{@on | baseline: "none.json"}, ci: true)
+      %{ebin: ebin, probe_off: off, probe_on: on}
+    end
+
+    test "a clause whose guard contradicts its pattern never gates", %{
+      ebin: ebin,
+      probe_off: off,
+      probe_on: on
+    } do
+      dead = SpecLint.ClauseLocalProbe.Dead
+
+      for run <- [off, on], name <- [:g, :h] do
+        assert [issue] = sl001(run, {dead, name, 1})
+        assert %Issue{evidence: :clause_conflict, clause: 1, gate: false} = issue
+        assert Issue.blocked(issue) -- [:no_arrow_polarity_argument] == [:clause_reachable]
+        assert [line] = issue.data.pattern_diagnostic_lines
+        assert is_integer(line)
+        assert {"compiler pattern diagnostics", "lines #{line}"} in issue.details
+      end
+
+      # Runtime: no input reaches the dead clause. :b falls through to the
+      # is_atom/1 clause.
+      {:module, ^dead} = :code.load_abs(String.to_charlist(Path.join(ebin, "#{dead}")))
+      g = Function.capture(dead, :g, 1)
+      h = Function.capture(dead, :h, 1)
+      assert g.(:b) == :fine
+      assert h.(:b) == :fine
+      assert g.(:a) == :ok
+    end
+
+    test "the reported clause is the stored signature clause", %{ebin: ebin, probe_on: on} do
+      index = SpecLint.ClauseLocalProbe.Index
+      assert [issue] = sl001(on, {index, :idx, 1})
+      assert %Issue{evidence: :clause_conflict, clause: 0, gate: true} = issue
+      assert {"stored signature clause", "#0 (:b) -> {:error, :b}"} in issue.details
+      refute Map.has_key?(issue.data, :pattern_diagnostic_lines)
+
+      # A true positive: the in-spec :b returns {:error, :b}; control :c.
+      {:module, ^index} = :code.load_abs(String.to_charlist(Path.join(ebin, "#{index}")))
+      idx = Function.capture(index, :idx, 1)
+      assert idx.(:b) == {:error, :b}
+      assert idx.(:c) == :ok
+    end
+
+    test "only functions with a clause conflict are checked", %{probe_on: on} do
+      assert on.reachability |> Map.keys() |> Enum.sort() == [
+               {SpecLint.ClauseLocalProbe.Dead, :g, 1},
+               {SpecLint.ClauseLocalProbe.Dead, :h, 1},
+               {SpecLint.ClauseLocalProbe.Index, :idx, 1}
+             ]
+
+      assert on.reachability[{SpecLint.ClauseLocalProbe.Index, :idx, 1}] == {:ok, []}
+      assert Reachability.check(on.modules, %{}) == %{}
+    end
+
+    test "the stand-ins have no pattern diagnostics", %{on: on} do
+      assert on.reachability[{Omission, :page_opts, 1}] == {:ok, []}
+      assert on.reachability[{Omission, :via, 3}] == {:ok, []}
+    end
+
+    test "a check that could not run blocks only under the clause-local qualification" do
+      reason = {:error, {:checker_failed, "boom"}}
+
+      assert [issue] =
+               ReturnConflict.check_function(rule_context(Omission, :via, 3, true, reason))
+
+      assert Issue.blocked(issue) == [:clause_reachable]
+      assert issue.data.reachability_check =~ "unavailable"
+
+      assert [issue] =
+               ReturnConflict.check_function(rule_context(Omission, :via, 3, false, reason))
+
+      assert Issue.blocked(issue) == []
+      assert {:clause_reachable, :unchecked} in issue.prerequisites
+    end
+  end
+
+  defp rule_context(module, name, arity, clause_local?, check) do
+    result = Analysis.module(beam_path(module))
+    function = Enum.find(result.functions, &(&1.mfa == {module, name, arity}))
+
+    slices =
+      for slice <- function.slices do
+        %{slice: slice, evidence: slice.relations && Evidence.classify(slice.relations)}
+      end
+
+    %{
+      module: result,
+      function: function,
+      file: nil,
+      slices: slices,
+      severity: :warning,
+      clause_local_qualification: clause_local?,
+      pattern_diagnostics: check
+    }
   end
 end

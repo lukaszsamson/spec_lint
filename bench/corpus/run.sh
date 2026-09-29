@@ -149,7 +149,8 @@ for name in "${corpora[@]}"; do
   for e in "${ebins[@]}"; do args+=(--ebin "$e"); done
   cp_args=()
   for c in ${codepaths[@]+"${codepaths[@]}"}; do cp_args+=(--code-path "$c"); done
-  bench/corpus/provenance.sh "$out/$name.provenance.json" "$name" "$source_repo" \
+  SPEC_LINT_RAW_DIR="$raw" ELIXIR_DIR="$elixir_dir" \
+    bench/corpus/provenance.sh "$out/$name.provenance.json" "$name" "$source_repo" \
     "$project_root" "$root" "${ebins[@]}" ${codepaths[@]+"${codepaths[@]}"}
 
   if [ "$product_only" != 1 ]; then

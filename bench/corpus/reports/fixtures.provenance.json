@@ -2,12 +2,12 @@
   "artifacts": [
     {
       "beam_count": 22,
-      "path": "/var/folders/5t/z9kkxlhn4w769jqmn00xqqkw0000gn/T/tmp.MgZHS3IR4j/fixtures/ebin",
+      "path": "$TMP/fixtures/ebin",
       "sha256": "5a75e6122b6df2f027fd28fb47a4822a7da46f9ca61bc97081ba42a3e669033a"
     },
     {
       "beam_count": 58,
-      "path": "/Users/lukaszsamson/claude_fun/spec_lint/_build/test/lib/spec_lint/ebin",
+      "path": "$SPEC_LINT/_build/test/lib/spec_lint/ebin",
       "sha256": "960cc3d9281ef02d844a960ddabf9ede16e6e247c25404ee4d022c303cf7c54e"
     }
   ],
@@ -28,7 +28,7 @@
   "toolchain": {
     "compiler": null,
     "elixir": "Elixir 1.21.0-dev (c24c235) (compiled with Erlang/OTP 28)",
-    "loaded_module_types_beam": "/Users/lukaszsamson/elixir/bin/../lib/elixir/ebin/Elixir.Module.Types.beam",
+    "loaded_module_types_beam": "$ELIXIR/bin/../lib/elixir/ebin/Elixir.Module.Types.beam",
     "loaded_module_types_sha256": "6a0ce8ab9665459220f41a61aa41f0b7f92f32029ea6395e33f283776120810e"
   }
 }

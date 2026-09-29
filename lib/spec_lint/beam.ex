@@ -13,7 +13,8 @@ defmodule SpecLint.Beam do
     * `debug_info` - the `:elixir_v1` debug info: definitions, the first line
       of each definition, the definitions whose metadata marks them
       `generated: true`, the overridable defaults the module did not
-      override, and the source file.
+      override, the source file, and the `__protocol__`/`__impl__`
+      attributes the compiler's type checker reads (`checker_attributes`).
 
   An overridable default that was not overridden (a `defoverridable`
   definition injected by `use`, such as `GenServer`'s `handle_info/2` or
@@ -33,7 +34,8 @@ defmodule SpecLint.Beam do
           lines: %{optional({atom(), arity()}) => pos_integer()},
           generated: [{atom(), arity()}],
           overridable_defaults: [{atom(), arity()}],
-          file: String.t() | nil
+          file: String.t() | nil,
+          checker_attributes: keyword()
         }
 
   @typedoc "Why the checker chunk is unavailable."
@@ -133,7 +135,9 @@ defmodule SpecLint.Beam do
            lines: definition_lines(definitions),
            generated: generated_definitions(definitions),
            overridable_defaults: overridable_defaults(definitions),
-           file: Map.get(map, :file)
+           file: Map.get(map, :file),
+           checker_attributes:
+             map |> Map.get(:attributes, []) |> Keyword.take([:__protocol__, :__impl__])
          }}
 
       {:error, reason} ->

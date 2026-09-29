@@ -224,14 +224,27 @@ applied return `U(D)`.
      returns `R_k`, entirely outside the spec". Prerequisites: the SL001
      prerequisites plus the clause is contained and the compiler did not
      already flag it unreachable. The chunk does not record reachability,
-     so it is approximated from the stored clause domains: the clause is
-     *possibly shadowed*, and the prerequisite `clause_reachable` is
-     blocked, when the upper bound of its domain tuple is a subtype of the
-     union of the domain tuples of the clauses before it. Stored domains
-     over-approximate guarded clauses, so this over-blocks and never
-     misses a clause the compiler reports as redundant; otherwise the
-     prerequisite is `unchecked`. The stored clause return is used, not
-     the wrapped application result;
+     so the prerequisite `clause_reachable` is decided by two checks and
+     is blocked when either flags the clause: (1) the compiler's own type
+     checker, re-run over the function's debug info in the mode it uses
+     for warnings after compilation (`SpecLint.Reachability`), reports a
+     pattern or guard diagnostic anywhere in the function (a guard that
+     can never succeed, a head that cannot match, a redundant clause);
+     stored clauses cannot be mapped to source clauses, so one diagnostic
+     blocks every clause conflict of the function; (2) the clause is
+     *possibly shadowed*: the upper bound of its domain tuple is a subtype
+     of the union of the domain tuples of the stored clauses before it
+     (this also covers clauses quoted with `generated: true`, whose
+     diagnostics the checker suppresses). Check (2) alone misses a clause
+     whose guard contradicts its own pattern: it is stored with its
+     pattern domain and its body's return, and nothing covers it (2026-09-29
+     review). Otherwise the prerequisite is `unchecked`: a dead clause the
+     type checker cannot see, such as a contradictory numeric guard, is
+     not ruled out. The stored clause return is used, not the wrapped
+     application result. The reported clause index is the stored signature
+     clause, which is not a source clause index: the checker drops clauses
+     whose return is empty (a clause that always raises) and merges clauses
+     with equal returns;
    - otherwise `extra_k = difference(R_k', S_hi)` is classified with step 5
      against `R_k` itself (structure must be present in `R_k`, never only
      in the subtraction), giving a per-clause class.
@@ -285,7 +298,7 @@ implementation emits**, recorded here because they are the JSON report's
 
 | Rule | Meaning | Gating prerequisites | Default |
 | --- | --- | --- | --- |
-| `SL001 return_conflict` | `U(D)` non-empty and disjoint from `S_hi` on a slice | translation of the slice has no `unsupported` loss, no `overlap` tag, no arrow in the return, no argument with an `arrow_polarity` loss (section 6) | warning, gated in both profiles |
+| `SL001 return_conflict` | `U(D)` non-empty and disjoint from `S_hi` on a slice (`conflict`), or a contained clause's stored return disjoint from `S_hi` (`clause_conflict`, section 3.1 step 7) | `conflict`: translation of the slice has no `unsupported` loss, no `overlap` tag, no arrow in the return, no argument with an `arrow_polarity` loss (section 6). `clause_conflict`: no `unsupported` loss, no `overlap` tag, the clause's whole domain non-empty and contained in the argument lower bounds (`clause_contained_in_lo`), and `clause_reachable`; with `clause_local_qualification: false`, the four slice-wide prerequisites of `conflict` plus `clause_contained` and `clause_reachable` | warning, gated in both profiles |
 | `SL002 possible_missing_return` | structured extra per section 3.1 | same as SL001 plus classification `structured_possible` | warning, informational: reported in both profiles, never gated by evidence policy (Phase 0 decision, section 11) |
 | `SL003 spec_domain_rejected` | the application rule matches no inferred clause on an inhabited spec slice, or a spec argument position is disjoint from every inferred domain | translation of the arguments exact or upper-bounded only, no `overlap` | warning, gated in both profiles |
 | `SL004 possible_missing_input` | inferred domain accepts shapes outside the spec domain | none | off, hint |
@@ -309,12 +322,15 @@ detections. **`clause_conflict` gates in both profiles**: 0 real-code
 candidates, so no gated noise, and 4 of 4 fixture detections with 0 false
 positives. Its unreachable-clause prerequisite cannot be read from the
 checker chunk. Since the post-Phase 1 review it is approximated from the
-stored clause domains (section 3.1 step 7): a possibly shadowed clause is
-blocked, any other clause is reported as unchecked.
+stored clause domains, and since the 2026-09-29 review also from the
+compiler's own pattern and guard diagnostics, re-run over debug info
+(section 3.1 step 7): a flagged or possibly shadowed clause is blocked, any
+other clause is reported as unchecked.
 
-**Experiment, not adopted (2026-09-29): clause-local qualification.**
-Behind `clause_local_qualification: true` (`--clause-local-qualification`,
-default `false`), a `clause_conflict` replaces the prerequisites
+**Decision (Close phase, 2026-09-29): clause-local qualification is the
+default, gating in both profiles.** With `clause_local_qualification: true`
+(the default; `--no-clause-local-qualification` or `false` restores the
+slice-wide prerequisites), a `clause_conflict` replaces the prerequisites
 `no_arrow_in_return` and `no_arrow_polarity_argument` by
 `clause_contained_in_lo`: the clause's whole, non-empty domain tuple is a
 subtype of the tuple of the argument lower bounds `D_lo` (tuple-wise,
@@ -326,7 +342,17 @@ the return is `fun(arity)` there, and `Descr` never calls two functions of
 the same arity disjoint). `no_unsupported_loss`, `no_overlap` and
 `clause_reachable` are kept; the slice-level `conflict` keeps the old
 prerequisites. The superseded prerequisites and their states are kept in
-the finding's `data`. Measurements, triage and the open decision are in
+the finding's `data`. Measured on 15 real-code corpora (4,204 compared
+slices, two of them fresh holdouts frozen before the experiment): one new
+gate, `Ash.Page.page_opts/1`, a witnessed true positive; no false positive;
+every negative control ungated, including the dead-clause controls the
+independent review added (they are blocked by the compiler check of
+`clause_reachable`, which also changed the slice-wide policy). The holdouts
+had no arrow-blocked clause conflict, so they neither confirm nor
+contradict a benefit. The rule for this decision was: default on only if
+every newly gating finding on the holdouts and tuned corpora is a triaged
+true positive that survived review and every negative control passes.
+Measurements, triage and the review are in
 `bench/corpus/clause_local_qualification.md`.
 
 **Decision (post-Phase 1 review): SL006 ignores top-only and near-top
@@ -393,6 +419,8 @@ mix spec_lint
   -> SpecLint.Beam        per module: ExCk, Dbgi specs and types, debug_info
   -> SpecLint.Translate   spec AST -> {lo, hi} Descr bounds + loss records
   -> SpecLint.Compare     per slice: application, relations, evidence
+  -> SpecLint.Reachability functions with a clause conflict: the compiler's
+                          pattern and guard diagnostics, re-run over debug info
   -> SpecLint.Bodies      optional, qualified builds only
   -> SpecLint.Rules.*     relations -> findings
   -> SpecLint.Coverage    ledger, regression against baseline inventory
@@ -434,8 +462,11 @@ release pins one 1.21 development revision and publishes a support matrix.
 Unknown combinations fail preflight in CI and report "unsupported" locally.
 
 **Decision:** direct chunk reading from Fable for signatures; the
-`Module.ParallelChecker` cache is started only for body analysis, and is
-stopped in an `after` block.
+`Module.ParallelChecker` cache is started only for body analysis and for
+the pattern and guard re-check behind `clause_reachable`
+(`pattern_diagnostics/4`, which runs the stock `Module.Types.warnings/6`
+over the debug info of functions with a clause conflict), and is stopped
+in an `after` block.
 
 ### 5.3 `SpecLint.Compare`
 
@@ -469,8 +500,11 @@ Rules:
   regression fixture.
 - Arrows: an argument that translates inexactly cannot be widened. Use
   `fun(arity)` as `hi` and `none()` as `lo`, record `arrow_polarity`, and
-  exclude the slice from `SL001` gating. Exact arrows translate as
-  `fun(args, ret)`.
+  exclude the slice from slice-level `SL001` gating (`conflict`). The
+  clause form (`clause_conflict`) is qualified clause by clause under
+  `clause_local_qualification` (the default, section 4): an inexact arrow
+  only shrinks `D_lo` and only widens `S_hi`, so it cannot fake a contained
+  clause or a disjoint return. Exact arrows translate as `fun(args, ret)`.
 - Repeated type variables: substitute the bound, record
   `type_variable_correlation`, and treat the return as `hi` only.
 - `@opaque` and `@nominal` from other modules: `term()` as `hi`, `none()` as
@@ -725,12 +759,23 @@ These notes record choices the text above left open.
 - **SL007.** It is off by default. Requesting it, or `analysis: :bodies`,
   exits 2 with a capability message.
 - **Clause reachability.** The `clause_conflict` prerequisite
-  `clause_reachable` is `blocked` for a possibly shadowed clause (section
-  3.1 step 7) and `unchecked` otherwise. `unchecked` does not block gating.
+  `clause_reachable` is `blocked` for a possibly shadowed clause and for
+  every clause of a function in which the compiler's type checker, re-run
+  over debug info, reports a pattern or guard diagnostic (section 3.1 step
+  7, `SpecLint.Reachability`); the lines are in the finding's
+  `data.pattern_diagnostic_lines`. It is `unchecked` otherwise, and
+  `unchecked` does not block gating. When the re-check cannot run it is
+  `unchecked` with `clause_local_qualification: false` and `blocked` with
+  it (`data.reachability_check`). The re-check runs only for functions with
+  a clause conflict; it may load a struct module that a pattern names, as
+  compilation did, and never calls a target function.
 - **Inexact arrow arguments.** Section 6 excludes a slice with an
-  `arrow_polarity` argument from SL001 gating; the prerequisite is
-  `no_arrow_polarity_argument` (SL001 slice and clause forms, recorded for
-  SL002).
+  `arrow_polarity` argument from slice-level SL001 gating; the prerequisite
+  is `no_arrow_polarity_argument` (the slice form, the clause form with
+  `clause_local_qualification: false`, and SL002). Under the default
+  clause-local qualification, the clause form uses `clause_contained_in_lo`
+  instead (section 4) and keeps the two arrow prerequisites and their
+  states in `data.superseded_prerequisites`.
 - **Coverage and rule selection.** SL008 is computed in every run. When it
   is not selected, its blocking findings are coverage violations, and the
   inventory acknowledgements are still checked for staleness.
@@ -1045,11 +1090,16 @@ improvements listed there.
   `structured_possible` detections. The option stays configurable.
 - **Clause reachability.** The `clause_conflict` prerequisite "the compiler
   did not flag the clause unreachable" is not in the checker chunk. It is
-  approximated from the stored clause domains (section 3.1 step 7), which
+  decided from the stored clause domains and from the compiler's type
+  checker re-run over debug info (section 3.1 step 7). The first
   over-blocks guarded clauses: on the stdlib 23 contributing clauses (22
-  functions) are possibly shadowed, none of them a conflict. An upstream
-  API that exports the compiler's redundancy verdict, or the body backend,
-  would close it.
+  functions) are possibly shadowed, none of them a conflict. The second
+  blocks per function, not per clause, because stored clauses cannot be
+  mapped to source clauses. Neither sees a dead clause the type checker
+  cannot see (a contradictory numeric guard), nor a clause only the Erlang
+  compiler reports. An upstream chunk field with the per-source-clause
+  verdict and the source-to-stored clause mapping would close it, and would
+  also let a finding name its source clause and line.
 - **Containment against typed struct fields.** A struct pattern leaves
   fields `term()`, so any function whose spec takes a struct with typed
   fields is `domain_escape`. That makes `structured_possible` unreachable

@@ -234,6 +234,23 @@ defmodule SpecLint.Compiler do
   """
   @callback canonical(descr()) :: term()
 
+  @typedoc """
+  One pattern or guard diagnostic of the compiler's own type checker: the
+  function it was reported in and its line (`nil` when the metadata has
+  none).
+  """
+  @type pattern_diagnostic :: {{atom(), arity()}, pos_integer() | nil}
+
+  @doc """
+  Re-runs the compiler's type checker, in the mode it uses for warnings
+  after compilation, over `definitions` (debug info definitions of
+  `module`) and returns its pattern and guard diagnostics: a clause whose
+  head cannot match, a guard that can never succeed, a redundant clause.
+  `attributes` are the module's `__protocol__`/`__impl__` attributes.
+  """
+  @callback pattern_diagnostics(module(), String.t() | nil, keyword(), [tuple()]) ::
+              {:ok, [pattern_diagnostic()]} | {:error, term()}
+
   @default_adapter SpecLint.Compiler.V121
 
   @doc """
@@ -483,4 +500,10 @@ defmodule SpecLint.Compiler do
   """
   @spec canonical(descr()) :: term()
   def canonical(descr), do: adapter().canonical(descr)
+
+  @doc "See `c:pattern_diagnostics/4`."
+  @spec pattern_diagnostics(module(), String.t() | nil, keyword(), [tuple()]) ::
+          {:ok, [pattern_diagnostic()]} | {:error, term()}
+  def pattern_diagnostics(module, file, attributes, definitions),
+    do: adapter().pattern_diagnostics(module, file, attributes, definitions)
 end

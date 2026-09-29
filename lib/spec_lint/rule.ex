@@ -21,7 +21,10 @@ defmodule SpecLint.Rule do
   @typedoc """
   What a rule sees for one function in scope. `clause_local_qualification`
   is the configuration flag of that name (`SpecLint.Config`); a context
-  without it reads as `false`.
+  without it reads as `false`. `pattern_diagnostics` is the compiler's
+  pattern and guard check of the function (`SpecLint.Reachability`), present
+  when the function has a clause conflict; a context without it reads as
+  `{:error, :not_checked}`.
   """
   @type function_context :: %{
           required(:module) => Analysis.result(),
@@ -29,7 +32,8 @@ defmodule SpecLint.Rule do
           required(:file) => String.t() | nil,
           required(:slices) => [slice_context()],
           required(:severity) => Issue.severity(),
-          optional(:clause_local_qualification) => boolean()
+          optional(:clause_local_qualification) => boolean(),
+          optional(:pattern_diagnostics) => SpecLint.Reachability.result()
         }
 
   @typedoc "What a rule sees for one module."

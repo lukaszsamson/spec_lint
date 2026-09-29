@@ -19,9 +19,10 @@ defmodule SpecLint.CLI do
       --rules ID,...               run only these rules (IDs or names)
       --except ID,...              do not run these rules
       --require-static-return      DESIGN 3.1 step 9 (default from config: false)
-      --clause-local-qualification experiment: qualify SL001 clause conflicts by
-                                   clause containment in the spec lower bound
-                                   (default from config: false)
+      --[no-]clause-local-qualification
+                                   qualify SL001 clause conflicts by clause
+                                   containment in the spec lower bound
+                                   (default from config: true)
   """
 
   alias SpecLint.Explain
