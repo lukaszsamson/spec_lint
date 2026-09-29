@@ -22,7 +22,9 @@ beside it.
 - Fingerprints: `SpecLint.Compiler.canonical/1` was already structural (a
   sorted-term serialisation of the `Descr` term, no printing). It is
   unchanged, so fingerprints and the baseline format version (1) are
-  unchanged and no migration is needed.
+  unchanged and no migration is needed. *The later review fixes (union
+  member order, shadowed required map keys) did change 13 of these 63
+  fingerprints; see `../m1_review/`.*
 
 ## Regenerate
 
@@ -105,7 +107,9 @@ cores, one run at a time):
 | Corpus runner wall time (includes provenance hashing) | no complete Phase 4 run | 118 s |
 
 The 60-second target is met only without rules (59.3 s). With the default
-rules `Run.execute/3` takes 65-68 s. What remains was measured separately:
+rules `Run.execute/3` takes 65-68 s. *The review re-measured 61.7 s without
+rules; five later runs took 60.6-66.8 s (`../m1_review/`), so the target is
+not met in either mode.* What remains was measured separately:
 
 - Translation and comparison compute: about 31 s when each module's result
   is discarded.
@@ -121,7 +125,11 @@ rules `Run.execute/3` takes 65-68 s. What remains was measured separately:
   76 ms in a fresh process, but the JSON rendering in the run process took
   between 1 s and 78 s in separate runs. That variance was not investigated
   further; it accounts for most of the difference between `Run.execute/3`
-  and the end-to-end time.
+  and the end-to-end time. *Later explained (`../m1_review/`): printing a
+  map type loads the module of each struct it prints, and every code load
+  in the run process took seconds, depending on how many were still to
+  load. Rendering now happens in a short-lived process: 0.13-0.17 s, and
+  73-75 s end to end.*
 
 A lower memory translation (sharing translated named types across slices)
 is the next performance lever; it is not part of this milestone.

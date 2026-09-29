@@ -31,6 +31,14 @@ defmodule SpecLint.Baseline do
   The raw spec AST is not hashed: it still carries type alias names,
   type variable names and union member order, so renaming a type alias,
   renaming a type variable or reordering a union keeps the fingerprint.
+  The translated bounds do not depend on the member order either:
+  `SpecLint.Translate` unites a union's members in a fixed order, because
+  the compiler fuses two tuple or map literals that differ in one position
+  as it unites them, so `{:ok, binary()} | {:error, :timeout} |
+  {:error, atom()}` and its reverse would otherwise be different terms.
+  Overlapping map associations are read in order (the first wins, as in
+  Dialyzer), so reordering those can change the translated type, and then
+  the fingerprint.
   A line change or reordering other functions keeps it too, while
   reordering the spec's clauses changes it (the slice index is part of the
   evidence). Refinements the lattice erases (`pos_integer()` against

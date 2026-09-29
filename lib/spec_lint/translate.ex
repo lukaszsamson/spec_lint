@@ -34,9 +34,13 @@ defmodule SpecLint.Translate do
       bound's `integers` so overlapping overloads can still be told apart.
     * Erlang records become open tuples tagged by the record name with
       `:record_fields_unknown`.
+    * Union members are united in Erlang term order, not in spec order, so
+      reordering a union changes neither the bounds nor their
+      representation (the compiler fuses literals as it unites them).
     * Map associations follow Dialyzer's reading (`erl_types`
       `map_from_form/6`): an earlier association shadows the keys it covers
-      in later ones. See `map/3` below.
+      in later ones. A shadowed required literal key is recorded as
+      `:map_key_widened`. See `map/3` below.
     * A construct with no sound translation makes the whole slice
       `{:unsupported, reason}`; other slices of the same spec still translate.
 
@@ -346,7 +350,7 @@ defmodule SpecLint.Translate do
       |> Enum.with_index()
       |> Enum.map(fn {member, index} -> node(member, ctx, path ++ [{:union, index}]) end)
 
-    union = Bound.map_covariant(bounds, &Compiler.union_all/1)
+    union = Bound.map_covariant(bounds, &union_members/1)
 
     if Enum.any?(bounds, &is_list(&1.integers)),
       do: %{union | integers: Enum.flat_map(bounds, &Bound.integer_intervals/1)},
@@ -514,6 +518,16 @@ defmodule SpecLint.Translate do
   defp builtin(name, args, _ctx, _path),
     do: throw({:unsupported, {:builtin, name, strip(args)}})
 
+  # The compiler fuses two tuple (or map) literals that differ in one
+  # position when it unites them one at a time, so the representation of a
+  # union depends on the order its members are united in:
+  # `{:ok, binary()} | {:error, :timeout} | {:error, atom()}` and its
+  # reverse denote the same set but differ as terms, and so would their
+  # fingerprints (`SpecLint.Baseline.fingerprint/1`). The members are
+  # therefore united in Erlang term order, which depends only on the
+  # translated members, never on how the spec orders them.
+  defp union_members(descrs), do: descrs |> Enum.sort() |> Compiler.union_all()
+
   defp maybe_improper(elem, tail) do
     Compiler.union(
       Compiler.empty_list(),
@@ -590,7 +604,9 @@ defmodule SpecLint.Translate do
   # an earlier association are removed from later ones, so the first
   # association for a key wins. A literal atom key after `optional(atom())`
   # is therefore shadowed, and `%{:__struct__ => atom(), optional(atom()) =>
-  # any()}` keeps `__struct__` as an `atom()` field.
+  # any()}` keeps `__struct__` as an `atom()` field. A shadowed *required*
+  # literal key is not exact: the readings disagree on whether it stays
+  # required (`shadowed_required/5`).
   #
   # A non-literal key is split into its finite atom part (one optional field
   # per atom) and whole base kinds (key domains). Its coverage is `certain`
@@ -601,7 +617,14 @@ defmodule SpecLint.Translate do
   # non-literal keys other than a single atom are widened to optional in the
   # upper bound with `lo = none()`. Every widening records `:map_key_widened`.
   defp map(assocs, ctx, path) do
-    acc = %{fields: [], domains: [], values: [], losses: [], lo_empty?: false}
+    acc = %{
+      fields: [],
+      domains: [],
+      values: [],
+      losses: [],
+      lo_empty?: false,
+      lo_required: []
+    }
 
     assocs
     |> Enum.with_index()
@@ -684,8 +707,8 @@ defmodule SpecLint.Translate do
       {%{certain?: true} = field, _} ->
         if optional?, do: acc, else: put_field(acc, %{field | optional?: false})
 
-      {nil, %{certain?: true}} ->
-        acc
+      {nil, %{certain?: true} = domain} ->
+        if optional?, do: acc, else: shadowed_required(acc, atom, domain, value, loss_path)
 
       {%{} = field, _} ->
         joined = %{field | hi: Compiler.union(field.hi, value.hi), optional?: true}
@@ -698,6 +721,25 @@ defmodule SpecLint.Translate do
       {nil, nil} ->
         put_field(acc, new_field(atom, value.hi, value.lo, optional?, certain?))
     end
+  end
+
+  # A required literal key that an earlier whole-kind domain covers is
+  # read three ways. Dialyzer keeps the domain's value and drops the
+  # requirement (`promote_to_mand/2` only promotes keys it holds as fields,
+  # though it does keep the requirement after an earlier literal field).
+  # Keeping the requirement is the other reading of "the first association
+  # wins". And Elixir code writes `%{optional(any()) => any(), year:
+  # integer()}` (`Calendar.date/0`) to mean a map that has `:year`, an
+  # integer: keyword keys come last, so every such key is shadowed. The
+  # upper bound covers all three: an optional field with both values. The
+  # lower bound is inside all three: the key required, with a value in both
+  # lower bounds. Translating Dialyzer's reading as exact made the lower
+  # bound of `Calendar.date()` every map (Milestone 1 review).
+  defp shadowed_required(acc, atom, domain, value, loss_path) do
+    field = new_field(atom, Compiler.union(domain.hi, value.hi), nil, true, false)
+    lo = Compiler.intersection(domain.lo, value.lo)
+    required = [{atom, lo} | Enum.reject(acc.lo_required, &(elem(&1, 0) == atom))]
+    widened_hi(%{put_field(acc, field) | lo_required: required}, loss_path)
   end
 
   defp add_domain(acc, kind, value, certain?, loss_path) do
@@ -767,7 +809,10 @@ defmodule SpecLint.Translate do
       if acc.lo_empty? do
         Compiler.none()
       else
-        lo_fields = for %{certain?: true} = f <- acc.fields, do: {f.key, f.lo, f.optional?}
+        lo_fields =
+          for(%{certain?: true} = f <- acc.fields, do: {f.key, f.lo, f.optional?}) ++
+            for {atom, lo} <- Enum.reverse(acc.lo_required), do: {atom, lo, false}
+
         lo_domains = for %{certain?: true} = d <- acc.domains, do: {[d.kind], d.lo}
         Compiler.closed_map(lo_fields, lo_domains)
       end

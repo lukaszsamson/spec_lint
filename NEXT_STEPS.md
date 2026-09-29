@@ -16,9 +16,11 @@ Phase 4 delivery and validation are recorded in `PHASE_4_PLAN.md` and
    normal return or establish that mapping. Do not infer a precise mapping
    from clause indices.
 4. Treat Absinthe as a performance regression benchmark. Milestone 1
-   removed type printing from classification: `Run.execute/3` takes 59 s
-   without rules and 65-68 s with the default rules, and the full product
-   run 109 s (`bench/corpus/reports/m1/`). The remaining cost is translation
+   removed type printing from classification, and its review moved
+   rendering out of the run process: `Run.execute/3` takes 60.6-66.8 s
+   without rules and 62.5-64.4 s with the default rules, so the 60-second
+   target is not met, and the full product run 73-75 s
+   (`bench/corpus/reports/m1_review/`). The remaining cost is translation
    and garbage collection of about 3.3 GB of retained translated bounds.
    Sharing translated named types across slices is the next lever. Preserve
    conservative lower/upper bounds and loss records if expansion is capped

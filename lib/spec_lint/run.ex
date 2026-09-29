@@ -132,6 +132,8 @@ defmodule SpecLint.Run do
   """
   @spec execute(Project.t(), Config.t(), [option()]) :: {:ok, t()} | {:error, String.t()}
   def execute(%Project{} = project, %Config{} = config, opts \\ []) do
+    :ok = preload()
+    opts = Keyword.put_new_lazy(opts, :today, &Date.utc_today/0)
     filters = %{modules: Keyword.get(opts, :modules, []), apps: Keyword.get(opts, :apps, [])}
 
     run = %__MODULE__{
@@ -160,6 +162,44 @@ defmodule SpecLint.Run do
           {:ok, unsupported_compiler(run, reason)}
       end
     end
+  end
+
+  # Standard library modules the stages after the analysis use (messages,
+  # module names, the reachability processes). See `preload/0`.
+  @preloaded [
+    Calendar.ISO,
+    Date,
+    Inspect,
+    Inspect.Algebra,
+    Inspect.Atom,
+    Inspect.BitString,
+    Inspect.Float,
+    Inspect.Integer,
+    Inspect.List,
+    Inspect.Map,
+    Inspect.Opts,
+    Inspect.Tuple,
+    MapSet,
+    String.Chars,
+    String.Chars.Atom,
+    String.Chars.Integer,
+    String.Chars.List,
+    Task,
+    Task.Supervised
+  ]
+
+  # Loads SpecLint's own modules and `@preloaded` before the analysis. After
+  # it this process holds every analysed module's results (a heap of about
+  # 3.3 GB on Absinthe), and every module first loaded then, on first call,
+  # cost seconds: the lazily loaded coverage, reachability, rule, policy and
+  # inspection modules added up to tens of seconds of `execute/3` (Milestone
+  # 1 review). Loading is best effort: a module that cannot be loaded here
+  # is loaded, or fails, where it is called, as before.
+  defp preload do
+    _ = Application.load(:spec_lint)
+    modules = List.wrap(Application.spec(:spec_lint, :modules)) ++ @preloaded
+    _ = :code.ensure_modules_loaded(modules)
+    :ok
   end
 
   defp check_backend(%Config{analysis: :bodies}, _rules),

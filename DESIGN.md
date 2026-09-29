@@ -541,7 +541,18 @@ Rules:
   `recursive_cutoff`, never counted as exact.
 - Literal map types stay closed; an association with a non-literal key opens
   the map and records a loss. Overlapping associations are validated in
-  tests before being called exact.
+  tests before being called exact. They are read in order, as Dialyzer
+  does: the first association for a key wins. A required literal key after
+  a domain that covers it is not exact. Dialyzer drops the requirement
+  (which it keeps after an earlier literal key), while Elixir code writes
+  `%{optional(any()) => any(), year: integer()}` (`Calendar.date()`) to mean
+  a map that has an integer `:year`, because keyword keys come last. `hi`
+  makes the key optional with both values, `lo` requires it with a value in
+  both lower bounds, and `map_key_widened` is recorded. Before the
+  Milestone 1 review this was translated as Dialyzer's reading and called
+  exact, so the lower bound of `Calendar.date()` was every map.
+- Unions are united in Erlang term order of the translated members, so the
+  representation, and the fingerprint, does not depend on member order.
 - Erlang records stay open tuples tagged with the record name.
 - One unsupported construct marks that slice `unsupported`; other slices of
   the same spec are still analysed.
@@ -780,7 +791,13 @@ These notes record choices the text above left open.
   and clause indexes are part of the hash, so reordering spec clauses
   changes the fingerprint. Reordering other functions, changing lines,
   recompiling, renaming a type alias or variable and reordering a union do
-  not. Tests cover each case, plus a fresh VM.
+  not. Tests cover each case, plus a fresh VM. Reordering a union keeps it
+  because translation unites the members in Erlang term order: the
+  compiler fuses tuple or map literals that differ in one position as it
+  unites them, so `{:ok, binary()} | {:error, :timeout} | {:error, atom()}`
+  and its reverse used to be different terms (Milestone 1 review). The
+  order of overlapping map associations is part of the meaning (the first
+  wins), so reordering them can change the fingerprint.
 - **SL008 acknowledgement.** An `SL008` finding is acknowledged by an
   inventory entry with the same subject (MFA, or the module for a
   module-level failure), slice and status. It is not listed among the

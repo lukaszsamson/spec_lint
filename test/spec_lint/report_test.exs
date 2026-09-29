@@ -4,7 +4,7 @@ defmodule SpecLint.ReportTest do
   import SpecLint.TestHelpers
 
   alias SpecLint.ExperimentFixtures.Cases
-  alias SpecLint.{Explain, Run}
+  alias SpecLint.{Explain, Issue, Report, Run}
   alias SpecLint.Fixtures.Compare
   alias SpecLint.Report.{Console, Json}
 
@@ -44,6 +44,83 @@ defmodule SpecLint.ReportTest do
     first = [Compare, Cases] |> run!(ci: true) |> Json.envelope() |> Json.encode()
     second = [Compare, Cases] |> run!(ci: true) |> Json.envelope() |> Json.encode()
     assert IO.iodata_to_binary(first) == IO.iodata_to_binary(second)
+  end
+
+  describe "rendering away from the run process" do
+    test "Report.render/2 returns what the reporters render in the calling process" do
+      run = run!([Compare, Cases], ci: true)
+      assert run.issues != []
+
+      assert Report.render(run, :json) ==
+               run |> Json.envelope() |> Json.encode() |> IO.iodata_to_binary()
+
+      assert Report.render(run, :console) == run |> Console.render() |> IO.iodata_to_binary()
+    end
+
+    test "the report view drops the analysis results and renders the same" do
+      run = run!([Compare, Cases], ci: true)
+      view = Report.view(run)
+
+      assert run.modules != [] and run.evidence != %{} and run.inventory != []
+      assert {view.modules, view.excluded, view.inventory} == {[], [], []}
+      assert {view.evidence, view.reachability} == {%{}, %{}}
+      assert %{view | issues: run.issues} == view
+      assert Json.envelope(view) == Json.envelope(run)
+      assert IO.iodata_to_binary(Console.render(view)) == IO.iodata_to_binary(Console.render(run))
+    end
+
+    # Printing a type loads struct modules, and a code load in the process
+    # holding a large project's analysis took seconds (Milestone 1 review):
+    # findings must be rendered in another process.
+    test "the calling process renders no finding" do
+      run = run!([Compare, Cases], ci: true)
+      mfa = {Issue, :rendered_details, 1}
+      test = self()
+      tracer = spawn_link(fn -> forward_traces(test) end)
+      :erlang.trace_pattern(mfa, true, [:global])
+      :erlang.trace(self(), true, [:call, {:tracer, tracer}])
+
+      try do
+        # Control: rendering in this process is seen.
+        _ = Json.envelope(run)
+        sync_traces(tracer)
+        assert_received {:trace, _, :call, {Issue, :rendered_details, [_]}}
+        flush_traces()
+
+        for format <- [:json, :console], do: Report.render(run, format)
+        sync_traces(tracer)
+        refute_received {:trace, _, :call, {Issue, :rendered_details, _}}
+      after
+        :erlang.trace(self(), false, [:call])
+        :erlang.trace_pattern(mfa, false, [:global])
+      end
+    end
+  end
+
+  defp forward_traces(test) do
+    receive do
+      {:sync, ref} -> send(test, {:synced, ref})
+      trace -> send(test, trace)
+    end
+
+    forward_traces(test)
+  end
+
+  defp flush_traces do
+    receive do
+      {:trace, _, _, _} -> flush_traces()
+    after
+      0 -> :ok
+    end
+  end
+
+  # Every trace message of this process has reached the tracer and been
+  # forwarded.
+  defp sync_traces(tracer) do
+    ref = :erlang.trace_delivered(self())
+    assert_receive {:trace_delivered, _, ^ref}, 5_000
+    send(tracer, {:sync, ref})
+    assert_receive {:synced, ^ref}, 5_000
   end
 
   test "encode sorts keys and writes atomically", %{tmp_dir: tmp_dir} do

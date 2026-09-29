@@ -166,6 +166,59 @@ defmodule SpecLint.BaselineTest do
       changed = String.replace(@spelled, ":none | :fine", ":none")
       refute fingerprints(Path.join(tmp_dir, "changed"), changed) == spelled
     end
+
+    defp union_source(type) do
+      """
+      defmodule FpUnion do
+        @spec f(#{type}) :: :never
+        def f(x) when is_tuple(x) or is_map(x), do: :oops
+
+        @spec g(atom()) :: #{type}
+        def g(a) when is_atom(a), do: a
+      end
+      """
+    end
+
+    # The compiler fuses two literals that differ in one position when it
+    # unites them one at a time, so these unions used to be different terms
+    # depending on the member order (Milestone 1 review).
+    test "reordering a union whose members share a tuple tag or map shape keeps fingerprints",
+         %{tmp_dir: tmp_dir} do
+      unions = [
+        ["{:ok, binary()}", "{:error, :timeout}", "{:error, atom()}"],
+        ["{:ok, atom()}", "{:ok, integer()}", "{:error, binary()}"],
+        ["%{a: :x}", "%{a: :y}", "%{b: integer()}"],
+        ["{:ok, binary()}", "{:error, :timeout}", "{:error, atom()}", "{:error, :closed}"]
+      ]
+
+      for {members, index} <- Enum.with_index(unions) do
+        forward = members |> Enum.join(" | ") |> union_source()
+        reverse = members |> Enum.reverse() |> Enum.join(" | ") |> union_source()
+        rotated = members |> tl() |> Kernel.++([hd(members)]) |> Enum.join(" | ")
+
+        expected = fingerprints(Path.join(tmp_dir, "u#{index}"), forward)
+        assert Map.keys(expected) |> Enum.sort() == [{"SL001", :f, 0, nil}, {"SL001", :g, 0, nil}]
+        assert fingerprints(Path.join(tmp_dir, "u#{index}r"), reverse) == expected
+        assert fingerprints(Path.join(tmp_dir, "u#{index}o"), union_source(rotated)) == expected
+      end
+    end
+
+    # Overlapping associations are read in order (the first wins, as in
+    # Dialyzer), so their order is part of the spec's meaning. Reversing
+    # them changes the translation, which records the shadowed required key
+    # as a loss, and so the fingerprint.
+    test "reordering overlapping map associations changes the fingerprint",
+         %{tmp_dir: tmp_dir} do
+      required_first = "%{required(:a) => atom(), optional(atom()) => integer()}"
+      domain_first = "%{optional(atom()) => integer(), required(:a) => atom()}"
+
+      first = fingerprints(Path.join(tmp_dir, "required_first"), union_source(required_first))
+      second = fingerprints(Path.join(tmp_dir, "domain_first"), union_source(domain_first))
+
+      assert Map.keys(first) == Map.keys(second)
+      assert Map.keys(first) != []
+      for key <- Map.keys(first), do: refute(first[key] == second[key])
+    end
   end
 
   test "strip_annotations removes lines and columns only" do

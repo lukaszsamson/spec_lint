@@ -53,8 +53,8 @@ defmodule Mix.Tasks.SpecLint do
 
   use Mix.Task
 
-  alias SpecLint.{CLI, Config, Explain, Project, Run}
-  alias SpecLint.Report.{Console, Json}
+  alias SpecLint.{CLI, Config, Explain, Project, Report, Run}
+  alias SpecLint.Report.Json
 
   @impl true
   @spec run([String.t()]) :: :ok
@@ -124,12 +124,12 @@ defmodule Mix.Tasks.SpecLint do
   defp report(run, cli) do
     case cli.format do
       :console ->
-        text = IO.iodata_to_binary(Console.render(run))
+        text = Report.render(run, :console)
         :ok = write_output!(cli.output, text)
         Mix.shell().info(text)
 
       :json ->
-        json = Json.encode(Json.envelope(run))
+        json = Report.render(run, :json)
 
         if cli.output do
           :ok = write_output!(cli.output, json)

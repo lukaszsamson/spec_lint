@@ -19,8 +19,8 @@
 defmodule SpecLint.RunOnEbin do
   @moduledoc false
 
-  alias SpecLint.{Baseline, CLI, Config, Explain, Project, Run}
-  alias SpecLint.Report.{Console, Json}
+  alias SpecLint.{Baseline, CLI, Config, Explain, Project, Report, Run}
+  alias SpecLint.Report.Json
 
   @spec main([String.t()]) :: no_return()
   def main(argv) do
@@ -80,12 +80,12 @@ defmodule SpecLint.RunOnEbin do
     do: write_baseline(run, cli, write_baseline)
 
   defp report(run, %{format: :json} = cli, _write_baseline) do
-    json = Json.encode(Json.envelope(run))
+    json = Report.render(run, :json)
     if cli.output, do: ok!(Json.write_atomic(cli.output, json)), else: IO.write(json)
   end
 
   defp report(run, cli, _write_baseline) do
-    text = Console.render(run)
+    text = Report.render(run, :console)
     if cli.output, do: ok!(Json.write_atomic(cli.output, text))
     IO.write(text)
   end

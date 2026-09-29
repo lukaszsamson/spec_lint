@@ -1,8 +1,9 @@
 # Profiles the product pipeline on the pinned Absinthe build: the wall
 # time of SpecLint.Run.execute/3 (`--ci`, no rendering), of rendering the
-# JSON and console reports, and how many types each stage printed (VM-wide
-# call counts of the adapter's printer and of Descr.to_quoted_string/2).
-# The worker's stack is sampled every 500 ms.
+# JSON and console reports as the Mix task does (SpecLint.Report.render/2,
+# in a short-lived process), and how many types each stage printed
+# (VM-wide call counts of the adapter's printer and of
+# Descr.to_quoted_string/2). The worker's stack is sampled every 500 ms.
 #
 #     MIX_ENV=test mix run bench/absinthe_profile.exs [--no-rules] [ABSINTHE_ROOT]
 #
@@ -13,8 +14,7 @@
 # (`reports/phase4/absinthe.profile.md`): analysis and classification still
 # run, rules, reachability checks and SL008 do not.
 
-alias SpecLint.{Config, Project, Run}
-alias SpecLint.Report.{Console, Json}
+alias SpecLint.{Config, Project, Report, Run}
 
 {flags, args} = Enum.split_with(System.argv(), &String.starts_with?(&1, "--"))
 only = if "--no-rules" in flags, do: [], else: nil
@@ -57,12 +57,12 @@ worker =
     IO.puts("findings: #{length(run.issues)}, exit code #{run.exit_code}, #{run.completion}")
 
     {ms, [adapter, descr], json} =
-      counted.(fn -> run |> Json.envelope() |> Json.encode() |> IO.iodata_to_binary() end)
+      counted.(fn -> Report.render(run, :json) end)
 
     IO.puts("json render: #{ms} ms, #{byte_size(json)} bytes, printed #{adapter} (#{descr})")
 
     {ms, [adapter, descr], console} =
-      counted.(fn -> run |> Console.render() |> IO.iodata_to_binary() end)
+      counted.(fn -> Report.render(run, :console) end)
 
     IO.puts(
       "console render: #{ms} ms, #{byte_size(console)} bytes, printed #{adapter} (#{descr})"

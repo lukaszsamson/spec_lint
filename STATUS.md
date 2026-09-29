@@ -5,6 +5,48 @@ Date 2026-09-29. `DESIGN.md` is the authoritative design,
 Phase 4 follows the review of the Phase 3 implementation at `0cc9c50`;
 previous results below are historical and are superseded where noted.
 
+## Milestone 1 review: rendering, union order, shadowed map keys
+
+Four review findings on `e4fc0c7`, all resolved
+(`bench/corpus/reports/m1_review/`):
+
+- **JSON rendering time (1-78 s) is explained and removed.** Printing a map
+  type loads the module of every struct it prints
+  (`Module.Types.Descr.maybe_struct/1`), and each code load in the run
+  process, which holds about 3.3 GB of analysis results on Absinthe, took
+  seconds; the reporters' own modules, and the coverage, reachability,
+  rule and policy modules first used after the analysis, were loaded
+  there too. `SpecLint.Report.render/2` now renders in a short-lived
+  process that receives the run without its analysis results, and
+  `Run.execute/3` loads SpecLint's modules and the standard library
+  modules its later stages use before the analysis. Absinthe's JSON report
+  renders in 0.13-0.17 s, and the product run takes 73-75 s end to end,
+  against 109 s.
+- **The 60-second target is not met.** `Run.execute/3` on Absinthe takes
+  60.6-66.8 s without rules (median 62.9 s of five runs) and 62.5-64.4 s
+  with the default rules. The earlier "met without rules" rested on one
+  59.3 s sample.
+- **Union member order no longer changes fingerprints.** The compiler
+  fuses two tuple or map literals that differ in one position when it
+  unites them, so `{:ok, binary()} | {:error, :timeout} | {:error, atom()}`
+  and its reverse were different terms with different fingerprints. The
+  translation now unites a union's members in Erlang term order.
+- **A shadowed required map key is no longer called exact.** In
+  `%{optional(any()) => any(), year: integer()}` (the `Calendar.date()`
+  form: keyword keys come last), Dialyzer's reading drops the requirement,
+  and it was translated as exact, so the lower bound admitted maps without
+  `:year`. The upper bound now covers Dialyzer's reading and the required
+  one, the lower bound requires the key, and `map_key_widened` is
+  recorded. The order of overlapping associations stays significant (the
+  first wins), so reordering them changes the fingerprint; a test pins it.
+
+The fifteen-corpus replay keeps every exit code, all 4,204 compared slices,
+63 findings and 9 gates; eleven reports are byte-identical to Milestone 1.
+**13 fingerprints changed**, including all seven gated Absinthe findings,
+so baselines that acknowledge them must be regenerated
+(`mix spec_lint.baseline`); the baseline format version is unchanged.
+Validation: 337 tests, strict Credo, formatting and Dialyzer pass.
+
 ## Milestone 1: no type printing during classification
 
 The Absinthe profile (`bench/corpus/reports/phase4/absinthe.profile.md`)
@@ -30,7 +72,11 @@ same machine) to 59.3 s; with the default rules it takes 65-68 s, so the
 (`run_on_ebin.exs --ci --format json`) takes 109 s, against 345 s in Phase 3.
 The remaining cost is translation (about 31 s) and garbage collection of the
 retained results; JSON rendering in the run process varied from 1 s to 78 s
-between runs and was not investigated further.
+between runs and was not investigated further. *Superseded by the review
+above: the 59.3 s was one sample of a 60-67 s spread, so the target is not
+met, and the rendering variance was module loading in the run process
+(now 0.13-0.17 s; end to end 73-75 s). Fingerprints did change after the
+review.*
 
 The fifteen-corpus replay (`bench/corpus/reports/m1/`) is complete for the
 first time since Phase 3. Its fourteen reports with a Phase 4 counterpart

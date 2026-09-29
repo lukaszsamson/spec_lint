@@ -243,13 +243,66 @@ defmodule SpecLint.TranslateTest do
       )
     end
 
-    test "a literal key after optional(atom()) is shadowed" do
+    test "a required literal key after optional(atom()) is shadowed, not exact" do
       %{args: [arg]} = slice(Types, :map_shadowed, 1)
-      # %{optional(atom()) => binary(), name: integer()} reads as
-      # %{atom() => binary()}: Elixir emits keyword keys last.
-      assert_exact(arg, C.closed_map([], [{[:atom], C.binary()}]))
+
+      # %{optional(atom()) => binary(), name: integer()}: Elixir emits keyword
+      # keys last. Dialyzer reads %{atom() => binary()} (requirement dropped,
+      # first value wins); the author may mean a required integer :name.
+      # hi covers both readings, lo is inside both.
+      hi =
+        C.closed_map([{:name, C.union(C.binary(), C.integer()), true}], [{[:atom], C.binary()}])
+
+      lo = C.closed_map([{:name, C.none(), false}], [{[:atom], C.binary()}])
+      assert_bounds(arg, lo, hi, [:map_key_widened])
+      assert [%{path: [{:arg, 0}, {:map_value, :name}]}] = arg.losses
       assert C.subtype?(C.closed_map([{:name, C.binary(), false}], []), arg.hi)
-      assert C.subtype?(C.empty_map(), arg.lo)
+      assert C.subtype?(C.closed_map([{:name, C.integer(), false}], []), arg.hi)
+      assert C.subtype?(C.empty_map(), arg.hi)
+      refute C.subtype?(C.empty_map(), arg.lo)
+    end
+
+    test "a map with required keys after optional(any()) requires them in lo" do
+      # Calendar.date(): %{optional(any) => any, calendar: ..., year: ...}.
+      form =
+        {:type, 0, :map,
+         [
+           {:type, 0, :map_field_assoc, [{:type, 0, :any, []}, {:type, 0, :any, []}]},
+           {:type, 0, :map_field_exact, [{:atom, 0, :year}, {:type, 0, :integer, []}]}
+         ]}
+
+      bound = raw(form)
+      assert loss_kinds(bound.losses) == [:map_key_widened]
+      assert C.equal?(bound.hi, C.open_map())
+      year = fn value -> C.closed_map([{:year, value, false}], []) end
+      assert C.subtype?(year.(C.integer()), bound.lo)
+      refute C.subtype?(year.(C.binary()), bound.lo)
+      refute C.subtype?(C.empty_map(), bound.lo)
+      refute C.subtype?(C.closed_map([{:month, C.integer(), false}], []), bound.lo)
+      other = C.closed_map([{:year, C.integer(), false}, {:month, C.binary(), false}], [])
+      assert C.subtype?(other, bound.lo)
+    end
+
+    test "a shadowed optional literal key stays exact" do
+      form =
+        {:type, 0, :map,
+         [
+           {:type, 0, :map_field_assoc, [{:type, 0, :atom, []}, {:type, 0, :binary, []}]},
+           {:type, 0, :map_field_assoc, [{:atom, 0, :name}, {:type, 0, :integer, []}]}
+         ]}
+
+      assert_exact(raw(form), C.closed_map([], [{[:atom], C.binary()}]))
+    end
+
+    test "a required literal key before optional(atom()) is exact and required" do
+      form =
+        {:type, 0, :map,
+         [
+           {:type, 0, :map_field_exact, [{:atom, 0, :a}, {:type, 0, :atom, []}]},
+           {:type, 0, :map_field_assoc, [{:type, 0, :atom, []}, {:type, 0, :integer, []}]}
+         ]}
+
+      assert_exact(raw(form), C.closed_map([{:a, C.atom(), false}], [{[:atom], C.integer()}]))
     end
 
     test "an inexact key keeps its finite atoms and kinds in hi only" do
