@@ -151,9 +151,9 @@ defmodule Mix.Tasks.SpecLint do
     check_current_compilers!()
 
     if Mix.Project.umbrella?() do
-      for {app, path} <- Enum.sort(Mix.Project.apps_paths() || %{}) do
+      Enum.each(Enum.sort(Mix.Project.apps_paths() || %{}), fn {app, path} ->
         Mix.Project.in_project(app, path, fn _ -> check_current_compilers!() end)
-      end
+      end)
     end
   end
 
@@ -173,7 +173,7 @@ defmodule Mix.Tasks.SpecLint do
     tasks = ["compile", "compile.all" | Enum.map(supported, &"compile.#{&1}")]
     aliases = Mix.Project.config()[:aliases] || []
 
-    for task <- tasks do
+    Enum.each(tasks, fn task ->
       if Keyword.has_key?(aliases, String.to_atom(task)) do
         Mix.raise(
           "unsupported compiler pipeline for #{Mix.Project.config()[:app] || "umbrella"}: " <>
@@ -192,7 +192,7 @@ defmodule Mix.Tasks.SpecLint do
           exit_status: 2
         )
       end
-    end
+    end)
   end
 
   defp compile_and_record!(args, force?, capabilities, prior) do
