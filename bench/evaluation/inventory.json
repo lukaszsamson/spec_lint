@@ -1,0 +1,843 @@
+{
+  "schema": "spec_lint/evaluation_inventory",
+  "version": 1,
+  "frozen": "2026-09-29",
+  "tool_revision_at_freeze": "62862e9",
+  "document": "bench/evaluation/INVENTORY.md",
+  "definitions": {
+    "omission": "an MFA whose @spec return omits a value that a runtime call with arguments inside the declared argument types returns normally",
+    "status": {
+      "witnessed": "a committed, executable witness on the pinned library build calls the MFA with arguments inside the declared domain (checked against the cited type declarations) and the result is outside the declared return",
+      "source-only": "a source path to an undeclared return is plausible but no in-domain runtime witness exists",
+      "refuted": "an in-domain witness returned inside the declared return, or source review shows the alternative is unreachable for in-domain inputs"
+    },
+    "family_rule": [
+      "all omitted alternatives of one MFA are one family, whatever the number of clauses, slices, inputs or findings (Absinthe.Blueprint.Input.parse/1's seven clause findings are one family)",
+      "two MFAs are one family when the undeclared value that witnesses one is produced by the same source construct as the other's: one returns the other's result (delegation), or both relay a value built at one origin; the relation is closed transitively",
+      "MFAs with separate code are separate families even when the defect has the same kind (two stale specs are two families)"
+    ],
+    "categories": {
+      "return_value": "the returned value itself, or a component of it that is not a struct field, is outside the declared return",
+      "struct_default": "a returned struct keeps a field at its default value, outside the field's declared type",
+      "struct_field_from_input": "a returned struct field holds a value copied from an in-domain argument, outside the field's declared type"
+    },
+    "category_policy": "struct_default and struct_field_from_input families stay in the denominator; every recall figure is also reported for category return_value alone. The categories change no rule policy.",
+    "counting_unit": "omission family",
+    "denominator": "the number of families with status witnessed in this file",
+    "numerator": {
+      "gated": "at least one MFA of the family has a finding with rule SL001 and gate true in the product report of the family's corpus under the measured adapter",
+      "reported": "not gated, and at least one MFA of the family has any finding (SL001 with gate false, or SL002) in that report",
+      "silent": "no finding on any MFA of the family",
+      "recall": "gated recall = gated / denominator; reported recall = (gated + reported) / denominator; both also for category return_value",
+      "granularity": "a finding counts by its subject MFA, whatever its slice or clause"
+    },
+    "reports": "the committed product reports (*.spec_lint.json) of the corpus, default configuration, one set per adapter; a measurement names the set and its file hashes",
+    "change_policy": "any change to families, statuses, witnesses, the family rule, the denominator or the holdout procedure is a new version of this file in its own commit, documented in INVENTORY.md; numbers computed against version 1 cite it"
+  },
+  "corpora": {
+    "decimal": {
+      "repository": "https://github.com/ericmj/decimal",
+      "revision": "92a28e6b9a103f2b52a22b3f772f7a2a34b7b1d5",
+      "root": "$OSS",
+      "report": "decimal"
+    },
+    "plug": {
+      "repository": "https://github.com/elixir-plug/plug",
+      "revision": "73404f851852a00ffb2014be95d4598900fa77b8",
+      "root": "$OSS",
+      "report": "plug"
+    },
+    "ecto": {
+      "repository": "https://github.com/elixir-ecto/ecto",
+      "revision": "94d69279c517347ff0962b138f4ccd0556486ae2",
+      "root": "$OSS",
+      "report": "ecto"
+    },
+    "oban": {
+      "repository": "https://github.com/sorentwo/oban",
+      "revision": "23fa8176b3586ca84f5859793739fad798e69d2b",
+      "root": "$EXPANSION",
+      "report": "oban"
+    },
+    "req": {
+      "repository": "https://github.com/wojtekmach/req",
+      "revision": "c6e8ab1f9d1c8e1aef935a6319faa40487bb6f42",
+      "root": "$EXPANSION",
+      "report": "req"
+    },
+    "ash": {
+      "repository": "https://github.com/ash-project/ash",
+      "revision": "164a4c0d0ef7724c5fd2153876c2cf90cd938863",
+      "root": "$EXPANSION",
+      "report": "ash"
+    },
+    "absinthe": {
+      "repository": "https://github.com/absinthe-graphql/absinthe",
+      "revision": "1372ceb5f8226175050a38821601cd57738c177b",
+      "root": "$EXPANSION",
+      "report": "absinthe"
+    }
+  },
+  "families": [
+    {
+      "id": "F01-decimal-compare-nan",
+      "corpus": "decimal",
+      "category": "return_value",
+      "mfas": [
+        "Decimal.compare/2",
+        "Decimal.cmp/2"
+      ],
+      "source": "lib/decimal.ex:490 (compare/2 spec), 508-512 (NaN clauses call error/4), 613-616 (cmp/2 delegates)",
+      "declared_return": "compare_result() = :lt | :gt | :eq (cmp/2: :lt | :eq | :gt)",
+      "omitted": "the NaN %Decimal{} returned by error/4 when :invalid_operation is not trapped",
+      "membership": "cmp/2 returns compare/2's result unchanged (delegation), so it joins compare/2's family",
+      "witnesses": [
+        {
+          "script": "bench/evaluation/pinned_witnesses.exs",
+          "record": "bench/evaluation/pinned_witnesses.json",
+          "case": "decimal_compare_nan",
+          "mfa": "Decimal.compare/2",
+          "input": "Decimal.compare(Decimal.new(\"NaN\"), Decimal.new(1)) with Decimal.Context traps: []",
+          "input_in_declared_domain": true,
+          "observed": "Decimal.new(\"NaN\")",
+          "control_input": "Decimal.compare(1, 2)",
+          "control_observed": ":lt"
+        },
+        {
+          "script": "bench/evaluation/pinned_witnesses.exs",
+          "record": "bench/evaluation/pinned_witnesses.json",
+          "case": "decimal_cmp_nan",
+          "mfa": "Decimal.cmp/2",
+          "input": "Decimal.cmp(Decimal.new(\"NaN\"), Decimal.new(1)) with traps: []",
+          "input_in_declared_domain": true,
+          "observed": "Decimal.new(\"NaN\")",
+          "control_input": "Decimal.cmp(1, 2)",
+          "control_observed": ":lt"
+        }
+      ],
+      "stand_in": "SpecLint.OmissionFixtures.Cases.compare/2 and cmp/2",
+      "origin": "EXPERIMENTS.md \"Real omissions found\" (the nine originals)",
+      "status": "witnessed",
+      "revision": "92a28e6b9a103f2b52a22b3f772f7a2a34b7b1d5"
+    },
+    {
+      "id": "F02-plug-query-decode-initial",
+      "corpus": "plug",
+      "category": "return_value",
+      "mfas": [
+        "Plug.Conn.Query.decode/4"
+      ],
+      "source": "lib/plug/conn/query.ex:108 (spec), 116-118 (\"\" clause returns Map.new(initial))",
+      "declared_return": "%{optional(String.t()) => term()}",
+      "omitted": "atom keys copied from a keyword() initial accumulator",
+      "membership": "single MFA",
+      "witnesses": [
+        {
+          "script": "bench/evaluation/pinned_witnesses.exs",
+          "record": "bench/evaluation/pinned_witnesses.json",
+          "case": "plug_query_decode_atom_key",
+          "mfa": "Plug.Conn.Query.decode/4",
+          "input": "Plug.Conn.Query.decode(\"\", [unexpected: 1], Plug.Conn.InvalidQueryError, true)",
+          "input_in_declared_domain": true,
+          "observed": "%{unexpected: 1}",
+          "control_input": "Plug.Conn.Query.decode(\"a=1\", [], Plug.Conn.InvalidQueryError, true)",
+          "control_observed": "%{\"a\" => \"1\"}"
+        }
+      ],
+      "stand_in": "SpecLint.OmissionFixtures.Cases.decode/2 (keeps the first two arguments)",
+      "origin": "EXPERIMENTS.md \"Real omissions found\" (the nine originals)",
+      "status": "witnessed",
+      "revision": "73404f851852a00ffb2014be95d4598900fa77b8"
+    },
+    {
+      "id": "F03-plug-merge-private-keys",
+      "corpus": "plug",
+      "category": "struct_field_from_input",
+      "mfas": [
+        "Plug.Conn.merge_private/2"
+      ],
+      "source": "lib/plug/conn.ex:388-391 (spec and body); private :: assigns :: %{optional(atom) => any} (169, 203)",
+      "declared_return": "Plug.Conn.t()",
+      "omitted": "a Plug.Conn whose private map has non-atom keys taken from the Enumerable.t() argument",
+      "membership": "single MFA",
+      "witnesses": [
+        {
+          "script": "bench/evaluation/pinned_witnesses.exs",
+          "record": "bench/evaluation/pinned_witnesses.json",
+          "case": "plug_merge_private_binary_key",
+          "mfa": "Plug.Conn.merge_private/2",
+          "input": "Plug.Conn.merge_private(%Plug.Conn{remote_ip: {127, 0, 0, 1}}, [{\"unexpected\", 1}]) (remote_ip repaired: the default nil is outside :inet.ip_address())",
+          "input_in_declared_domain": true,
+          "observed": "%Plug.Conn{private: %{\"unexpected\" => 1}, ...}",
+          "control_input": "Plug.Conn.merge_private(same conn, [expected: 1])",
+          "control_observed": "%Plug.Conn{private: %{expected: 1}, ...}"
+        }
+      ],
+      "stand_in": "SpecLint.OmissionFixtures.Cases.merge_private/2",
+      "origin": "EXPERIMENTS.md \"Real omissions found\" (the nine originals)",
+      "status": "witnessed",
+      "revision": "73404f851852a00ffb2014be95d4598900fa77b8"
+    },
+    {
+      "id": "F04-ecto-changeset-nil-data",
+      "corpus": "ecto",
+      "category": "return_value",
+      "mfas": [
+        "Ecto.Changeset.apply_action/2",
+        "Ecto.Changeset.apply_changes/1"
+      ],
+      "source": "lib/ecto/changeset.ex:2298-2301 (apply_changes/1 returns data), 2337-2342 (apply_action/2 wraps it); t :: t(Ecto.Schema.t() | map | nil) (408), data :: map() (419)",
+      "declared_return": "apply_action/2: {:ok, Ecto.Schema.t() | data} | {:error, t}; apply_changes/1: Ecto.Schema.t() | data",
+      "omitted": "nil (from a changeset whose data is nil, which t() allows)",
+      "membership": "apply_action/2 returns apply_changes/1's value inside {:ok, _} (delegation); apply_changes/1 was the omission found by the body backend experiment (EXPERIMENTS.md), with the same root cause",
+      "witnesses": [
+        {
+          "script": "bench/evaluation/pinned_witnesses.exs",
+          "record": "bench/evaluation/pinned_witnesses.json",
+          "case": "ecto_apply_action_nil_data",
+          "mfa": "Ecto.Changeset.apply_action/2",
+          "input": "Ecto.Changeset.apply_action(%Ecto.Changeset{valid?: true}, :insert)",
+          "input_in_declared_domain": true,
+          "observed": "{:ok, nil}",
+          "control_input": "Ecto.Changeset.apply_action(%Ecto.Changeset{valid?: true, data: %{}}, :insert)",
+          "control_observed": "{:ok, %{}}"
+        },
+        {
+          "script": "bench/evaluation/pinned_witnesses.exs",
+          "record": "bench/evaluation/pinned_witnesses.json",
+          "case": "ecto_apply_changes_nil_data",
+          "mfa": "Ecto.Changeset.apply_changes/1",
+          "input": "Ecto.Changeset.apply_changes(%Ecto.Changeset{})",
+          "input_in_declared_domain": true,
+          "observed": "nil",
+          "control_input": "Ecto.Changeset.apply_changes(%Ecto.Changeset{data: %{}})",
+          "control_observed": "%{}"
+        }
+      ],
+      "stand_in": "SpecLint.OmissionFixtures.Cases.apply_action/2",
+      "origin": "EXPERIMENTS.md \"Real omissions found\" (apply_action/2, one of the nine) and \"Body backend experiment\" (apply_changes/1)",
+      "status": "witnessed",
+      "revision": "94d69279c517347ff0962b138f4ccd0556486ae2"
+    },
+    {
+      "id": "F05-ecto-join-escape-stale",
+      "corpus": "ecto",
+      "category": "return_value",
+      "mfas": [
+        "Ecto.Query.Builder.Join.escape/3"
+      ],
+      "source": "lib/ecto/query/builder/join.ex:45-46 (spec, 4-tuple), 47-116 (clauses return 5-tuples)",
+      "declared_return": "{atom, Macro.t() | nil, Macro.t() | nil, list}",
+      "omitted": "5-tuples (stale spec)",
+      "membership": "single MFA",
+      "witnesses": [
+        {
+          "script": "bench/evaluation/pinned_witnesses.exs",
+          "record": "bench/evaluation/pinned_witnesses.json",
+          "case": "ecto_join_escape_five_tuple",
+          "mfa": "Ecto.Query.Builder.Join.escape/3",
+          "input": "Ecto.Query.Builder.Join.escape(quote(do: x in fragment(\"foo\")), [], __ENV__) (the function's own doc example)",
+          "input_in_declared_domain": true,
+          "observed": "{:x, {:{}, [], [:fragment, [], [raw: \"foo\"]]}, nil, nil, []}"
+        }
+      ],
+      "stand_in": "SpecLint.OmissionFixtures.Cases.join_escape/3",
+      "origin": "EXPERIMENTS.md \"Real omissions found\" (the nine originals)",
+      "notes": "no in-domain control exists: every clause returns a 5-tuple",
+      "status": "witnessed",
+      "revision": "94d69279c517347ff0962b138f4ccd0556486ae2"
+    },
+    {
+      "id": "F06-ecto-quoted-type-stale",
+      "corpus": "ecto",
+      "category": "return_value",
+      "mfas": [
+        "Ecto.Query.Builder.quoted_type/2"
+      ],
+      "source": "lib/ecto/query/builder.ex:1427 (spec), 1503 (literal atom clause returns :atom); quoted_type (55), Ecto.Type.primitive (lib/ecto/type.ex:202-230)",
+      "declared_return": "quoted_type() = Ecto.Type.primitive() | {non_neg_integer, atom | Macro.t()}",
+      "omitted": ":atom, {:tuple, _} and {{:{}, [], [kind, [], [value]]}, field} pairs (stale spec)",
+      "membership": "single MFA",
+      "witnesses": [
+        {
+          "script": "bench/evaluation/pinned_witnesses.exs",
+          "record": "bench/evaluation/pinned_witnesses.json",
+          "case": "ecto_quoted_type_atom",
+          "mfa": "Ecto.Query.Builder.quoted_type/2",
+          "input": "Ecto.Query.Builder.quoted_type(:example, [])",
+          "input_in_declared_domain": true,
+          "observed": ":atom",
+          "control_input": "Ecto.Query.Builder.quoted_type(1, [])",
+          "control_observed": ":integer"
+        }
+      ],
+      "stand_in": "SpecLint.OmissionFixtures.Cases.quoted_type/2",
+      "origin": "EXPERIMENTS.md \"Real omissions found\" (the nine originals)",
+      "status": "witnessed",
+      "revision": "94d69279c517347ff0962b138f4ccd0556486ae2"
+    },
+    {
+      "id": "F07-ecto-assoc-query-rows",
+      "corpus": "ecto",
+      "category": "return_value",
+      "mfas": [
+        "Ecto.Repo.Assoc.query/4"
+      ],
+      "source": "lib/ecto/repo/assoc.ex:10 (spec), 14 (Enum.map(rows, fun))",
+      "declared_return": "[Ecto.Schema.t()]",
+      "omitted": "a list of rows (lists), not schemas (stale spec)",
+      "membership": "single MFA",
+      "witnesses": [
+        {
+          "script": "bench/evaluation/pinned_witnesses.exs",
+          "record": "bench/evaluation/pinned_witnesses.json",
+          "case": "ecto_assoc_query_rows",
+          "mfa": "Ecto.Repo.Assoc.query/4",
+          "input": "Ecto.Repo.Assoc.query([[1]], [], {}, fn row -> row end)",
+          "input_in_declared_domain": true,
+          "observed": "[[1]]",
+          "control_input": "Ecto.Repo.Assoc.query([], [], {}, fn row -> row end)",
+          "control_observed": "[]"
+        }
+      ],
+      "stand_in": "SpecLint.OmissionFixtures.Cases.assoc_query/4",
+      "origin": "EXPERIMENTS.md \"Real omissions found\" (the nine originals)",
+      "status": "witnessed",
+      "revision": "94d69279c517347ff0962b138f4ccd0556486ae2"
+    },
+    {
+      "id": "F08-ecto-preloader-query-fun",
+      "corpus": "ecto",
+      "category": "return_value",
+      "mfas": [
+        "Ecto.Repo.Preloader.query/7"
+      ],
+      "source": "lib/ecto/repo/preloader.ex:15-23 (spec), 25 (Enum.map(rows, fun))",
+      "declared_return": "[list]",
+      "omitted": "whatever the untyped fun() returns (stale spec)",
+      "membership": "single MFA (separate code from F07)",
+      "witnesses": [
+        {
+          "script": "bench/evaluation/pinned_witnesses.exs",
+          "record": "bench/evaluation/pinned_witnesses.json",
+          "case": "ecto_preloader_query_non_list",
+          "mfa": "Ecto.Repo.Preloader.query/7",
+          "input": "Ecto.Repo.Preloader.query([[1]], MyRepo, [], nil, [], fn _ -> :unexpected end, {%{}, []})",
+          "input_in_declared_domain": true,
+          "observed": "[:unexpected]",
+          "control_input": "the same with fn row -> row end",
+          "control_observed": "[[1]]"
+        }
+      ],
+      "stand_in": "SpecLint.OmissionFixtures.Cases.preloader_query/7",
+      "origin": "EXPERIMENTS.md \"Real omissions found\" (the nine originals)",
+      "status": "witnessed",
+      "revision": "94d69279c517347ff0962b138f4ccd0556486ae2"
+    },
+    {
+      "id": "F09-oban-registry-via-value",
+      "corpus": "oban",
+      "category": "return_value",
+      "mfas": [
+        "Oban.Registry.via/3"
+      ],
+      "source": "lib/oban/registry.ex:6-8 (types), 122-125 (spec and clauses); Oban.name :: term() (lib/oban.ex:26)",
+      "declared_return": "{:via, Registry, {Oban.Registry, key()}}",
+      "omitted": "an inner 3-tuple {Oban.Registry, key, value} for a non-nil value",
+      "membership": "single MFA",
+      "witnesses": [
+        {
+          "script": "bench/corpus/expansion_witnesses.exs",
+          "record": "bench/corpus/reports/expansion/witnesses.json",
+          "case": "oban_registry_via_non_nil_value",
+          "mfa": "Oban.Registry.via/3",
+          "input": "Oban.Registry.via(Oban, nil, :witness)",
+          "input_in_declared_domain": true,
+          "observed": "{:via, Registry, {Oban.Registry, Oban, :witness}}",
+          "control_input": "Oban.Registry.via(Oban, nil, nil)",
+          "control_observed": "{:via, Registry, {Oban.Registry, Oban}}"
+        }
+      ],
+      "stand_in": "SpecLint.OmissionFixtures.ClauseLocal.via/3",
+      "origin": "bench/corpus/expansion_triage.md",
+      "status": "witnessed",
+      "revision": "23fa8176b3586ca84f5859793739fad798e69d2b"
+    },
+    {
+      "id": "F10-ash-page-opts-falsy",
+      "corpus": "ash",
+      "category": "return_value",
+      "mfas": [
+        "Ash.Page.page_opts/1"
+      ],
+      "source": "lib/ash/page/page.ex:7 (page()), 13-14 (spec and clause 0), 16-25 (catch-all)",
+      "declared_return": "{:ok, page()} | {:error, String.t()}",
+      "omitted": "{:ok, false} and {:ok, nil} (clause 0); the catch-all also returns {:ok, keyword()} (not reported by SpecLint)",
+      "membership": "single MFA; both escaping clauses are one family",
+      "witnesses": [
+        {
+          "script": "bench/corpus/holdout_witnesses.exs",
+          "record": "bench/corpus/reports/expansion/holdout_witnesses.json",
+          "case": "page_opts(false)",
+          "mfa": "Ash.Page.page_opts/1",
+          "input": "Ash.Page.page_opts(false)",
+          "input_in_declared_domain": true,
+          "observed": "{:ok, false}"
+        },
+        {
+          "script": "bench/corpus/holdout_witnesses.exs",
+          "record": "bench/corpus/reports/expansion/holdout_witnesses.json",
+          "case": "page_opts(nil)",
+          "mfa": "Ash.Page.page_opts/1",
+          "input": "Ash.Page.page_opts(nil)",
+          "input_in_declared_domain": true,
+          "observed": "{:ok, nil}"
+        }
+      ],
+      "stand_in": "SpecLint.OmissionFixtures.ClauseLocal.page_opts/1",
+      "origin": "bench/corpus/holdout_triage.md",
+      "notes": "no in-domain input returns inside the declared return (the catch-all returns a keyword list), so there is no control; @doc false internal validator",
+      "status": "witnessed",
+      "revision": "164a4c0d0ef7724c5fd2153876c2cf90cd938863"
+    },
+    {
+      "id": "F11-ash-load-ok",
+      "corpus": "ash",
+      "category": "return_value",
+      "mfas": [
+        "Ash.load/3"
+      ],
+      "source": "lib/ash.ex:2436-2447 (spec), 2451 (load(:ok, _, _) clause); load_statement (36-41) includes atom",
+      "declared_return": "{:ok, Ash.Resource.record() | [Ash.Resource.record()] | nil} | {:error, term}",
+      "omitted": "{:ok, :ok}",
+      "membership": "single MFA",
+      "witnesses": [
+        {
+          "script": "bench/corpus/holdout_witnesses.exs",
+          "record": "bench/corpus/reports/expansion/holdout_witnesses.json",
+          "case": "load(:ok, nil)",
+          "mfa": "Ash.load/3",
+          "input": "Ash.load(:ok, nil, []) (:ok is an explicit first-argument alternative; nil is in load_statement() through atom; [] is Keyword.t())",
+          "input_in_declared_domain": true,
+          "observed": "{:ok, :ok}"
+        }
+      ],
+      "origin": "bench/corpus/holdout_triage.md",
+      "notes": "the witness record has no in-domain flag or control; the domain was checked by hand against the spec for this inventory",
+      "status": "witnessed",
+      "revision": "164a4c0d0ef7724c5fd2153876c2cf90cd938863"
+    },
+    {
+      "id": "F12-ash-refute-has-error-ok",
+      "corpus": "ash",
+      "category": "return_value",
+      "mfas": [
+        "Ash.Test.refute_has_error/3"
+      ],
+      "source": "lib/ash/test.ex:109-118 (spec), 122 (:ok clause); Ash.Error class_module() includes Ash.Error.Invalid (lib/ash/error/error.ex:9-16, splode.ex:70)",
+      "declared_return": "Ash.Error.t() | no_return()",
+      "omitted": ":ok (the {:error, _} path also returns nil, the result of Enum.find/2)",
+      "membership": "single MFA",
+      "witnesses": [
+        {
+          "script": "bench/corpus/holdout_witnesses.exs",
+          "record": "bench/corpus/reports/expansion/holdout_witnesses.json",
+          "case": "refute_has_error(:ok, ...)",
+          "mfa": "Ash.Test.refute_has_error/3",
+          "input": "Ash.Test.refute_has_error(:ok, Ash.Error.Invalid, fn _ -> false end)",
+          "input_in_declared_domain": true,
+          "observed": ":ok"
+        }
+      ],
+      "origin": "bench/corpus/holdout_triage.md",
+      "notes": "the witness record has no in-domain flag or control; the domain was checked by hand. No in-domain input returns inside the declared return, so there is no control; test helper",
+      "status": "witnessed",
+      "revision": "164a4c0d0ef7724c5fd2153876c2cf90cd938863"
+    },
+    {
+      "id": "F13-ash-read-return-query",
+      "corpus": "ash",
+      "category": "return_value",
+      "mfas": [
+        "Ash.read/2",
+        "Ash.read_one/2",
+        "Ash.read_first/2"
+      ],
+      "source": "lib/ash.ex:2758-2759, 2910-2911, 2988-2989 (specs); each relays {:ok, result(s), query} (2789, 2925, 3004) built by Ash.Actions.Read.add_query/3 under return_query?: true (lib/ash/actions/read/read.ex:508, 2819-2825)",
+      "declared_return": "read/2: {:ok, list(record) | page()} | {:error, term}; read_one/2 and read_first/2: {:ok, record | nil} | {:error, Ash.Error.t()}",
+      "omitted": "{:ok, result, %Ash.Query{}} for return_query?: true",
+      "membership": "one undeclared value from one origin (the return_query? three-tuple of Ash.Actions.Read), relayed unchanged by all three",
+      "witnesses": [
+        {
+          "script": "bench/corpus/ash_integration_witnesses.exs",
+          "record": "bench/corpus/reports/expansion/ash_integration_witnesses.json",
+          "case": "Ash.read/2",
+          "mfa": "Ash.read/2",
+          "input": "Ash.read(Witness.Post, return_query?: true, domain: Witness.Domain)",
+          "input_in_declared_domain": true,
+          "observed": "{:ok, [%Witness.Post{}], %Ash.Query{}}",
+          "control_input": "Ash.read(Witness.Post, domain: Witness.Domain)",
+          "control_observed": "{:ok, [%Witness.Post{}]}"
+        },
+        {
+          "script": "bench/corpus/ash_integration_witnesses.exs",
+          "record": "bench/corpus/reports/expansion/ash_integration_witnesses.json",
+          "case": "Ash.read_one/2",
+          "mfa": "Ash.read_one/2",
+          "input": "Ash.read_one(Witness.Post, return_query?: true, domain: Witness.Domain)",
+          "input_in_declared_domain": true,
+          "observed": "{:ok, %Witness.Post{}, %Ash.Query{}}",
+          "control_input": "Ash.read_one(Witness.Post, domain: Witness.Domain)",
+          "control_observed": "{:ok, %Witness.Post{}}"
+        },
+        {
+          "script": "bench/corpus/ash_integration_witnesses.exs",
+          "record": "bench/corpus/reports/expansion/ash_integration_witnesses.json",
+          "case": "Ash.read_first/2",
+          "mfa": "Ash.read_first/2",
+          "input": "Ash.read_first(Witness.Post, return_query?: true, domain: Witness.Domain)",
+          "input_in_declared_domain": true,
+          "observed": "{:ok, %Witness.Post{}, %Ash.Query{}}",
+          "control_input": "Ash.read_first(Witness.Post, domain: Witness.Domain)",
+          "control_observed": "{:ok, %Witness.Post{}}"
+        }
+      ],
+      "origin": "bench/corpus/holdout_triage.md",
+      "status": "witnessed",
+      "revision": "164a4c0d0ef7724c5fd2153876c2cf90cd938863"
+    },
+    {
+      "id": "F14-ash-page-keyset-integer",
+      "corpus": "ash",
+      "category": "return_value",
+      "mfas": [
+        "Ash.page/2"
+      ],
+      "source": "lib/ash.ex:2204-2205 (spec), 2226-2228 (keyset page with an integer request); page_request (18-19) includes integer",
+      "declared_return": "{:ok, Ash.Page.page()} | {:error, Ash.Error.t()}",
+      "omitted": "{:error, binary()}",
+      "membership": "single MFA",
+      "witnesses": [
+        {
+          "script": "bench/corpus/ash_integration_witnesses.exs",
+          "record": "bench/corpus/reports/expansion/ash_integration_witnesses.json",
+          "case": "Ash.page/2",
+          "mfa": "Ash.page/2",
+          "input": "Ash.page(%Ash.Page.Keyset{} read with page: [limit: 1, count: true], rerun query repaired to distinct: [], timeout: nil, 3)",
+          "input_in_declared_domain": true,
+          "observed": "{:error, \"Cannot seek to a specific page with keyset based pagination\"}",
+          "control_input": "Ash.page(same page, :self)",
+          "control_observed": "{:ok, %Ash.Page.Keyset{}}"
+        }
+      ],
+      "origin": "bench/corpus/holdout_triage.md",
+      "status": "witnessed",
+      "revision": "164a4c0d0ef7724c5fd2153876c2cf90cd938863"
+    },
+    {
+      "id": "F15-ash-policy-solve-unsatisfiable",
+      "corpus": "ash",
+      "category": "return_value",
+      "mfas": [
+        "Ash.Policy.Policy.solve/1"
+      ],
+      "source": "lib/ash/policy/policy.ex:72-74 (spec), 75-98",
+      "declared_return": "{:ok, boolean() | list(map), Authorizer.t()} | {:error, Authorizer.t(), Ash.Error.t()}",
+      "omitted": "{:error, authorizer, :unsatisfiable}",
+      "membership": "single MFA",
+      "witnesses": [
+        {
+          "script": "bench/corpus/ash_integration_witnesses.exs",
+          "record": "bench/corpus/reports/expansion/ash_integration_witnesses.json",
+          "case": "Ash.Policy.Policy.solve/1",
+          "mfa": "Ash.Policy.Policy.solve/1",
+          "input": "solve/1 on an Authorizer.t() from initial_state/4 with subject repaired to an in-domain Ash.Query.t() and the scenario lists to []; two applicable policies whose user checks strict-check to :unknown and conflict",
+          "input_in_declared_domain": true,
+          "observed": "{:error, %Ash.Policy.Authorizer{}, :unsatisfiable}",
+          "control_input": "the same authorizer for a resource with one policy",
+          "control_observed": "{:ok, [%{...}], %Ash.Policy.Authorizer{}}"
+        }
+      ],
+      "origin": "bench/corpus/holdout_triage.md",
+      "notes": "internal solver boundary; the public flow maps the result to Ash.Error.Forbidden.Policy",
+      "status": "witnessed",
+      "revision": "164a4c0d0ef7724c5fd2153876c2cf90cd938863"
+    },
+    {
+      "id": "F16-absinthe-input-parse-source-location",
+      "corpus": "absinthe",
+      "category": "struct_default",
+      "mfas": [
+        "Absinthe.Blueprint.Input.parse/1"
+      ],
+      "source": "lib/absinthe/blueprint/input.ex:21,36 (t, spec), 41-82 (clauses 1-7); Input.Integer.t source_location: Blueprint.SourceLocation.t() (lib/absinthe/blueprint/input/integer.ex:15-21, likewise float, null, string, boolean, list, object)",
+      "declared_return": "nil | Absinthe.Blueprint.Input.t()",
+      "omitted": "Input.* structs whose source_location is the default nil",
+      "membership": "one MFA, one slice: the seven clause findings (clauses 1-7) are ONE family",
+      "witnesses": [
+        {
+          "script": "bench/evaluation/pinned_witnesses.exs",
+          "record": "bench/evaluation/pinned_witnesses.json",
+          "case": "absinthe_parse_1",
+          "mfa": "Absinthe.Blueprint.Input.parse/1",
+          "input": "Absinthe.Blueprint.Input.parse(1)",
+          "input_in_declared_domain": true,
+          "observed": "%Absinthe.Blueprint.Input.Integer{..., source_location: nil, ...}"
+        },
+        {
+          "script": "bench/evaluation/pinned_witnesses.exs",
+          "record": "bench/evaluation/pinned_witnesses.json",
+          "case": "absinthe_parse_1.0",
+          "mfa": "Absinthe.Blueprint.Input.parse/1",
+          "input": "Absinthe.Blueprint.Input.parse(1.0)",
+          "input_in_declared_domain": true,
+          "observed": "%Absinthe.Blueprint.Input.Float{..., source_location: nil, ...}"
+        },
+        {
+          "script": "bench/evaluation/pinned_witnesses.exs",
+          "record": "bench/evaluation/pinned_witnesses.json",
+          "case": "absinthe_parse_nil",
+          "mfa": "Absinthe.Blueprint.Input.parse/1",
+          "input": "Absinthe.Blueprint.Input.parse(nil)",
+          "input_in_declared_domain": true,
+          "observed": "%Absinthe.Blueprint.Input.Null{..., source_location: nil, ...}"
+        },
+        {
+          "script": "bench/evaluation/pinned_witnesses.exs",
+          "record": "bench/evaluation/pinned_witnesses.json",
+          "case": "absinthe_parse_\"s\"",
+          "mfa": "Absinthe.Blueprint.Input.parse/1",
+          "input": "Absinthe.Blueprint.Input.parse(\"s\")",
+          "input_in_declared_domain": true,
+          "observed": "%Absinthe.Blueprint.Input.String{..., source_location: nil, ...}"
+        },
+        {
+          "script": "bench/evaluation/pinned_witnesses.exs",
+          "record": "bench/evaluation/pinned_witnesses.json",
+          "case": "absinthe_parse_true",
+          "mfa": "Absinthe.Blueprint.Input.parse/1",
+          "input": "Absinthe.Blueprint.Input.parse(true)",
+          "input_in_declared_domain": true,
+          "observed": "%Absinthe.Blueprint.Input.Boolean{..., source_location: nil, ...}"
+        },
+        {
+          "script": "bench/evaluation/pinned_witnesses.exs",
+          "record": "bench/evaluation/pinned_witnesses.json",
+          "case": "absinthe_parse_[]",
+          "mfa": "Absinthe.Blueprint.Input.parse/1",
+          "input": "Absinthe.Blueprint.Input.parse([])",
+          "input_in_declared_domain": true,
+          "observed": "%Absinthe.Blueprint.Input.List{..., source_location: nil, ...}"
+        },
+        {
+          "script": "bench/evaluation/pinned_witnesses.exs",
+          "record": "bench/evaluation/pinned_witnesses.json",
+          "case": "absinthe_parse_%{}",
+          "mfa": "Absinthe.Blueprint.Input.parse/1",
+          "input": "Absinthe.Blueprint.Input.parse(%{})",
+          "input_in_declared_domain": true,
+          "observed": "%Absinthe.Blueprint.Input.Object{..., source_location: nil, ...}"
+        }
+      ],
+      "control": {
+        "input": "Absinthe.Blueprint.Input.parse(%Input.Integer{value: 1, source_location: %SourceLocation{line: 1, column: 1}})",
+        "observed": "the same struct"
+      },
+      "origin": "bench/corpus/clause_local_qualification.md (pre-existing gates); witness previously recorded only in prose, now executable",
+      "status": "witnessed",
+      "revision": "1372ceb5f8226175050a38821601cd57738c177b"
+    },
+    {
+      "id": "F17-req-response-new-status",
+      "corpus": "req",
+      "category": "struct_field_from_input",
+      "mfas": [
+        "Req.Response.new/1"
+      ],
+      "source": "lib/req/response.ex:23-30 (t, status: non_neg_integer()), 54-72 (spec and constructor)",
+      "declared_return": "Req.Response.t()",
+      "omitted": "a %Req.Response{} whose status is copied unchecked from the map() input",
+      "membership": "single MFA",
+      "witnesses": [
+        {
+          "script": "bench/corpus/expansion_witnesses.exs",
+          "record": "bench/corpus/reports/expansion/witnesses.json",
+          "case": "req_response_new_broad_map",
+          "mfa": "Req.Response.new/1",
+          "input": "Req.Response.new(%{status: -1})",
+          "input_in_declared_domain": true,
+          "observed": "%Req.Response{status: -1}",
+          "control_input": "Req.Response.new(%{status: 200})",
+          "control_observed": "%Req.Response{status: 200}"
+        }
+      ],
+      "origin": "bench/corpus/expansion_triage.md",
+      "notes": "type-contract counterexample under a broad constructor input; its usefulness as a CI warning is a usability question",
+      "status": "witnessed",
+      "revision": "c6e8ab1f9d1c8e1aef935a6319faa40487bb6f42"
+    }
+  ],
+  "candidates_not_counted": [
+    {
+      "id": "C01-ash-query-apply-to-error",
+      "status": "source-only",
+      "corpus": "ash",
+      "revision": "164a4c0d0ef7724c5fd2153876c2cf90cd938863",
+      "mfas": [
+        "Ash.Query.apply_to/3"
+      ],
+      "source": "lib/ash/query/query.ex:4344-4373; t() declares calculations: %{optional(atom) => :wat} (206-246)",
+      "reason": "the {:error, _} escape was observed only for a query that loads a calculation, which is outside Ash.Query.t(); no in-domain error path was found (ash_integration_witnesses.json: witness_input_in_declared_domain false)",
+      "record": "bench/corpus/reports/expansion/ash_integration_witnesses.json"
+    },
+    {
+      "id": "R01-ash-data-layer-query",
+      "status": "refuted",
+      "corpus": "ash",
+      "revision": "164a4c0d0ef7724c5fd2153876c2cf90cd938863",
+      "mfas": [
+        "Ash.data_layer_query/2"
+      ],
+      "reason": "in-domain witness Ash.data_layer_query(query, return_query?: true) returned {:ok, %{...}}, inside the declared return; the three-tuple is spillover from read/2's union",
+      "record": "bench/corpus/reports/expansion/ash_integration_witnesses.json"
+    },
+    {
+      "id": "R02-ash-resource-info-sortable",
+      "status": "refuted",
+      "corpus": "ash",
+      "revision": "164a4c0d0ef7724c5fd2153876c2cf90cd938863",
+      "mfas": [
+        "Ash.Resource.Info.sortable?/3"
+      ],
+      "reason": "source review: every path returns true or false; the inferred nil is propagated call imprecision (holdout_triage.md); no witness"
+    },
+    {
+      "id": "R03-ash-uuidv7-generate",
+      "status": "refuted",
+      "corpus": "ash",
+      "revision": "164a4c0d0ef7724c5fd2153876c2cf90cd938863",
+      "mfas": [
+        "Ash.UUIDv7.generate/0"
+      ],
+      "reason": "source review: bingenerate/0 builds exactly 128 bits, so encode/1's :error catch-all is unreachable from this caller (holdout_triage.md); no witness"
+    },
+    {
+      "id": "R04-oban-period-to-seconds",
+      "status": "refuted",
+      "corpus": "oban",
+      "revision": "23fa8176b3586ca84f5859793739fad798e69d2b",
+      "mfas": [
+        "Oban.Period.to_seconds/1"
+      ],
+      "reason": "the zero and float returns need inputs outside Period.t() (to_seconds(0), to_seconds({1.5, :minute})); input_in_declared_domain false in witnesses.json; negative control",
+      "record": "bench/corpus/reports/expansion/witnesses.json"
+    }
+  ],
+  "untriaged_reports": [
+    {
+      "mfa": "Absinthe.Phase.Init.run/2",
+      "corpus": "absinthe",
+      "report": "SL002 possible_domain_escape",
+      "where": "bench/corpus/holdout2_baseline.md"
+    },
+    {
+      "mfa": "Absinthe.Subscription.PipelineSerializer.pack/1",
+      "corpus": "absinthe",
+      "report": "SL002 possible_domain_escape",
+      "where": "bench/corpus/holdout2_baseline.md"
+    },
+    {
+      "mfa": "Tesla.Adapter.Mint.read_chunk/3",
+      "corpus": "tesla",
+      "report": "SL002 possible_domain_escape",
+      "where": "bench/corpus/holdout2_baseline.md"
+    }
+  ],
+  "holdout_selection": {
+    "purpose": "fresh holdouts for precision experiments (experiments that change a gating prerequisite or evidence class)",
+    "candidates": [
+      "bandit",
+      "cachex",
+      "commanded",
+      "credo",
+      "db_connection",
+      "earmark_parser",
+      "ecto_sql",
+      "ex_aws",
+      "ex_doc",
+      "ex_machina",
+      "explorer",
+      "finch",
+      "floki",
+      "gettext",
+      "httpoison",
+      "joken",
+      "membrane_core",
+      "mint",
+      "nimble_csv",
+      "nimble_parsec",
+      "nimble_pool",
+      "phoenix",
+      "phoenix_html",
+      "phoenix_pubsub",
+      "postgrex",
+      "reactor",
+      "redix",
+      "spark",
+      "stream_data",
+      "swoosh",
+      "telemetry_metrics",
+      "thousand_island",
+      "timex"
+    ],
+    "excluded": "the fifteen corpora (stdlib, jason, decimal, nimble_options, mime, plug, ecto, req, broadway, oban, phoenix_live_view, ash, nx, absinthe, tesla)",
+    "draw_rule": "order = sorted(candidates) shuffled by Python random.Random(20260929).shuffle; the order below is authoritative",
+    "draw_order": [
+      "credo",
+      "floki",
+      "earmark_parser",
+      "stream_data",
+      "reactor",
+      "phoenix_pubsub",
+      "cachex",
+      "ecto_sql",
+      "mint",
+      "timex",
+      "nimble_pool",
+      "phoenix_html",
+      "explorer",
+      "redix",
+      "ex_doc",
+      "thousand_island",
+      "swoosh",
+      "spark",
+      "telemetry_metrics",
+      "ex_machina",
+      "bandit",
+      "membrane_core",
+      "commanded",
+      "joken",
+      "finch",
+      "nimble_parsec",
+      "ex_aws",
+      "gettext",
+      "db_connection",
+      "httpoison",
+      "phoenix",
+      "nimble_csv",
+      "postgrex"
+    ],
+    "revision_rule": "the commit of the tag of the latest non-prerelease hex.pm release published on or before 2026-09-29; if no tag matches, the last default-branch commit on or before that date. Recorded before the first build",
+    "build": "MIX_ENV=test, the compiler of the adapter under test, as in bench/corpus/README.md (separate MIX_BUILD_PATH and SPEC_LINT_PLT_DIR per compiler)",
+    "criterion": "the product report of a baseline run (tool revision before the experiment, default configuration, SPEC_LINT_PRODUCT_ONLY=1) is complete and contains at least one SL001 finding with gate false and at least one prerequisite blocked",
+    "criterion_check": "jq '[.findings[] | select(.rule == \"SL001\" and .gate == false and any(.prerequisites[]; .[1] == \"blocked\"))] | length' REPORT  (> 0 qualifies; only this count is read before the experiment is frozen)",
+    "procedure": [
+      "walk draw_order from the first candidate not yet spent",
+      "a candidate that fails to fetch, compile or complete the baseline run, or does not meet the criterion, is recorded with the reason and skipped, never retried with changes",
+      "stop at the number of qualifying holdouts the experiment plan fixed in advance (default 3)",
+      "the experiment's tool tree is frozen (source digest recorded) before any holdout's findings are read",
+      "every candidate examined, qualifying or not, is spent: it becomes a regression corpus and is never drawn again"
+    ],
+    "note": "no report of the fifteen current corpora meets the criterion: all nine SL001 findings gate under both adapters"
+  }
+}
