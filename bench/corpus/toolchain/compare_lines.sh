@@ -10,17 +10,44 @@
 #
 #     compare_lines.sh NEW_DIR BASE_DIR > summary.json
 #
-# Runs under bash 3.2 and later; needs jq.
+# The corpora compared are every corpus with a product report or a
+# provenance file in either directory (not `fixtures`). A report that is
+# missing, unreadable or not complete on either side fails the script
+# (exit 2), as in compare_replay.sh: a corpus left out would drop out of
+# both totals and the comparison would look balanced. So do a directory
+# that does not exist and an empty set. Runs under bash 3.2 and later;
+# needs jq.
 set -euo pipefail
 [ "$#" -eq 2 ] || { echo "usage: $0 NEW_DIR BASE_DIR" >&2; exit 2; }
 new="$1"; base="$2"
 command -v jq >/dev/null || { echo "jq is required" >&2; exit 2; }
+for dir in "$new" "$base"; do
+  [ -d "$dir" ] || { echo "no such report directory: $dir" >&2; exit 2; }
+done
+
+corpora="$(
+  for f in "$new"/*.spec_lint.json "$new"/*.provenance.json \
+    "$base"/*.spec_lint.json "$base"/*.provenance.json; do
+    [ -e "$f" ] || continue
+    f="$(basename "$f")"
+    [ "${f%%.*}" = fixtures ] || echo "${f%%.*}"
+  done | LC_ALL=C sort -u
+)"
+[ -n "$corpora" ] || { echo "no product reports in $new or $base" >&2; exit 2; }
+bad=""
+for corpus in $corpora; do
+  for dir in "$new" "$base"; do
+    jq -e '.completion.status == "complete" and (.ledger | type == "object") and
+      (.findings | type == "array")' "$dir/$corpus.spec_lint.json" >/dev/null 2>&1 ||
+      bad="$bad $dir/$corpus.spec_lint.json"
+  done
+done
+[ -z "$bad" ] || { echo "missing, unreadable or incomplete reports:$bad" >&2; exit 2; }
 
 entries="[]"
-for report in "$new"/*.spec_lint.json; do
-  corpus="$(basename "$report" .spec_lint.json)"
+for corpus in $corpora; do
+  report="$new/$corpus.spec_lint.json"
   other="$base/$corpus.spec_lint.json"
-  [ -f "$other" ] || { echo "no baseline report for $corpus in $base" >&2; exit 2; }
   entry="$(jq -n --arg c "$corpus" --slurpfile n "$report" --slurpfile o "$other" '
     def coverage(r): r.ledger.slices | {found, compared, exact, approximate, unsupported, unavailable};
     def count_by(xs; f): xs | group_by(f) | map({key: (.[0] | f | tostring), value: length}) | from_entries;

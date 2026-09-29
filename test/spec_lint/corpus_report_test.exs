@@ -6,6 +6,7 @@ defmodule SpecLint.CorpusReportTest do
   @runner Path.expand("../../bench/corpus/run.sh", __DIR__)
   @compare Path.expand("../../bench/corpus/compare_replay.sh", __DIR__)
   @gate_diff Path.expand("../../bench/corpus/gate_diff.sh", __DIR__)
+  @lines Path.expand("../../bench/corpus/toolchain/compare_lines.sh", __DIR__)
 
   test "large product reports retain the real ledger and completion plus full compressed JSON", %{
     tmp_dir: dir
@@ -178,9 +179,8 @@ defmodule SpecLint.CorpusReportTest do
     env =
       [
         {"MOCK_COMPLETION", "complete"},
-        {"MOCK_EXIT", "0"},
-        {"SPEC_LINT_BUDGETS", budgets}
-        | corpus_env(dir, manifest, out, bin)
+        {"MOCK_EXIT", "0"}
+        | corpus_env(dir, manifest, out, bin, budgets)
       ]
 
     File.write!(
@@ -209,11 +209,81 @@ defmodule SpecLint.CorpusReportTest do
     resources = out |> Path.join("fake.resources.json") |> File.read!() |> JSON.decode!()
     assert resources["budget"]["within"] == false
 
-    # A corpus without a budget is measured, not checked.
+    # A corpus without a budget fails before anything runs (Milestone 5
+    # review: it used to be measured and silently not checked).
     File.write!(budgets, JSON.encode!(%{"corpora" => %{}}))
-    assert {_, 0} = System.cmd("bash", [@runner, "fake"], env: env, stderr_to_stdout: true)
+    assert {message, 2} = System.cmd("bash", [@runner, "fake"], env: env, stderr_to_stdout: true)
+    assert message =~ "no budget for fake in #{budgets}"
+    refute message =~ "== fake"
+
+    # So does a budgets file that does not exist (a typo in the variable).
+    missing =
+      List.keystore(
+        env,
+        "SPEC_LINT_BUDGETS",
+        0,
+        {"SPEC_LINT_BUDGETS", Path.join(dir, "absent.json")}
+      )
+
+    assert {message, 2} =
+             System.cmd("bash", [@runner, "fake"], env: missing, stderr_to_stdout: true)
+
+    assert message =~ "budgets file not found"
+    refute message =~ "== fake"
+
+    # Only the explicit value "none" measures without checking.
+    none = List.keystore(env, "SPEC_LINT_BUDGETS", 0, {"SPEC_LINT_BUDGETS", "none"})
+    assert {_, 0} = System.cmd("bash", [@runner, "fake"], env: none, stderr_to_stdout: true)
     resources = out |> Path.join("fake.resources.json") |> File.read!() |> JSON.decode!()
     assert resources["budget"] == nil
+  end
+
+  test "corpus runner never keeps the report of a killed or inconsistent run as a result", %{
+    tmp_dir: dir
+  } do
+    {_checkout, revision, bin} = setup_mock_corpus(dir)
+    manifest = Path.join(dir, "manifest.json")
+    out = Path.join(dir, "reports")
+    base = Path.join(dir, "base")
+    File.write!(manifest, JSON.encode!(%{"fake" => %{"revision" => revision}}))
+    env = [{"MOCK_COMPLETION", "complete"} | corpus_env(dir, manifest, out, bin)]
+
+    run = fn extra ->
+      System.cmd("bash", [@runner, "fake"], env: extra ++ env, stderr_to_stdout: true)
+    end
+
+    report = Path.join(out, "fake.spec_lint.json")
+    rejected = Path.join(out, "fake.spec_lint.rejected.json")
+
+    # A clean run, kept as the comparison base.
+    assert {_, 0} = run.([{"MOCK_EXIT", "0"}])
+    File.mkdir_p!(base)
+    File.cp!(report, Path.join(base, "fake.spec_lint.json"))
+
+    # The VM is killed after its complete report was written: /usr/bin/time
+    # exits 1, the status of gated findings, whatever the report says.
+    for code <- ["0", "1"] do
+      assert {message, 2} = run.([{"MOCK_EXIT", code}, {"MOCK_KILL", "1"}])
+      assert message =~ "was killed by a signal"
+      refute File.exists?(report)
+      assert JSON.decode!(File.read!(rejected))["completion"]["status"] == "complete"
+      refute File.exists?(Path.join(out, "fake.resources.json"))
+
+      # The comparison sees no result for the corpus.
+      {output, 2} = System.cmd("bash", quiet([@compare, out, base]))
+      assert JSON.decode!(output)["incomplete"] == ["fake"]
+    end
+
+    # A complete report whose exit code is not the process's.
+    assert {message, 2} = run.([{"MOCK_EXIT", "1"}, {"MOCK_REPORT_EXIT", "0"}])
+    assert message =~ "exit status/report mismatch for fake: 1 vs 0"
+    refute File.exists?(report)
+    assert File.exists?(rejected)
+
+    # The next good run replaces the rejected report.
+    assert {_, 0} = run.([{"MOCK_EXIT", "0"}])
+    assert File.exists?(report)
+    refute File.exists?(rejected)
   end
 
   test "corpus runner removes an earlier run's outputs before running a corpus", %{tmp_dir: dir} do
@@ -370,6 +440,76 @@ defmodule SpecLint.CorpusReportTest do
     assert {_, 2} = System.cmd("bash", quiet([@gate_diff, new, base]))
   end
 
+  test "gate_diff.sh and compare_lines.sh fail on a missing or incomplete corpus report", %{
+    tmp_dir: dir
+  } do
+    # Milestone 5 review: both walked only NEW_DIR's reports, so a corpus
+    # whose run was killed dropped out of the gate list and of both totals.
+    base = Path.join(dir, "base")
+    new = Path.join(dir, "new")
+    File.mkdir_p!(base)
+    File.mkdir_p!(new)
+
+    report = fn status ->
+      JSON.encode!(%{
+        "adapter" => "a",
+        "completion" => %{"status" => status, "exit_code" => 1},
+        "ledger" => %{"slices" => %{"compared" => 1}, "obligations" => %{}, "entries" => []},
+        "findings" => [
+          %{
+            "subject" => "M.f/1",
+            "rule" => "SL001",
+            "evidence" => "clause_conflict",
+            "slice" => 0,
+            "clause" => 1,
+            "line" => 1,
+            "gate" => true,
+            "fingerprint" => "f"
+          }
+        ]
+      })
+    end
+
+    for name <- ~w(a b),
+        dir <- [base, new],
+        do: File.write!(Path.join(dir, "#{name}.spec_lint.json"), report.("complete"))
+
+    assert {output, 0} = System.cmd("bash", [@gate_diff, new, base])
+    assert JSON.decode!(output)["counts"] == %{"unchanged" => 2}
+    assert {_, 0} = System.cmd("bash", quiet([@lines, new, base]))
+
+    # b's run was killed: only its provenance is left in NEW_DIR.
+    File.rm!(Path.join(new, "b.spec_lint.json"))
+    File.write!(Path.join(new, "b.provenance.json"), "{}")
+    assert {message, 2} = System.cmd("bash", [@gate_diff, new, base], stderr_to_stdout: true)
+    assert message =~ "missing, unreadable or incomplete reports in #{new}: b"
+    assert {message, 2} = System.cmd("bash", [@lines, new, base], stderr_to_stdout: true)
+    assert message =~ "b.spec_lint.json"
+
+    # Nothing of b at all in NEW_DIR: BASE_DIR still expects it.
+    File.rm!(Path.join(new, "b.provenance.json"))
+    assert {_, 2} = System.cmd("bash", quiet([@gate_diff, new, base]))
+    assert {_, 2} = System.cmd("bash", quiet([@lines, new, base]))
+
+    # An incomplete report is not compared either.
+    File.write!(Path.join(new, "b.spec_lint.json"), report.("incomplete"))
+    assert {_, 2} = System.cmd("bash", quiet([@gate_diff, new, base]))
+    assert {_, 2} = System.cmd("bash", quiet([@lines, new, base]))
+
+    # Directories that do not exist, or hold nothing, are errors, not empty lists.
+    empty = Path.join(dir, "empty")
+    File.mkdir_p!(empty)
+
+    for script <- [@gate_diff, @lines, @compare],
+        args <- [
+          [Path.join(dir, "absent"), base],
+          [empty, empty],
+          [new, Path.join(dir, "absent")]
+        ] do
+      assert {_, 2} = System.cmd("bash", quiet([script | args])), inspect({script, args})
+    end
+  end
+
   test "budgets.json covers the fifteen corpora and the release campaign is within it" do
     root = Path.expand("../..", __DIR__)
     budgets = root |> Path.join("bench/corpus/budgets.json") |> File.read!() |> JSON.decode!()
@@ -436,8 +576,10 @@ defmodule SpecLint.CorpusReportTest do
           exit 0 ;;
         --output)
           cat >"$2" <<JSON
-    {"adapter":"adapter","checker_version":"checker","findings":[],"ledger":{},"completion":{"status":"${MOCK_COMPLETION:-incomplete}","exit_code":${MOCK_EXIT:-2}}}
+    {"adapter":"adapter","checker_version":"checker","findings":[],"ledger":{},"completion":{"status":"${MOCK_COMPLETION:-incomplete}","exit_code":${MOCK_REPORT_EXIT:-${MOCK_EXIT:-2}}}}
     JSON
+          # A VM killed after its report's atomic write, before it exits.
+          if [ -n "${MOCK_KILL:-}" ]; then kill -9 $$; fi
           exit "${MOCK_EXIT:-2}" ;;
       esac
       shift
@@ -449,8 +591,11 @@ defmodule SpecLint.CorpusReportTest do
     {checkout, String.trim(revision), bin}
   end
 
-  defp corpus_env(dir, manifest, out, bin) do
+  # Budgets are off unless a test names a file: the mock corpus has no entry
+  # in bench/corpus/budgets.json, which fails the runner.
+  defp corpus_env(dir, manifest, out, bin, budgets \\ "none") do
     [
+      {"SPEC_LINT_BUDGETS", budgets},
       {"PATH", bin <> ":" <> System.get_env("PATH")},
       {"SPEC_LINT_OSS", Path.join(dir, "oss")},
       {"SPEC_LINT_CORPUS_MANIFEST", manifest},

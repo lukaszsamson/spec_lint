@@ -14,20 +14,46 @@
 # listed with status `removed`. `changes` names the finding keys that
 # differ from the previous gate (for example `data` when only the
 # diagnostic data grew, `fingerprint` when the identity moved). The adapter
-# is the report's. A corpus
-# report that is missing or not complete in NEW_DIR fails the script
-# (exit 2): compare_replay.sh first. Runs under bash 3.2 and later.
+# is the report's.
+#
+# The corpora expected in NEW_DIR are those with a product report or a
+# provenance file there (run.sh writes the provenance first; not
+# `fixtures`, which has no product report) and every corpus with a product
+# report in BASE_DIR. A corpus report that is missing, unreadable or not
+# complete in NEW_DIR fails the script (exit 2) without a list, and so does
+# a directory that does not exist or an empty expected set: a partial
+# campaign must not produce a shorter gate list that looks clean
+# (compare_replay.sh applies the same rule). Runs under bash 3.2 and later.
 set -euo pipefail
 [ "$#" -eq 2 ] || { echo "usage: $0 NEW_DIR BASE_DIR" >&2; exit 2; }
 new="$1" base="$2"
 command -v jq >/dev/null || { echo "jq is required" >&2; exit 2; }
+for dir in "$new" "$base"; do
+  [ -d "$dir" ] || { echo "no such report directory: $dir" >&2; exit 2; }
+done
+
+expected="$(
+  for f in "$new"/*.spec_lint.json "$new"/*.provenance.json "$base"/*.spec_lint.json; do
+    [ -e "$f" ] || continue
+    f="$(basename "$f")"
+    [ "${f%%.*}" = fixtures ] || echo "${f%%.*}"
+  done | LC_ALL=C sort -u
+)"
+[ -n "$expected" ] || { echo "no product reports in $new or $base" >&2; exit 2; }
+
+missing=""
+for corpus in $expected; do
+  jq -e '.completion.status == "complete" and (.findings | type == "array")' \
+    "$new/$corpus.spec_lint.json" >/dev/null 2>&1 || missing="$missing $corpus"
+done
+if [ -n "$missing" ]; then
+  echo "missing, unreadable or incomplete reports in $new:$missing" >&2
+  exit 2
+fi
 
 rows="[]"
-for report in "$new"/*.spec_lint.json; do
-  [ -e "$report" ] || continue
-  corpus="$(basename "$report" .spec_lint.json)"
-  jq -e '.completion.status == "complete"' "$report" >/dev/null 2>&1 ||
-    { echo "report not complete: $report" >&2; exit 2; }
+for corpus in $expected; do
+  report="$new/$corpus.spec_lint.json"
   previous="$base/$corpus.spec_lint.json"
   [ -f "$previous" ] || previous=/dev/null
   rows="$(jq -n --argjson rows "$rows" --arg corpus "$corpus" \

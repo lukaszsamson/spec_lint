@@ -59,10 +59,7 @@ defmodule SpecLint.StructDefaults do
     {:ok, capabilities} = Compiler.preflight_once()
 
     corpora =
-      for report <- Path.wildcard(Path.join(dir, "*.spec_lint.json")) |> Enum.sort(),
-          corpus = Path.basename(report, ".spec_lint.json"),
-          json = report |> File.read!() |> JSON.decode!(),
-          json["findings"] != [] do
+      for {corpus, json} <- complete_reports!(dir), json["findings"] != [] do
         {corpus, corpus_rows(corpus, json, Path.join(dir, corpus <> ".provenance.json"), vars)}
       end
 
@@ -85,6 +82,42 @@ defmodule SpecLint.StructDefaults do
 
     File.write!(opts[:out], JSON.encode_to_iodata!(out))
     IO.puts(:stderr, "struct defaults: #{inspect(out["totals"])} -> #{opts[:out]}")
+  end
+
+  # The corpora of REPORT_DIR are those with a product report or a
+  # provenance file (not `fixtures`, which has no product report). A report
+  # that is missing, unreadable or not complete is an error (exit 2), never
+  # a corpus left out of the totals; so is a directory with no corpus.
+  defp complete_reports!(dir) do
+    corpora =
+      ["*.spec_lint.json", "*.provenance.json"]
+      |> Enum.flat_map(&Path.wildcard(Path.join(dir, &1)))
+      |> Enum.map(&(&1 |> Path.basename() |> String.split(".") |> hd()))
+      |> Enum.reject(&(&1 == "fixtures"))
+      |> Enum.uniq()
+      |> Enum.sort()
+
+    if corpora == [], do: fail!("no product reports or provenance files in #{dir}")
+
+    for corpus <- corpora do
+      path = Path.join(dir, corpus <> ".spec_lint.json")
+
+      json =
+        with {:ok, text} <- File.read(path),
+             {:ok, %{"completion" => %{"status" => "complete"}, "findings" => findings} = json}
+             when is_list(findings) <- JSON.decode(text) do
+          json
+        else
+          _ -> fail!("missing, unreadable or incomplete product report: #{path}")
+        end
+
+      {corpus, json}
+    end
+  end
+
+  defp fail!(message) do
+    IO.puts(:stderr, "struct_defaults: " <> message)
+    System.halt(2)
   end
 
   defp totals(rows) do

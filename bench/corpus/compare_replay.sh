@@ -22,10 +22,18 @@
 #
 # Milestone 1 (bench/corpus/reports/m1/summary.json), from reports/:
 #     ../compare_replay.sh m1 phase4 expansion/clause_local/on:absinthe
+#
+# A NEW_DIR or BASE_DIR that does not exist, or an empty expected set (for
+# example a runner killed during its first compile, and a mistyped base),
+# is an error (exit 2), never a vacuous `all_unchanged`.
 set -euo pipefail
 [ "$#" -ge 2 ] || { echo "usage: $0 NEW_DIR BASE_DIR[:corpus,...] ..." >&2; exit 2; }
 new="$1"; shift
 command -v jq >/dev/null || { echo "jq is required" >&2; exit 2; }
+[ -d "$new" ] || { echo "no such report directory: $new" >&2; exit 2; }
+for spec in "$@"; do
+  [ -d "${spec%%:*}" ] || { echo "no such report directory: ${spec%%:*}" >&2; exit 2; }
+done
 
 base_for() {
   local corpus="$1" found="" spec dir names
@@ -68,8 +76,11 @@ readable() {
     (.findings | type == "array")' "$1" >/dev/null 2>&1
 }
 
+corpora="$(expected_corpora | grep -v '^$' | LC_ALL=C sort -u || true)"
+[ -n "$corpora" ] || { echo "no corpora to compare: $new and the base directories hold no reports" >&2; exit 2; }
+
 entries="[]"
-for corpus in $(expected_corpora | grep -v '^$' | LC_ALL=C sort -u); do
+for corpus in $corpora; do
   report="$new/$corpus.spec_lint.json"
   base_dir="$(base_for "$corpus")"
   base="$base_dir/$corpus.spec_lint.json"
@@ -111,10 +122,11 @@ jq -n --argjson e "$entries" '{schema: "spec_lint.m1_replay/1", corpora: $e,
            findings: ([$e[].findings // 0] | add), gates: ([$e[].gates // 0] | add),
            previous_gates: ([$e[].previous_gates // 0] | add)},
   incomplete: [$e[] | select(.status != "complete") | .corpus],
-  all_unchanged: ([$e[] | .status == "complete" and .baseline != null
-                   and .ledger_unchanged and .findings_unchanged and .fingerprints_unchanged
-                   and .added_gates == [] and .removed_gates == []
-                   and .exit_code == .previous_exit_code] | all)}'
+  all_unchanged: (($e | length) > 0 and
+                  ([$e[] | .status == "complete" and .baseline != null
+                    and .ledger_unchanged and .findings_unchanged and .fingerprints_unchanged
+                    and .added_gates == [] and .removed_gates == []
+                    and .exit_code == .previous_exit_code] | all))}'
 if jq -e 'any(.[]; .status != "complete")' <<<"$entries" >/dev/null; then
   echo "incomplete results: $(jq -r '[.[] | select(.status != "complete") |
     "\(.corpus) (\(.status))"] | join(", ")' <<<"$entries")" >&2

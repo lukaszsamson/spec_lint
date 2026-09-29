@@ -49,10 +49,18 @@
 # (-l on macOS, -v with GNU time): wall time and the peak resident set size
 # of its VM, written with the method to NAME.resources.json (not
 # deterministic; not part of the normalised reports). SPEC_LINT_BUDGETS
-# (default bench/corpus/budgets.json; "none" disables the check) holds a
-# wall-time and peak-RSS budget per corpus. A corpus with a budget that
-# exceeds either one fails the runner (exit 2) after every named corpus has
-# run; its report is kept, and NAME.resources.json records the verdict.
+# (default bench/corpus/budgets.json; only the value "none" disables the
+# check) holds a wall-time and peak-RSS budget per corpus. A budgets file
+# that does not exist, or that has no entry for a named corpus with a
+# product run, fails the runner (exit 2) before anything runs. A corpus
+# that exceeds either budget fails the runner (exit 2) after every named
+# corpus has run; its report is kept, and NAME.resources.json records the
+# verdict.
+#
+# A product run that was killed by a signal, or whose exit status does not
+# match its complete report's exit_code, is not a result: its report is
+# kept as NAME.spec_lint.rejected.json, never as NAME.spec_lint.json, and
+# the runner exits 2 at once.
 #
 # Runs under bash 3.2 (the macOS system bash) and later: no associative
 # arrays, and empty arrays are expanded with ${a[@]+"${a[@]}"} (set -u).
@@ -70,12 +78,12 @@ trap 'rm -rf "$raw"' EXIT
 
 command -v jq >/dev/null || { echo "jq is required" >&2; exit 2; }
 budgets="${SPEC_LINT_BUDGETS:-$root/bench/corpus/budgets.json}"
-if [ "$budgets" != none ] && [ -f "$budgets" ]; then
+if [ "$budgets" != none ]; then
+  [ -f "$budgets" ] ||
+    { echo "budgets file not found: $budgets (SPEC_LINT_BUDGETS=none disables the check)" >&2; exit 2; }
   jq -e '(.corpora | type == "object") and all(.corpora[];
     (.wall_s | type == "number") and (.max_rss_mb | type == "number"))' "$budgets" >/dev/null ||
     { echo "invalid budgets file: $budgets" >&2; exit 2; }
-else
-  budgets=none
 fi
 time_tool=/usr/bin/time
 case "$(uname -s)" in
@@ -128,6 +136,16 @@ if [ $# -gt 0 ]; then
   corpora=("$@")
 else
   corpora=(stdlib jason decimal nimble_options mime plug ecto fixtures)
+fi
+
+# Every corpus with a product run needs a budget while budgets are checked:
+# a corpus missing from the file is a configuration error, not "no check".
+if [ "$budgets" != none ]; then
+  for name in "${corpora[@]}"; do
+    [ "$name" = fixtures ] && continue
+    jq -e --arg name "$name" '.corpora[$name] != null' "$budgets" >/dev/null ||
+      { echo "no budget for $name in $budgets (add one, or SPEC_LINT_BUDGETS=none)" >&2; exit 2; }
+  done
 fi
 
 product_args=()
@@ -230,9 +248,22 @@ resources() {
   fi
 }
 
+# reject NAME REASON -> keeps a product report that must not be read as a
+# result as $out/NAME.spec_lint.rejected.json (never NAME.spec_lint.json,
+# which compare_replay.sh and gate_diff.sh then report as missing), retains
+# the log, and fails the runner.
+reject() {
+  SPEC_LINT_ROOT="$root" SPEC_LINT_RAW_DIR="$raw" \
+    bench/corpus/normalise_report.sh "$raw/$1.spec_lint.json" "$out/$1.spec_lint.rejected.json"
+  cp "$raw/$1.run.log" "$out/$1.spec_lint.log"
+  echo "$2; report kept as $out/$1.spec_lint.rejected.json, log at $out/$1.spec_lint.log" >&2
+  exit 2
+}
+
 for name in "${corpora[@]}"; do
   echo "== $name" >&2
   rm -f "$out/$name.provenance.json" "$out/$name.spec_lint.json" "$out/$name.spec_lint.json.gz" \
+    "$out/$name.spec_lint.rejected.json" "$out/$name.spec_lint.rejected.json.gz" \
     "$out/$name.spec_lint.log" "$out/$name.resources.json" "$out/$name.experiment.log"
   if [ "$product_only" != 1 ]; then rm -f "$out/$name.json" "$out/$name.json.gz"; fi
   select_corpus "$name"
@@ -284,23 +315,36 @@ for name in "${corpora[@]}"; do
       cat "$raw/$name.run.log" >&2
       exit 2
     fi
+    # /usr/bin/time exits 1 for a command killed by a signal (macOS) or with
+    # its status (GNU), so its status cannot tell a killed VM from gated
+    # findings (exit 1). It says so itself: macOS prints "command terminated
+    # abnormally" on standard error, GNU time "Command terminated by signal"
+    # in its output file. A killed run is never a result, even when the
+    # report's atomic write finished before the kill: its report is kept as
+    # NAME.spec_lint.rejected.json and no measurement is recorded.
+    if grep -q '^time: command terminated abnormally' "$raw/$name.run.log" ||
+      grep -q 'Command terminated by signal' "$raw/$name.time"; then
+      reject "$name" "the product run for $name was killed by a signal (/usr/bin/time exit $status)"
+    fi
     echo "   mix spec_lint --ci equivalent exited $status" >&2
-    resources "$name" "$raw/$name.time"
-    SPEC_LINT_ROOT="$root" SPEC_LINT_RAW_DIR="$raw" \
-      bench/corpus/normalise_report.sh "$raw/$name.spec_lint.json" "$out/$name.spec_lint.json"
-    completion="$(jq -r '.completion.status' "$out/$name.spec_lint.json")"
-    report_status="$(jq -r '.completion.exit_code' "$out/$name.spec_lint.json")"
-    if [ "$status" -eq 2 ] || [ "$completion" != complete ] || [ "$report_status" -eq 2 ]; then
+    completion="$(jq -r '.completion.status' "$raw/$name.spec_lint.json")"
+    report_status="$(jq -r '.completion.exit_code' "$raw/$name.spec_lint.json")"
+    if [ "$completion" != complete ]; then
+      # An incomplete report says so itself; it is kept with the log.
+      resources "$name" "$raw/$name.time"
+      SPEC_LINT_ROOT="$root" SPEC_LINT_RAW_DIR="$raw" \
+        bench/corpus/normalise_report.sh "$raw/$name.spec_lint.json" "$out/$name.spec_lint.json"
       cp "$raw/$name.run.log" "$out/$name.spec_lint.log"
       cat "$raw/$name.run.log" >&2
       echo "incomplete product run for $name (exit $status, completion $completion); log retained at $out/$name.spec_lint.log" >&2
       exit 2
     fi
-    if [ "$status" -ne "$report_status" ]; then
-      cp "$raw/$name.run.log" "$out/$name.spec_lint.log"
-      echo "exit status/report mismatch for $name: $status vs $report_status" >&2
-      exit 2
+    if [ "$status" -ne "$report_status" ] || [ "$report_status" -eq 2 ]; then
+      reject "$name" "exit status/report mismatch for $name: $status vs $report_status"
     fi
+    resources "$name" "$raw/$name.time"
+    SPEC_LINT_ROOT="$root" SPEC_LINT_RAW_DIR="$raw" \
+      bench/corpus/normalise_report.sh "$raw/$name.spec_lint.json" "$out/$name.spec_lint.json"
     if [ -n "${SPEC_LINT_WRITE_BASELINE_DIR:-}" ]; then
       mkdir -p "$SPEC_LINT_WRITE_BASELINE_DIR"
       MIX_ENV=test mix run bench/run_on_ebin.exs -- "${args[@]}" ${cp_args[@]+"${cp_args[@]}"} \

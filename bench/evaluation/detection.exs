@@ -8,6 +8,16 @@
 # true, "reported" when not gated but one of its MFAs has any finding, and
 # "silent" otherwise (INVENTORY.md, "Counting"). Prints JSON with the report
 # hashes, the class of every family and the recall figures.
+#
+# Each report must be complete, and its sibling REPORT_DIR/CORPUS.provenance.json
+# must record the source revision the inventory pins for that corpus
+# (`corpora[*].revision`): a report built from another revision of the
+# library is not a measurement of the frozen inventory, and the script
+# raises. Every counted finding is listed per family (`matched`: subject,
+# rule, evidence, gate, slice, clause, fingerprint and the "inferred extra"
+# or "stored signature clause" detail), so a reviewer can check that each
+# match is the witnessed omission and not an unrelated finding on the same
+# MFA (INVENTORY.md, "Counting", counts by subject MFA).
 
 root = Path.expand("../..", __DIR__)
 inventory = root |> Path.join("bench/evaluation/inventory.json") |> File.read!() |> JSON.decode!()
@@ -27,6 +37,12 @@ sha256 = fn path ->
   "sha256:" <> Base.encode16(:crypto.hash(:sha256, File.read!(path)), case: :lower)
 end
 
+pinned_revision = fn report_corpus ->
+  Enum.find_value(inventory["corpora"], fn {_name, corpus} ->
+    if corpus["report"] == report_corpus, do: corpus["revision"]
+  end)
+end
+
 measure = fn dir ->
   corpora = families |> Enum.map(&inventory["corpora"][&1["corpus"]]["report"]) |> Enum.uniq()
 
@@ -38,7 +54,23 @@ measure = fn dir ->
       unless report["completion"]["status"] == "complete",
         do: raise("#{path}: report is not complete")
 
-      {corpus, %{path: Path.relative_to(path, root), sha256: sha256.(path), report: report}}
+      provenance = Path.join(dir, corpus <> ".provenance.json")
+      revision = provenance |> File.read!() |> JSON.decode!() |> get_in(["source", "revision"])
+
+      unless revision == pinned_revision.(corpus),
+        do:
+          raise(
+            "#{provenance}: source revision #{inspect(revision)} is not the inventory pin " <>
+              inspect(pinned_revision.(corpus))
+          )
+
+      {corpus,
+       %{
+         path: Path.relative_to(path, root),
+         sha256: sha256.(path),
+         revision: revision,
+         report: report
+       }}
     end)
 
   classes =
@@ -62,7 +94,25 @@ measure = fn dir ->
         |> Enum.map(fn {text, n} -> if n == 1, do: text, else: "#{text} x#{n}" end)
         |> Enum.sort()
 
-      %{id: family["id"], category: family["category"], class: class, findings: evidence}
+      matched =
+        for finding <- findings do
+          extra =
+            for [label, text] <- finding["details"],
+                label in ["inferred extra", "stored signature clause"],
+                do: label <> ": " <> text
+
+          finding
+          |> Map.take(~w(subject rule evidence gate slice clause fingerprint))
+          |> Map.put("extra", extra)
+        end
+
+      %{
+        id: family["id"],
+        category: family["category"],
+        class: class,
+        findings: evidence,
+        matched: Enum.sort_by(matched, &{&1["subject"], &1["slice"], &1["clause"], &1["rule"]})
+      }
     end
 
   tally = fn rows ->
@@ -85,7 +135,9 @@ measure = fn dir ->
     reports:
       reports
       |> Enum.sort()
-      |> Enum.map(fn {corpus, r} -> %{corpus: corpus, path: r.path, sha256: r.sha256} end),
+      |> Enum.map(fn {corpus, r} ->
+        %{corpus: corpus, path: r.path, sha256: r.sha256, revision: r.revision}
+      end),
     families: classes,
     all: tally.(classes),
     return_value: tally.(Enum.filter(classes, &(&1.category == "return_value"))),
