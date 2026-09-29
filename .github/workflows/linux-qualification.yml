@@ -1,8 +1,11 @@
 name: Clean Linux compiler qualification
-# Manual until Linux compiler identities and complete corpus inputs have
-# been reviewed. Every failed preflight/test/budget remains a failed job.
+# Dispatch manually, and validate changes to this workflow itself.
+# Every failed preflight/test/budget remains a failed job.
 on:
   workflow_dispatch:
+  push:
+    branches: [master]
+    paths: [.github/workflows/linux-qualification.yml]
 permissions:
   contents: read
 jobs:
