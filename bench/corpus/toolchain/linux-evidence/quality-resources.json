@@ -1,0 +1,157 @@
+{
+  "release-final-clean": {
+    "alternate_preflight": {
+      "wall": "0:00.75",
+      "rss_kib": "164836",
+      "exit": "0"
+    },
+    "compile": {
+      "wall": "0:00.35",
+      "rss_kib": "105160",
+      "exit": "0"
+    },
+    "credo": {
+      "wall": "0:02.51",
+      "rss_kib": "236964",
+      "exit": "0"
+    },
+    "cross_compiler": {
+      "wall": "0:45.94",
+      "rss_kib": "268736",
+      "exit": "0"
+    },
+    "dependencies": {
+      "wall": "0:00.78",
+      "rss_kib": "155504",
+      "exit": "0"
+    },
+    "dialyzer": {
+      "wall": "1:10.29",
+      "rss_kib": "1062916",
+      "exit": "2"
+    },
+    "format": {
+      "wall": "0:00.38",
+      "rss_kib": "136504",
+      "exit": "0"
+    },
+    "gating_policy": {
+      "wall": "0:00.48",
+      "rss_kib": "112744",
+      "exit": "0"
+    },
+    "preflight": {
+      "wall": "0:00.68",
+      "rss_kib": "115352",
+      "exit": "0"
+    },
+    "tests": {
+      "wall": "3:36.72",
+      "rss_kib": "278780",
+      "exit": "0"
+    }
+  },
+  "release-dev-dialyzer": {
+    "dialyzer": {
+      "wall": "1:33.21",
+      "rss_kib": "1305672",
+      "exit": "0"
+    }
+  },
+  "fork-final": {
+    "alternate_preflight": {
+      "wall": "0:07.04",
+      "rss_kib": "355868",
+      "exit": "0"
+    },
+    "compile": {
+      "wall": "0:05.38",
+      "rss_kib": "362168",
+      "exit": "0"
+    },
+    "credo": {
+      "wall": "0:03.59",
+      "rss_kib": "239312",
+      "exit": "0"
+    },
+    "cross_compiler": {
+      "wall": "0:48.86",
+      "rss_kib": "261520",
+      "exit": "0"
+    },
+    "dependencies": {
+      "wall": "0:00.94",
+      "rss_kib": "150880",
+      "exit": "0"
+    },
+    "dialyzer": {
+      "wall": "1:06.00",
+      "rss_kib": "1152184",
+      "exit": "2"
+    },
+    "format": {
+      "wall": "0:00.43",
+      "rss_kib": "138004",
+      "exit": "0"
+    },
+    "gating_policy": {
+      "wall": "0:00.42",
+      "rss_kib": "108504",
+      "exit": "0"
+    },
+    "preflight": {
+      "wall": "0:00.40",
+      "rss_kib": "112912",
+      "exit": "0"
+    },
+    "tests": {
+      "wall": "6:01.73",
+      "rss_kib": "276620",
+      "exit": "0"
+    }
+  },
+  "fork-dev-dialyzer": {
+    "dialyzer": {
+      "wall": "0:59.85",
+      "rss_kib": "1214200",
+      "exit": "0"
+    }
+  },
+  "upstream-final": {
+    "compile": {
+      "wall": "0:06.98",
+      "rss_kib": "357604",
+      "exit": "0"
+    },
+    "credo": {
+      "wall": "0:02.34",
+      "rss_kib": "236528",
+      "exit": "0"
+    },
+    "dependencies": {
+      "wall": "0:00.91",
+      "rss_kib": "157236",
+      "exit": "0"
+    },
+    "format": {
+      "wall": "0:00.46",
+      "rss_kib": "139932",
+      "exit": "0"
+    },
+    "gating_policy": {
+      "wall": "0:00.52",
+      "rss_kib": "115556",
+      "exit": "0"
+    },
+    "preflight": {
+      "wall": "0:00.49",
+      "rss_kib": "109100",
+      "exit": "0"
+    },
+    "upstream_diagnostics": {
+      "wall": "0:04.50",
+      "rss_kib": "160468",
+      "exit": "0"
+    }
+  }
+}

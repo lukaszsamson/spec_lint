@@ -70,9 +70,9 @@ project when you switch between them. `mix spec_lint` records which build
 produced the project's BEAM files (`_build/ENV/lib/APP/.mix/spec_lint.build`)
 and recompiles with `--force` when that is not the running build,
 including the first time it runs on a project it did not compile itself.
-Build-record version 2 records each BEAM only when a compiler event attests
+Build-record version 3 records each BEAM only when a compiler event attests
 that the module was produced in this VM, or the unchanged artifact already
-has verified provenance. Version 1 records require a rebuild. An app-wide
+has verified provenance. Version 1 and 2 records require a rebuild. An app-wide
 successful compile cannot verify orphan BEAMs: the task refuses unverified
 artifacts with exit 2 and leaves them in place for explicit repair.
 Only built-in Mix compiler pipelines are supported. A custom compiler can
@@ -87,12 +87,15 @@ checker chunks, make the run fail with exit status 2. The forced
 recompilation also runs when `compile` already ran in the same VM (`mix do
 compile + spec_lint`, an alias such as `["compile", "spec_lint --ci"]`);
 if it still compiles nothing, the task exits 2 instead of recording the
-other build's files as its own. A dependency whose BEAM files carry the
-other line's checker chunks (possible with `--no-deps-check`, a shared or
-stale build directory, or vendored BEAM files) also exits 2: the running
-checker would ignore its signatures. Recompile it with `mix deps.compile
---force`. A dependency built by the other 1.21 build writes the same chunk
-version and is not detected.
+other build's files as its own. Source-backed Mix dependencies are checked
+and compiled in their dependency environment before the consumer. Missing
+or stale dependency provenance forces downstream recompilation, even when
+the dependency's code MD5 is unchanged: its inferred signature may differ.
+The same per-artifact checks apply to dependencies. Elixir artifacts from
+custom dependency compilers or compile commands are refused; non-Mix pure
+Erlang dependencies do not supply Elixir checker signatures and are exempt.
+Explicit-ebin research runs do not establish dependency provenance; their
+caller must provide artifacts built with the selected compiler.
 
 Baselines record the adapter id, so switching compilers is an adapter
 change: a baseline written under another one is not applied, and
@@ -130,7 +133,13 @@ installation are exercised by `test/integration/release/`.
 
 Only Mix's complete default compiler pipeline is supported. Custom compilers,
 missing stages, compile-task aliases and replacement compile tasks in a
-project or umbrella child cause exit 2.
+project, umbrella child or source-backed Mix dependency cause exit 2.
+This currently includes `file_system`, used by some development tools and
+Phoenix development stacks, when it is present in the selected Mix
+environment. There is no audited custom-compiler exception. SpecLint's own
+runtime self-check uses `MIX_ENV=prod`, without its Credo/Dialyxir development
+dependencies; ordinary `mix spec_lint --ci` on this development checkout is
+therefore refused. This is a material limitation of the experimental release.
 
 The project uses [Apache 2.0](LICENSE); [NOTICE](NOTICE) and
 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) preserve attribution for
@@ -661,13 +670,18 @@ mix dialyzer      # PLT in priv/plts, or SPEC_LINT_PLT_DIR (one per compiler)
 Tests whose expectations legitimately differ between compiler lines are
 tagged `adapter:` and run only under that adapter's compiler; run the
 suite under each qualified compiler, each with its own `MIX_BUILD_PATH`.
-Two environment variables name other compilers, and the tests that need
+Use separate checkouts or run the suites sequentially: ExUnit's `tmp_dir`
+fixtures share checkout-relative paths across compiler processes.
+Three environment variables name other compilers, and the tests that need
 them do not pass without them:
 
 - `SPEC_LINT_OTHER_ELIXIR`, the bin directory of a second qualified
   compiler (1.20.4 under 1.21, a 1.21 build under 1.20.4): the
   cross-compiler tests (tag `cross_compiler`, including the compiler
   upgrade tests of `test/integration/release/`) are **excluded** without it;
+- `SPEC_LINT_DIAGNOSTIC_ELIXIR`, the exact upstream `648b2a9` bin directory:
+  under `c24c235`, exercises the stale same-version dependency regression
+  (tag `diagnostic_dependency`), **excluded** without it;
 - `SPEC_LINT_UNSUPPORTED_ELIXIR`, the bin directory of a compiler outside
   the support range (1.19.4 was used): the test behind the 1.19 refusal
   described under [Requirements](#requirements)
@@ -680,6 +694,7 @@ compiler, naming another one):
 ```
 SPEC_LINT_OTHER_ELIXIR=/path/to/other/elixir/bin \
 SPEC_LINT_UNSUPPORTED_ELIXIR=/path/to/elixir-1.19/bin \
+SPEC_LINT_DIAGNOSTIC_ELIXIR=/path/to/elixir-648b2a9/bin \
 MIX_BUILD_PATH=_build/$COMPILER mix test
 ```
 

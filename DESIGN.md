@@ -581,18 +581,18 @@ unless the record names the running build and every BEAM file matches it.
 `SpecLint.Run` refuses an application whose record names another build or
 whose BEAM files were added or changed since (an incomplete build, exit 2);
 an application without a record (an explicit ebin, as in the corpus
-runner) is analysed and reported as `unrecorded`. Build-record version 2 accepts each artifact only when a per-module compiler
+runner) is analysed and reported as `unrecorded`. Build-record version 3 accepts each artifact only when a per-module compiler
 event proves it was produced in this VM, or an unchanged artifact already
-has verified provenance. Version 1 records require a rebuild. An app-wide
+has verified provenance. Version 1 and 2 records require a rebuild. An app-wide
 successful compile does not establish provenance for orphan BEAMs; the
 task refuses them with exit 2 and retains them for explicit repair.
 Only built-in Mix compiler pipelines are supported. Nonstandard custom
 compiler pipelines, including umbrella child configurations, are refused
 with exit 2 because a custom compiler can overwrite artifacts after an
 Elixir compiler event. This is stale-artifact checking for trusted project
-code, not protection against a malicious project. Dependencies are not
-recorded: Mix does not recompile them across the two builds, and their
-chunks feed the signatures the running compiler infers for the project.
+code, not protection against a malicious project. Source-backed Mix
+dependencies receive the same per-artifact production records before
+owned applications compile.
 
 `Mix.Task.run/2` does nothing when `compile` already ran in the VM (`mix
 do compile + spec_lint`, an alias, or a task defined in the project, which
@@ -620,20 +620,23 @@ other line's chunk version fails decoding (`unsupported_chunk`, exit 2 in
 CI). Baselines record the adapter id, so each line has its own baselines;
 another line's baseline is not applied and CI exits 2.
 
-A dependency can still carry the other line's chunks when Mix's version
-check is bypassed (`--no-deps-check`, a shared or stale build directory,
-vendored BEAM files). The running checker ignores a chunk of another
-version, so calls into that dependency become `dynamic()` and a gate can
-disappear (review repro: an SL001 on a consumer became exit 0). The Mix
-tasks therefore read the chunk version tag of every dependency BEAM after
-compiling (`SpecLint.BuildRecord.foreign_dependencies/2`) and refuse a
-dependency whose version differs from the running compiler's (exit 2),
-removing the owned build records so the project is recompiled once the
-dependencies are (Mix does not recompile a caller for a runtime
-dependency). Documented limit: a dependency compiled by the other build of
-the same line (`c24c235` and `648b2a9`, both v10) has the same tag and is
-not detected; reports do not list dependency chunk versions. Without the
-Mix task (`SpecLint.Run` on explicit ebins) dependencies are not checked.
+A dependency's stored signatures participate in caller inference. Checking
+only its chunk version is insufficient: switching from upstream `648b2a9`
+to the fork can retain the upstream dependency and produce a false SL003
+on a consumer whose runtime call returns `:ok`. Both builds use v10.
+The Mix tasks therefore compile source-backed Mix dependencies in their
+actual dependency environment and dependency order, preserving orphan
+artifacts so the provenance checks can reject them. Missing or stale
+records, or newly compiled dependency modules, force downstream dependencies
+and owned consumers to recompile, regardless of code MD5. A checker chunk
+can change without changing the code digest. Version 3 invalidates older
+owned records whose inference could have used unverified dependencies.
+Non-Mix artifacts with Elixir checker chunks and custom dependency compile
+commands fail closed; pure Erlang artifacts without checker chunks are
+exempt. Dependency records are rechecked after owned compilation.
+Without the Mix task (`SpecLint.Run` on explicit ebins), dependency
+provenance remains the caller's responsibility. The frozen corpus runner
+records exact compiler, source and artifact identities separately.
 
 **Decision:** direct chunk reading from Fable for signatures; the
 `Module.ParallelChecker` cache is started only for body analysis and for

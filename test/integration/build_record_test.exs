@@ -277,7 +277,7 @@ defmodule SpecLint.Integration.BuildRecordTest do
   # dynamic() and a gate disappears (Milestone 3 review). Mix keeps such a
   # BEAM with --no-deps-check, a shared or stale build directory or vendored
   # files; the test swaps the chunk version in place.
-  test "a dependency compiled by another compiler line fails closed" do
+  test "a source-backed dependency from another compiler line is rebuilt before its caller" do
     dir = Fixture.tmp_dir!("foreign-dep")
     on_exit(fn -> File.rm_rf!(dir) end)
     dep = Path.join(dir, "dep_a")
@@ -325,21 +325,19 @@ defmodule SpecLint.Integration.BuildRecordTest do
     assert [%{"rule" => "SL001"}] = json["findings"]
 
     beam = Path.join(consumer, "_build/dev/lib/dep_a/ebin/Elixir.DepA.beam")
+    {md5, _exck} = SpecLint.Beam.identity(beam)
     swap_checker_version!(beam, :elixir_checker_v0)
+    assert {^md5, _exck} = SpecLint.Beam.identity(beam)
 
+    # Changing only ExCk does not change the code MD5. The dependency
+    # record's full byte digest still triggers its own and caller's rebuild.
     {status, json, output} = Fixture.lint(consumer)
-    assert status == 2, output
-    assert json == nil
-    assert output =~ "dependencies compiled by another compiler line: dep_a (elixir_checker_v0)"
-    refute File.exists?(Path.join(consumer, "_build/dev/lib/consumer/.mix/spec_lint.build"))
-
-    # Once the dependency is rebuilt, the project is recompiled (its record
-    # was removed) and the native verdict returns.
-    {_output, 0} = Fixture.mix(consumer, ["deps.compile", "dep_a", "--force"])
-    {status, json, output} = Fixture.lint(consumer)
+    assert output =~ "recompiling dep_a", output
     assert output =~ "recompiling consumer", output
     assert status == 1, output
     assert [%{"rule" => "SL001"}] = json["findings"]
+    assert {:ok, checker} = SpecLint.Beam.checker_version(beam)
+    assert checker == Atom.to_string(:elixir_erl.checker_version())
   end
 
   @tag :cross_compiler

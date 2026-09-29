@@ -11,11 +11,16 @@ Upstream `648b2a9` is now **diagnostic-only**: its mixed list/bitstring
 callers. All findings have `gate: false`; the report is `incomplete`.
 `--ci` and `--warnings-as-errors` exit 2, a local run exits 0, and a baseline
 cannot waive the restriction or be written. `c24c235` and 1.20.4 remain CI
-candidates pending current-tree requalification. Build-record version 2
+candidates pending current-tree requalification. Build-record version 3
 requires per-module production evidence and rejects unverified orphan
 BEAMs without deleting them. Only built-in Mix compiler pipelines are
 supported; custom compiler configurations, including umbrella children,
-are refused with exit 2.
+are refused with exit 2. Dependency provenance is also required before
+consumer compilation; the same checker chunk version does not establish
+that two compiler builds inferred the same signatures. Custom compiler-bearing
+Mix dependencies, including `file_system` in development environments, are
+unsupported. The runtime self-check uses `MIX_ENV=prod`; the development
+checkout with all lint-tool dependencies is refused.
 
 The historical campaigns observed no gated false positives on fifteen
 corpora, detected 3 of 18 witnessed omission families, and gave no verdict

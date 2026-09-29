@@ -1,0 +1,33 @@
+Erlang/OTP 28 [erts-16.4.0.1] [source] [64-bit] [smp:12:12] [ds:12:12:10] [async-threads:1] [jit]
+
+Elixir 1.20.4 (compiled with Erlang/OTP 29)
+== stdlib
+   mix spec_lint --ci equivalent exited 0
+== jason
+   mix spec_lint --ci equivalent exited 0
+== decimal
+   mix spec_lint --ci equivalent exited 0
+== nimble_options
+   mix spec_lint --ci equivalent exited 0
+== mime
+   mix spec_lint --ci equivalent exited 0
+== plug
+   mix spec_lint --ci equivalent exited 0
+== ecto
+   mix spec_lint --ci equivalent exited 0
+== req
+   mix spec_lint --ci equivalent exited 0
+== broadway
+   mix spec_lint --ci equivalent exited 0
+== oban
+   mix spec_lint --ci equivalent exited 1
+== phoenix_live_view
+   mix spec_lint --ci equivalent exited 0
+== ash
+   mix spec_lint --ci equivalent exited 1
+== nx
+   mix spec_lint --ci equivalent exited 0
+== absinthe
+   mix spec_lint --ci equivalent exited 1
+== tesla
+   mix spec_lint --ci equivalent exited 0

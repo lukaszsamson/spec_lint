@@ -28,6 +28,41 @@ defmodule SpecLint.BuildRecordTest do
 
   defp run(project), do: Run.execute(project, %Config{baseline: "missing.json"}, ci: true)
 
+  test "only readable Erlang artifacts without ExCk are exempt", %{tmp_dir: dir} do
+    ebin = Path.join(dir, "erlang")
+    File.mkdir_p!(ebin)
+    source = Path.join(dir, "erlang_dependency_probe.erl")
+    File.write!(source, "-module(erlang_dependency_probe). -export([tag/0]). tag() -> ok.")
+
+    assert {:ok, :erlang_dependency_probe, bytes} =
+             :compile.file(String.to_charlist(source), [:binary])
+
+    File.write!(Path.join(ebin, "erlang_dependency_probe.beam"), bytes)
+    refute BuildRecord.elixir_artifacts?(ebin)
+
+    File.write!(Path.join(ebin, "invalid.beam"), "not a BEAM")
+    assert BuildRecord.elixir_artifacts?(ebin)
+  end
+
+  test "a malformed ExCk remains an Elixir artifact requiring provenance", %{
+    app: app,
+    tmp_dir: dir
+  } do
+    original = beam_path(Compare)
+    {:ok, _module, chunks} = :beam_lib.all_chunks(String.to_charlist(original))
+    chunks = List.keyreplace(chunks, ~c"ExCk", 0, {~c"ExCk", <<0, 1, 2>>})
+    {:ok, bytes} = :beam_lib.build_module(chunks)
+    File.write!(Path.join(app.ebin, "#{Compare}.beam"), bytes)
+    assert :error = Beam.checker_version(Path.join(app.ebin, "#{Compare}.beam"))
+    assert BuildRecord.elixir_artifacts?(app.ebin)
+
+    stripped = Path.join(dir, "stripped")
+    File.mkdir_p!(stripped)
+    {:ok, bytes} = :beam_lib.build_module(List.keydelete(chunks, ~c"ExCk", 0))
+    File.write!(Path.join(stripped, "#{Compare}.beam"), bytes)
+    assert BuildRecord.elixir_artifacts?(stripped)
+  end
+
   test "missing compiler evidence API fails closed with exit status 2" do
     error =
       assert_raise Mix.Error, ~r/compiler artifact evidence API is unavailable/, fn ->

@@ -1,0 +1,12 @@
+{
+  "build_date": "2026-08-28T10:04:20Z",
+  "checker_version": "elixir_checker_v8",
+  "code_digest": "cf42510c62e2725d02769af5996c808a8b597351db0d0dceb52ebf8a88febcb8",
+  "elixir_version": "1.20.4",
+  "exck_digest": "28bc01cf3075064bdebb88faf653a8ca8decb87c8c1bbd8e24c0e2e28a596d07",
+  "module_types_beam_lib_md5": "660e5b145f39b19699c5a86c6211cd93",
+  "modules": 447,
+  "otp_release": "28",
+  "otp_version": "28.5.0.4",
+  "revision": "759443e"
+}

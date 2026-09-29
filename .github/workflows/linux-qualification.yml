@@ -18,6 +18,7 @@ jobs:
             mode: gating
           - compiler: c24c235
             alternate: 1.20.4
+            diagnostic: 648b2a9
             mode: gating
           - compiler: 648b2a9
             alternate: ''
@@ -39,6 +40,7 @@ jobs:
         env:
           COMPILER: ${{ matrix.compiler }}
           ALTERNATE: ${{ matrix.alternate }}
+          DIAGNOSTIC: ${{ matrix.diagnostic }}
         run: |
           mkdir -p qualification
           bench/corpus/toolchain/install_ci_elixir.sh "$COMPILER" "$RUNNER_TEMP/compiler" > qualification/compiler.identity.json
@@ -46,6 +48,10 @@ jobs:
           if [ -n "$ALTERNATE" ]; then
             bench/corpus/toolchain/install_ci_elixir.sh "$ALTERNATE" "$RUNNER_TEMP/alternate" > qualification/alternate.identity.json
             echo "SPEC_LINT_OTHER_ELIXIR=$RUNNER_TEMP/alternate/bin" >> "$GITHUB_ENV"
+          fi
+          if [ -n "$DIAGNOSTIC" ]; then
+            bench/corpus/toolchain/install_ci_elixir.sh "$DIAGNOSTIC" "$RUNNER_TEMP/diagnostic" > qualification/diagnostic.identity.json
+            echo "SPEC_LINT_DIAGNOSTIC_ELIXIR=$RUNNER_TEMP/diagnostic/bin" >> "$GITHUB_ENV"
           fi
       - name: Validate compiler and run bounded quality checks
         env:

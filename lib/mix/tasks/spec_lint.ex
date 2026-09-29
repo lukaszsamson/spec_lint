@@ -65,6 +65,7 @@ defmodule Mix.Tasks.SpecLint do
 
   use Mix.Task
 
+  alias Mix.Dep.Loader, as: DepLoader
   alias SpecLint.{BuildRecord, CLI, Compiler, Config, Explain, Project, Report, Run}
   alias SpecLint.BuildRecord.Capture
   alias SpecLint.Report.Json
@@ -122,26 +123,40 @@ defmodule Mix.Tasks.SpecLint do
   """
   @spec compile!() :: :ok
   def compile! do
-    capabilities =
-      case Compiler.preflight_once() do
-        {:ok, capabilities} -> capabilities
-        {:error, _reason} -> nil
-      end
-
+    capabilities = compiler_capabilities()
     project = Project.current()
-    if capabilities, do: check_compiler_pipeline!()
-
-    prior =
-      if capabilities,
-        do: Map.new(project.apps, &{&1.app, BuildRecord.verified_beams(&1, capabilities)}),
-        else: %{}
-
-    force? = capabilities != nil and stale_build?(project, capabilities)
+    {force?, prior, dependencies} = compile_plan!(project, capabilities)
     args = if force?, do: ["--force", "--return-errors"], else: ["--return-errors"]
     if force?, do: reenable_compile()
 
-    compile_and_record!(args, force?, capabilities, prior)
+    compile_and_record!(args, force?, capabilities, prior, dependencies)
     :ok
+  end
+
+  defp compiler_capabilities do
+    case Compiler.preflight_once() do
+      {:ok, capabilities} -> capabilities
+      {:error, _reason} -> nil
+    end
+  end
+
+  defp compile_plan!(_project, nil), do: {false, %{}, %{}}
+
+  defp compile_plan!(project, capabilities) do
+    check_compiler_pipeline!()
+    {dependencies_changed?, dependencies} = compile_dependencies!(project, capabilities)
+    prior = Map.new(project.apps, &{&1.app, BuildRecord.verified_beams(&1, capabilities)})
+    owned_stale? = stale_build?(project, capabilities)
+
+    if dependencies_changed? and not owned_stale? do
+      Enum.each(project.apps, fn app ->
+        Mix.shell().info(
+          "spec_lint: recompiling #{app.app} with #{capabilities.adapter_id}: dependency signatures rebuilt"
+        )
+      end)
+    end
+
+    {owned_stale? or dependencies_changed?, prior, dependencies}
   end
 
   # Compiler events identify modules, not output bytes. A custom compiler
@@ -195,7 +210,7 @@ defmodule Mix.Tasks.SpecLint do
     end)
   end
 
-  defp compile_and_record!(args, force?, capabilities, prior) do
+  defp compile_and_record!(args, force?, capabilities, prior, dependencies) do
     capture = if capabilities, do: Capture.start()
 
     try do
@@ -206,7 +221,7 @@ defmodule Mix.Tasks.SpecLint do
       if capabilities do
         compiled = Capture.finish(capture)
         check_dependencies!(Project.current(), capabilities)
-        record_build!(Project.current(), capabilities, prior, compiled)
+        record_build!(Project.current(), capabilities, prior, compiled, dependencies)
       end
     after
       if capture, do: Capture.stop(capture)
@@ -240,41 +255,140 @@ defmodule Mix.Tasks.SpecLint do
   defp noop?({:noop, _diagnostics}), do: true
   defp noop?(_result), do: false
 
-  # Dependencies compiled by another compiler line (another checker chunk
-  # version): the project's signatures were inferred without theirs. The
-  # owned records are removed, so the project is recompiled once the
-  # dependencies are (Mix does not recompile a caller for a runtime
-  # dependency).
-  defp check_dependencies!(project, capabilities) do
-    owned = for app <- project.apps, do: app.app
-    build = Mix.Project.build_path()
+  # Dependency checker signatures participate in inference even when the
+  # compiler version/chunk number and BEAM code MD5 are unchanged. Compile
+  # dependencies in topological order, preserving orphans, and attest every
+  # artifact before any owned application is inferred from those signatures.
+  defp compile_dependencies!(project, capabilities) do
+    owned = MapSet.new(project.apps, & &1.app)
 
-    ebins =
-      for {app, _source} <- Enum.sort(Mix.Project.deps_paths()),
-          app not in owned,
-          ebin = Path.join([build, "lib", Atom.to_string(app), "ebin"]),
-          File.dir?(ebin),
-          do: {app, ebin}
+    check_dependency_api!()
 
-    case BuildRecord.foreign_dependencies(ebins, capabilities) do
-      [] ->
+    Mix.Dep.cached()
+    |> Enum.reject(&MapSet.member?(owned, &1.app))
+    |> Enum.reduce({false, %{}}, &compile_dependency!(&1, &2, capabilities))
+  rescue
+    error ->
+      Enum.each(project.apps, &File.rm(BuildRecord.path(&1)))
+      reraise error, __STACKTRACE__
+  end
+
+  defp compile_dependency!(dep, {upstream_changed?, snapshots}, capabilities) do
+    if Mix.Dep.mix?(dep) and is_nil(dep.opts[:compile]) do
+      DepLoader.with_system_env(dep, fn ->
+        compile_in_dependency!(dep, upstream_changed?, snapshots, capabilities)
+      end)
+    else
+      check_external_dependency!(dep)
+      {upstream_changed?, snapshots}
+    end
+  end
+
+  defp compile_in_dependency!(dep, upstream_changed?, snapshots, capabilities) do
+    Mix.Dep.in_dependency(dep, fn _ ->
+      compile_mix_dependency!(upstream_changed?, snapshots, capabilities)
+    end)
+  end
+
+  defp compile_mix_dependency!(upstream_changed?, snapshots, capabilities) do
+    check_compiler_pipeline!()
+    dependency = Project.current()
+    prior = Map.new(dependency.apps, &{&1.app, BuildRecord.verified_beams(&1, capabilities)})
+    force? = stale_build?(dependency, capabilities) or upstream_changed?
+    reenable_compile()
+
+    args = [
+      "--return-errors",
+      "--from-mix-deps-compile",
+      "--no-deps-check",
+      "--no-warnings-as-errors",
+      "--no-code-path-pruning"
+    ]
+
+    args = if force?, do: ["--force" | args], else: args
+    capture = Capture.start()
+
+    try do
+      result = Mix.Task.run("compile", args)
+      check_compile!(result, force?)
+      compiled = Capture.finish(capture)
+      check_dependency_build!(dependency)
+      record_build!(dependency, capabilities, prior, compiled, snapshots)
+      changed? = force? or Enum.any?(compiled, fn {_app, modules} -> MapSet.size(modules) > 0 end)
+      {changed?, dependency_snapshots(dependency, snapshots)}
+    after
+      Capture.stop(capture)
+    end
+  end
+
+  defp dependency_snapshots(dependency, snapshots) do
+    Enum.reduce(dependency.apps, snapshots, fn app, acc ->
+      Map.put(acc, Atom.to_string(app.app), BuildRecord.snapshot(app))
+    end)
+  end
+
+  defp check_dependency_build!(project) do
+    case Project.check_build_paths(project) do
+      :ok ->
         :ok
 
-      foreign ->
-        Enum.each(project.apps, &File.rm(BuildRecord.path(&1)))
+      error ->
+        apps = Enum.map_join(project.apps, ", ", &Atom.to_string(&1.app))
+        Mix.raise("incomplete dependency build for #{apps}: #{inspect(error)}", exit_status: 2)
+    end
+  end
 
-        list =
-          Enum.map_join(foreign, ", ", fn {app, versions} ->
-            "#{app} (#{Enum.join(versions, ", ")})"
-          end)
+  defp check_dependency_api! do
+    required = [
+      {Mix.Dep, :cached, 0},
+      {Mix.Dep, :mix?, 1},
+      {Mix.Dep, :in_dependency, 2},
+      {Mix.Dep.Loader, :with_system_env, 2}
+    ]
 
+    Enum.each(required, fn {module, function, arity} ->
+      unless Code.ensure_loaded?(module) and function_exported?(module, function, arity) do
         Mix.raise(
-          "dependencies compiled by another compiler line: #{list}; the running compiler " <>
-            "(#{capabilities.adapter_id}) writes #{capabilities.checker_version} and ignores " <>
-            "their signatures. Recompile them (mix deps.compile --force) and run again",
+          "dependency compiler evidence API is unavailable: #{inspect(module)}.#{function}/#{arity}",
           exit_status: 2
         )
+      end
+    end)
+  end
+
+  defp check_external_dependency!(dep) do
+    ebin = Path.join(dep.opts[:build], "ebin")
+
+    if BuildRecord.elixir_artifacts?(ebin) do
+      Mix.raise(
+        "cannot verify compiler provenance for dependency #{dep.app}: " <>
+          "artifacts with Elixir metadata or unreadable BEAMs require a source-backed " <>
+          "Mix dependency with the built-in " <>
+          "compiler pipeline, without a custom :compile command",
+        exit_status: 2
+      )
     end
+  end
+
+  defp check_dependencies!(project, capabilities) do
+    owned = MapSet.new(project.apps, & &1.app)
+
+    Mix.Dep.cached()
+    |> Enum.reject(&MapSet.member?(owned, &1.app))
+    |> Enum.each(fn dep ->
+      app = %{app: dep.app, ebin: Path.join(dep.opts[:build], "ebin")}
+
+      if BuildRecord.elixir_artifacts?(app.ebin) and
+           BuildRecord.status(app, capabilities) != :verified do
+        Enum.each(project.apps, &File.rm(BuildRecord.path(&1)))
+
+        Mix.raise(
+          "cannot verify compiler provenance for dependency #{dep.app} after compilation; " <>
+            "its Elixir artifacts are not verified for the running compiler build",
+          exit_status: 2
+        )
+      end
+    end)
   end
 
   defp stale_build?(project, capabilities) do
@@ -298,7 +412,7 @@ defmodule Mix.Tasks.SpecLint do
     stale != []
   end
 
-  defp record_build!(project, capabilities, prior, compiled) do
+  defp record_build!(project, capabilities, prior, compiled, dependencies) do
     for app <- project.apps, File.dir?(app.ebin) do
       evidence =
         Map.merge(
@@ -306,7 +420,7 @@ defmodule Mix.Tasks.SpecLint do
           BuildRecord.compiled_beams(app, Map.get(compiled, app.app, MapSet.new()))
         )
 
-      case BuildRecord.write(app, capabilities, evidence) do
+      case BuildRecord.write(app, capabilities, evidence, dependencies) do
         :ok ->
           :ok
 

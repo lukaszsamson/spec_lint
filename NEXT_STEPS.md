@@ -31,6 +31,29 @@ Finish this sequence before publishing an experimental release:
    (it crashes an existing compiler test). See
    `bench/upstream/review-2026-09-29.md`.
 
+### Memory follow-up after qualification
+
+The frozen 1.20.4 Absinthe workload was killed by the enforced local 6 GiB
+Linux cap after 83.37 seconds (status 137; OOM counters 0 to 1), before any
+report was written. This is a local stress-cap failure, not evidence that
+the frozen 8,256 MiB corpus acceptance budget was exceeded. Keep the passing
+quality checks separate from that incomplete workload; details and portable
+resource evidence are in `bench/corpus/toolchain/linux-results.md`.
+
+Bounded prefix probes found memory growth in translation before evidence,
+rules or rendering. Forcing full GC between modules reduced temporary heap
+but did not remove cumulative growth. Investigate processing each module
+through evidence, reachability, rules and coverage before retaining compact
+finding, inventory and ledger summaries for ordinary lint output. Preserve
+the existing full-analysis mode for Explain and API consumers. Printing is
+already lazy and the reporter already excludes analysis results from its view.
+
+Treat streaming as a future experiment, not an adopted fix. Require unchanged
+complete reports, gates, structural fingerprints, baseline/lost-spec behavior
+and per-adapter corpus results, then measure the same workload within the
+unchanged 6 GiB local cap. Do not hide failures by raising that cap or rewrite
+the frozen corpus budget to imply a successful replay.
+
 ### Completion of the original objective versus an incremental experiment
 
 The incremental criterion later in this document (one additional gated

@@ -39,6 +39,11 @@ if [ "$mode" = gating ]; then
   # Explicit --only prevents an accidentally excluded cross-compiler suite
   # from appearing as successful qualification.
   run cross_compiler mix test --only cross_compiler
+  compiler_revision="$(elixir -e 'IO.write(System.build_info()[:revision])')"
+  if [[ "$compiler_revision" == c24c235* ]]; then
+    : "${SPEC_LINT_DIAGNOSTIC_ELIXIR:?provide the qualified 648b2a9 bin directory}"
+    run diagnostic_dependency mix test --only diagnostic_dependency
+  fi
   # Fixtures intentionally carry invalid specs; analyze production modules
   # in a separate dev build so test/support is never part of the target.
   run dialyzer env MIX_ENV=dev MIX_BUILD_PATH="${MIX_BUILD_PATH}-dialyzer" mix dialyzer

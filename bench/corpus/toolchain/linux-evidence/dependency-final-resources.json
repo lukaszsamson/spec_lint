@@ -1,0 +1,82 @@
+{
+  "base_source_archive_sha256": "e362d950195b35b866a450291cb11eef7ea6976bf7ca97523def10930c0eeee7",
+  "final_delta_archive_sha256": "0efc64b5cb714323ff438319e8018c390c5baeaffe7fe655a0369c1e3b2d6d79",
+  "final_delta_utc": "2026-09-29T22:21:08Z",
+  "full_linux_suite_repeated": false,
+  "resources": {
+    "dependency-final-c24": {
+      "compile": {
+        "captured_status": 0,
+        "wall": "0:00.77",
+        "rss_kib": "163424"
+      },
+      "credo": {
+        "captured_status": 0,
+        "wall": "0:02.60",
+        "rss_kib": "228516"
+      },
+      "format": {
+        "captured_status": 0,
+        "wall": "0:00.41",
+        "rss_kib": "138912"
+      },
+      "selected": {
+        "captured_status": 0,
+        "wall": "0:04.93",
+        "rss_kib": "126620"
+      }
+    },
+    "dependency-final-release": {
+      "compile": {
+        "captured_status": 0,
+        "wall": "0:00.80",
+        "rss_kib": "168948"
+      },
+      "credo": {
+        "captured_status": 0,
+        "wall": "0:02.42",
+        "rss_kib": "236956"
+      },
+      "format": {
+        "captured_status": 0,
+        "wall": "0:00.60",
+        "rss_kib": "133228"
+      },
+      "selected": {
+        "captured_status": 0,
+        "wall": "0:12.41",
+        "rss_kib": "139284"
+      }
+    },
+    "dependency-final-upstream": {
+      "compile": {
+        "captured_status": 0,
+        "wall": "0:00.64",
+        "rss_kib": "163268"
+      },
+      "selected": {
+        "captured_status": 0,
+        "wall": "0:05.89",
+        "rss_kib": "161972"
+      }
+    }
+  },
+  "test_results": {
+    "c24_explicit_diagnostic_dependency": {
+      "passed": 1,
+      "excluded": 4,
+      "skipped": 0
+    },
+    "release_dependency_provenance": {
+      "passed": 4,
+      "excluded": 1,
+      "skipped": 0
+    },
+    "upstream_selected_diagnostics": {
+      "passed": 8,
+      "excluded": 0,
+      "skipped": 0
+    }
+  },
+  "final_workspace_lib_test_source_match": true
+}
