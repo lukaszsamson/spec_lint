@@ -10,6 +10,9 @@ never calls your functions. Compilation still runs your macros.
 The design, evidence model and measurements are in [`DESIGN.md`](DESIGN.md)
 and [`EXPERIMENTS.md`](EXPERIMENTS.md).
 
+**Status: experimental release.** The release verdict, with the measured
+figures and what is not claimed, is [`RELEASE.md`](RELEASE.md).
+
 ## Requirements
 
 SpecLint reads compiler internals that change between Elixir releases and
@@ -216,11 +219,15 @@ gating rules below. It does not mean the spec is correct:
   with the unknown count.
 - **Omissions are mostly not detected.** Inference over-approximates and
   never proves that a return happens, and most real omissions
-  found by hand sit in classes that do not gate (`EXPERIMENTS.md`). On the frozen evaluation (17 functions whose specs are
-  witnessed at runtime to omit a returned value, `bench/evaluation/
-  INVENTORY.md`, version 1) SpecLint gates 3, reports 7 without failing CI
-  and is silent on 7. Release figures: {{RELEASE_RECALL: gated, reported,
-  silent of 17 per compiler}}. A clean run says nothing about the rest.
+  found by hand sit in classes that do not gate (`EXPERIMENTS.md`). On the
+  frozen evaluation (`bench/evaluation/INVENTORY.md`, version 2: 18
+  omission families, each witnessed at runtime to return a value its spec
+  leaves out for an input inside the spec's domain) the release reports
+  gate **3**, report **8** without failing CI and are silent on **7**,
+  identically under each of the three compilers (version 1, 17 families:
+  3, 7 and 7). Over the 15 families where the returned value itself is
+  undeclared: 2 gated, 8 reported, 5 silent. A clean run says nothing
+  about the rest.
 - **Findings are conditional.** A conflict says a return would be outside
   the spec if the function returns. `SL002` findings are informational.
   Several documented classes are deliberately reported without failing CI
@@ -233,21 +240,30 @@ gating rules below. It does not mean the spec is correct:
   A defect there can make SpecLint gate a correct spec (the `for ... into:`
   case on `648b2a9`, in the matrix above) or miss a real one.
 
-The unknown-obligation counts of the release measurement (fifteen
-benchmark corpora, default configuration; from the release reports):
+The unknown-obligation counts of the release measurement (the fifteen
+benchmark corpora, default configuration; release campaign 1,
+`bench/corpus/reports/release-1/`, confirmed unchanged by release campaign
+2, see [`RELEASE.md`](RELEASE.md)):
 
-<!-- RELEASE PLACEHOLDERS: the committing agent replaces every {{...}}
-     with the figure from the M5 release reports, and deletes this note. -->
-
-| Run | Slices compared | Established | Compatible after approximation | Possible mismatch | Conflict | **Unknown** | `top_only` | `near_top` | `no_counted_component` | `other` |
+| Run | Slices compared | Established | Compatible after approximation | Possible mismatch | Whole-slice conflict | **Unknown** | `top_only` | `near_top` | `no_counted_component` | `other` |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| 1.21 `c24c235` | {{N}} | {{N}} | {{N}} | {{N}} | {{N}} | {{N}} | {{N}} | {{N}} | {{N}} | {{N}} |
-| 1.21 `648b2a9` | {{N}} | {{N}} | {{N}} | {{N}} | {{N}} | {{N}} | {{N}} | {{N}} | {{N}} | {{N}} |
-| 1.20.4 | {{N}} | {{N}} | {{N}} | {{N}} | {{N}} | {{N}} | {{N}} | {{N}} | {{N}} | {{N}} |
+| 1.21 `c24c235` | 4,204 | 841 | 193 | 57 | 0 | **3,113** | 2,220 | 54 | 839 | 0 |
+| 1.21 `648b2a9` | 4,204 | 841 | 193 | 57 | 0 | **3,113** | 2,220 | 54 | 839 | 0 |
+| 1.20.4 | 4,170 | 830 | 186 | 59 | 0 | **3,095** | 2,210 | 51 | 834 | 0 |
 
-Unknown obligations are {{UNKNOWN_SHARE}} of the compared slices. Gated
-findings on those corpora: {{GATED_COUNT}}, of which {{GATED_FALSE_POSITIVES}}
-were false positives after review.
+Unknown obligations are **74.0%** of the compared slices under 1.21
+(3,113 of 4,204) and **74.2%** under 1.20.4 (3,095 of 4,170). The
+"whole-slice conflict" obligation counts slices whose entire inferred
+return is disjoint from the spec; there are none. The gates are clause
+conflicts (one inferred clause outside the spec) inside slices counted
+as possible mismatches. Gated findings on those corpora: **9** per
+compiler (27 in all, on 3 functions: `Oban.Registry.via/3`,
+`Ash.Page.page_opts/1` and the seven clauses of
+`Absinthe.Blueprint.Input.parse/1`), of which **0** were false positives
+after independent refutation (each gate survived two attempts,
+`bench/corpus/reports/release-1/refutation.json`). The seven Absinthe
+gates are one omission, a struct field left at its default `nil` outside
+its declared type; they gate like any other clause conflict.
 
 **Exit statuses in CI.** Exit 1 is a verdict about your code (a new gated
 finding or a coverage violation): fix the spec or acknowledge the finding

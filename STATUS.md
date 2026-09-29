@@ -5,6 +5,63 @@ Date 2026-09-29. `DESIGN.md` is the authoritative design,
 Phase 4 follows the review of the Phase 3 implementation at `0cc9c50`;
 previous results below are historical and are superseded where noted.
 
+## Milestone 5 delivered: experimental release (2026-09-29)
+
+Verdict in `RELEASE.md`: **release as experimental**; every Milestone 5
+exit criterion is met on `c24c235`, `648b2a9` and 1.20.4. The released
+tree is `58fe1dd` (`source_sha256` `26c90fa8...948a9eb`), replayed as
+release campaign 2 (`bench/corpus/reports/release-2/README.md`).
+
+- **Refutation of campaign 1's gates** (`release-1/refutation.json`): the
+  3 gated functions (27 gates: `Absinthe.Blueprint.Input.parse/1` x7,
+  `Ash.Page.page_opts/1`, `Oban.Registry.via/3`, on each compiler)
+  survived two independent attempts each. 0 gated false positives, so no
+  evidence class needed downgrading and no corpus a re-run for that.
+- **Campaign 2** (tool `58fe1dd`, frozen budgets): every product report
+  byte-identical to campaign 1 on all three compilers; 27 gates, all
+  unchanged; every corpus within budget (Absinthe 57-58 s, 5,774-6,080 MiB);
+  struct defaults 7 per compiler; qualification 468/468/471 tests (with
+  the other compiler and 1.19.4 named, none skipped), Dialyzer 0 errors,
+  self-check 408 slices, exit 0.
+- **Figures** (both campaigns, per compiler 1.21 / 1.20.4): 4,204 / 4,170
+  compared slices, 3,113 / 3,095 unknown obligations (74.0% / 74.2%;
+  `top_only` 2,220 / 2,210, `near_top` 54 / 51, `no_counted_component`
+  839 / 834), 63 / 65 findings, 9 gates. Inventory version 2: 3 gated, 8
+  reported, 7 silent of 18 families (`return_value` 2, 8, 5 of 15);
+  version 1: 3, 7, 7 of 17.
+- **README** placeholders filled with these figures; the frozen criterion
+  for the missing-return objective is in `NEXT_STEPS.md` (M5).
+- **M6** prepared, not submitted: `bench/upstream/` (`58fe1dd`), nine
+  items, all reproducing on upstream `648b2a9`.
+
+Commits: `9f42022` (crash handling), `0cd5d11` (fail-closed tooling),
+`5753b08` (inventory version 2), `08d96f9` (installation and upgrade
+tests), `58fe1dd` (upstream package), `2f2580c` (campaign 2 reports and
+refutation), then this verdict.
+
+### Milestone 5 review: eighteen findings
+
+| # | Sev. | Finding | Outcome |
+| --- | --- | --- | --- |
+| 1 | high | README committed with unfilled `{{...}}` placeholders (unknown counts, recall, gated false positives) | **fixed**: filled from the release reports, note deleted; `ReleaseDocsTest` fails on `{{` and checks the ledger figures against the reports |
+| 2 | high | `Ash.Query.apply_to/3` (C01) wrongly excluded: in-domain filters return the undeclared `{:error, _}` | **fixed**: inventory version 2 (`5753b08`), F18 with two witnesses and a control; denominator 18; Ash audit and detection recomputed |
+| 3 | medium | `06b7496` swept in the installation agent's README draft | **documented** (release-1 README, here); the draft was finished with the tests (`08d96f9`) and this verdict; later commits stage explicit paths |
+| 4 | medium | README cited `test/integration/release/`, which was untracked | **fixed**: committed in `08d96f9` after the gates passed under all three compilers with both compiler variables set |
+| 5 | medium | `run.sh` silently skipped budget checks for a missing file or corpus entry | **fixed** (`0cd5d11`): exit 2 before running; only `none` disables; tested |
+| 6 | medium | an exit or a crashed linked process (reachability task) ended the run with status 1, no report | **fixed** (`9f42022`): `SpecLint.Isolated` (monitored, unlinked), exits caught and trapped in the guarded stage, `internal!/1` and `run_on_ebin.exs` catch exits; two integration tests fail before the fix |
+| 7 | medium | `gate_diff.sh` passed with a missing corpus report, shortening the refutation list | **fixed** (`0cd5d11`): expected corpora from both directories; exit 2 on a missing or incomplete report or directory; tested |
+| 8 | medium | (duplicate of 1) placeholders in the committed README | **fixed** with 1 |
+| 9 | low | budgets derived from the run they certify | **documented** (release-1 README, `RELEASE.md`); campaign 2 is measured against them as frozen. Absinthe's budget is not tightened to 60 s: the measured maximum (58.0 s) would leave 3% headroom for noise; the 60 s target is reported as met separately |
+| 10 | low | F10-F12 witness references did not resolve; no in-domain flag | **fixed** in version 2: case ids, domain and return predicates in `holdout_witnesses.exs`, F11 control and line citation; `EvaluationInventoryTest` resolves every reference |
+| 11 | low | any finding on a family's MFA counts, even an unrelated one | **partly fixed**: `detection.exs` lists every counted finding (`matched`); all current matches contain the witnessed value (checked, INVENTORY.md "Counting"). The rule itself is unchanged in version 2: changing it now would change a frozen definition without a measured need; a later version may require the match |
+| 12 | low | no committed detection for campaign 1; no provenance revision check | **fixed**: `release-1/detection_v1.json` and `detection_v2.json`; `detection.exs` refuses a report whose provenance revision is not the pin |
+| 13 | low | `run.sh` kept a complete-looking report of a VM killed after its write | **fixed** (`0cd5d11`): a signalled run (time's own message) or an exit/report mismatch keeps the report as `NAME.spec_lint.rejected.json` and records no measurement; tested with a VM killed after the write |
+| 14 | low | `compare_replay.sh` was vacuously `all_unchanged` for empty or missing directories | **fixed** (`0cd5d11`), tested |
+| 15 | low | `compare_lines.sh` and `struct_defaults.exs` skipped missing reports and counted incomplete ones | **fixed** (`0cd5d11`); `compare_lines.sh` is tested; `struct_defaults.exs` was checked by hand (empty directory and a provenance without its report: exit 2) and has no automated test because it needs `mix run` under a qualified compiler in a subprocess |
+| 16 | low | `bench/upstream/README.md` named a session scratch path | **fixed** (`58fe1dd`); `ReleaseDocsTest` rejects such paths in the release documents |
+| 17 | low | `holdout2_baseline.md` named a home directory | **fixed** (`58fe1dd`) |
+| 18 | low | `SPEC_LINT_UNSUPPORTED_ELIXIR` undocumented; stale test counts | **fixed**: README "Development" documents both compiler variables; counts refreshed (468/468/471) |
+
 ## Milestone 5: release campaign 1, correctness and runtime (2026-09-29)
 
 Frozen tool `06b7496` (`source_sha256` `b039ce7d...8edded`), after the
@@ -918,7 +975,8 @@ documented limitations. "Sound" is not claimed.
   adopted (EXPERIMENTS.md "Body backend experiment"). The binding
   constraints are compiler inference (helpers under default domains,
   generic `Enum`/`Map` signatures) and translation input approximation.
-  Gating recall on known real omissions is 0 of 9.
+  Gating recall on the frozen evaluation (inventory version 2) is 3 of 18
+  witnessed omission families (0 of the 8 original hand-found ones).
 - **Spec slices are positional.** Removing any one overload of a
   multi-clause spec is reported against the last slice index
   (`spec_clause_removed`), and reordering spec clauses changes the
@@ -951,9 +1009,10 @@ documented limitations. "Sound" is not claimed.
   APIs (`Decimal.t()`, `Plug.Conn.t()`) input-approximate. Opaque remote
   types are `term()` unless `expand_opaque` is on. Overlapping overloads
   follow no validated semantics and are never gated.
-- **Real-code precision of `clause_conflict` is unmeasured** (0
-  candidates). The first confirmed false positive reopens its gating
-  decision.
+- **Real-code precision of `clause_conflict` rests on few gates**: all 27
+  release gates (3 functions) survived independent refutation, which is
+  too few to bound a rate. The first confirmed false positive reopens its
+  gating decision.
 - **Minor gaps.** Message printing of nested negations is simplified, but
   it is presentation only. A module whose checker chunk version mismatches
   but that has no in-scope specs is not flagged. Umbrella aggregation

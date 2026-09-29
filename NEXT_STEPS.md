@@ -4,7 +4,7 @@ The six milestones below replace the numbered lists further down, which are
 kept as history. Performance, compiler compatibility and evidence policy
 stay in separate changes. Exit criteria are copied from the plan.
 
-## M1. Remove printing from analysis on the existing compiler: done, one criterion not met
+## M1. Remove printing from analysis on the existing compiler: done (the 60 s criterion met since M5)
 
 *Done when:* Absinthe completes under 60 seconds under recorded
 conditions; all fifteen corpora preserve coverage, classifications, gate
@@ -25,6 +25,11 @@ correctness fixes (union member order, shadowed map keys) changed 13, with
 the migration documented (regenerate baselines). The independent review
 checked that rendering no longer affects classification, and tests pin it
 (a stub adapter that cannot print gives identical classifications and runs).
+
+Update (Milestone 5): release campaigns 1 and 2 measure Absinthe's whole
+product run (VM start included) at 53-58 s under all three compilers on
+the same machine class, so the 60-second target is met there
+(`bench/corpus/reports/release-1/README.md`, `release-2/README.md`).
 
 ## M2. Qualify upstream 1.21 at `648b2a9`: done
 
@@ -106,7 +111,7 @@ checker's `subpatterns` leak, protocol implementations, gradual bounds
 widened by subtraction, the redundant-clause path) and gives wrong exact
 claims on warning-free fixtures.
 
-## M5. Freeze the evaluation and run the release campaign: next
+## M5. Freeze the evaluation and run the release campaign: done, experimental release
 
 **First task: the frozen evaluation inventory.** Before any M5
 measurement, commit one inventory file that freezes the executable
@@ -133,17 +138,70 @@ For resource failures, require **no successful result**. Caught analysis
 failures can exit 2; an externally killed or OOM-terminated VM cannot
 reliably promise that exact exit code.
 
-Progress (2026-09-29): the frozen inventory (`e464905`) and release
-campaign 1 (`bench/corpus/reports/release-1/`, tool `06b7496`) are done:
-qualification under the three compilers, the fifteen-corpus replay with
-provenance, runtime and memory budgets (`bench/corpus/budgets.json`,
-checked by `run.sh`), the resource-failure tests, struct-default counts and
-the gate list for refutation (`release-1/gates.json`, 27 gates, none new).
-Remaining: independent refutation of the listed gates, installation and
-upgrade workflows, and the README support matrix with unknown-obligation
-counts and gating limitations.
+Delivered (2026-09-29; the verdict is `RELEASE.md`). The frozen inventory
+(`e464905`, version 1; version 2 `5753b08` after the review), release
+campaign 1 (`bench/corpus/reports/release-1/`, tool `06b7496`), the
+Milestone 5 review (18 findings, all resolved or documented: STATUS.md,
+"Milestone 5 review") and release campaign 2 (`release-2/`, tool
+`58fe1dd`, the reviewed tree, measured against the frozen budgets). Every
+exit criterion is met:
 
-## M6. Move inference work upstream (submission preparation): after M5
+- **Correctness, both supported lines** (three builds): qualification
+  (format, strict Credo, the full suite with the other compiler and a 1.19
+  compiler named, Dialyzer) passes under `c24c235`, `648b2a9` and 1.20.4;
+  the fifteen-corpus replay is complete and reproducible (campaign 2 is
+  byte-identical to campaign 1 on every product report); all 27 gates (3
+  functions) survived two independent refutation attempts each: 0 gated
+  false positives; detection against the frozen inventory: 3 gated, 8
+  reported, 7 silent of 18 families (version 1: 3, 7, 7 of 17) on every
+  adapter.
+- **Runtime budgets**: both campaign 1 runs and campaign 2 (measured
+  against the budgets frozen from campaign 1, the only independent check)
+  are within `bench/corpus/budgets.json` on every corpus and adapter.
+  Absinthe takes 53-58 s for the whole product run, which also meets the
+  Milestone 1 target of 60 s.
+- **Installation and upgrade workflows**: `test/integration/release/` (18
+  tests: path, git and umbrella installs, the baseline workflow, compiler
+  and SpecLint upgrades, incomplete builds, the 1.19 refusal) passes under
+  the three compilers.
+- **README**: support matrix, unknown-obligation counts per compiler (74%
+  of compared slices are unknown), recall on the frozen inventory, gated
+  false positives and the gating limitations.
+- **Resource failures**: no successful result from a crashed, killed or
+  inconsistent run (product and corpus runner; exits and crashed
+  processes included since the review).
+
+Not claimed: see `RELEASE.md`, "What is not claimed". Recall on witnessed
+omissions is low (3 of 18 gated), and raising it is the objective of the
+next work.
+
+### Frozen criterion for the missing-return objective
+
+Fixed now, before any Milestone 6 or later inference change is measured.
+An inference mechanism (upstream, or local and qualified against an
+upstream build) improves missing-return detection only if, measured with
+`bench/evaluation/detection.exs` against **evaluation inventory version 2**
+on the product reports of the fifteen corpora in the default configuration
+under the adapter that has the mechanism:
+
+1. **gated recall on the `return_value` families rises** above the frozen
+   baseline of **2 of 15** (all 18 families: 3 of 18) by at least one
+   family;
+2. **no family loses its class**: none of the 3 gated or 8 reported
+   families becomes reported or silent;
+3. **no gated false positive**: every new or changed gate on the fifteen
+   corpora, and on holdouts drawn by the frozen procedure (INVENTORY.md,
+   "Holdout selection"), survives two independent refutation attempts;
+4. **unknown obligations do not rise** above the campaign figures (3,113
+   of 4,204 slices on 1.21, 3,095 of 4,170 on 1.20.4), and every corpus
+   stays within `budgets.json`.
+
+The inventory is not changed during such an experiment: a new family
+enters only through a new inventory version committed before the
+measurement, and the figures are then given under both versions.
+Reported-only recall (SL002, which never gates) does not count toward (1).
+
+## M6. Move inference work upstream (submission preparation): package prepared, not submitted
 
 Stop extending the local helper source transform. Prepare the helper and
 collection counterexamples, recheck the `list_tl` finding on upstream, and
@@ -157,6 +215,25 @@ the `subpatterns` leak between definitions
 (`bench/clause_mapping/subpatterns_leak.ex`) and the request for a
 per-source-clause mapping and reachability verdict in the checker chunk,
 which the structural classes cannot replace for merged or dropped clauses.
+
+Delivered as preparation (`58fe1dd`, `bench/upstream/`): nine items, each
+with a standalone reproducer, expected and actual output, a draft issue
+marked NOT FILED and the output on upstream `648b2a9`, the fork and
+1.20.4: helper insensitivity, `Enum.map/2` results, `list_tl` (rechecked:
+it reproduces on upstream `648b2a9`), the `for ... into:` narrowing with
+the fork's fix as a patch, fun and map printing, the printer profile
+(per-map module loads), the `subpatterns` leak and the checker-chunk
+request. The local helper source transform was not extended. All nine
+reproduce on upstream `648b2a9` (re-run on the fresh campaign build by the
+review).
+
+Remaining, each a separate human action (`bench/upstream/CHECKLIST.md`):
+re-run every item on current `main`, search for duplicates, follow
+Elixir's AI-use policy (rewrite in one's own words, disclosure, and an
+adversarial pass over the correctness claims, which the package has not
+had), and decide who files what. Nothing has been submitted. Local
+inference experiments resume only around an upstream mechanism, measured
+by the frozen criterion under M5.
 
 # Current next steps after Phase 4
 
