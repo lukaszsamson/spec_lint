@@ -73,18 +73,34 @@ project when you switch between them. `mix spec_lint` records which build
 produced the project's BEAM files (`_build/ENV/lib/APP/.mix/spec_lint.build`)
 and recompiles with `--force` when that is not the running build,
 including the first time it runs on a project it did not compile itself.
-Build-record version 3 records each BEAM only when a compiler event attests
+Build-record version 4 records each BEAM only when a compiler event attests
 that the module was produced in this VM, or the unchanged artifact already
-has verified provenance. Version 1 and 2 records require a rebuild. An app-wide
+has verified provenance, together with the exact compiler list that ran.
+Version 1 to 3 records require a rebuild. An app-wide
 successful compile cannot verify orphan BEAMs: the task refuses unverified
 artifacts with exit 2 and leaves them in place for explicit repair.
-Only the complete built-in Mix compiler pipeline is supported. The `:leex`
-and `:yecc` generators may run in either order before `:erlang`, `:elixir`
-and `:app`, which must remain in that order. A custom compiler can
-overwrite an artifact after an Elixir compiler event, so nonstandard
-compiler pipelines are refused with exit 2, including umbrella child
-configurations. These checks detect stale artifacts in trusted projects;
-they do not protect against malicious project code.
+The compiler pipeline must end with Mix's built-in `:erlang`, `:elixir` and
+`:app` stages, exactly once and in that order. Everything else must run
+before `:erlang`: the `:leex` and `:yecc` generators, in any order and any
+multiplicity (`[:yecc] ++ Mix.compilers()` is fine), and custom compiler
+stages such as `:elixir_make`, `:file_system`, `:appsignal` or
+`:phoenix_swagger`. Mix runs the stages in list order, so the Elixir and
+Erlang stages, whose compiler events attest modules, run after every prefix
+stage finished; a prefix stage that rewrites a previously verified BEAM of a
+module Mix does not recompile leaves an artifact whose bytes no longer
+match its record, which is refused with exit 2. When the recorded compiler
+list differs from the current one, the build is recompiled with `--force`
+and no earlier evidence is reused. A custom stage after `:erlang` could
+overwrite an artifact after its compiler event, so it is refused with exit
+2 naming the stage, as are missing or reordered built-in stages and
+aliased or replaced compile tasks; the same rules apply to umbrella
+children and source-backed Mix dependencies. These checks detect stale
+artifacts in trusted projects; they do not protect against malicious
+project code: prefix stages, `after_compiler` callbacks, macros and module
+bodies (of the project or a dependency) run inside the compilation and can
+forge a compiler event, run `compile.elixir` themselves and rewrite its
+output, or rewrite a BEAM from a callback, and SpecLint then records that
+BEAM as verified. SpecLint is not a security sandbox.
 Switching between 1.20.4 and 1.21 recompiles in any case. BEAM files of
 the other compiler line are never analysed: without the Mix task (an
 explicit ebin, `SpecLint.Run`), a build record of the other line, or its
@@ -96,9 +112,11 @@ other build's files as its own. Source-backed Mix dependencies are checked
 and compiled in their dependency environment before the consumer. Missing
 or stale dependency provenance forces downstream recompilation, even when
 the dependency's code MD5 is unchanged: its inferred signature may differ.
-The same per-artifact checks apply to dependencies. Elixir artifacts from
-custom dependency compilers or compile commands are refused; non-Mix pure
-Erlang dependencies do not supply Elixir checker signatures and are exempt.
+The same per-artifact checks and compiler-pipeline rules apply to
+dependencies. Elixir artifacts from custom `:compile` commands, custom
+compiler stages after `:erlang`, or non-Mix dependencies are refused;
+non-Mix pure Erlang dependencies do not supply Elixir checker signatures
+and are exempt.
 Explicit-ebin research runs do not establish dependency provenance; their
 caller must provide artifacts built with the selected compiler.
 
@@ -136,16 +154,23 @@ Pin a commit with `ref:` for reproducible builds. For local development,
 replace `git:` with `path: "../spec_lint"`. Path, local git and umbrella
 installation are exercised by `test/integration/release/`.
 
-Only Mix's complete built-in compiler pipeline is supported; `:leex` and
-`:yecc` may swap places before `:erlang`, `:elixir`, `:app`. Custom compilers,
-missing stages, compile-task aliases and replacement compile tasks in a
-project, umbrella child or source-backed Mix dependency cause exit 2.
-This currently includes `file_system`, used by some development tools and
-Phoenix development stacks, when it is present in the selected Mix
-environment. There is no audited custom-compiler exception. SpecLint's own
-runtime self-check uses `MIX_ENV=prod`, without its Credo/Dialyxir development
-dependencies; ordinary `mix spec_lint --ci` on this development checkout is
-therefore refused. This is a material limitation of the experimental release.
+The compiler pipeline of a project, umbrella child or source-backed Mix
+dependency must be `prefix ++ [:erlang, :elixir, :app]`, where the prefix
+holds the `:leex`/`:yecc` generators (any order, repeats allowed) and any
+custom compiler stages. Prefix stages such as `file_system` (pulled into
+dev/test by `phoenix_live_reload`), `elixir_make` (`bcrypt_elixir`),
+`appsignal` or `phoenix_swagger` are therefore accepted. A custom stage
+after `:erlang`, a missing or reordered built-in stage, compile-task aliases,
+replacement compile tasks and dependencies with a custom `:compile` command
+cause exit 2. A custom stage may be a compiler task or, as in
+`file_system`, an alias of `compile.<stage>`; aliases of `compile`,
+`compile.all` or a built-in stage are refused, including a dependency's
+self-alias such as `compile: ["compile --warnings-as-errors"]` (some Hex
+packages define one; such a project cannot be linted until the alias is
+removed). SpecLint's own runtime
+self-check uses `MIX_ENV=prod`, without its Credo/Dialyxir development
+dependencies; `mix spec_lint --ci` on this development checkout, whose
+Credo dependency pulls in `file_system`, is accepted as well.
 
 The project uses [Apache 2.0](LICENSE); [NOTICE](NOTICE) and
 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) preserve attribution for
@@ -207,6 +232,22 @@ go to standard error, so standard output is only the JSON report.
 | `--except ID,...` | Do not run these rules. Coverage is still checked when `SL008` is left out. |
 | `--require-static-return` | Treat structured evidence supported only by gradual clause returns as `possible_gradual`. |
 | `--[no-]clause-local-qualification` | On by default (Close-phase decision, 2026-09-29): an `SL001` clause conflict gates when its clause's whole domain is inside the spec's argument lower bounds, instead of requiring the whole slice to be free of arrow losses. `--no-clause-local-qualification` restores the slice-wide arrow prerequisites. Also accepted by `mix spec_lint.baseline`: write the baseline under the setting CI uses, because the baseline records gate states. See `bench/corpus/clause_local_qualification.md`. |
+
+### Reading the report
+
+Findings come in two kinds. Established contradictions (`SL001`, `SL003`,
+and `SL006` in the `review` profile) are what `--ci` gates. Everything else
+is a reported candidate: `SL002` possible omissions, hints and the like are
+heuristic evidence that inference may over- or under-approximate. To fail a
+build on new reported candidates as well, use `--warnings-as-errors`. That
+is an explicit heuristic policy, separate from the established
+contradictions, and a baseline acknowledges its findings like any other.
+
+A finding whose spec was injected by a macro (a library's `__using__/1` that
+emits `@spec`, then the application overrides the definition) carries a
+`note` saying so, and `inherited_spec: true` in the JSON `data`. The spec is
+not written next to the definition: baseline the finding or fix the spec
+upstream.
 
 ### Exit status
 

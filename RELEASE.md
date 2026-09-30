@@ -39,17 +39,27 @@ Upstream `648b2a9` is now **diagnostic-only**: its mixed list/bitstring
 callers. All findings have `gate: false`; the report is `incomplete`.
 `--ci` and `--warnings-as-errors` exit 2, a local run exits 0, and a baseline
 cannot waive the restriction or be written. `c24c235` and the exact 1.20.4
-release build are qualified for experimental CI. Build-record version 3
-requires per-module production evidence and rejects unverified orphan
-BEAMs without deleting them. Only the complete built-in pipeline is
-supported, with either lexer/parser generator order before Erlang, Elixir
-and app stages; custom compiler configurations, including umbrella children,
-are refused with exit 2. Dependency provenance is also required before
-consumer compilation; the same checker chunk version does not establish
-that two compiler builds inferred the same signatures. Custom compiler-bearing
-Mix dependencies, including `file_system` in development environments, are
-unsupported. The runtime self-check uses `MIX_ENV=prod`; the development
-checkout with all lint-tool dependencies is refused.
+release build are qualified for experimental CI. Build-record version 4
+requires per-module production evidence, rejects unverified orphan BEAMs
+without deleting them, and records the compiler list. Since Milestone 7 the
+pipeline of a project, umbrella child or source-backed Mix dependency may
+carry custom stages before `:erlang` (`elixir_make`, `phoenix_swagger`,
+`file_system` and similar), with the `:yecc`/`:leex` generators in any
+order and multiplicity; it must end with `:erlang`, `:elixir`, `:app`.
+A custom stage after `:erlang`, a missing or reordered built-in stage, an
+alias of `compile`, `compile.all` or a built-in stage (including a
+dependency's `compile: ["compile --warnings-as-errors"]`), and a custom
+dependency `:compile` command are refused with exit 2. The checks assume
+trusted project code: code running inside the compilation can forge
+compiler events and have a foreign BEAM recorded, as it already could
+through module bodies and `after_compiler` hooks. Dependency provenance is
+also required before consumer compilation; the same checker chunk version
+does not establish that two compiler builds inferred the same signatures.
+The runtime self-check uses `MIX_ENV=prod`; the development checkout with
+all lint-tool dependencies is now accepted as well. Milestone 7 changed
+build provenance and presentation (an inherited-spec note), not analysis:
+the fifteen-corpus campaign was not re-run for it, and the numbers below
+are unchanged.
 
 The historical campaigns observed no gated false positives on fifteen
 corpora, detected 3 of 18 witnessed omission families, and gave no verdict

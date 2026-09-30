@@ -581,22 +581,43 @@ unless the record names the running build and every BEAM file matches it.
 `SpecLint.Run` refuses an application whose record names another build or
 whose BEAM files were added or changed since (an incomplete build, exit 2);
 an application without a record (an explicit ebin, as in the corpus
-runner) is analysed and reported as `unrecorded`. Build-record version 3 accepts each artifact only when a per-module compiler
+runner) is analysed and reported as `unrecorded`. Build-record version 4 accepts each artifact only when a per-module compiler
 event proves it was produced in this VM, or an unchanged artifact already
-has verified provenance. Version 1 and 2 records require a rebuild. An app-wide
+has verified provenance for this build and the same compiler list, which
+the record stores. Version 1 to 3 records require a rebuild. An app-wide
 successful compile does not establish provenance for orphan BEAMs; the
 task refuses them with exit 2 and retains them for explicit repair.
-Only the complete built-in pipeline is supported: `:yecc` and `:leex`
-in either order, followed by `:erlang`, `:elixir`, `:app`. Both pinned
-generators emit `.erl` sources, so their order does not weaken BEAM
-production evidence. Omitting or duplicating stages, reordering the artifact
-compilers, and nonstandard custom
-compiler pipelines, including umbrella child configurations, are refused
-with exit 2 because a custom compiler can overwrite artifacts after an
-Elixir compiler event. This is stale-artifact checking for trusted project
-code, not protection against a malicious project. Source-backed Mix
-dependencies receive the same per-artifact production records before
-owned applications compile.
+
+Supported compiler pipelines (Milestone 7) have the shape
+`prefix ++ [:erlang, :elixir, :app]`: the three artifact stages exactly
+once and in that order at the end, and a prefix holding both `:yecc` and
+`:leex` (any order, repeats allowed) and any custom stages, such as
+`:elixir_make`, `:phoenix_swagger`, or `file_system`'s alias-implemented
+`compile.file_system`. Mix runs the stages in list order and each task at
+most once per compilation, so the Elixir and Erlang stages, whose events
+attest modules, run after every prefix stage has finished, and a prefix
+stage that rewrites a verified BEAM of a module Mix does not recompile
+leaves bytes that no longer match the record (exit 2). A changed compiler
+list makes the build stale: it is recompiled with `--force` and no earlier
+evidence is reused. A custom stage after `:erlang` is refused (exit 2
+naming the stage) because compiler events do not attest output bytes and
+a later stage could replace attested BEAMs; so are missing or reordered
+built-in stages, aliases of `compile`, `compile.all` or a built-in stage
+(including a self-alias such as `compile: ["compile --warnings-as-errors"]`),
+and built-in task modules not loaded from Mix's ebin. The same rules apply
+to umbrella children and source-backed Mix dependencies, which receive the
+same per-artifact production records before owned applications compile.
+
+This is stale-artifact checking for trusted project code, not protection
+against a malicious project. Code that runs inside the compilation
+(prefix stages, macros, module bodies, `after_compiler` callbacks, in the
+project or a dependency) can forge a `:modules_compiled` event on Mix's
+compiler channel, invoke `compile.elixir` itself and then rewrite its
+output, or rewrite BEAMs from a callback, and have a foreign BEAM recorded
+as verified. This was equally possible from a module body or an
+`after_compiler` hook before prefix stages were accepted; the post-release
+review reproduced each case and found no regression relative to the
+built-in-only rule (`SpecLint.BuildRecord`, "Threat model").
 
 `Mix.Task.run/2` does nothing when `compile` already ran in the VM (`mix
 do compile + spec_lint`, an alias, or a task defined in the project, which
@@ -633,8 +654,9 @@ actual dependency environment and dependency order, preserving orphan
 artifacts so the provenance checks can reject them. Missing or stale
 records, or newly compiled dependency modules, force downstream dependencies
 and owned consumers to recompile, regardless of code MD5. A checker chunk
-can change without changing the code digest. Version 3 invalidates older
-owned records whose inference could have used unverified dependencies.
+can change without changing the code digest. Version 3 invalidated older
+owned records whose inference could have used unverified dependencies;
+version 4 adds the compiler list and invalidates version 3.
 Non-Mix artifacts with Elixir checker chunks and custom dependency compile
 commands fail closed; pure Erlang artifacts without checker chunks are
 exempt. Dependency records are rechecked after owned compilation.
@@ -895,6 +917,32 @@ Behaviour:
 ```
 
 Unknown settings are rejected. CLI overrides config.
+
+Inherited specs. A spec injected by another module's `quote` (a library's
+`__using__/1` emitting `@spec`, the definition and `defoverridable`, which
+the application then overrides) stays attached to the override; the
+Phoenix.View `template_not_found/2` shape gives a correct SL006 that the
+application cannot fix. Observed with `Code.Typespec.fetch_specs/1` and the
+debug chunk (`test/support/adoption_fixtures.ex`): the injected spec's
+annotation is a bare line, the line of the macro call (the `use` line,
+neither the definition line nor a line in the library), while a spec written
+in the module has `{line, column}`. The BEAM records neither the macro nor
+the library, and no `:file`. So the signal is: the spec's annotation has no
+column while the function's own definition does (columns were on).
+A spec the module evaluates itself from an AST without line metadata
+(`Code.string_to_quoted!/1` or a `quote` evaluated in the module body) also
+has a bare line, the AST's default line 1, which is not a macro call; a
+macro call lies after the module's `defmodule` line (the debug chunk's
+module `anno`). `SpecLint.InheritedSpec` reports `{:inherited, line}` only
+when the line follows that `defmodule` line; when the definition has no
+column (columns off) or the module line is unknown it says nothing.
+`quote location: :keep` still yields the bare call line. A finding on such a
+spec gets `data.inherited_spec: true`, `data.inherited_spec_line` and a
+`note` detail telling the user the spec was not written next to the
+definition (baseline it or fix it upstream). Not knowable: the macro's name
+or origin module; a spec built by unquoting an AST that keeps its columns is
+missed (no false positive). Gating, evidence classes, fingerprints and the
+evaluation inventory never read the note.
 
 Inline suppression: **deferred**. Persisted attributes carry no source
 association and `@after_compile` runs after the binary exists. When added,

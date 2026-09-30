@@ -43,6 +43,100 @@ silent families out of 18. Future priorities are public-task adoption with
 custom dependency compilers, lower retained memory, and compiler inference
 work judged on independently witnessed real omissions.
 
+## Milestone 7: real-project adoption (2026-09-30)
+
+Acceptance on two private umbrellas (copies, `MIX_ENV=test`, separate
+build path, previously built by a plain `mix compile`), c24c235 fork.
+Only aggregate numbers are recorded here.
+
+- **Umbrella B**: 5 apps, 556 modules, 53 specs compared (27 exact,
+  26 approximate slices), complete. First run 111 s (every artifact
+  recompiled once to attest provenance), second run 25 s with nothing
+  recompiled and a byte-identical report. Gates 2, reported 2 (both
+  SL006 on a library-injected spec, both carrying the inherited-spec
+  note). Obligations: 15 established, 5 compatible after approximation,
+  2 possible mismatch, 31 unknown (20 top only, 9 no counted component,
+  2 near top). `mix spec_lint.baseline` then `--ci` exits 0 (25 s). A
+  wrong return added to one owned spec is detected as a new SL001
+  conflict with one file recompiled (exit 1, 26 s); reverting exits 0.
+  Accepted prefix stages seen in its dependencies: `file_system` (an
+  alias-implemented stage), `elixir_make` and `appsignal`.
+- **Umbrella A**: 14 apps. All 14 application pipelines pass the new
+  rule, including one `[:phoenix_swagger] ++ Mix.compilers()`. The run is
+  still refused (exit 2) because one Hex dependency aliases `compile` to
+  `compile --warnings-as-errors`; compile aliases stay refused by design,
+  so no report was produced. The refusal takes 15 s once dependencies are
+  recorded.
+
+Defect fixed: dependencies compiled by `mix spec_lint` were left looking
+outdated to Mix. The Elixir compiler writes a fetchable dependency's SCM
+manifest without its dependency list, and `deps.compile` fills it in
+afterwards; spec_lint skipped that step. The next Mix command then deleted
+each such dependency's build directory, including its record, and rebuilt
+it, so every run rebuilt every Hex dependency twice (umbrella B took about
+140 s per run, and umbrella A took 64 s before each refusal). spec_lint now
+updates the manifest the way `deps.compile` does. Regression test:
+`a fetchable dependency compiled by spec_lint stays up to date for Mix`
+in `test/integration/dependency_provenance_test.exs`.
+
+Observation: 22 of 556 BEAMs in umbrella B (LiveView modules) get a
+different MD5 on every forced recompile of unchanged sources, but their
+ExCk chunks and every finding stay identical. Only forced rebuilds are
+affected, because an incremental run does not recompile those modules.
+
+### Milestone 7 review (20 findings)
+
+- **High, fixed:** the manifest fix called `Mix.Dep.ElixirSCM.update/4`,
+  which Elixir 1.20.4 lacks (`update/3`), and the API check made every
+  run on the 1.20.4 lane exit 2 before compiling. The arity is now chosen
+  at runtime and either arity satisfies the check; the manifest is only
+  rewritten after a dependency actually recompiled. Regression test
+  (`:cross_compiler`): a git dependency stays up to date under the other
+  qualified compiler.
+- **Documented, deliberate:** in-VM forgery of a `:modules_compiled`
+  event, a prefix stage running `compile.elixir` itself and rewriting its
+  output, and the same from a dependency's prefix stage can each have a
+  foreign BEAM recorded as verified. The reviewer reproduced all three and
+  showed that the built-in-only rule at `35bbd22` allowed the same through
+  module bodies and `after_compiler` hooks, so none is a regression. Project
+  code is trusted (not a sandbox); the new "Threat model" section of
+  `SpecLint.BuildRecord` states these assumptions, and the moduledoc no
+  longer claims that events alone prove a BEAM was written after the prefix
+  stages. Non-forging attacks (rewrite without an event, orphan, manifest
+  mtime games, changed stage list) are refused as claimed, and a project
+  without custom stages behaves as at `35bbd22`.
+- **Fixed, inherited-spec note:** a spec the module evaluates from an AST
+  without line metadata (bare line 1) was reported as injected at "line
+  1". A bare line now counts only when it follows the module's `defmodule`
+  line. The moduledoc's `quote location: :keep` claim was wrong (it keeps
+  the call line) and is corrected. Adoption fixtures cover both cases.
+- **Fixed, code and tests:** `status/3` restructured (one read, no
+  unreachable branches); `verified_beams/2` and `write/4` removed, so
+  evidence reuse always names a pipeline; `status/2` documents that it
+  does not compare pipelines (SpecLint.Run on a given build); one plan map
+  replaces the positional tuples of the Mix task and is shared by owned
+  applications and dependencies; the built-in stage list lives only in
+  `BuildRecord.builtin_stages/0`; the pipeline checks are split (shape,
+  aliases, task modules); `check_pipeline/1` uses named helpers. New tests:
+  compile self-alias and built-in-stage aliases beside a custom stage
+  refused, a dependency's compile self-alias refused and its alias prefix
+  stage accepted, custom stages around `:erlang`, status of unrecorded and
+  invalid records under a pipeline. Record-layout assertions use
+  `BuildRecord.version/0`, and message assertions were shortened. The
+  umbrella stage creates its directory before writing.
+- **Fixed, documentation:** DESIGN.md and RELEASE.md described build-record
+  v3 and refused custom stages; both now state the v4 pipeline rule.
+
+Gates on the final tree (c24c235): format, strict Credo (no issues),
+Dialyzer (0 errors); `mix test` with
+`SPEC_LINT_OTHER_ELIXIR` pointing at the 1.20.4 build: 514 passed,
+2 skipped, 10 excluded (the 1.20-pinned adapter tests and the 648b2a9
+diagnostic-dependency test); without it: 508 passed, 2 skipped, 16
+excluded. Production self-check (`MIX_ENV=prod mix
+spec_lint --ci`): 425 specs, 0 findings, complete, exit 0, on both
+c24c235 and 1.20.4 (419 at `1bb9594`; M7 adds specified public functions).
+The fifteen-corpus campaign was not re-run: no analysis logic changed.
+
 ## Milestone 5 delivered: experimental release (2026-09-29)
 
 Verdict in `RELEASE.md`: **release as experimental**; every Milestone 5
@@ -1004,6 +1098,28 @@ decisions.
 
 Wording: the analysis is conservative with tested gating prerequisites and
 documented limitations. "Sound" is not claimed.
+
+## Adoption regressions
+
+Findings from trials on private projects, kept as anonymised fixtures in
+`test/support/adoption_fixtures.ex` and asserted by
+`test/spec_lint/adoption_regressions_test.exs`. They are not part of the
+evaluation inventory: the 18-family denominator is unchanged.
+
+- Omitted error tuple (a struct argument with a status field, the first of
+  three clauses returns an undeclared `{:error, atom}`): an executable
+  in-domain witness returns the undeclared value; the current class is
+  `possible_domain_escape` (SL002), reported and not gated (recorded, not
+  the desired class).
+- Inherited spec (Phoenix.View `template_not_found/2` shape: a library's
+  `__using__/1` injects `@spec`, the def and `defoverridable`; the consumer
+  overrides it): the SL006 finding is correct and library-owned. The spec
+  annotation is a bare line (the `use` line) where a written spec has
+  `{line, column}`, so the finding carries `inherited_spec: true`, the
+  line, and a note (DESIGN.md section 8). Gating and fingerprints are
+  unchanged. A spec the module evaluates itself from an AST (bare line 1,
+  before its `defmodule` line) is not marked, and a spec injected with
+  `quote location: :keep` carries the call line.
 
 ## Known limitations
 

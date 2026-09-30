@@ -412,3 +412,27 @@ terms).
 
 Historical drafts and frozen reproducers are retained for evidence. See
 bench/upstream/review-2026-09-29.md for commands and refutation evidence.
+
+--------------------------------------------------------------------------------
+12. LIBRARY (phoenix_view): INJECTED template_not_found/2 SPEC IS no_return
+
+Priority: candidate library-spec report; NOT a compiler bug. Not filed.
+Found: Milestone 7 adoption trials (2026-09-30), anonymised as
+test/support/adoption_fixtures.ex (Library/Consumer) and asserted by
+test/spec_lint/adoption_regressions_test.exs.
+
+Phoenix.View's __using__/1 injects
+  @spec template_not_found(binary, map) :: no_return
+together with a raising default definition and defoverridable. Applications
+routinely override template_not_found/2 to return a rendered binary (the
+generated ErrorView does). The injected spec stays attached to the override,
+so the override's inferred return (binary) contradicts the declared
+no_return: SpecLint reports SL006 unexpected_return, correctly, but the spec
+is owned by the library, not the application. SpecLint now marks such
+findings with an inherited-spec note (bare-line spec annotation).
+
+Before filing: check current phoenix_view (and Phoenix 1.7+ component-based
+error rendering, which may no longer use it), search for duplicates, and
+propose either no spec on the overridable default or a return type that
+admits the documented override (for example String.t() | no_return, or
+term()).

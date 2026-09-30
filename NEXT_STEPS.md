@@ -1,6 +1,6 @@
 # Milestones (plan of 2026-09-29)
 
-The six milestones below replace the numbered lists further down, which are
+The milestones below (M1 to M6, and M7 added on 2026-09-30) replace the numbered lists further down, which are
 kept as history. Performance, compiler compatibility and evidence policy
 stay in separate changes. Exit criteria are copied from the plan.
 
@@ -19,9 +19,11 @@ final Linux corpus campaign.
    `bench/corpus/toolchain/github-linux-results.md`. Git publication is not
    a Hex release. The extracted package consumer also passed initial and
    incremental runs (`bench/corpus/toolchain/package-publication.json`).
-2. Qualify public Mix task adoption on prominent projects, starting with
-   the custom dependency compiler boundary below. Preserve fail-closed
-   provenance; do not turn the raw-BEAM corpus into an installation claim.
+2. Qualify public Mix task adoption on prominent projects. The custom
+   compiler boundary below is resolved by M7 (prefix stages accepted);
+   the public-task OSS campaign remains (M7, "Remaining"). Preserve
+   fail-closed provenance; do not turn the raw-BEAM corpus into an
+   installation claim.
 3. Reduce retained analysis memory and replay unchanged evidence against
    the frozen budgets before adopting a streaming implementation.
 4. Requalify an upstream compiler containing the mixed-collectable fix
@@ -34,6 +36,9 @@ final Linux corpus campaign.
    `bench/upstream/review-2026-09-29.md`.
 
 ### Public Mix projects with custom dependency compilers
+
+Historical (superseded by M7, which accepts custom stages before
+`:erlang`; the Oban `file_system` refusal below no longer applies).
 
 The copied, locked Oban project exercises a boundary the explicit-ebin corpus
 runner does not: compilation through the public Mix task. Allowing either
@@ -319,6 +324,61 @@ adversarial pass over the correctness claims, which the package has not
 had), and decide who files what. Nothing has been submitted. Local
 inference experiments resume only around an upstream mechanism, measured
 by the frozen criterion under M5.
+
+## M7. Real-project adoption: delivered, public campaign remaining
+
+Goal: make `mix spec_lint --ci` usable on real Mix projects and umbrellas
+whose pipelines carry custom compiler stages, without weakening the
+provenance principle (a BEAM is verified only by a compiler event in this
+VM or byte identity with an artifact already verified for this build).
+
+Exit criteria: (1) projects and dependencies with custom stages before
+`:erlang` (`file_system`, `elixir_make`, `phoenix_swagger`, ...) are
+accepted, stages after `:erlang` and compile aliases stay refused; (2) a
+second run on an unchanged real umbrella recompiles nothing and repeats the
+report byte for byte; (3) baseline, spec edit and revert behave as on the
+fixtures; (4) findings from the trials are kept as anonymised regression
+fixtures; (5) all quality gates pass on both qualified compilers.
+
+Delivered (2026-09-30):
+
+- Build record version 4 stores the compiler list; supported pipelines are
+  `prefix ++ [:erlang, :elixir, :app]` with the generators in any order
+  and multiplicity (`SpecLint.BuildRecord`, "Supported compiler
+  pipelines"); a changed list forces a rebuild without reusing evidence.
+  The threat model (project code trusted; in-VM event forgery and
+  self-invoked built-in compilers are assumptions, as before M7) is
+  documented.
+- Dependencies compiled by `mix spec_lint` stay up to date for Mix
+  (fetchable SCM manifest), on 1.21 and 1.20.4.
+- Inherited-spec note for macro-injected specs (presentation only).
+- Adoption fixtures: an omitted error tuple (currently SL002
+  `possible_domain_escape`, reported, not gated) and the Phoenix.View
+  `template_not_found/2` inherited spec.
+- Acceptance on two private umbrellas (aggregate numbers in STATUS.md,
+  "Milestone 7"): one complete with a byte-identical second run, baseline
+  and edit/revert checks; the other still refused (exit 2) by a Hex
+  dependency's `compile: ["compile --warnings-as-errors"]` alias, which
+  stays refused by design.
+- `bench/corpus/oss_inventory.md`: pipelines and compile aliases of 33
+  public checkouts, for the public campaign.
+- The fifteen-corpus campaign was not re-run: no analysis logic changed,
+  and every frozen number stands.
+
+Remaining:
+
+1. Public-task OSS campaign from `bench/corpus/oss_inventory.md`: run
+   `mix spec_lint --ci` through the Mix task (not the raw-BEAM runner) on
+   the projects with custom prefix stages and generator prefixes, and
+   record the selected environment, cold and incremental compile overhead,
+   and completion. Decide separately whether a compile self-alias that only
+   adds flags (`compile --warnings-as-errors`) can be accepted; until then
+   such projects exit 2.
+2. Memory reduction (see "Memory follow-up after qualification").
+3. Upstream inference work (M6), unchanged.
+4. Phoenix.View's injected `@spec template_not_found(binary, map) ::
+   no_return` is a candidate upstream library-spec report
+   (`UPSTREAM_BUGS.txt` item 12), not a compiler bug. Not filed.
 
 # Current next steps after Phase 4
 
