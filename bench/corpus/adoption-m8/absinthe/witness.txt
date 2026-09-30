@@ -1,0 +1,8 @@
+{1, Absinthe.Blueprint.Input.Integer, nil}
+{1.5, Absinthe.Blueprint.Input.Float, nil}
+{nil, Absinthe.Blueprint.Input.Null, nil}
+{"text", Absinthe.Blueprint.Input.String, nil}
+{true, Absinthe.Blueprint.Input.Boolean, nil}
+{[1], Absinthe.Blueprint.Input.List, nil}
+{%{x: 1}, Absinthe.Blueprint.Input.Object, nil}
+All seven native input constructors return nil source_location.

@@ -1,5 +1,5 @@
 # Run with: elixir bench/upstream/phoenix_view_override.exs
-# Installs public source; does not start a target application or file an issue.
+# Mix.install installs and starts public dependencies; this files no issue.
 # Related prior discussion: phoenixframework/phoenix_view PR #7 and issue #8.
 Mix.install([
   {:phoenix_view,

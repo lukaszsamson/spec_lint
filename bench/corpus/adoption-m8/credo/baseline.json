@@ -1,0 +1,95 @@
+{
+  "adapter": "1.20.4+759443e",
+  "findings": [],
+  "inventory": [
+    {
+      "mfa": "Credo.Check.Consistency.ExceptionNames.Collector.find_and_append_issues/5",
+      "module": "Credo.Check.Consistency.ExceptionNames.Collector",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "exact"
+    },
+    {
+      "mfa": "Credo.Check.Consistency.LineEndings.Collector.find_and_append_issues/5",
+      "module": "Credo.Check.Consistency.LineEndings.Collector",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "exact"
+    },
+    {
+      "mfa": "Credo.Check.Consistency.MultiAliasImportRequireUse.Collector.find_and_append_issues/5",
+      "module": "Credo.Check.Consistency.MultiAliasImportRequireUse.Collector",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "exact"
+    },
+    {
+      "mfa": "Credo.Check.Consistency.ParameterPatternMatching.Collector.find_and_append_issues/5",
+      "module": "Credo.Check.Consistency.ParameterPatternMatching.Collector",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "exact"
+    },
+    {
+      "mfa": "Credo.Check.Consistency.SpaceAroundOperators.Collector.find_and_append_issues/5",
+      "module": "Credo.Check.Consistency.SpaceAroundOperators.Collector",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "exact"
+    },
+    {
+      "mfa": "Credo.Check.Consistency.SpaceInParentheses.Collector.find_and_append_issues/5",
+      "module": "Credo.Check.Consistency.SpaceInParentheses.Collector",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "exact"
+    },
+    {
+      "mfa": "Credo.Check.Consistency.TabsOrSpaces.Collector.find_and_append_issues/5",
+      "module": "Credo.Check.Consistency.TabsOrSpaces.Collector",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "exact"
+    },
+    {
+      "mfa": "Credo.Check.Consistency.UnusedVariableNames.Collector.find_and_append_issues/5",
+      "module": "Credo.Check.Consistency.UnusedVariableNames.Collector",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "exact"
+    },
+    {
+      "mfa": "Credo.Code.Module.analyze/1",
+      "module": "Credo.Code.Module",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "approximate"
+    },
+    {
+      "mfa": "Credo.Execution.Task.ValidateOptions.error/2",
+      "module": "Credo.Execution.Task.ValidateOptions",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "exact"
+    },
+    {
+      "mfa": "Credo.SourceFile.timed_out/1",
+      "module": "Credo.SourceFile",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "exact"
+    }
+  ],
+  "version": 1
+}

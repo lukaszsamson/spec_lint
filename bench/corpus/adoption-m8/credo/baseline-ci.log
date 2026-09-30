@@ -1,0 +1,221 @@
+warning: "xref: [exclude: ...]" in your mix.exs file is deprecated, instead use: "elixirc_options: [no_warn_undefined: ...]"
+  (mix 1.20.4) lib/mix/tasks/compile.elixir.ex:243: Mix.Tasks.Compile.Elixir.xref_exclude_opts/2
+  (mix 1.20.4) lib/mix/tasks/compile.elixir.ex:142: Mix.Tasks.Compile.Elixir.run/1
+  (mix 1.20.4) lib/mix/task.ex:502: anonymous fn/3 in Mix.Task.run_task/5
+  (mix 1.20.4) lib/mix/task.compiler.ex:299: Mix.Task.Compiler.run_compiler/2
+  (mix 1.20.4) lib/mix/task.compiler.ex:287: Mix.Task.Compiler.run/4
+  (mix 1.20.4) lib/mix/tasks/compile.all.ex:75: Mix.Tasks.Compile.All.do_run/2
+
+     warning: the following clause is redundant:
+
+         defp argument_type(v) when is_boolean(v)
+
+     it has type:
+
+         dynamic(boolean())
+
+     previous clauses have already matched on the following types:
+
+         {:sigil_a, term(), term()}
+         {:sigil_A, term(), term()}
+         {:sigil_b, term(), term()}
+         {:sigil_B, term(), term()}
+         {:sigil_c, term(), term()}
+         {:sigil_C, term(), term()}
+         {:sigil_d, term(), term()}
+         {:sigil_D, term(), term()}
+         {:sigil_e, term(), term()}
+         {:sigil_E, term(), term()}
+         {:sigil_f, term(), term()}
+         {:sigil_F, term(), term()}
+         {:sigil_g, term(), term()}
+         {:sigil_G, term(), term()}
+         {:sigil_h, term(), term()}
+         {:sigil_H, term(), term()}
+         {:sigil_i, term(), term()}
+         {:sigil_I, term(), term()}
+         {:sigil_j, term(), term()}
+         {:sigil_J, term(), term()}
+         {:sigil_k, term(), term()}
+         {:sigil_K, term(), term()}
+         {:sigil_l, term(), term()}
+         {:sigil_L, term(), term()}
+         {:sigil_m, term(), term()}
+         {:sigil_M, term(), term()}
+         {:sigil_n, term(), term()}
+         {:sigil_N, term(), term()}
+         {:sigil_o, term(), term()}
+         {:sigil_O, term(), term()}
+         {:sigil_p, term(), term()}
+         {:sigil_P, term(), term()}
+         {:sigil_q, term(), term()}
+         {:sigil_Q, term(), term()}
+         {:sigil_s, term(), term()}
+         {:sigil_S, term(), term()}
+         {:sigil_t, term(), term()}
+         {:sigil_T, term(), term()}
+         {:sigil_u, term(), term()}
+         {:sigil_U, term(), term()}
+         {:sigil_v, term(), term()}
+         {:sigil_V, term(), term()}
+         {:sigil_w, term(), term()}
+         {:sigil_W, term(), term()}
+         {:sigil_x, term(), term()}
+         {:sigil_X, term(), term()}
+         {:sigil_y, term(), term()}
+         {:sigil_Y, term(), term()}
+         {:sigil_z, term(), term()}
+         {:sigil_Z, term(), term()}
+         {:sigil_r, term(), term()}
+         {:sigil_R, term(), term()}
+         {:fn, term(), term()}
+         {:%{}, term(), term()}
+         {:{}, term(), term()}
+         nil
+         atom()
+         binary()
+         bitstring()
+
+     │
+ 284 │   defp argument_type(v) when is_boolean(v), do: [:boolean]
+     │        ~
+     │
+     └─ lib/credo/check/refactor/pipe_chain_start.ex:284:8: Credo.Check.Refactor.PipeChainStart.argument_type/1
+
+     warning: the following clause is redundant:
+
+         defp argument_type(v) when is_boolean(v)
+
+     it has type:
+
+         dynamic(boolean())
+
+     previous clauses have already matched on the following types:
+
+         {:sigil_a, term(), term()}
+         {:sigil_A, term(), term()}
+         {:sigil_b, term(), term()}
+         {:sigil_B, term(), term()}
+         {:sigil_c, term(), term()}
+         {:sigil_C, term(), term()}
+         {:sigil_d, term(), term()}
+         {:sigil_D, term(), term()}
+         {:sigil_e, term(), term()}
+         {:sigil_E, term(), term()}
+         {:sigil_f, term(), term()}
+         {:sigil_F, term(), term()}
+         {:sigil_g, term(), term()}
+         {:sigil_G, term(), term()}
+         {:sigil_h, term(), term()}
+         {:sigil_H, term(), term()}
+         {:sigil_i, term(), term()}
+         {:sigil_I, term(), term()}
+         {:sigil_j, term(), term()}
+         {:sigil_J, term(), term()}
+         {:sigil_k, term(), term()}
+         {:sigil_K, term(), term()}
+         {:sigil_l, term(), term()}
+         {:sigil_L, term(), term()}
+         {:sigil_m, term(), term()}
+         {:sigil_M, term(), term()}
+         {:sigil_n, term(), term()}
+         {:sigil_N, term(), term()}
+         {:sigil_o, term(), term()}
+         {:sigil_O, term(), term()}
+         {:sigil_p, term(), term()}
+         {:sigil_P, term(), term()}
+         {:sigil_q, term(), term()}
+         {:sigil_Q, term(), term()}
+         {:sigil_s, term(), term()}
+         {:sigil_S, term(), term()}
+         {:sigil_t, term(), term()}
+         {:sigil_T, term(), term()}
+         {:sigil_u, term(), term()}
+         {:sigil_U, term(), term()}
+         {:sigil_v, term(), term()}
+         {:sigil_V, term(), term()}
+         {:sigil_w, term(), term()}
+         {:sigil_W, term(), term()}
+         {:sigil_x, term(), term()}
+         {:sigil_X, term(), term()}
+         {:sigil_y, term(), term()}
+         {:sigil_Y, term(), term()}
+         {:sigil_z, term(), term()}
+         {:sigil_Z, term(), term()}
+         {:sigil_r, term(), term()}
+         {:sigil_R, term(), term()}
+         {:fn, term(), term()}
+         {:%{}, term(), term()}
+         {:{}, term(), term()}
+         nil
+         atom()
+         binary()
+         bitstring()
+
+     │
+ 354 │     defp argument_type(v) when is_boolean(v), do: [:boolean]
+     │          ~
+     │
+     └─ lib/credo/check/readability/nested_function_calls.ex:354:10: Credo.Check.Readability.NestedFunctionCalls.PipeHelper.argument_type/1
+
+    warning: the right-hand side of || will never be executed:
+
+        previous_ref_as_datetime(given_datetime) || ...
+
+    because the left-hand side always evaluates to:
+
+        dynamic({:error, binary()} or {:git_datetime, term()})
+
+    where "given_datetime" was given the type:
+
+        # type: dynamic()
+        # from: lib/credo/cli/command/diff/diff_command.ex:61:7
+        %{since: given_datetime}
+
+    type warning found at:
+    │
+ 62 │         previous_ref_as_datetime(given_datetime) ||
+    │         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    │
+    └─ lib/credo/cli/command/diff/diff_command.ex:62: Credo.CLI.Command.Diff.DiffCommand.previous_ref/1
+
+    warning: the right-hand side of || will never be executed:
+
+        previous_ref_as_path(given_dir) || ...
+
+    because the left-hand side always evaluates to:
+
+        dynamic({:error, binary()} or {:path, binary() or empty_list() or non_empty_list(term(), term())})
+
+    where "given_dir" was given the types:
+
+        # type: dynamic()
+        # from: lib/credo/cli/command/diff/diff_command.ex:65:7
+        %{from_dir: given_dir}
+
+        # type: dynamic(binary() or empty_list() or non_empty_list(term(), term()))
+        # from: lib/credo/cli/command/diff/diff_command.ex:66:9
+        previous_ref_as_path(given_dir)
+
+    type warning found at:
+    │
+ 66 │         previous_ref_as_path(given_dir) ||
+    │         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    │
+    └─ lib/credo/cli/command/diff/diff_command.ex:66: Credo.CLI.Command.Diff.DiffCommand.previous_ref/1
+
+     warning: this clause of defp filter_checks_by_tags/2 is never used (or it will always fail/warn when invoked)
+     │
+ 236 │   defp filter_checks_by_tags(_checks, nil), do: []
+     │        ~
+     │
+     └─ lib/credo/execution.ex:236:8: Credo.Execution.filter_checks_by_tags/2
+
+     warning: this clause of defp filter_checks_by_tags/2 is never used (or it will always fail/warn when invoked)
+     │
+ 237 │   defp filter_checks_by_tags(_checks, []), do: []
+     │        ~
+     │
+     └─ lib/credo/execution.ex:237:8: Credo.Execution.filter_checks_by_tags/2
+
+spec_lint: 11 specs checked, 0 finding(s), 0 gating and new, complete, exit 0 -> /private/tmp/spec-lint-adoption-m8/evidence/credo/baseline-ci.json

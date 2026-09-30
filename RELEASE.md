@@ -1,5 +1,16 @@
 # SpecLint 0.1.0: experimental release verdict
 
+M8 follow-up: implementation `4b87020` passed the
+[three-compiler Ubuntu workflow](bench/corpus/adoption-m8/github-quality.md).
+The [public-task campaign](bench/corpus/adoption-m8/README.md) completed on
+four of seven selected projects under exact 1.20.4; two pipelines were
+refused and one project required an unsupported compiler. Initial and
+incremental reports matched, and all four baseline CI runs passed. These
+results qualify the narrowed self-alias policy and document its remaining
+adoption limits; the historical raw-corpus figures below remain historical.
+The attribution metadata is explicitly heuristic. No missing-return recall
+improvement or production memory reduction is claimed in this follow-up.
+
 **Current verdict: qualified for experimental release**, with the compiler
 and build-pipeline restrictions below. Implementation `1bb9594` passed the
 final [quality gates](bench/corpus/toolchain/quality-1bb9594/README.md) and

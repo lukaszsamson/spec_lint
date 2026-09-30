@@ -1,0 +1,1846 @@
+{
+  "adapter": "1.20.4+759443e",
+  "artifacts": {
+    "build_digest": "ab40621dc4c1ee7ce26ad192bb3ab0dd65c434816cd2dfb247faff3446e85766",
+    "recorded": ["credo"],
+    "unrecorded": []
+  },
+  "baseline": {
+    "applied": false,
+    "baselined": 0,
+    "expired": 0,
+    "gate_changed": [],
+    "new": 0,
+    "path": ".spec_lint_baseline.json",
+    "pending_reconciliation": [],
+    "reason": "missing",
+    "stale_findings": [],
+    "stale_inventory": []
+  },
+  "beams": [
+    {
+      "exck": "4a8b156bff97ac0559ee2c9751a50b99c72102d67994936e225ac7945fac684b",
+      "md5": "0b66cc2387cb2db2c2e7ed7e458324d3",
+      "module": "Credo",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.beam"
+    },
+    {
+      "exck": "78cbcd259764fea82d3b1de797c9b6211927840f4d66f97eb902a8d04eed8b32",
+      "md5": "932cf876af070a4b169c2e5fc9b311a5",
+      "module": "Credo.Application",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Application.beam"
+    },
+    {
+      "exck": "5e3e5d25fdf7dc0739e1b6201ecef3cbdd08faefb093ac82dc20b20a00d688eb",
+      "md5": "3baaeaa65d9572547d69d1ffcf14b3eb",
+      "module": "Credo.CLI",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.CLI.beam"
+    },
+    {
+      "exck": "413724b5bf55f3f6b104b645904c684b1f141af62fc5c3f5ac3cb574d0b28e71",
+      "md5": "1c4c61bc3cf6d2ce0430f1ba4c32f676",
+      "module": "Credo.CLI.Command",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.CLI.Command.beam"
+    },
+    {
+      "exck": "1b178719272967c150f0be60822c791757da5c9ffe1cdb73dc57ab5759d36bd3",
+      "md5": "ff6593ed71716c3535a1094576d105c1",
+      "module": "Credo.CLI.Command.Categories.CategoriesCommand",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.CLI.Command.Categories.CategoriesCommand.beam"
+    },
+    {
+      "exck": "bd4e23dd2d243b3ec6bdca8f11f7fa6d6ea90aa167dca31d1e8281f11f41a840",
+      "md5": "2e5261234d28219de66cc8837933fc98",
+      "module": "Credo.CLI.Command.Categories.CategoriesOutput",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.CLI.Command.Categories.CategoriesOutput.beam"
+    },
+    {
+      "exck": "2d98502eec1a3e88d97b516e0eb75465727b466e4c3f55376b396920f970b506",
+      "md5": "89f83af3ff2d4a5aca0e093466f88d16",
+      "module": "Credo.CLI.Command.Categories.Output.Default",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.CLI.Command.Categories.Output.Default.beam"
+    },
+    {
+      "exck": "2d98502eec1a3e88d97b516e0eb75465727b466e4c3f55376b396920f970b506",
+      "md5": "b27b2a03123351cc9bd521b35196ade3",
+      "module": "Credo.CLI.Command.Categories.Output.Json",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.CLI.Command.Categories.Output.Json.beam"
+    },
+    {
+      "exck": "5ea17007de8622c2e99e5c0297fab3e35bb75a7c9a23f10554aa0074b4dce053",
+      "md5": "40aa4f8f19e63fa79982fbcd41ab70aa",
+      "module": "Credo.CLI.Command.Diff.DiffCommand",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.CLI.Command.Diff.DiffCommand.beam"
+    },
+    {
+      "exck": "7bc444ff925e2771439a3f397b169bfd6197f5e5c8830ac194736540e9c6b3c8",
+      "md5": "d496962b3d42c991e161f13e6fb15e2d",
+      "module": "Credo.CLI.Command.Diff.DiffOutput",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.CLI.Command.Diff.DiffOutput.beam"
+    },
+    {
+      "exck": "690e004f81b3e0f62511ec668e9c10fb600c3c7c5deaa73795e113b022331981",
+      "md5": "b1ab8fb6a1381df2ff9d43a5fcda86b0",
+      "module": "Credo.CLI.Command.Diff.DiffSummary",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.CLI.Command.Diff.DiffSummary.beam"
+    },
+    {
+      "exck": "92c05cc7affbc58c92926c40c856aae966b435480d325fc872deae194e3c92ed",
+      "md5": "3b1753be4e9d4c1655ade1ebbae658f3",
+      "module": "Credo.CLI.Command.Diff.Output.Default",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.CLI.Command.Diff.Output.Default.beam"
+    },
+    {
+      "exck": "f808d039f36972e9b2acc35440eef0cf6a1ead62cff446c49b86133b18fe20e2",
+      "md5": "b29757aa0796c7be0752e25919b7eef9",
+      "module": "Credo.CLI.Command.Diff.Output.FlyCheck",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.CLI.Command.Diff.Output.FlyCheck.beam"
+    },
+    {
+      "exck": "f808d039f36972e9b2acc35440eef0cf6a1ead62cff446c49b86133b18fe20e2",
+      "md5": "7e0b9e9be170600e598be077932c3846",
+      "module": "Credo.CLI.Command.Diff.Output.Json",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.CLI.Command.Diff.Output.Json.beam"
+    },
+    {
+      "exck": "f808d039f36972e9b2acc35440eef0cf6a1ead62cff446c49b86133b18fe20e2",
+      "md5": "5665b480c69336de222b4a9d24eab2ff",
+      "module": "Credo.CLI.Command.Diff.Output.Oneline",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.CLI.Command.Diff.Output.Oneline.beam"
+    },
+    {
+      "exck": "bbbb8f0e07bc13c7cb1559dbcd7cf2ca965012a340a4672c07ae5327e66d3650",
+      "md5": "393a05c73732dd296d2dbe55427964b0",
+      "module": "Credo.CLI.Command.Diff.Task.FilterIssues",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.CLI.Command.Diff.Task.FilterIssues.beam"
+    },
+    {
+      "exck": "bbbb8f0e07bc13c7cb1559dbcd7cf2ca965012a340a4672c07ae5327e66d3650",
+      "md5": "607d3cf589aa926c9d1b95b615b3ef07",
+      "module": "Credo.CLI.Command.Diff.Task.FilterIssuesForExitStatus",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.CLI.Command.Diff.Task.FilterIssuesForExitStatus.beam"
+    },
+    {
+      "exck": "75a0f95ca3d9e3b4f0810bdff9a5a81f1b837aec227a04344cd126fc5d01ee00",
+      "md5": "de431ffe442440f9dc6d70f4474ac906",
+      "module": "Credo.CLI.Command.Diff.Task.GetGitDiff",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.CLI.Command.Diff.Task.GetGitDiff.beam"
+    },
+    {
+      "exck": "bbbb8f0e07bc13c7cb1559dbcd7cf2ca965012a340a4672c07ae5327e66d3650",
+      "md5": "adcd33de0860b4215444b883f3549e5d",
+      "module": "Credo.CLI.Command.Diff.Task.PrintBeforeInfo",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.CLI.Command.Diff.Task.PrintBeforeInfo.beam"
+    },
+    {
+      "exck": "bbbb8f0e07bc13c7cb1559dbcd7cf2ca965012a340a4672c07ae5327e66d3650",
+      "md5": "3b815a7259830799da7384d2507bcd9c",
+      "module": "Credo.CLI.Command.Diff.Task.PrintResultsAndSummary",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.CLI.Command.Diff.Task.PrintResultsAndSummary.beam"
+    },
+    {
+      "exck": "3c8748f73a103af9e7bd27794f52f39d8f05964818fe61ae3b75942b371b0bea",
+      "md5": "e2dbf082de0eaceef41c9d1ce866556a",
+      "module": "Credo.CLI.Command.Explain.ExplainCommand",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.CLI.Command.Explain.ExplainCommand.beam"
+    },
+    {
+      "exck": "bbbb8f0e07bc13c7cb1559dbcd7cf2ca965012a340a4672c07ae5327e66d3650",
+      "md5": "07bb9f4fe4328499bfbe95a743094a34",
+      "module": "Credo.CLI.Command.Explain.ExplainCommand.ExplainCheck",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.CLI.Command.Explain.ExplainCommand.ExplainCheck.beam"
+    },
+    {
+      "exck": "2d2df8f4cbe6e68911f178f43e6b29b9f1ef06e5cdb4cf376a8ec07b58e4bb97",
+      "md5": "9f8724c798fd67fd1e9f8fae577a8727",
+      "module": "Credo.CLI.Command.Explain.ExplainCommand.ExplainIssue",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.CLI.Command.Explain.ExplainCommand.ExplainIssue.beam"
+    },
+    {
+      "exck": "bbbb8f0e07bc13c7cb1559dbcd7cf2ca965012a340a4672c07ae5327e66d3650",
+      "md5": "4fd9b90a77016dce917f87833bcba617",
+      "module": "Credo.CLI.Command.Explain.ExplainCommand.ExplainIssuePreCheck",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.CLI.Command.Explain.ExplainCommand.ExplainIssuePreCheck.beam"
+    },
+    {
+      "exck": "7bc444ff925e2771439a3f397b169bfd6197f5e5c8830ac194736540e9c6b3c8",
+      "md5": "1516689ef14185cb1335ae7bd8ea8cf0",
+      "module": "Credo.CLI.Command.Explain.ExplainOutput",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.CLI.Command.Explain.ExplainOutput.beam"
+    },
+    {
+      "exck": "16ae85a34ddc9c32d89762013290fd535afae156eeedad8ecaf8933bd8ca5b8e",
+      "md5": "274a948090b9650220db66c346c4d2f8",
+      "module": "Credo.CLI.Command.Explain.Output.Default",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.CLI.Command.Explain.Output.Default.beam"
+    },
+    {
+      "exck": "f808d039f36972e9b2acc35440eef0cf6a1ead62cff446c49b86133b18fe20e2",
+      "md5": "e1c1ea0ee4fd01c27337853b08695f68",
+      "module": "Credo.CLI.Command.Explain.Output.Json",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.CLI.Command.Explain.Output.Json.beam"
+    },
+    {
+      "exck": "a98fc6e5c443918a24844ffcec50c578f7204055a5f56d58f3f28eef41b98ac6",
+      "md5": "c7682bcc2efeb86a6ad74a949fa634c2",
+      "module": "Credo.CLI.Command.GenCheck",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.CLI.Command.GenCheck.beam"
+    },
+    {
+      "exck": "1b178719272967c150f0be60822c791757da5c9ffe1cdb73dc57ab5759d36bd3",
+      "md5": "aadafe01da486bb6c3524fa3bab934aa",
+      "module": "Credo.CLI.Command.GenConfig",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.CLI.Command.GenConfig.beam"
+    },
+    {
+      "exck": "0cd4edc204c788100c775db71ea921c9405dc2e79f78f5ae74975a463843f343",
+      "md5": "8669388a5334c884b2bb3c240a07125e",
+      "module": "Credo.CLI.Command.Help",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.CLI.Command.Help.beam"
+    },
+    {
+      "exck": "03988fbfca838a43094e72c1b7c2b407ccb8498d76f049b7bfbbfb474e5d4fc3",
+      "md5": "80f3e1f16dcde53645aecda1d9e1c6bc",
+      "module": "Credo.CLI.Command.Info.InfoCommand",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.CLI.Command.Info.InfoCommand.beam"
+    },
+    {
+      "exck": "23e0c988bbd2cca52168fb0fb235bca0c3768bb90c46cbad655ad0f9457e0661",
+      "md5": "5b7bbb1e4603c6878742bf2c65a2938a",
+      "module": "Credo.CLI.Command.Info.InfoCommand.PrintInfo",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.CLI.Command.Info.InfoCommand.PrintInfo.beam"
+    },
+    {
+      "exck": "c5d9d2f1a789614c7747ebd321a9ae31ea301b13520081d98bf751a86d431528",
+      "md5": "b350d602d2f8a1a4ba5b765b8f2e40a0",
+      "module": "Credo.CLI.Command.Info.InfoOutput",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.CLI.Command.Info.InfoOutput.beam"
+    },
+    {
+      "exck": "f4a37272f4c9ea4024bb6aebf56f330bbc9167b43297672bdff587e92cda76e6",
+      "md5": "d0f46d1adb3a2d84223ae7f4834aab80",
+      "module": "Credo.CLI.Command.Info.Output.Default",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.CLI.Command.Info.Output.Default.beam"
+    },
+    {
+      "exck": "eec4ec3b93a454906a2e1d39ec964a0f0feff4f213e239760abddb670c86be59",
+      "md5": "dcd8b76e22645d8974732f41efbd7184",
+      "module": "Credo.CLI.Command.Info.Output.Json",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.CLI.Command.Info.Output.Json.beam"
+    },
+    {
+      "exck": "03988fbfca838a43094e72c1b7c2b407ccb8498d76f049b7bfbbfb474e5d4fc3",
+      "md5": "ffe6941383c0d1c90c280bdf68b1b96c",
+      "module": "Credo.CLI.Command.List.ListCommand",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.CLI.Command.List.ListCommand.beam"
+    },
+    {
+      "exck": "bbbb8f0e07bc13c7cb1559dbcd7cf2ca965012a340a4672c07ae5327e66d3650",
+      "md5": "eced44d748188a1a74ddfc21e7a1ad84",
+      "module": "Credo.CLI.Command.List.ListCommand.PrintBeforeInfo",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.CLI.Command.List.ListCommand.PrintBeforeInfo.beam"
+    },
+    {
+      "exck": "bbbb8f0e07bc13c7cb1559dbcd7cf2ca965012a340a4672c07ae5327e66d3650",
+      "md5": "bfc0b038ee917258ef84123da128de95",
+      "module": "Credo.CLI.Command.List.ListCommand.PrintResultsAndSummary",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.CLI.Command.List.ListCommand.PrintResultsAndSummary.beam"
+    },
+    {
+      "exck": "7bc444ff925e2771439a3f397b169bfd6197f5e5c8830ac194736540e9c6b3c8",
+      "md5": "edd55cb7c67df58775065c9ef577ac47",
+      "module": "Credo.CLI.Command.List.ListOutput",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.CLI.Command.List.ListOutput.beam"
+    },
+    {
+      "exck": "10d74cb3ef6cc1b32df22314b1390091b3c6cef6ea6b39557dfea2b934ca5f9e",
+      "md5": "5c13060074d2d148b150d48ddd26e313",
+      "module": "Credo.CLI.Command.List.Output.Default",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.CLI.Command.List.Output.Default.beam"
+    },
+    {
+      "exck": "f808d039f36972e9b2acc35440eef0cf6a1ead62cff446c49b86133b18fe20e2",
+      "md5": "3d5b71c24f517e0d29ad995fb97efc06",
+      "module": "Credo.CLI.Command.List.Output.FlyCheck",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.CLI.Command.List.Output.FlyCheck.beam"
+    },
+    {
+      "exck": "f808d039f36972e9b2acc35440eef0cf6a1ead62cff446c49b86133b18fe20e2",
+      "md5": "3436444242b0f8824ec6be76655d37e4",
+      "module": "Credo.CLI.Command.List.Output.Json",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.CLI.Command.List.Output.Json.beam"
+    },
+    {
+      "exck": "f808d039f36972e9b2acc35440eef0cf6a1ead62cff446c49b86133b18fe20e2",
+      "md5": "a4bf6cb14160faa2602216c4d4eb617a",
+      "module": "Credo.CLI.Command.List.Output.Oneline",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.CLI.Command.List.Output.Oneline.beam"
+    },
+    {
+      "exck": "f808d039f36972e9b2acc35440eef0cf6a1ead62cff446c49b86133b18fe20e2",
+      "md5": "7714e632a70505e31167a055d5664114",
+      "module": "Credo.CLI.Command.List.Output.Sarif",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.CLI.Command.List.Output.Sarif.beam"
+    },
+    {
+      "exck": "2d83af54e356726e0af5a36674cef645faca6949545671bc90a514e33d4c02a9",
+      "md5": "318e2c0457abaef5b0672faa88166001",
+      "module": "Credo.CLI.Command.Suggest.Output.Default",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.CLI.Command.Suggest.Output.Default.beam"
+    },
+    {
+      "exck": "f808d039f36972e9b2acc35440eef0cf6a1ead62cff446c49b86133b18fe20e2",
+      "md5": "f9bad3bae169f379cb1b9cb21f365e5a",
+      "module": "Credo.CLI.Command.Suggest.Output.FlyCheck",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.CLI.Command.Suggest.Output.FlyCheck.beam"
+    },
+    {
+      "exck": "f808d039f36972e9b2acc35440eef0cf6a1ead62cff446c49b86133b18fe20e2",
+      "md5": "4c68c4e84bf07403fe6cef4d0c5ca86b",
+      "module": "Credo.CLI.Command.Suggest.Output.Json",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.CLI.Command.Suggest.Output.Json.beam"
+    },
+    {
+      "exck": "f808d039f36972e9b2acc35440eef0cf6a1ead62cff446c49b86133b18fe20e2",
+      "md5": "7222c1ebef0137dd47b7ffd522e46e42",
+      "module": "Credo.CLI.Command.Suggest.Output.Oneline",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.CLI.Command.Suggest.Output.Oneline.beam"
+    },
+    {
+      "exck": "f808d039f36972e9b2acc35440eef0cf6a1ead62cff446c49b86133b18fe20e2",
+      "md5": "1d38b21f774b1b5d9d4796e841cc1110",
+      "module": "Credo.CLI.Command.Suggest.Output.Sarif",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.CLI.Command.Suggest.Output.Sarif.beam"
+    },
+    {
+      "exck": "03988fbfca838a43094e72c1b7c2b407ccb8498d76f049b7bfbbfb474e5d4fc3",
+      "md5": "f076915c7eea92dbb74c7a0fb0e7b764",
+      "module": "Credo.CLI.Command.Suggest.SuggestCommand",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.CLI.Command.Suggest.SuggestCommand.beam"
+    },
+    {
+      "exck": "1e4763f14350de89b777fa72d5ef0204fbfb53cbcb42f559115ec0d9e4871880",
+      "md5": "95bdecd97418005ab000d415a32d4ff5",
+      "module": "Credo.CLI.Command.Suggest.SuggestCommand.ManipulateConfigIfRerun",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.CLI.Command.Suggest.SuggestCommand.ManipulateConfigIfRerun.beam"
+    },
+    {
+      "exck": "821f66ba5163b29f43c676027ca48e84da5198aceaf41686851bce211a9ed8bb",
+      "md5": "b7731e8ec85b0f4c5dfc67536bee8394",
+      "module": "Credo.CLI.Command.Suggest.SuggestCommand.PrintBeforeInfo",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.CLI.Command.Suggest.SuggestCommand.PrintBeforeInfo.beam"
+    },
+    {
+      "exck": "821f66ba5163b29f43c676027ca48e84da5198aceaf41686851bce211a9ed8bb",
+      "md5": "107dfdf1c1bd23deeb54d1483ec1ab1f",
+      "module": "Credo.CLI.Command.Suggest.SuggestCommand.PrintResultsAndSummary",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.CLI.Command.Suggest.SuggestCommand.PrintResultsAndSummary.beam"
+    },
+    {
+      "exck": "7bc444ff925e2771439a3f397b169bfd6197f5e5c8830ac194736540e9c6b3c8",
+      "md5": "d5bff1962cb33f6a59fb1fdb73723f50",
+      "module": "Credo.CLI.Command.Suggest.SuggestOutput",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.CLI.Command.Suggest.SuggestOutput.beam"
+    },
+    {
+      "exck": "aabad681405fbc90996ee638c75d05c98695c25afc0a10f58ac189290d61e6ef",
+      "md5": "437e595b675968cc0645f8f7a66fc9f7",
+      "module": "Credo.CLI.Command.Version",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.CLI.Command.Version.beam"
+    },
+    {
+      "exck": "c48af3518445189d6d67879b92653fc42797084884c83291722d470e79d763aa",
+      "md5": "5186ccf4b4790b5743d5f603c6fbd9c3",
+      "module": "Credo.CLI.ExitStatus",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.CLI.ExitStatus.beam"
+    },
+    {
+      "exck": "d73f1ac3c1a6323b1da97eb1ad45c6bfebcb33cfa5c364608950f68cd1f6a38f",
+      "md5": "f6efe858c8a9fb81273a56aafe40c2c1",
+      "module": "Credo.CLI.Filename",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.CLI.Filename.beam"
+    },
+    {
+      "exck": "2f69eb07fed4123f18db8f09e143989de7f98d2db569e23c47588d33f659c6c6",
+      "md5": "b601790dfbd711c942baf15a67cbca38",
+      "module": "Credo.CLI.Filter",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.CLI.Filter.beam"
+    },
+    {
+      "exck": "c4aa3c778f3d4288243f671e28874529ee293a53ae6da73f1de9c7d230fab802",
+      "md5": "45568883c54436a6fc7df9b5650624de",
+      "module": "Credo.CLI.Options",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.CLI.Options.beam"
+    },
+    {
+      "exck": "7aa802475482e0f3d839946df971465a7de188c1fa3f456ccf6ec6c5536b3d06",
+      "md5": "895f774effeaab99c5528ce8d05a6755",
+      "module": "Credo.CLI.Output",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.CLI.Output.beam"
+    },
+    {
+      "exck": "9c95b4a99436a8af3ed84065e693684eaff1cac05881cfe26202c249b1410c59",
+      "md5": "11ad31f0179354ff2591cae9c0153797",
+      "module": "Credo.CLI.Output.FirstRunHint",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.CLI.Output.FirstRunHint.beam"
+    },
+    {
+      "exck": "722a99a1081306643aa7eb109da57ec94ffb86a604edc5272b9200667c3ee97e",
+      "md5": "8f88390ca346e122ef5d50a0097e1546",
+      "module": "Credo.CLI.Output.FormatDelegator",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.CLI.Output.FormatDelegator.beam"
+    },
+    {
+      "exck": "3818c6e8b14640ce63b339930cd0fcc07643d94a42d901fca99b650228e1b1cf",
+      "md5": "9b98d68abcecc18df5001b102026c127",
+      "module": "Credo.CLI.Output.Formatter.Flycheck",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.CLI.Output.Formatter.Flycheck.beam"
+    },
+    {
+      "exck": "63c53c61a61d5c71ea659e926b0b5f409870b3c7aef363f557a6de185c93e653",
+      "md5": "897623cc231e416102aef1016e6b00cc",
+      "module": "Credo.CLI.Output.Formatter.JSON",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.CLI.Output.Formatter.JSON.beam"
+    },
+    {
+      "exck": "d3c60c7a559a84316d7f610981a0f91bc692c8349f9c907e5f4cda31503ddd60",
+      "md5": "e5845eb70632f08a099fc34ce7eb4c3e",
+      "module": "Credo.CLI.Output.Formatter.Oneline",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.CLI.Output.Formatter.Oneline.beam"
+    },
+    {
+      "exck": "248e11590dcea7e06ab78a224074e133c2d66a6fc5546306ef3b1e1cec0e3a1d",
+      "md5": "ad8dcd5cb13b1d5f3a83ea3babb73337",
+      "module": "Credo.CLI.Output.Formatter.SARIF",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.CLI.Output.Formatter.SARIF.beam"
+    },
+    {
+      "exck": "e958824e561091eb74a5c7953c05194583a45922a7f3559b90d952acf9f18d91",
+      "md5": "4e445d0d91b92fbcce7fb0cbcfd65414",
+      "module": "Credo.CLI.Output.Shell",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.CLI.Output.Shell.beam"
+    },
+    {
+      "exck": "9f7f93c6a07d946a0675bb7d1753953d122190e17d0e342f4886befdbd4a7eff",
+      "md5": "0303762f48d49580b23bb85b74e8b0dd",
+      "module": "Credo.CLI.Output.Summary",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.CLI.Output.Summary.beam"
+    },
+    {
+      "exck": "f9ad1cdfd7a4bfa49e86a7a693beb555d1b82513ebf521f35339442b3e07f58c",
+      "md5": "d0ea88e2bcea90bf9ec258f3509214fd",
+      "module": "Credo.CLI.Output.UI",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.CLI.Output.UI.beam"
+    },
+    {
+      "exck": "684fa724094baca747c9e402dc82b0f63c325235abbad50e6e75939011369dc5",
+      "md5": "6533abd0b6d203c2b68936e4a7dad518",
+      "module": "Credo.CLI.Sorter",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.CLI.Sorter.beam"
+    },
+    {
+      "exck": "3bc8a0cd5857ba0f865a08d2ee2ed012783db39a4a6780cc448f6540bd716296",
+      "md5": "67bdbc911eda876dc1973d66beb5f48b",
+      "module": "Credo.CLI.Switch",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.CLI.Switch.beam"
+    },
+    {
+      "exck": "80f4d1ed57ca63911b00ab6cc5052dc72e73136a5c54e216437b512b38e138c5",
+      "md5": "a66c2290607de500801de0d555a98230",
+      "module": "Credo.CLI.Task.LoadAndValidateSourceFiles",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.CLI.Task.LoadAndValidateSourceFiles.beam"
+    },
+    {
+      "exck": "facb8229002ce770c82ed37609001c4bc1088805ba95dd6f4af0e149428f7be9",
+      "md5": "409bde2433f65521ac1621c079064c35",
+      "module": "Credo.CLI.Task.PrepareChecksToRun",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.CLI.Task.PrepareChecksToRun.beam"
+    },
+    {
+      "exck": "80f4d1ed57ca63911b00ab6cc5052dc72e73136a5c54e216437b512b38e138c5",
+      "md5": "1ac4ef18a8aee8e100f4a054b8ac2769",
+      "module": "Credo.CLI.Task.RunChecks",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.CLI.Task.RunChecks.beam"
+    },
+    {
+      "exck": "80f4d1ed57ca63911b00ab6cc5052dc72e73136a5c54e216437b512b38e138c5",
+      "md5": "3b9196a1fe2c90b4c5579b94c6aa8581",
+      "module": "Credo.CLI.Task.SetRelevantIssues",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.CLI.Task.SetRelevantIssues.beam"
+    },
+    {
+      "exck": "1c7a8171c873caa97e9c3b9b456242d4499c7617470c50648d5c76de6a4d0ae6",
+      "md5": "ad0c118b08bd3257a75793606c18d346",
+      "module": "Credo.Check",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.beam"
+    },
+    {
+      "exck": "d314a4778be8c5193437a514fa80a96a02105a141233f868cb745b547e9102c7",
+      "md5": "8ac23d9ce72f9801f463ee372267444d",
+      "module": "Credo.Check.ConfigComment",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.ConfigComment.beam"
+    },
+    {
+      "exck": "062abad63885a4e454ef62b27afc8bac82ee719e5f659d54cfdbfe488ac20298",
+      "md5": "f33c2a38d334e95d17783030a96ad329",
+      "module": "Credo.Check.ConfigCommentFinder",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.ConfigCommentFinder.beam"
+    },
+    {
+      "exck": "73e0abe63163901c0a203e7276345f057fd2c1c28724a93aa21caf5faaffed3b",
+      "md5": "13597bc6af49056b8320d52e825ba51f",
+      "module": "Credo.Check.Consistency.Collector",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Consistency.Collector.beam"
+    },
+    {
+      "exck": "bf67d1923fb1e65ffbf1f2493e52a8be673e5833d208a9ac1bd6700e0cefb7d5",
+      "md5": "7ac77dee5f7f992756bde3e0bb801791",
+      "module": "Credo.Check.Consistency.ExceptionNames",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Consistency.ExceptionNames.beam"
+    },
+    {
+      "exck": "16a60e73d6216dc7fa0b635835de08ebf3eebfae83850f9d8039261b640180d4",
+      "md5": "84fb304b00cb3bbf71d6fbdde80d3d32",
+      "module": "Credo.Check.Consistency.ExceptionNames.Collector",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Consistency.ExceptionNames.Collector.beam"
+    },
+    {
+      "exck": "a94d8e11d3cdedddf5f2b12faefc859573017a4649ee4e0dfa84ed00da8a93de",
+      "md5": "b2654aa9888d7112115265b70933a4a8",
+      "module": "Credo.Check.Consistency.LineEndings",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Consistency.LineEndings.beam"
+    },
+    {
+      "exck": "8a2d04cce684ebf4fb9ed81052a7c75dfa1ac0c30a4566dc7f8e9f5a50c704e3",
+      "md5": "f9b8cfba032128844b048e53b86d22fc",
+      "module": "Credo.Check.Consistency.LineEndings.Collector",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Consistency.LineEndings.Collector.beam"
+    },
+    {
+      "exck": "1f044af7d06b96a1d046a6bf4e990e9921dabffa62a027464cbb398e506144f9",
+      "md5": "0fdc5e7ccb9e64c590b3c85c6b02ba82",
+      "module": "Credo.Check.Consistency.MultiAliasImportRequireUse",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Consistency.MultiAliasImportRequireUse.beam"
+    },
+    {
+      "exck": "16a60e73d6216dc7fa0b635835de08ebf3eebfae83850f9d8039261b640180d4",
+      "md5": "f97929b99453d140ba2a4feedadaa6c2",
+      "module": "Credo.Check.Consistency.MultiAliasImportRequireUse.Collector",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Consistency.MultiAliasImportRequireUse.Collector.beam"
+    },
+    {
+      "exck": "0ce7c346fdbe22a00ac6185613209dabe805f99dad23a1dd06f5d877632453dc",
+      "md5": "e1fc6b6a9c99a105a6fd58c616dfd3f1",
+      "module": "Credo.Check.Consistency.ParameterPatternMatching",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Consistency.ParameterPatternMatching.beam"
+    },
+    {
+      "exck": "9dd3ab0432a7e9a6916a84d8c3a2c5712dc34f5d72da07d5f5640aea79009302",
+      "md5": "206e426f36f15920d4495ec475ae49a5",
+      "module": "Credo.Check.Consistency.ParameterPatternMatching.Collector",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Consistency.ParameterPatternMatching.Collector.beam"
+    },
+    {
+      "exck": "d2e4afd43d9822296b2bc4df2b7180a90c2758ad9fe2c28ce71ee16084df1dbb",
+      "md5": "ca5e8fdd36d731ca23ac88bd8ae27ab7",
+      "module": "Credo.Check.Consistency.SpaceAroundOperators",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Consistency.SpaceAroundOperators.beam"
+    },
+    {
+      "exck": "16a60e73d6216dc7fa0b635835de08ebf3eebfae83850f9d8039261b640180d4",
+      "md5": "f833da57bab6834536784b60b4ccbeb9",
+      "module": "Credo.Check.Consistency.SpaceAroundOperators.Collector",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Consistency.SpaceAroundOperators.Collector.beam"
+    },
+    {
+      "exck": "bb89e2b2cf28a38e0f9d72bcb848d500af61fddeafc6a38c9ff16db7b5aa15b8",
+      "md5": "c7524288a85618fd581959f1f9bdc2db",
+      "module": "Credo.Check.Consistency.SpaceAroundOperators.SpaceHelper",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Consistency.SpaceAroundOperators.SpaceHelper.beam"
+    },
+    {
+      "exck": "58b8a51e3317d3d5bce393dab8d85520bb6c2afa62b0aeac4de95af78d53e5ea",
+      "md5": "6b047fb6344ec8f0ed1bf66eb7374b52",
+      "module": "Credo.Check.Consistency.SpaceInParentheses",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Consistency.SpaceInParentheses.beam"
+    },
+    {
+      "exck": "e3fabf4a21be55f0cbdcf6f0eb2602d8fcd28e933e39a2643615a873536c09c9",
+      "md5": "aaf1116fda44ac5b90e6f1552b3d3f29",
+      "module": "Credo.Check.Consistency.SpaceInParentheses.Collector",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Consistency.SpaceInParentheses.Collector.beam"
+    },
+    {
+      "exck": "a94d8e11d3cdedddf5f2b12faefc859573017a4649ee4e0dfa84ed00da8a93de",
+      "md5": "7512bc534ad53e60ad75712d00d43da2",
+      "module": "Credo.Check.Consistency.TabsOrSpaces",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Consistency.TabsOrSpaces.beam"
+    },
+    {
+      "exck": "16a60e73d6216dc7fa0b635835de08ebf3eebfae83850f9d8039261b640180d4",
+      "md5": "c271c9bfb2e644c916e193ab80ab34d9",
+      "module": "Credo.Check.Consistency.TabsOrSpaces.Collector",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Consistency.TabsOrSpaces.Collector.beam"
+    },
+    {
+      "exck": "0ce7c346fdbe22a00ac6185613209dabe805f99dad23a1dd06f5d877632453dc",
+      "md5": "402625ebc36c96079bcd5c7993b43bf4",
+      "module": "Credo.Check.Consistency.UnusedVariableNames",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Consistency.UnusedVariableNames.beam"
+    },
+    {
+      "exck": "16a60e73d6216dc7fa0b635835de08ebf3eebfae83850f9d8039261b640180d4",
+      "md5": "17ba4b87a5568be0c186a9ed2fca06e5",
+      "module": "Credo.Check.Consistency.UnusedVariableNames.Collector",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Consistency.UnusedVariableNames.Collector.beam"
+    },
+    {
+      "exck": "0880dd6ad1565e86cf00fbeb4620dcbdcd12411c9ef17272a8013dbf4b00ba83",
+      "md5": "11f863098d3b501602a382d9f1de851b",
+      "module": "Credo.Check.Context",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Context.beam"
+    },
+    {
+      "exck": "a4e60e6bf1109240b36648bc06d5384ca25774833e903f00dd46a8d44e714551",
+      "md5": "fa2364a3c7a39c3fee8aa3bad8567756",
+      "module": "Credo.Check.Design.AliasUsage",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Design.AliasUsage.beam"
+    },
+    {
+      "exck": "2dd4002ab1c25b964e3525f59f66f5212a449ed4bcb37a676ef0f7abdcdbea3d",
+      "md5": "c1f8038c443ee955f16ebb94df311ec9",
+      "module": "Credo.Check.Design.DuplicatedCode",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Design.DuplicatedCode.beam"
+    },
+    {
+      "exck": "e2848e4daa7c604f67997ba1292e2b4ec26d221789c11b97bc01b574e036e0b4",
+      "md5": "cc80a4119f84c912314b9ffe5dc3666b",
+      "module": "Credo.Check.Design.SkipTestWithoutComment",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Design.SkipTestWithoutComment.beam"
+    },
+    {
+      "exck": "33a898370ceaa041a0d4e22fc4bee1173f96d3eeb61fd49d003b824bf72ed958",
+      "md5": "fd7fd5c6e5f96018f4871b864c7722b4",
+      "module": "Credo.Check.Design.TagFIXME",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Design.TagFIXME.beam"
+    },
+    {
+      "exck": "47fd08f318abfa77280b42ad570984efc7f05513ecf70d4e8b3bbca69fdc7291",
+      "md5": "85c8757da3af2ea98fb19264c0f3711d",
+      "module": "Credo.Check.Design.TagHelper",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Design.TagHelper.beam"
+    },
+    {
+      "exck": "40224a52213cf48ab417bfe54c456cc6501e05681d63ac456f24077ae16a540d",
+      "md5": "511167d2f2f0a81c221b77dba2ff5807",
+      "module": "Credo.Check.Design.TagTODO",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Design.TagTODO.beam"
+    },
+    {
+      "exck": "77025e7a8b8c84c9b9d68f5625a57b8ad57c3c214f14b3fe34c6df2fe8c00383",
+      "md5": "4c7020efa293a9d5567c4a7f359b474b",
+      "module": "Credo.Check.Params",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Params.beam"
+    },
+    {
+      "exck": "8da8964a959de89224a698e4a5adab7859986ba74aa85bee0c83eb30674d983e",
+      "md5": "28ea4ae8fc11ce1143f2d41b8b515619",
+      "module": "Credo.Check.Readability.AliasAs",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Readability.AliasAs.beam"
+    },
+    {
+      "exck": "15d1844c414257b391c0a8607265a599115c3339367c2f8da4fbf3314533227a",
+      "md5": "de408a82af911f9b593911e367e95edd",
+      "module": "Credo.Check.Readability.AliasOrder",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Readability.AliasOrder.beam"
+    },
+    {
+      "exck": "49e4fbfe619161a9744c869a45ae343245e622dcf4ef9831f37360129c83f226",
+      "md5": "6c395a04baf9c437a981d4bf53e35def",
+      "module": "Credo.Check.Readability.BlockPipe",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Readability.BlockPipe.beam"
+    },
+    {
+      "exck": "446a2651affc2cf90bd72cda3afefdfe6360ec0b0aff7be32d3a2379dddb172d",
+      "md5": "37d600103821cac02e9141ad4ddd4791",
+      "module": "Credo.Check.Readability.FunctionNames",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Readability.FunctionNames.beam"
+    },
+    {
+      "exck": "aa8b4d70ba1d8f4a7c5df88447dec5309e8b2336f389ff80a5c46523b67c44da",
+      "md5": "216d11ea73a219b17bd8aaf6681a1ad1",
+      "module": "Credo.Check.Readability.ImplTrue",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Readability.ImplTrue.beam"
+    },
+    {
+      "exck": "408ccf4130437093473b9e3c2fde9316138ddc669a5f0aeef2eade3a6fc012c0",
+      "md5": "e757b011aa6ab1af9e83c92aa52944fe",
+      "module": "Credo.Check.Readability.LargeNumbers",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Readability.LargeNumbers.beam"
+    },
+    {
+      "exck": "53bb63f1367382077c8f475f206ce973500e458b4e6593382a68f1826ad68602",
+      "md5": "446bb4228c399b21270f9eca86d15249",
+      "module": "Credo.Check.Readability.MaxLineLength",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Readability.MaxLineLength.beam"
+    },
+    {
+      "exck": "06e889dc467184f8ed1ab3ea69fe9367e2e6de24092e029ff349e46674a7c45f",
+      "md5": "6146d0ecb60544f04f72ef9cbc2744f0",
+      "module": "Credo.Check.Readability.ModuleAttributeNames",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Readability.ModuleAttributeNames.beam"
+    },
+    {
+      "exck": "03ebd14e44c52268320fade0dceae0ff84ca9f7c6fb29a2cd9ea0e83b26c473a",
+      "md5": "7ef94a6f0db36f7f40516bbc56b253e7",
+      "module": "Credo.Check.Readability.ModuleDoc",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Readability.ModuleDoc.beam"
+    },
+    {
+      "exck": "006814a3b48e5da3635ff6b143956366f3ee1d19a9890825b88a3e148bc812b4",
+      "md5": "bb2187cde23ff93a840f466a19e7d77c",
+      "module": "Credo.Check.Readability.ModuleNames",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Readability.ModuleNames.beam"
+    },
+    {
+      "exck": "bd55b18965b993195fcdac03f59605ada13e60db45f9cee39b857c50061383d5",
+      "md5": "0d6a158f766da8fdd4c589140773d352",
+      "module": "Credo.Check.Readability.MultiAlias",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Readability.MultiAlias.beam"
+    },
+    {
+      "exck": "777d6a1cf151b0a90888817a07849af3636d3ac2918b5da1cdeaed58b0c560e1",
+      "md5": "45ed379edaac51edd277f0baed74f69e",
+      "module": "Credo.Check.Readability.NestedFunctionCalls",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Readability.NestedFunctionCalls.beam"
+    },
+    {
+      "exck": "8607ec0a85b0fc4c1d00c1f8d200d8d3d08a6fe6a747b7a826a8e1288921a097",
+      "md5": "0c23e7844c95b36bc05aee4a8315e26e",
+      "module": "Credo.Check.Readability.NestedFunctionCalls.PipeHelper",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Readability.NestedFunctionCalls.PipeHelper.beam"
+    },
+    {
+      "exck": "7f58759549509d1b1719aad99a2aa54f1b5715b0211e9dd03008f16e62545d35",
+      "md5": "9c308a2644db718a0f8598aeafb0427f",
+      "module": "Credo.Check.Readability.OneArityFunctionInPipe",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Readability.OneArityFunctionInPipe.beam"
+    },
+    {
+      "exck": "7f2113efa7bd2706267259609cbf54af25104e0ce967226fd3d29e5212d48ffb",
+      "md5": "e4ccee2cb8991268b1c65433b0c11bd3",
+      "module": "Credo.Check.Readability.OnePipePerLine",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Readability.OnePipePerLine.beam"
+    },
+    {
+      "exck": "813914d1c2608a70c1954a2f3413592f2c4b43fc1487b349f2cfd7040d4cf81f",
+      "md5": "87f12e34147eed98f6b862093f22f603",
+      "module": "Credo.Check.Readability.ParenthesesInCondition",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Readability.ParenthesesInCondition.beam"
+    },
+    {
+      "exck": "423c58c7e0f67a06e78a1bad2f86b2164e43d9cad6747f9087a4d664e22accec",
+      "md5": "d85c1e5d9fb993803356b3232586dddd",
+      "module": "Credo.Check.Readability.ParenthesesOnZeroArityDefs",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Readability.ParenthesesOnZeroArityDefs.beam"
+    },
+    {
+      "exck": "3d5007974dc4724d4ea9b0c9888c1e1a1510039571bd392e28b97e07d19808e3",
+      "md5": "9a0621bc81457c308494f7bffc8648c2",
+      "module": "Credo.Check.Readability.PipeIntoAnonymousFunctions",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Readability.PipeIntoAnonymousFunctions.beam"
+    },
+    {
+      "exck": "06e889dc467184f8ed1ab3ea69fe9367e2e6de24092e029ff349e46674a7c45f",
+      "md5": "4789aae33eaa79d15abb67da5b645ec8",
+      "module": "Credo.Check.Readability.PredicateFunctionNames",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Readability.PredicateFunctionNames.beam"
+    },
+    {
+      "exck": "7f58759549509d1b1719aad99a2aa54f1b5715b0211e9dd03008f16e62545d35",
+      "md5": "c196a16abaf188efcdafc0aebc15eb39",
+      "module": "Credo.Check.Readability.PreferImplicitTry",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Readability.PreferImplicitTry.beam"
+    },
+    {
+      "exck": "bf67d1923fb1e65ffbf1f2493e52a8be673e5833d208a9ac1bd6700e0cefb7d5",
+      "md5": "449c931735c1e46c0662517c0184ae78",
+      "module": "Credo.Check.Readability.PreferUnquotedAtoms",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Readability.PreferUnquotedAtoms.beam"
+    },
+    {
+      "exck": "21dfc456593d8e584e153dc0771f3f3b821d2b62cafc0f6d28da1e53ddd48977",
+      "md5": "3ee1fe35671c8aa6aeae9675b2d265b3",
+      "module": "Credo.Check.Readability.RedundantBlankLines",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Readability.RedundantBlankLines.beam"
+    },
+    {
+      "exck": "813914d1c2608a70c1954a2f3413592f2c4b43fc1487b349f2cfd7040d4cf81f",
+      "md5": "ed7266560084143577424b5372241b9d",
+      "module": "Credo.Check.Readability.Semicolons",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Readability.Semicolons.beam"
+    },
+    {
+      "exck": "bf5f13dda2bdac8f8a50065f077b964c708e8c2379975a44f8a04cb550ab8cc8",
+      "md5": "d362807b2b4181be119efc75c5d73d0b",
+      "module": "Credo.Check.Readability.SeparateAliasRequire",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Readability.SeparateAliasRequire.beam"
+    },
+    {
+      "exck": "c3e999895261a17116f53a4f57b2dbe9064500d300d57e0a2dcad901540e443b",
+      "md5": "a52845d2fe37f81ebce2b0855037bc82",
+      "module": "Credo.Check.Readability.SingleFunctionToBlockPipe",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Readability.SingleFunctionToBlockPipe.beam"
+    },
+    {
+      "exck": "bf146a97d9c60ffaf1098802aa271c1c0af8cf51357fe66cbcbed74ebaf2b3ee",
+      "md5": "ae208e0f16c70604e2a2a5ee0c3513b8",
+      "module": "Credo.Check.Readability.SinglePipe",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Readability.SinglePipe.beam"
+    },
+    {
+      "exck": "11a24f8ba16a6bbba771bae9a9fc092adfe8d78e1f1921274869a8d364a225a7",
+      "md5": "0f313609baa5b4ec649febf9fb9cbc49",
+      "module": "Credo.Check.Readability.SpaceAfterCommas",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Readability.SpaceAfterCommas.beam"
+    },
+    {
+      "exck": "ccee1e3a9b5143d41d8080baeddd3f36c764d80648fc9efd5a2a83f3ecf12e7c",
+      "md5": "7bc66be7667485013c734f3166a613dd",
+      "module": "Credo.Check.Readability.Specs",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Readability.Specs.beam"
+    },
+    {
+      "exck": "e96b7a82e0e12b4f6ac8dd082dc5e41d4a884d0726b48b46852fa52970c911b2",
+      "md5": "21d2403aaf84f717fa4af8f9ad63c969",
+      "module": "Credo.Check.Readability.StrictModuleLayout",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Readability.StrictModuleLayout.beam"
+    },
+    {
+      "exck": "b9a8a6e24fa3663349fd069eb3691ec968a8b07b01dfb5353980dd1a5a290555",
+      "md5": "de2bc580c0b63e4b99d9193097cccc18",
+      "module": "Credo.Check.Readability.StringSigils",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Readability.StringSigils.beam"
+    },
+    {
+      "exck": "303f6df4d3d8e7a0feb3d65b6df670a73671da54f5e312fc9908bac3b4665beb",
+      "md5": "d2d5557c377de9a957d8f05daaaf665f",
+      "module": "Credo.Check.Readability.TrailingBlankLine",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Readability.TrailingBlankLine.beam"
+    },
+    {
+      "exck": "8ea7b71de20add3d22b933bdf7195cbf5cb17bc093d1a7205a571971e5c98e7c",
+      "md5": "5c32078739d9a766747667d0ce270c65",
+      "module": "Credo.Check.Readability.TrailingWhiteSpace",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Readability.TrailingWhiteSpace.beam"
+    },
+    {
+      "exck": "7f58759549509d1b1719aad99a2aa54f1b5715b0211e9dd03008f16e62545d35",
+      "md5": "5b6e871b5552838bea5a46166c1e415c",
+      "module": "Credo.Check.Readability.UnnecessaryAliasExpansion",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Readability.UnnecessaryAliasExpansion.beam"
+    },
+    {
+      "exck": "06e889dc467184f8ed1ab3ea69fe9367e2e6de24092e029ff349e46674a7c45f",
+      "md5": "1dc2ebaffc82ae5cb5160e25a767763b",
+      "module": "Credo.Check.Readability.VariableNames",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Readability.VariableNames.beam"
+    },
+    {
+      "exck": "61e3747395d2942a3a52b619667683978c46a5a478eb5405c905bc5ee14928c2",
+      "md5": "96961b43ea40216691654d4286547937",
+      "module": "Credo.Check.Readability.WithCustomTaggedTuple",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Readability.WithCustomTaggedTuple.beam"
+    },
+    {
+      "exck": "5b2b56ae3b4fb1c1ed6b4697233041f6d8c8dbc748f89f5a6866d26916471271",
+      "md5": "e3d9ea641b19567e725c905b82bb4441",
+      "module": "Credo.Check.Readability.WithSingleClause",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Readability.WithSingleClause.beam"
+    },
+    {
+      "exck": "0020d68667d82eebac235bb0464a283a170d6ae882e7a0a295692d68549bb678",
+      "md5": "9620dc0054cbba28d0a37768f335890d",
+      "module": "Credo.Check.Refactor.ABCSize",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Refactor.ABCSize.beam"
+    },
+    {
+      "exck": "bd55b18965b993195fcdac03f59605ada13e60db45f9cee39b857c50061383d5",
+      "md5": "401254e3e5f305aa49b25301619c7833",
+      "module": "Credo.Check.Refactor.AppendSingleItem",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Refactor.AppendSingleItem.beam"
+    },
+    {
+      "exck": "7f58759549509d1b1719aad99a2aa54f1b5715b0211e9dd03008f16e62545d35",
+      "md5": "71c4e2aaaff8c253c043bfce932c2949",
+      "module": "Credo.Check.Refactor.Apply",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Refactor.Apply.beam"
+    },
+    {
+      "exck": "5b2b56ae3b4fb1c1ed6b4697233041f6d8c8dbc748f89f5a6866d26916471271",
+      "md5": "a580f7868076e8879df670ec3236a4d6",
+      "module": "Credo.Check.Refactor.CaseTrivialMatches",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Refactor.CaseTrivialMatches.beam"
+    },
+    {
+      "exck": "5b2b56ae3b4fb1c1ed6b4697233041f6d8c8dbc748f89f5a6866d26916471271",
+      "md5": "76fc8f8454b62b1c224013c846d1edb7",
+      "module": "Credo.Check.Refactor.CondStatements",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Refactor.CondStatements.beam"
+    },
+    {
+      "exck": "10a65f0f210b73663012259bd130208f61a2f82e3b8d6ea87b919f63bf1f315e",
+      "md5": "07558bb1956edcf0460c7cb9b44aa4e9",
+      "module": "Credo.Check.Refactor.CyclomaticComplexity",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Refactor.CyclomaticComplexity.beam"
+    },
+    {
+      "exck": "bd55b18965b993195fcdac03f59605ada13e60db45f9cee39b857c50061383d5",
+      "md5": "c7f7ead014546962b8eee30eb7d8a3f1",
+      "module": "Credo.Check.Refactor.DoubleBooleanNegation",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Refactor.DoubleBooleanNegation.beam"
+    },
+    {
+      "exck": "4011e73086f3913044ddb5dbdf62bf0cd9161944b0be05918d07f6fdba147c12",
+      "md5": "178e316dfc976482393abbc5fccb08a3",
+      "module": "Credo.Check.Refactor.EnumHelpers",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Refactor.EnumHelpers.beam"
+    },
+    {
+      "exck": "4cb63bda9dc5d1d8f1281299e0069ddd2576cc8ead0176c2334a1e0d1f14826e",
+      "md5": "680665a3d7933bd9bb669064a6efc367",
+      "module": "Credo.Check.Refactor.FilterCount",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Refactor.FilterCount.beam"
+    },
+    {
+      "exck": "88a51fcc721090991b009a0f40baa685519006f181e1c05fad6727bdafaf59b6",
+      "md5": "c816c654e4ce0586e2104e6671ebf3c9",
+      "module": "Credo.Check.Refactor.FilterFilter",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Refactor.FilterFilter.beam"
+    },
+    {
+      "exck": "5ad5a1163144ce4852b5649b1da9c879fbce50ee8f96fecfdc6f706a27479589",
+      "md5": "16c651c1b43597a47fb4893308a2b528",
+      "module": "Credo.Check.Refactor.FilterReject",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Refactor.FilterReject.beam"
+    },
+    {
+      "exck": "7474e8354351920a9cab744584a21d32341505fa1cf0bc29cc3f29e8020a756a",
+      "md5": "e2057ab6cb5fd318cf4234bdae58c935",
+      "module": "Credo.Check.Refactor.FunctionArity",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Refactor.FunctionArity.beam"
+    },
+    {
+      "exck": "c3e999895261a17116f53a4f57b2dbe9064500d300d57e0a2dcad901540e443b",
+      "md5": "736d4e4a401ca349dc1b0a8fd55b1ef9",
+      "module": "Credo.Check.Refactor.IoPuts",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Refactor.IoPuts.beam"
+    },
+    {
+      "exck": "4804a325c3a01a6bb7e70806389377498a93dc9e28423f4e189797d54affb65b",
+      "md5": "e839ab7543e9fda81c5a4dc6ae368064",
+      "module": "Credo.Check.Refactor.LongQuoteBlocks",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Refactor.LongQuoteBlocks.beam"
+    },
+    {
+      "exck": "06e889dc467184f8ed1ab3ea69fe9367e2e6de24092e029ff349e46674a7c45f",
+      "md5": "1aecb0253e5ea9d7bb135477575cc6d7",
+      "module": "Credo.Check.Refactor.MapInto",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Refactor.MapInto.beam"
+    },
+    {
+      "exck": "4cb63bda9dc5d1d8f1281299e0069ddd2576cc8ead0176c2334a1e0d1f14826e",
+      "md5": "54c9a1f87748f2cfc3dc3c8117dd9b6d",
+      "module": "Credo.Check.Refactor.MapJoin",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Refactor.MapJoin.beam"
+    },
+    {
+      "exck": "88a51fcc721090991b009a0f40baa685519006f181e1c05fad6727bdafaf59b6",
+      "md5": "28a132eafda326d4f2fedf84e7ee83a0",
+      "module": "Credo.Check.Refactor.MapMap",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Refactor.MapMap.beam"
+    },
+    {
+      "exck": "3e1594568f2c5a37cdd6336ae343c49d0af812c63b438ccc866282681aa23448",
+      "md5": "3364c3051f1796d3200d4aedc5e0ea93",
+      "module": "Credo.Check.Refactor.MatchInCondition",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Refactor.MatchInCondition.beam"
+    },
+    {
+      "exck": "b6f3d78899015d0d6b8ed91bf326a1fd64ff30e3f636c374927cb8523d36fca5",
+      "md5": "82d2e6453a46d70efd93795605fbbefd",
+      "module": "Credo.Check.Refactor.ModuleDependencies",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Refactor.ModuleDependencies.beam"
+    },
+    {
+      "exck": "06e889dc467184f8ed1ab3ea69fe9367e2e6de24092e029ff349e46674a7c45f",
+      "md5": "88c9687da48c96efa320167a5de8534c",
+      "module": "Credo.Check.Refactor.NegatedConditionsInUnless",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Refactor.NegatedConditionsInUnless.beam"
+    },
+    {
+      "exck": "06e889dc467184f8ed1ab3ea69fe9367e2e6de24092e029ff349e46674a7c45f",
+      "md5": "fd4f16f4ee53cbe8f445ad2c0e0a3347",
+      "module": "Credo.Check.Refactor.NegatedConditionsWithElse",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Refactor.NegatedConditionsWithElse.beam"
+    },
+    {
+      "exck": "88b812ee800e9d513cc0a4b074578f11c81b03dbf10fc448d6d55682550a617b",
+      "md5": "2cb3e7f23075072e0c2825b1b295bbaa",
+      "module": "Credo.Check.Refactor.NegatedIsNil",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Refactor.NegatedIsNil.beam"
+    },
+    {
+      "exck": "f82c58d2f42c9a21f88337395bcdc33c0fc4cfd5a35d697970193daef184f218",
+      "md5": "8b1df4b28ae46460292939191cd6239f",
+      "module": "Credo.Check.Refactor.Nesting",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Refactor.Nesting.beam"
+    },
+    {
+      "exck": "ab9c7f89b6aea251bcd9fbcf4a1aebfd8cff2b93937764b15cb851a4cbcc770a",
+      "md5": "500f53b336d3ef843995b28ececfc366",
+      "module": "Credo.Check.Refactor.PassAsyncInTestCases",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Refactor.PassAsyncInTestCases.beam"
+    },
+    {
+      "exck": "10a65f0f210b73663012259bd130208f61a2f82e3b8d6ea87b919f63bf1f315e",
+      "md5": "f9d177a30b0062b1b749f1f6c62c368f",
+      "module": "Credo.Check.Refactor.PerceivedComplexity",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Refactor.PerceivedComplexity.beam"
+    },
+    {
+      "exck": "e8227974d7bc8b7a327ea9e37aa51001b8d092137cb587e28cacb1dc62d824ca",
+      "md5": "174f53967386e0989e11f3cc8defd5d6",
+      "module": "Credo.Check.Refactor.PipeChainStart",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Refactor.PipeChainStart.beam"
+    },
+    {
+      "exck": "06e889dc467184f8ed1ab3ea69fe9367e2e6de24092e029ff349e46674a7c45f",
+      "md5": "0f24d6aa90545402ea5cd8b21f1a3c64",
+      "module": "Credo.Check.Refactor.RedundantWithClauseResult",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Refactor.RedundantWithClauseResult.beam"
+    },
+    {
+      "exck": "5ad5a1163144ce4852b5649b1da9c879fbce50ee8f96fecfdc6f706a27479589",
+      "md5": "bfe0d3fd10e87a9015132bc3f22dc435",
+      "module": "Credo.Check.Refactor.RejectFilter",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Refactor.RejectFilter.beam"
+    },
+    {
+      "exck": "88a51fcc721090991b009a0f40baa685519006f181e1c05fad6727bdafaf59b6",
+      "md5": "9e4030ae115d50a54f737781d20e086c",
+      "module": "Credo.Check.Refactor.RejectReject",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Refactor.RejectReject.beam"
+    },
+    {
+      "exck": "06e889dc467184f8ed1ab3ea69fe9367e2e6de24092e029ff349e46674a7c45f",
+      "md5": "15adba69e2714c3712a44a329b4d73d4",
+      "module": "Credo.Check.Refactor.UnlessWithElse",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Refactor.UnlessWithElse.beam"
+    },
+    {
+      "exck": "4cb63bda9dc5d1d8f1281299e0069ddd2576cc8ead0176c2334a1e0d1f14826e",
+      "md5": "f04bc971d528974a3a85e7b051c2ade3",
+      "module": "Credo.Check.Refactor.UtcNowTruncate",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Refactor.UtcNowTruncate.beam"
+    },
+    {
+      "exck": "1f884006491920ea8f7fbddd4b94a91fada18ffdae08ec5e8e696e724b05c467",
+      "md5": "f29230f332f0901c9f5e78a16f6b4aba",
+      "module": "Credo.Check.Refactor.VariableRebinding",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Refactor.VariableRebinding.beam"
+    },
+    {
+      "exck": "06e889dc467184f8ed1ab3ea69fe9367e2e6de24092e029ff349e46674a7c45f",
+      "md5": "4f41f51d3641f53735a9454a1ca5f135",
+      "module": "Credo.Check.Refactor.WithClauses",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Refactor.WithClauses.beam"
+    },
+    {
+      "exck": "dc0d80289f41d41521477f2929581f0013b060c5b6906b723c23d85376c54127",
+      "md5": "caa2e39090ddeb2f896f0de9d667e43c",
+      "module": "Credo.Check.Runner",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Runner.beam"
+    },
+    {
+      "exck": "7f60f64a9c9eea1bc68476e547d9d71546d25abf84abff857852d9cc37869ea7",
+      "md5": "5f3b9877c0bc9a6b3eb819e02b420a57",
+      "module": "Credo.Check.Warning.ApplicationConfigInModuleAttribute",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Warning.ApplicationConfigInModuleAttribute.beam"
+    },
+    {
+      "exck": "06e889dc467184f8ed1ab3ea69fe9367e2e6de24092e029ff349e46674a7c45f",
+      "md5": "62b5108f7fbb26bcca4842ae19c147cf",
+      "module": "Credo.Check.Warning.BoolOperationOnSameValues",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Warning.BoolOperationOnSameValues.beam"
+    },
+    {
+      "exck": "06e889dc467184f8ed1ab3ea69fe9367e2e6de24092e029ff349e46674a7c45f",
+      "md5": "0d65df3525452e2ce7b1e7518b31b578",
+      "module": "Credo.Check.Warning.Dbg",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Warning.Dbg.beam"
+    },
+    {
+      "exck": "06e889dc467184f8ed1ab3ea69fe9367e2e6de24092e029ff349e46674a7c45f",
+      "md5": "b7f391cabf0afbeb0ec088727818a093",
+      "module": "Credo.Check.Warning.ExpensiveEmptyEnumCheck",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Warning.ExpensiveEmptyEnumCheck.beam"
+    },
+    {
+      "exck": "82b3ce2e6baf49ef360d4c0593dbe70c412f5e211569f75681f9e816818061b7",
+      "md5": "953c92e676d67911fed3a7e39a54a9b1",
+      "module": "Credo.Check.Warning.ForbiddenModule",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Warning.ForbiddenModule.beam"
+    },
+    {
+      "exck": "06e889dc467184f8ed1ab3ea69fe9367e2e6de24092e029ff349e46674a7c45f",
+      "md5": "c449eea392131959320f61c44a2bc99e",
+      "module": "Credo.Check.Warning.IExPry",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Warning.IExPry.beam"
+    },
+    {
+      "exck": "06e889dc467184f8ed1ab3ea69fe9367e2e6de24092e029ff349e46674a7c45f",
+      "md5": "d3e9f1e1e7d8651cdc4875e7b9c1dbc7",
+      "module": "Credo.Check.Warning.IoInspect",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Warning.IoInspect.beam"
+    },
+    {
+      "exck": "074f52034721b45ffa295126649f3e5bd97c03a9ca19dedf8741c566476d70c8",
+      "md5": "67eecf2b8745ddebc9ad1d0c8c14080e",
+      "module": "Credo.Check.Warning.LazyLogging",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Warning.LazyLogging.beam"
+    },
+    {
+      "exck": "7f60f64a9c9eea1bc68476e547d9d71546d25abf84abff857852d9cc37869ea7",
+      "md5": "565eb0820f308d52361b8c4a802e2d82",
+      "module": "Credo.Check.Warning.LeakyEnvironment",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Warning.LeakyEnvironment.beam"
+    },
+    {
+      "exck": "897027337b506a0083d90a760e24969fa997bfa6e7a5a3ba66ba6c364b3080bb",
+      "md5": "47c9c166aa7a0197d3eed953a7f62fc1",
+      "module": "Credo.Check.Warning.MapGetUnsafePass",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Warning.MapGetUnsafePass.beam"
+    },
+    {
+      "exck": "1c4f0fe6dea7f510575e884da849a2e055f23c72f27fe7f16976ac492575e537",
+      "md5": "4287f161234ee02f49b72627d1d61a20",
+      "module": "Credo.Check.Warning.MissedMetadataKeyInLoggerConfig",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Warning.MissedMetadataKeyInLoggerConfig.beam"
+    },
+    {
+      "exck": "f468e3d0c14d3c42774de48709ef189c0b96b49cece6ab9f4a552bce8a1c0939",
+      "md5": "e77c3781f5c472cca377c886fbc6ae35",
+      "module": "Credo.Check.Warning.MixEnv",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Warning.MixEnv.beam"
+    },
+    {
+      "exck": "06e889dc467184f8ed1ab3ea69fe9367e2e6de24092e029ff349e46674a7c45f",
+      "md5": "029405071e8b95f5385ca78f6a4e72b8",
+      "module": "Credo.Check.Warning.OperationOnSameValues",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Warning.OperationOnSameValues.beam"
+    },
+    {
+      "exck": "06e889dc467184f8ed1ab3ea69fe9367e2e6de24092e029ff349e46674a7c45f",
+      "md5": "c85c6ee3f2a6de174f2db110d2f60200",
+      "module": "Credo.Check.Warning.OperationWithConstantResult",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Warning.OperationWithConstantResult.beam"
+    },
+    {
+      "exck": "5b2b56ae3b4fb1c1ed6b4697233041f6d8c8dbc748f89f5a6866d26916471271",
+      "md5": "8c67f4c675254e341c6ec090eb4cf832",
+      "module": "Credo.Check.Warning.RaiseInsideRescue",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Warning.RaiseInsideRescue.beam"
+    },
+    {
+      "exck": "477a4991942e5cd848c7712e3bd55ae68b647535e76e6fff1d13783418c1a0b3",
+      "md5": "161f77c6fc88a6111f30500cc96a085f",
+      "module": "Credo.Check.Warning.SpecWithStruct",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Warning.SpecWithStruct.beam"
+    },
+    {
+      "exck": "cd0c35936734fbbec3eff869d897cea8f246522743781802171a99fc20841a90",
+      "md5": "c88cbe550eb9edf6fed682a9cfd61954",
+      "module": "Credo.Check.Warning.StructFieldAmount",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Warning.StructFieldAmount.beam"
+    },
+    {
+      "exck": "bdd0278942d100d56a106ec7afef6f871757e9505aebd34a1862d638343b7b04",
+      "md5": "bcbf74c844938c7eccaf322992c9a8c1",
+      "module": "Credo.Check.Warning.UnsafeExec",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Warning.UnsafeExec.beam"
+    },
+    {
+      "exck": "86b742e09ff106b861697818ddef2a1b781df4806c4e70e53e7db02c5d8194ed",
+      "md5": "b8ecc4f4a89104f87a86843bdc7c2ff7",
+      "module": "Credo.Check.Warning.UnsafeToAtom",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Warning.UnsafeToAtom.beam"
+    },
+    {
+      "exck": "06e889dc467184f8ed1ab3ea69fe9367e2e6de24092e029ff349e46674a7c45f",
+      "md5": "99d2741791c652370e24be9702087d2a",
+      "module": "Credo.Check.Warning.UnusedEnumOperation",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Warning.UnusedEnumOperation.beam"
+    },
+    {
+      "exck": "06e889dc467184f8ed1ab3ea69fe9367e2e6de24092e029ff349e46674a7c45f",
+      "md5": "87c351769bb477314a90acec7b51bdd4",
+      "module": "Credo.Check.Warning.UnusedFileOperation",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Warning.UnusedFileOperation.beam"
+    },
+    {
+      "exck": "ac9918a18f197d747076be06647708ffbd77c480f208ee13a4a72e652aa18578",
+      "md5": "cb6b00e0be5d22088f1e11e76b6a437c",
+      "module": "Credo.Check.Warning.UnusedFunctionReturnHelper",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Warning.UnusedFunctionReturnHelper.beam"
+    },
+    {
+      "exck": "06e889dc467184f8ed1ab3ea69fe9367e2e6de24092e029ff349e46674a7c45f",
+      "md5": "6df41acb4c45c4d508a6de50f8353936",
+      "module": "Credo.Check.Warning.UnusedKeywordOperation",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Warning.UnusedKeywordOperation.beam"
+    },
+    {
+      "exck": "06e889dc467184f8ed1ab3ea69fe9367e2e6de24092e029ff349e46674a7c45f",
+      "md5": "a8a9619c84fde89dd3e6457aca83c7b4",
+      "module": "Credo.Check.Warning.UnusedListOperation",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Warning.UnusedListOperation.beam"
+    },
+    {
+      "exck": "93ccc82f0d81f8d5709802cbdbfb43bb71eceb6d2d0a377b7e924662b9e18746",
+      "md5": "ae535ab3bd4a6bb7c7e769841dd7df1f",
+      "module": "Credo.Check.Warning.UnusedOperation",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Warning.UnusedOperation.beam"
+    },
+    {
+      "exck": "06e889dc467184f8ed1ab3ea69fe9367e2e6de24092e029ff349e46674a7c45f",
+      "md5": "1f50af018c89ed5f6567e75c7b696501",
+      "module": "Credo.Check.Warning.UnusedPathOperation",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Warning.UnusedPathOperation.beam"
+    },
+    {
+      "exck": "06e889dc467184f8ed1ab3ea69fe9367e2e6de24092e029ff349e46674a7c45f",
+      "md5": "c8d4fe2b788f8b27d7fc088c3e53b947",
+      "module": "Credo.Check.Warning.UnusedRegexOperation",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Warning.UnusedRegexOperation.beam"
+    },
+    {
+      "exck": "06e889dc467184f8ed1ab3ea69fe9367e2e6de24092e029ff349e46674a7c45f",
+      "md5": "ae39ddaf35b8bdd36af08cef0dad6984",
+      "module": "Credo.Check.Warning.UnusedStringOperation",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Warning.UnusedStringOperation.beam"
+    },
+    {
+      "exck": "06e889dc467184f8ed1ab3ea69fe9367e2e6de24092e029ff349e46674a7c45f",
+      "md5": "f4c66a6bdae255cbf4d488e38dc30577",
+      "module": "Credo.Check.Warning.UnusedTupleOperation",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Warning.UnusedTupleOperation.beam"
+    },
+    {
+      "exck": "50c621163df0250847e98bf5db32b9312cda0eb1abffcfc3b405e03686dd85b7",
+      "md5": "b628a34723120efc016bd4584fbf4768",
+      "module": "Credo.Check.Warning.WrongTestFileExtension",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Check.Warning.WrongTestFileExtension.beam"
+    },
+    {
+      "exck": "e28943922e363c33bcc42c46657808929d27a1a277fefa8c216d09e4452cf1a2",
+      "md5": "65e2192dbf1515c5de13cbb4f53870c3",
+      "module": "Credo.Code",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Code.beam"
+    },
+    {
+      "exck": "1e341f6833b7e521d8cdaddb855a91c07f2dddb07749c7347b4a2c9c6ec25c97",
+      "md5": "330ab815b2a7210c8d88057436d6a057",
+      "module": "Credo.Code.Block",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Code.Block.beam"
+    },
+    {
+      "exck": "f5411bcfe4cbc8c6de78734e7c33a207990b6040493e00b3ab7b41de36943817",
+      "md5": "2b923f8c1e1b2214a02a3b753ad169a6",
+      "module": "Credo.Code.Charlists",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Code.Charlists.beam"
+    },
+    {
+      "exck": "f5411bcfe4cbc8c6de78734e7c33a207990b6040493e00b3ab7b41de36943817",
+      "md5": "196a9d0698d9042cf12c7086d688c02c",
+      "module": "Credo.Code.Heredocs",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Code.Heredocs.beam"
+    },
+    {
+      "exck": "ed9e5bff2d740cd36f86624e54b4d18f3fe8e684868763c995f4fa2f309bced9",
+      "md5": "b3385966fb2844f7140c3a6e1d61fe9f",
+      "module": "Credo.Code.InterpolationHelper",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Code.InterpolationHelper.beam"
+    },
+    {
+      "exck": "1896ff41d740ea2bf61c7b1602fe05f0464e9a702e7da7d7d60ef698378a85a5",
+      "md5": "c03c00d076d3148ed7b7a0e0d819aed4",
+      "module": "Credo.Code.Module",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Code.Module.beam"
+    },
+    {
+      "exck": "1b2c7ecd4c5ff026cacd9affd7d7c93358492542511c67bc8052782a17a8bf22",
+      "md5": "895f69fa9528cde41d6c56263a0b8e12",
+      "module": "Credo.Code.Name",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Code.Name.beam"
+    },
+    {
+      "exck": "0c81495cf8dac6d4fdafd3b9ba120fa94894268002bdf02d2e1af1ce1a8bb29e",
+      "md5": "a0330b82db6caf2dff77f1c05749826e",
+      "module": "Credo.Code.Parameters",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Code.Parameters.beam"
+    },
+    {
+      "exck": "722a99a1081306643aa7eb109da57ec94ffb86a604edc5272b9200667c3ee97e",
+      "md5": "0053d6c137869119f26fdb5b3969c75a",
+      "module": "Credo.Code.ParserError",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Code.ParserError.beam"
+    },
+    {
+      "exck": "e80c73f6eb1f8c258026471f7cc805ec2b73518d2a73ab946bc3c401d54a102b",
+      "md5": "216137f1d99f3113bf614ee74a407cc9",
+      "module": "Credo.Code.Scope",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Code.Scope.beam"
+    },
+    {
+      "exck": "f5411bcfe4cbc8c6de78734e7c33a207990b6040493e00b3ab7b41de36943817",
+      "md5": "56c615c4644c2838ca27c6478787e677",
+      "module": "Credo.Code.Sigils",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Code.Sigils.beam"
+    },
+    {
+      "exck": "f5411bcfe4cbc8c6de78734e7c33a207990b6040493e00b3ab7b41de36943817",
+      "md5": "1ac15b48ef4b23e161ef88c106c9b778",
+      "module": "Credo.Code.Strings",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Code.Strings.beam"
+    },
+    {
+      "exck": "e249aed24ce17d62857f73ef0c59c00d75ed6eb739cd379b9468311a79d8fbb6",
+      "md5": "d1b7c093317f59c429b48a9a85bcbdd5",
+      "module": "Credo.Code.Token",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Code.Token.beam"
+    },
+    {
+      "exck": "e1585dfce92fcbb4d9ca1a7187887383e1ddc1b0bb6277d4a626114ed3ad7af1",
+      "md5": "dc4ab28e57d6205579ac11e09929132c",
+      "module": "Credo.Code.TokenAstCorrelation",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Code.TokenAstCorrelation.beam"
+    },
+    {
+      "exck": "7ea8331b1d996a2e52f90d5330550630c280371bce350372ed5a82dc58aaf913",
+      "md5": "9d145a1017dfdf9cff6e75b39828f048",
+      "module": "Credo.ConfigBuilder",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.ConfigBuilder.beam"
+    },
+    {
+      "exck": "fb9755b5b4844ac8ed7f75e2a97226f58a2a9b957e77c5ac7904923e2b6669c7",
+      "md5": "35ba0c906acc960dc86e3b1a66011222",
+      "module": "Credo.ConfigFile",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.ConfigFile.beam"
+    },
+    {
+      "exck": "7ab9020616bfd78037889b10340b653f287b9c7009724b2258be803e4a53dfc0",
+      "md5": "ac91defd5441da3135b51cadec2b0b61",
+      "module": "Credo.Execution",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Execution.beam"
+    },
+    {
+      "exck": "3fdf00db4e8a864b7fd0b27ce29b7827fe47e514ff6ae7256447326e6b9b21ff",
+      "md5": "d00ed1830a65441e211a7c4b28d5de9d",
+      "module": "Credo.Execution.ExecutionConfigFiles",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Execution.ExecutionConfigFiles.beam"
+    },
+    {
+      "exck": "ea61fd6c7b3fa1588e35e5536052490d4ce36a9ae9aab1221196543ea22ddd9b",
+      "md5": "bb2cf1a70f48bec106cfbf4fe577bac8",
+      "module": "Credo.Execution.ExecutionIssues",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Execution.ExecutionIssues.beam"
+    },
+    {
+      "exck": "72f5ea9e1d9a8814ca74725807422ef1717a2815dc38e1d00fadcbb165063c94",
+      "md5": "80799e1c0165bc3e870f35bd3d3575fb",
+      "module": "Credo.Execution.ExecutionSourceFiles",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Execution.ExecutionSourceFiles.beam"
+    },
+    {
+      "exck": "7a7e0a6f58f945f41ccc76e0b9b3af9dd8b5048f10cafaa4ad745053819a1113",
+      "md5": "343f8281954eff531ee0586e50531a70",
+      "module": "Credo.Execution.ExecutionTiming",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Execution.ExecutionTiming.beam"
+    },
+    {
+      "exck": "a94c0a64c9dcde64b6a0e91bb8308fea302b6bf7b78d0505eca697cffda0273d",
+      "md5": "a823666352583bf6557264af1f6cce2c",
+      "module": "Credo.Execution.Task",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Execution.Task.beam"
+    },
+    {
+      "exck": "bbbb8f0e07bc13c7cb1559dbcd7cf2ca965012a340a4672c07ae5327e66d3650",
+      "md5": "2d937b1097678f882e21fa6f629ef68a",
+      "module": "Credo.Execution.Task.AppendDefaultConfig",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Execution.Task.AppendDefaultConfig.beam"
+    },
+    {
+      "exck": "bbbb8f0e07bc13c7cb1559dbcd7cf2ca965012a340a4672c07ae5327e66d3650",
+      "md5": "349f215c1f9205606925e2a394eb8853",
+      "module": "Credo.Execution.Task.AppendExtraConfig",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Execution.Task.AppendExtraConfig.beam"
+    },
+    {
+      "exck": "bbbb8f0e07bc13c7cb1559dbcd7cf2ca965012a340a4672c07ae5327e66d3650",
+      "md5": "f1cf7eeeaf9fc40afc9605d29ffb5f77",
+      "module": "Credo.Execution.Task.AssignExitStatusForIssues",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Execution.Task.AssignExitStatusForIssues.beam"
+    },
+    {
+      "exck": "bbbb8f0e07bc13c7cb1559dbcd7cf2ca965012a340a4672c07ae5327e66d3650",
+      "md5": "5345d89fe23b3b792d30800b10daa805",
+      "module": "Credo.Execution.Task.ConvertCLIOptionsToConfig",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Execution.Task.ConvertCLIOptionsToConfig.beam"
+    },
+    {
+      "exck": "e26e59c0aa5eb0f30c7e46b92aa6100f1e6cfca4cd003cf7706ac366be816ab3",
+      "md5": "d60251b6bcf73bfee71e64ce86e375f0",
+      "module": "Credo.Execution.Task.DetermineCommand",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Execution.Task.DetermineCommand.beam"
+    },
+    {
+      "exck": "a12cd2adb1abcd664f90d5fd7902490162661a233b3ca42f8928a860b043741a",
+      "md5": "fdb03da0ff28c59271174e3c3bfd2bb6",
+      "module": "Credo.Execution.Task.InitializeCommand",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Execution.Task.InitializeCommand.beam"
+    },
+    {
+      "exck": "9a009ea9a00c2126aa192d7c804868b80be079bd6ef030812125e280a09f2351",
+      "md5": "bd80fd75ec67ae7ee32fcc7718de1e43",
+      "module": "Credo.Execution.Task.InitializePlugins",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Execution.Task.InitializePlugins.beam"
+    },
+    {
+      "exck": "5afdcd1123efc8b04e27b7c8a23f0fe3492bcfb048ccdedc0e6a194f7db99b79",
+      "md5": "cff55a191e5b737f9ced7320f77b8f62",
+      "module": "Credo.Execution.Task.ParseOptions",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Execution.Task.ParseOptions.beam"
+    },
+    {
+      "exck": "9e67754f9213b4fcb5562a70179604deaa6e8984e37725450632c1f19677be7c",
+      "md5": "a19d9e36287cbf1dd63522fe93acc66e",
+      "module": "Credo.Execution.Task.RequireRequires",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Execution.Task.RequireRequires.beam"
+    },
+    {
+      "exck": "bbbb8f0e07bc13c7cb1559dbcd7cf2ca965012a340a4672c07ae5327e66d3650",
+      "md5": "dfd45f8746c9389c81dbda213713fac8",
+      "module": "Credo.Execution.Task.RunCommand",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Execution.Task.RunCommand.beam"
+    },
+    {
+      "exck": "b769b279b42c2f73915b77c89361a3f03914d2d753815ef502168dbbb2d6eae6",
+      "md5": "99eda31d2ecfd338b76b233e57364c59",
+      "module": "Credo.Execution.Task.SetDefaultCommand",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Execution.Task.SetDefaultCommand.beam"
+    },
+    {
+      "exck": "bbbb8f0e07bc13c7cb1559dbcd7cf2ca965012a340a4672c07ae5327e66d3650",
+      "md5": "1f4723cdb4252b9d6349b9d2d43fc09b",
+      "module": "Credo.Execution.Task.UseColors",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Execution.Task.UseColors.beam"
+    },
+    {
+      "exck": "557a9f658f5677bc519b8acd37fed768db2032e5f1ab46e26f39bd5d9f4d73f5",
+      "md5": "dad2b3b7d902d81ebc858f73111d4d10",
+      "module": "Credo.Execution.Task.ValidateConfig",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Execution.Task.ValidateConfig.beam"
+    },
+    {
+      "exck": "05c9b211756cb0f644a09b52d6cd4baa24a5362b20170a0e8910fa5581d97bda",
+      "md5": "a74562612d53bf383d1a80c233dc3512",
+      "module": "Credo.Execution.Task.ValidateOptions",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Execution.Task.ValidateOptions.beam"
+    },
+    {
+      "exck": "9e27e1a3a2e122c7e27eb9724f2684f690b013b764fdaf27b38bec2e515b049a",
+      "md5": "f373d8caa5f5a345f48da1b7c350ae7a",
+      "module": "Credo.Execution.Task.WriteDebugReport",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Execution.Task.WriteDebugReport.beam"
+    },
+    {
+      "exck": "a65e433564225a53a091459f96c90bba209f983e8323e61cdddd5b7a312a7c58",
+      "md5": "e11253a4e40497d94a8481039a590a6b",
+      "module": "Credo.ExsLoader",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.ExsLoader.beam"
+    },
+    {
+      "exck": "846630c81ee1366356c12e3a94b603bfbdc170e1dcf87750b697b6d742680341",
+      "md5": "676eba92677a26570e35bfbc186264bd",
+      "module": "Credo.Issue",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Issue.beam"
+    },
+    {
+      "exck": "90aba725aa02558a029dda19a4ea09c975f4df8da335dfeb34b30063ba055e2e",
+      "md5": "bd71876af66130ab484f39ab735ec0ab",
+      "module": "Credo.IssueMeta",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.IssueMeta.beam"
+    },
+    {
+      "exck": "ecb5a35a0bc02899d595c2e337cdfce5b8cd7dba419d354d9e4ccf62cac1c0c5",
+      "md5": "309b51f721ee42cb7d4c1a9c8485f590",
+      "module": "Credo.Plugin",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Plugin.beam"
+    },
+    {
+      "exck": "242eddf8aa5ddb1e1c91db6aa2683743dc05801a652fb6d54ea7ac4cae256b8f",
+      "md5": "6d4001313d208a18795970eccd53b991",
+      "module": "Credo.Priority",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Priority.beam"
+    },
+    {
+      "exck": "0fed0113271b57acd14c6dc43e0b8728b193669baa71cdead4bc6e84cfc5c5d8",
+      "md5": "d153ef11d5198333438c4cf593e927c4",
+      "module": "Credo.Service.ConfigFiles",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Service.ConfigFiles.beam"
+    },
+    {
+      "exck": "4e81e43dd17def55fd4d3118c80a4e70fd2fa801cff172f633eb65c6ff19385b",
+      "md5": "e08906bb3b63dc96bf9d80b49513dc25",
+      "module": "Credo.Service.ETSTableHelper",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Service.ETSTableHelper.beam"
+    },
+    {
+      "exck": "0fed0113271b57acd14c6dc43e0b8728b193669baa71cdead4bc6e84cfc5c5d8",
+      "md5": "22a498562fd098dab0d0d95c813a19a8",
+      "module": "Credo.Service.SourceFileAST",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Service.SourceFileAST.beam"
+    },
+    {
+      "exck": "0fed0113271b57acd14c6dc43e0b8728b193669baa71cdead4bc6e84cfc5c5d8",
+      "md5": "63b1e9516ba2ed6d70bcc370594339dd",
+      "module": "Credo.Service.SourceFileLines",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Service.SourceFileLines.beam"
+    },
+    {
+      "exck": "0fed0113271b57acd14c6dc43e0b8728b193669baa71cdead4bc6e84cfc5c5d8",
+      "md5": "8420eca4fc7de4bb01dd90f90499303b",
+      "module": "Credo.Service.SourceFileScopePriorities",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Service.SourceFileScopePriorities.beam"
+    },
+    {
+      "exck": "0fed0113271b57acd14c6dc43e0b8728b193669baa71cdead4bc6e84cfc5c5d8",
+      "md5": "df739f44ed6236983e199b1cebb406d2",
+      "module": "Credo.Service.SourceFileScopes",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Service.SourceFileScopes.beam"
+    },
+    {
+      "exck": "0fed0113271b57acd14c6dc43e0b8728b193669baa71cdead4bc6e84cfc5c5d8",
+      "md5": "d80bd6ac2cf305f4a9b853484f2689da",
+      "module": "Credo.Service.SourceFileSource",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Service.SourceFileSource.beam"
+    },
+    {
+      "exck": "de76187e27bf9ba5ab416480d720e6a4381e1189c5ccf45124e00bfe10b79cbe",
+      "md5": "d6ff9921ee78790296c1b5cfb65dafa2",
+      "module": "Credo.Severity",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Severity.beam"
+    },
+    {
+      "exck": "410aebce2686d6a642b23651eab6bd0ed06dad3606897feddff31c346ae80283",
+      "md5": "717bcfa50634af932712ea27c33a6d29",
+      "module": "Credo.SourceFile",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.SourceFile.beam"
+    },
+    {
+      "exck": "4ac049b933e789202fc0af4d6e827b5d4234e50a5a236424117eef64d44fbb18",
+      "md5": "1549da0a01cb42d57ad31da93cdd6fdf",
+      "module": "Credo.Sources",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Sources.beam"
+    },
+    {
+      "exck": "a406f12d4b477fea50a565ea39cbb1c6816cf293c348ae0e5e41e0d76d2aa4de",
+      "md5": "b4923a1f6024bba29077945fa60f92e2",
+      "module": "Credo.Test.Assertions",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Test.Assertions.beam"
+    },
+    {
+      "exck": "93bdb97291ad995c474f8bfc920137c0ee503452c6835e1faa012f48940627fe",
+      "md5": "a0ef9258ed0e7e137c1744c230ecb0e6",
+      "module": "Credo.Test.Case",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Test.Case.beam"
+    },
+    {
+      "exck": "acd970a4a8c9534014b49241be98fa7976ff1a757ff22fdf8d22f0ac191e5f4d",
+      "md5": "856202600c918b0dda71f47970a78a24",
+      "module": "Credo.Test.CheckRunner",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Test.CheckRunner.beam"
+    },
+    {
+      "exck": "5ef5f20634c014c9f27b188a42196038d8ba1658c537402b4de5f8d024359c9f",
+      "md5": "44bcd8ac2137b8dfa3149d34832a736a",
+      "module": "Credo.Test.SourceFiles",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Test.SourceFiles.beam"
+    },
+    {
+      "exck": "dfaa4773462120f27ad58dc3ac91cdbf4a07ff0fa25ae805d8e7f134759a467e",
+      "md5": "780d0ee50594fe0d3ab48cdcb23a9959",
+      "module": "Credo.Watcher",
+      "path": "_build/test/lib/credo/ebin/Elixir.Credo.Watcher.beam"
+    },
+    {
+      "exck": "4cc820b18f5177a4c45b65926a3bd47eb92434ae37160271207ff6c60202091a",
+      "md5": "ce29d32a0720e3c42e0f0d8e12c796bf",
+      "module": "Inspect.Credo.SourceFile",
+      "path": "_build/test/lib/credo/ebin/Elixir.Inspect.Credo.SourceFile.beam"
+    },
+    {
+      "exck": "11888c0210b3bad2ab4eb405de7141e55afb002beced2a1ec22bd901d7d2c1f1",
+      "md5": "218f38782c5662d33033098711f7d23e",
+      "module": "Mix.Tasks.Credo",
+      "path": "_build/test/lib/credo/ebin/Elixir.Mix.Tasks.Credo.beam"
+    },
+    {
+      "exck": "11888c0210b3bad2ab4eb405de7141e55afb002beced2a1ec22bd901d7d2c1f1",
+      "md5": "beda520404bbe56f886ca12de02177bc",
+      "module": "Mix.Tasks.Credo.Gen.Check",
+      "path": "_build/test/lib/credo/ebin/Elixir.Mix.Tasks.Credo.Gen.Check.beam"
+    },
+    {
+      "exck": "11888c0210b3bad2ab4eb405de7141e55afb002beced2a1ec22bd901d7d2c1f1",
+      "md5": "bfc010f09af571cec9ab1621667af214",
+      "module": "Mix.Tasks.Credo.Gen.Config",
+      "path": "_build/test/lib/credo/ebin/Elixir.Mix.Tasks.Credo.Gen.Config.beam"
+    }
+  ],
+  "capabilities": {
+    "bodies": false,
+    "body_hook": false,
+    "signatures": true
+  },
+  "checker_version": "elixir_checker_v8",
+  "completion": {
+    "blocking": 0,
+    "coverage_violations": [],
+    "exit_code": 0,
+    "reasons": [],
+    "status": "complete"
+  },
+  "config": {
+    "ci": true,
+    "clause_local_qualification": true,
+    "digest": "sha256:c95f1857e0a209121d5e3fc51e45212b3fbc95f647f4b53df9d4adc6b5dcf423",
+    "expand_opaque": false,
+    "profile": "review",
+    "require_static_return": false,
+    "rules": [
+      ["SL001", "warning"],
+      ["SL002", "warning"],
+      ["SL003", "warning"],
+      ["SL006", "warning"],
+      ["SL008", "warning"]
+    ],
+    "warnings_as_errors": false
+  },
+  "elixir": "1.20.4",
+  "findings": [],
+  "ledger": {
+    "bodies": {
+      "completed": 0,
+      "requested": false
+    },
+    "entries": [
+      {
+        "class": "none",
+        "mfa": "Credo.Check.Consistency.ExceptionNames.Collector.find_and_append_issues/5",
+        "module": "Credo.Check.Consistency.ExceptionNames.Collector",
+        "notes": [],
+        "obligation": "established",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "exact",
+        "unknown_reason": null
+      },
+      {
+        "class": "none",
+        "mfa": "Credo.Check.Consistency.LineEndings.Collector.find_and_append_issues/5",
+        "module": "Credo.Check.Consistency.LineEndings.Collector",
+        "notes": [],
+        "obligation": "established",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "exact",
+        "unknown_reason": null
+      },
+      {
+        "class": "none",
+        "mfa": "Credo.Check.Consistency.MultiAliasImportRequireUse.Collector.find_and_append_issues/5",
+        "module": "Credo.Check.Consistency.MultiAliasImportRequireUse.Collector",
+        "notes": [],
+        "obligation": "established",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "exact",
+        "unknown_reason": null
+      },
+      {
+        "class": "none",
+        "mfa": "Credo.Check.Consistency.ParameterPatternMatching.Collector.find_and_append_issues/5",
+        "module": "Credo.Check.Consistency.ParameterPatternMatching.Collector",
+        "notes": [],
+        "obligation": "established",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "exact",
+        "unknown_reason": null
+      },
+      {
+        "class": "none",
+        "mfa": "Credo.Check.Consistency.SpaceAroundOperators.Collector.find_and_append_issues/5",
+        "module": "Credo.Check.Consistency.SpaceAroundOperators.Collector",
+        "notes": [],
+        "obligation": "established",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "exact",
+        "unknown_reason": null
+      },
+      {
+        "class": "none",
+        "mfa": "Credo.Check.Consistency.SpaceInParentheses.Collector.find_and_append_issues/5",
+        "module": "Credo.Check.Consistency.SpaceInParentheses.Collector",
+        "notes": [],
+        "obligation": "established",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "exact",
+        "unknown_reason": null
+      },
+      {
+        "class": "none",
+        "mfa": "Credo.Check.Consistency.TabsOrSpaces.Collector.find_and_append_issues/5",
+        "module": "Credo.Check.Consistency.TabsOrSpaces.Collector",
+        "notes": [],
+        "obligation": "established",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "exact",
+        "unknown_reason": null
+      },
+      {
+        "class": "none",
+        "mfa": "Credo.Check.Consistency.UnusedVariableNames.Collector.find_and_append_issues/5",
+        "module": "Credo.Check.Consistency.UnusedVariableNames.Collector",
+        "notes": [],
+        "obligation": "established",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "exact",
+        "unknown_reason": null
+      },
+      {
+        "class": "unknown",
+        "mfa": "Credo.Code.Module.analyze/1",
+        "module": "Credo.Code.Module",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "approximate",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Credo.Execution.Task.ValidateOptions.error/2",
+        "module": "Credo.Execution.Task.ValidateOptions",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "exact",
+        "unknown_reason": "top_only"
+      },
+      {
+        "class": "unknown",
+        "mfa": "Credo.SourceFile.timed_out/1",
+        "module": "Credo.SourceFile",
+        "notes": [],
+        "obligation": "unknown",
+        "reason": null,
+        "slice": 0,
+        "status": "compared",
+        "translation": "exact",
+        "unknown_reason": "no_counted_component"
+      }
+    ],
+    "functions": {
+      "compared": 11,
+      "found": 11,
+      "unavailable": 0,
+      "unsupported": 0
+    },
+    "lost_analysis": {},
+    "modules": {
+      "analysed": 265,
+      "discovered": 265,
+      "out_of_scope": {
+        "erlang_module": 0,
+        "excluded": 0
+      },
+      "unavailable": {}
+    },
+    "obligations": {
+      "established": 8,
+      "unknown": 3
+    },
+    "obligations_unknown_by_reason": {
+      "no_counted_component": 1,
+      "top_only": 2
+    },
+    "signatures": {
+      "available": 11,
+      "unavailable": {}
+    },
+    "slices": {
+      "approximate": 1,
+      "compared": 11,
+      "exact": 10,
+      "expanded": 0,
+      "found": 11,
+      "loss_kinds": {
+        "integer_refinement_erased": 1,
+        "recursive_cutoff": 1
+      },
+      "unavailable": {},
+      "unsupported": {}
+    },
+    "specs_out_of_scope": {
+      "generated": 1
+    }
+  },
+  "otp": "28",
+  "project": {
+    "mix_env": "test",
+    "mix_target": "host",
+    "umbrella": false
+  },
+  "schema": "spec_lint/report",
+  "schema_version": 1,
+  "scope": {
+    "app_filters": [],
+    "apps": ["credo"],
+    "exclude": [],
+    "module_filters": [],
+    "partial": false
+  },
+  "tool": {
+    "name": "spec_lint",
+    "version": "0.1.0"
+  }
+}

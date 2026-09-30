@@ -126,3 +126,17 @@ printer_load_per_map/absinthe.profile.md   the printer profile, copied
 - The original package did not change SpecLint implementation or tests.
   This index and draft banners now reflect the subsequent duplicate and
   adversarial review.
+
+
+## Separate library-spec witness (M8)
+
+`phoenix_view_override.exs` is a tenth script, separate from the nine compiler
+items above. It installs and starts pinned public Phoenix.View dependencies,
+compiles a minimal override, checks its actual attached `no_return` spec and
+asserts an in-domain binary return. It passed on exact Elixir 1.20.4 / OTP
+28.5.0.1. No private application code is included.
+
+The issue family has prior history in Phoenix.View PR #7 and issue #8;
+`UPSTREAM_BUGS.txt` item 12 records the links and current-main revision check.
+No issue or comment has been posted. Do not assume a binary-only replacement
+spec covers all render formats.

@@ -1,0 +1,34 @@
+==> file_system
+Compiling 7 files (.ex)
+Generated file_system app
+==> bunt
+Compiling 2 files (.ex)
+Generated bunt app
+==> jason
+Compiling 10 files (.ex)
+Generated jason app
+==> erlex
+Compiling 2 files (.erl)
+Compiling 2 files (.ex)
+Generated erlex app
+==> dialyxir
+Compiling 70 files (.ex)
+Generated dialyxir app
+==> credo
+Compiling 257 files (.ex)
+Generated credo app
+==> spec_lint
+Compiling 54 files (.ex)
+Generated spec_lint app
+Running ExUnit with seed: 67905, max_cases: 8
+Excluding tags: [adapter: SpecLint.Compiler.V121]
+
+..............................................................................................................................................
+22:44:02.202 [error] Process #PID<0.3254.0> raised an exception
+** (ErlangError) Erlang error: {:nocatch, :ball}
+    test/spec_lint/isolated_test.exs:19: anonymous fn/0 in SpecLint.IsolatedTest."test a crash comes back as a value, and the caller is not linked to it"/1
+    (spec_lint 0.1.0) lib/spec_lint/isolated.ex:25: anonymous fn/3 in SpecLint.Isolated.run/1
+................................................................................................................................................................................................................................................................*..........................................................................................................................
+Finished in 405.0 seconds (50.9s async, 354.1s sync)
+
+Result: 520 passed, 1 skipped, 7 excluded

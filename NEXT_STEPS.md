@@ -4,6 +4,34 @@ The milestones below (M1 to M6, and M7 added on 2026-09-30) replace the numbered
 kept as history. Performance, compiler compatibility and evidence policy
 stay in separate changes. Exit criteria are copied from the plan.
 
+## M8: focused qualification and public-task adoption
+
+Implementation `4b87020` narrows built-in self-aliases to a single invocation
+with diagnostic-only flags, uses Mix's argument parser, and exposes spec
+attribution as `possibly_inherited_spec` rather than a provenance claim.
+Focused controls cover malformed quoting, suppressive/unknown flags,
+forced dependency compilation and JSON metadata. The scalar alias form is
+still deliberately unsupported; the accepted shape is a one-element list.
+
+The seven-project public-task campaign and final cross-version results are
+recorded in `bench/corpus/adoption-m8/`. Preserve its distinction between
+policy refusal, project/compiler incompatibility, complete analysis and
+baseline acceptance. The untouched holdouts remain bandit, kino and timex.
+
+The next implementation priority is a compact normal-report execution path.
+`bench/memory/README.md` records an analysis/evidence-only experiment: equal
+inventory with about 83% lower peak RSS when module graphs are discarded.
+This is evidence for the design, not a production memory fix. Preserve full
+analysis for Explain/API users, retain export/default metadata for lost-spec
+checks, and reconcile baselines/floors once across the complete project.
+Require full/compact report and policy equivalence before adoption, then
+repeat the unchanged 6 GiB Linux workload and frozen corpus budgets.
+
+Phoenix.View's current pinned source still reproduces the inherited
+`no_return` mismatch. The executable public-library witness and existing
+PR/issue history are in `bench/upstream/` and `UPSTREAM_BUGS.txt`; nothing was
+filed. This is a known issue family, not a new compiler defect.
+
 ## Current sequence: release hardening after `a50b0d7`
 
 The implementation at `1bb9594` completes local release hardening: artifact

@@ -1,0 +1,2304 @@
+==> floki
+      warning: a struct for Floki.HTML.Tokenizer.StartTag is expected on struct update:
+
+          %Floki.HTML.Tokenizer.StartTag{
+            s.token
+            | attributes: [%Floki.HTML.Tokenizer.Attribute{name: "=", value: ""} | s.token.attributes]
+          }
+
+      but got type:
+
+          dynamic()
+
+      where "s" was given the type:
+
+          # type: dynamic(%{..., token: term()})
+          # from: lib/floki/html/tokenizer.ex:1168:17
+          %Floki.HTML.Tokenizer.StartTag{...}
+
+      you must assign "s.token" to variable and pattern match on "%Floki.HTML.Tokenizer.StartTag{}"
+
+      type warning found at:
+      │
+ 1168 │     new_token = %StartTag{
+      │                 ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:1168:17: Floki.HTML.Tokenizer.before_attribute_name/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Attribute is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Attribute{attr | name: [attr.name | [c + 32]]}
+
+      but got type:
+
+          dynamic()
+
+      where "attr" was given the type:
+
+          # type: dynamic()
+          # from: lib/floki/html/tokenizer.ex:1217:20
+          [attr | attrs] = s.token.attributes
+
+      when defining the variable "attr", you must also pattern match on "%Floki.HTML.Tokenizer.Attribute{}"
+
+      type warning found at:
+      │
+ 1218 │     new_attr = %Attribute{attr | name: [attr.name | [c + 32]]}
+      │                ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:1218:16: Floki.HTML.Tokenizer.attribute_name/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Attribute is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Attribute{attr | name: [attr.name | [65533]]}
+
+      but got type:
+
+          dynamic()
+
+      where "attr" was given the type:
+
+          # type: dynamic()
+          # from: lib/floki/html/tokenizer.ex:1225:20
+          [attr | attrs] = s.token.attributes
+
+      when defining the variable "attr", you must also pattern match on "%Floki.HTML.Tokenizer.Attribute{}"
+
+      type warning found at:
+      │
+ 1226 │     new_attr = %Attribute{attr | name: [attr.name | [@replacement_char]]}
+      │                ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:1226:16: Floki.HTML.Tokenizer.attribute_name/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Attribute is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Attribute{attr | name: [attr.name | [c]]}
+
+      but got type:
+
+          dynamic()
+
+      where "attr" was given the type:
+
+          # type: dynamic()
+          # from: lib/floki/html/tokenizer.ex:1234:20
+          [attr | attrs] = s.token.attributes
+
+      when defining the variable "attr", you must also pattern match on "%Floki.HTML.Tokenizer.Attribute{}"
+
+      type warning found at:
+      │
+ 1235 │     new_attr = %Attribute{attr | name: [attr.name | [c]]}
+      │                ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:1235:16: Floki.HTML.Tokenizer.attribute_name/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Attribute is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Attribute{attr | name: [attr.name | [c]]}
+
+      but got type:
+
+          dynamic()
+
+      where "attr" was given the type:
+
+          # type: dynamic()
+          # from: lib/floki/html/tokenizer.ex:1246:20
+          [attr | attrs] = s.token.attributes
+
+      when defining the variable "attr", you must also pattern match on "%Floki.HTML.Tokenizer.Attribute{}"
+
+      type warning found at:
+      │
+ 1247 │     new_attr = %Attribute{attr | name: [attr.name | [c]]}
+      │                ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:1247:16: Floki.HTML.Tokenizer.attribute_name/2
+
+      warning: a struct for Floki.HTML.Tokenizer.StartTag is expected on struct update:
+
+          %Floki.HTML.Tokenizer.StartTag{s.token | attributes: [attribute | s.token.attributes]}
+
+      but got type:
+
+          dynamic()
+
+      where "s" was given the type:
+
+          # type: dynamic(%{..., token: term()})
+          # from: lib/floki/html/tokenizer.ex:1287:17
+          %Floki.HTML.Tokenizer.StartTag{...}
+
+      you must assign "s.token" to variable and pattern match on "%Floki.HTML.Tokenizer.StartTag{}"
+
+      type warning found at:
+      │
+ 1287 │     new_token = %StartTag{s.token | attributes: [attribute | s.token.attributes]}
+      │                 ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:1287:17: Floki.HTML.Tokenizer.after_attribute_name/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Attribute is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Attribute{attr | value: [attr.value | [65533]]}
+
+      but got type:
+
+          dynamic()
+
+      where "attr" was given the type:
+
+          # type: dynamic()
+          # from: lib/floki/html/tokenizer.ex:1329:20
+          [attr | attrs] = s.token.attributes
+
+      when defining the variable "attr", you must also pattern match on "%Floki.HTML.Tokenizer.Attribute{}"
+
+      type warning found at:
+      │
+ 1330 │     new_attr = %Attribute{attr | value: [attr.value | [@replacement_char]]}
+      │                ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:1330:16: Floki.HTML.Tokenizer.attribute_value_double_quoted/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Attribute is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Attribute{attr | value: [attr.value | [c]]}
+
+      but got type:
+
+          dynamic()
+
+      where "attr" was given the type:
+
+          # type: dynamic()
+          # from: lib/floki/html/tokenizer.ex:1347:20
+          [attr | attrs] = s.token.attributes
+
+      when defining the variable "attr", you must also pattern match on "%Floki.HTML.Tokenizer.Attribute{}"
+
+      type warning found at:
+      │
+ 1348 │     new_attr = %Attribute{attr | value: [attr.value | [c]]}
+      │                ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:1348:16: Floki.HTML.Tokenizer.attribute_value_double_quoted/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Attribute is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Attribute{attr | value: [attr.value | [65533]]}
+
+      but got type:
+
+          dynamic()
+
+      where "attr" was given the type:
+
+          # type: dynamic()
+          # from: lib/floki/html/tokenizer.ex:1367:20
+          [attr | attrs] = s.token.attributes
+
+      when defining the variable "attr", you must also pattern match on "%Floki.HTML.Tokenizer.Attribute{}"
+
+      type warning found at:
+      │
+ 1368 │     new_attr = %Attribute{attr | value: [attr.value | [@replacement_char]]}
+      │                ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:1368:16: Floki.HTML.Tokenizer.attribute_value_single_quoted/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Attribute is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Attribute{attr | value: [attr.value | [c]]}
+
+      but got type:
+
+          dynamic()
+
+      where "attr" was given the type:
+
+          # type: dynamic()
+          # from: lib/floki/html/tokenizer.ex:1385:20
+          [attr | attrs] = s.token.attributes
+
+      when defining the variable "attr", you must also pattern match on "%Floki.HTML.Tokenizer.Attribute{}"
+
+      type warning found at:
+      │
+ 1386 │     new_attr = %Attribute{attr | value: [attr.value | [c]]}
+      │                ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:1386:16: Floki.HTML.Tokenizer.attribute_value_single_quoted/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Attribute is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Attribute{attr | value: [attr.value | [65533]]}
+
+      but got type:
+
+          dynamic()
+
+      where "attr" was given the type:
+
+          # type: dynamic()
+          # from: lib/floki/html/tokenizer.ex:1410:20
+          [attr | attrs] = s.token.attributes
+
+      when defining the variable "attr", you must also pattern match on "%Floki.HTML.Tokenizer.Attribute{}"
+
+      type warning found at:
+      │
+ 1411 │     new_attr = %Attribute{attr | value: [attr.value | [@replacement_char]]}
+      │                ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:1411:16: Floki.HTML.Tokenizer.attribute_value_unquoted/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Attribute is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Attribute{attr | value: [attr.value | [c]]}
+
+      but got type:
+
+          dynamic()
+
+      where "attr" was given the type:
+
+          # type: dynamic()
+          # from: lib/floki/html/tokenizer.ex:1422:20
+          [attr | attrs] = s.token.attributes
+
+      when defining the variable "attr", you must also pattern match on "%Floki.HTML.Tokenizer.Attribute{}"
+
+      type warning found at:
+      │
+ 1423 │     new_attr = %Attribute{attr | value: [attr.value | [c]]}
+      │                ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:1423:16: Floki.HTML.Tokenizer.attribute_value_unquoted/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Attribute is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Attribute{attr | value: [attr.value | [c]]}
+
+      but got type:
+
+          dynamic()
+
+      where "attr" was given the type:
+
+          # type: dynamic()
+          # from: lib/floki/html/tokenizer.ex:1440:20
+          [attr | attrs] = s.token.attributes
+
+      when defining the variable "attr", you must also pattern match on "%Floki.HTML.Tokenizer.Attribute{}"
+
+      type warning found at:
+      │
+ 1441 │     new_attr = %Attribute{attr | value: [attr.value | [c]]}
+      │                ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:1441:16: Floki.HTML.Tokenizer.attribute_value_unquoted/2
+
+      warning: a struct for Floki.HTML.Tokenizer.StartTag is expected on struct update:
+
+          %Floki.HTML.Tokenizer.StartTag{s.token | self_close: true}
+
+      but got type:
+
+          dynamic()
+
+      where "s" was given the type:
+
+          # type: dynamic(%{..., token: term()})
+          # from: lib/floki/html/tokenizer.ex:1478:11
+          %Floki.HTML.Tokenizer.StartTag{...}
+
+      you must assign "s.token" to variable and pattern match on "%Floki.HTML.Tokenizer.StartTag{}"
+
+      type warning found at:
+      │
+ 1478 │     tag = %StartTag{s.token | self_close: true}
+      │           ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:1478:11: Floki.HTML.Tokenizer.self_closing_start_tag/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Comment is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Comment{s.token | data: [s.token.data | [65533]]}
+
+      but got type:
+
+          dynamic()
+
+      where "s" was given the type:
+
+          # type: dynamic(%{..., token: term()})
+          # from: lib/floki/html/tokenizer.ex:1507:15
+          %Floki.HTML.Tokenizer.Comment{...}
+
+      you must assign "s.token" to variable and pattern match on "%Floki.HTML.Tokenizer.Comment{}"
+
+      type warning found at:
+      │
+ 1507 │     comment = %Comment{s.token | data: [s.token.data | [@replacement_char]]}
+      │               ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:1507:15: Floki.HTML.Tokenizer.bogus_comment/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Comment is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Comment{s.token | data: [s.token.data | [c]]}
+
+      but got type:
+
+          dynamic()
+
+      where "s" was given the type:
+
+          # type: dynamic(%{..., token: term()})
+          # from: lib/floki/html/tokenizer.ex:1513:15
+          %Floki.HTML.Tokenizer.Comment{...}
+
+      you must assign "s.token" to variable and pattern match on "%Floki.HTML.Tokenizer.Comment{}"
+
+      type warning found at:
+      │
+ 1513 │     comment = %Comment{s.token | data: [s.token.data | [c]]}
+      │               ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:1513:15: Floki.HTML.Tokenizer.bogus_comment/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Comment is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Comment{s.token | data: [s.token.data | ~c"-"]}
+
+      but got type:
+
+          dynamic()
+
+      where "s" was given the type:
+
+          # type: dynamic(%{..., token: term()})
+          # from: lib/floki/html/tokenizer.ex:1597:19
+          %Floki.HTML.Tokenizer.Comment{...}
+
+      you must assign "s.token" to variable and pattern match on "%Floki.HTML.Tokenizer.Comment{}"
+
+      type warning found at:
+      │
+ 1597 │     new_comment = %Comment{s.token | data: [s.token.data | [@hyphen_minus]]}
+      │                   ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:1597:19: Floki.HTML.Tokenizer.comment_start_dash/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Comment is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Comment{s.token | data: [s.token.data | ~c"<"]}
+
+      but got type:
+
+          dynamic()
+
+      where "s" was given the type:
+
+          # type: dynamic(%{..., token: term()})
+          # from: lib/floki/html/tokenizer.ex:1605:19
+          %Floki.HTML.Tokenizer.Comment{...}
+
+      you must assign "s.token" to variable and pattern match on "%Floki.HTML.Tokenizer.Comment{}"
+
+      type warning found at:
+      │
+ 1605 │     new_comment = %Comment{s.token | data: [s.token.data | [@less_than_sign]]}
+      │                   ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:1605:19: Floki.HTML.Tokenizer.comment/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Comment is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Comment{s.token | data: [s.token.data | [65533]]}
+
+      but got type:
+
+          dynamic()
+
+      where "s" was given the type:
+
+          # type: dynamic(%{..., token: term()})
+          # from: lib/floki/html/tokenizer.ex:1615:19
+          %Floki.HTML.Tokenizer.Comment{...}
+
+      you must assign "s.token" to variable and pattern match on "%Floki.HTML.Tokenizer.Comment{}"
+
+      type warning found at:
+      │
+ 1615 │     new_comment = %Comment{s.token | data: [s.token.data | [@replacement_char]]}
+      │                   ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:1615:19: Floki.HTML.Tokenizer.comment/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Comment is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Comment{s.token | data: [s.token.data | [c]]}
+
+      but got type:
+
+          dynamic()
+
+      where "s" was given the type:
+
+          # type: dynamic(%{..., token: term()})
+          # from: lib/floki/html/tokenizer.ex:1634:17
+          %Floki.HTML.Tokenizer.Comment{...}
+
+      you must assign "s.token" to variable and pattern match on "%Floki.HTML.Tokenizer.Comment{}"
+
+      type warning found at:
+      │
+ 1634 │     new_token = %Comment{s.token | data: [s.token.data | [c]]}
+      │                 ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:1634:17: Floki.HTML.Tokenizer.comment/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Comment is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Comment{s.token | data: [s.token.data | ~c"!"]}
+
+      but got type:
+
+          dynamic()
+
+      where "s" was given the type:
+
+          # type: dynamic(%{..., token: term()})
+          # from: lib/floki/html/tokenizer.ex:1645:19
+          %Floki.HTML.Tokenizer.Comment{...}
+
+      you must assign "s.token" to variable and pattern match on "%Floki.HTML.Tokenizer.Comment{}"
+
+      type warning found at:
+      │
+ 1645 │     new_comment = %Comment{s.token | data: [s.token.data | [@exclamation_mark]]}
+      │                   ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:1645:19: Floki.HTML.Tokenizer.comment_less_than_sign/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Comment is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Comment{s.token | data: [s.token.data | ~c"<"]}
+
+      but got type:
+
+          dynamic()
+
+      where "s" was given the type:
+
+          # type: dynamic(%{..., token: term()})
+          # from: lib/floki/html/tokenizer.ex:1651:19
+          %Floki.HTML.Tokenizer.Comment{...}
+
+      you must assign "s.token" to variable and pattern match on "%Floki.HTML.Tokenizer.Comment{}"
+
+      type warning found at:
+      │
+ 1651 │     new_comment = %Comment{s.token | data: [s.token.data | [@less_than_sign]]}
+      │                   ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:1651:19: Floki.HTML.Tokenizer.comment_less_than_sign/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Comment is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Comment{s.token | data: [s.token.data | ~c"-"]}
+
+      but got type:
+
+          dynamic()
+
+      where "s" was given the type:
+
+          # type: dynamic(%{..., token: term()})
+          # from: lib/floki/html/tokenizer.ex:1710:19
+          %Floki.HTML.Tokenizer.Comment{...}
+
+      you must assign "s.token" to variable and pattern match on "%Floki.HTML.Tokenizer.Comment{}"
+
+      type warning found at:
+      │
+ 1710 │     new_comment = %Comment{s.token | data: [s.token.data | [@hyphen_minus]]}
+      │                   ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:1710:19: Floki.HTML.Tokenizer.comment_end_dash/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Comment is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Comment{s.token | data: [s.token.data | ~c"-"]}
+
+      but got type:
+
+          dynamic()
+
+      where "s" was given the type:
+
+          # type: dynamic(%{..., token: term()})
+          # from: lib/floki/html/tokenizer.ex:1729:19
+          %Floki.HTML.Tokenizer.Comment{...}
+
+      you must assign "s.token" to variable and pattern match on "%Floki.HTML.Tokenizer.Comment{}"
+
+      type warning found at:
+      │
+ 1729 │     new_comment = %Comment{s.token | data: [s.token.data | [@hyphen_minus]]}
+      │                   ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:1729:19: Floki.HTML.Tokenizer.comment_end/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Comment is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Comment{s.token | data: [s.token.data | ["--"]]}
+
+      but got type:
+
+          dynamic()
+
+      where "s" was given the type:
+
+          # type: dynamic(%{..., token: term()})
+          # from: lib/floki/html/tokenizer.ex:1744:19
+          %Floki.HTML.Tokenizer.Comment{...}
+
+      you must assign "s.token" to variable and pattern match on "%Floki.HTML.Tokenizer.Comment{}"
+
+      type warning found at:
+      │
+ 1744 │     new_comment = %Comment{s.token | data: [s.token.data | ["--"]]}
+      │                   ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:1744:19: Floki.HTML.Tokenizer.comment_end/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Comment is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Comment{s.token | data: [s.token.data | ["--!"]]}
+
+      but got type:
+
+          dynamic()
+
+      where "s" was given the type:
+
+          # type: dynamic(%{..., token: term()})
+          # from: lib/floki/html/tokenizer.ex:1752:19
+          %Floki.HTML.Tokenizer.Comment{...}
+
+      you must assign "s.token" to variable and pattern match on "%Floki.HTML.Tokenizer.Comment{}"
+
+      type warning found at:
+      │
+ 1752 │     new_comment = %Comment{s.token | data: [s.token.data | ["--!"]]}
+      │                   ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:1752:19: Floki.HTML.Tokenizer.comment_end_bang/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Comment is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Comment{s.token | data: [s.token.data | ["--!"]]}
+
+      but got type:
+
+          dynamic()
+
+      where "s" was given the type:
+
+          # type: dynamic(%{..., token: term()})
+          # from: lib/floki/html/tokenizer.ex:1776:19
+          %Floki.HTML.Tokenizer.Comment{...}
+
+      you must assign "s.token" to variable and pattern match on "%Floki.HTML.Tokenizer.Comment{}"
+
+      type warning found at:
+      │
+ 1776 │     new_comment = %Comment{s.token | data: [s.token.data | ["--!"]]}
+      │                   ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:1776:19: Floki.HTML.Tokenizer.comment_end_bang/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Doctype is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Doctype{s.token | name: [s.token.name | [c + 32]]}
+
+      but got type:
+
+          dynamic()
+
+      where "s" was given the type:
+
+          # type: dynamic(%{..., token: term()})
+          # from: lib/floki/html/tokenizer.ex:1873:17
+          %Floki.HTML.Tokenizer.Doctype{...}
+
+      you must assign "s.token" to variable and pattern match on "%Floki.HTML.Tokenizer.Doctype{}"
+
+      type warning found at:
+      │
+ 1873 │     new_token = %Doctype{
+      │                 ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:1873:17: Floki.HTML.Tokenizer.doctype_name/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Doctype is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Doctype{s.token | name: [s.token.name | [65533]]}
+
+      but got type:
+
+          dynamic()
+
+      where "s" was given the type:
+
+          # type: dynamic(%{..., token: term()})
+          # from: lib/floki/html/tokenizer.ex:1882:17
+          %Floki.HTML.Tokenizer.Doctype{...}
+
+      you must assign "s.token" to variable and pattern match on "%Floki.HTML.Tokenizer.Doctype{}"
+
+      type warning found at:
+      │
+ 1882 │     new_token = %Doctype{s.token | name: [s.token.name | [@replacement_char]]}
+      │                 ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:1882:17: Floki.HTML.Tokenizer.doctype_name/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Doctype is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Doctype{s.token | force_quirks: :on}
+
+      but got type:
+
+          dynamic()
+
+      where "s" was given the type:
+
+          # type: dynamic(%{..., token: term()})
+          # from: lib/floki/html/tokenizer.ex:1892:17
+          %Floki.HTML.Tokenizer.Doctype{...}
+
+      you must assign "s.token" to variable and pattern match on "%Floki.HTML.Tokenizer.Doctype{}"
+
+      type warning found at:
+      │
+ 1892 │     new_token = %Doctype{s.token | force_quirks: :on}
+      │                 ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:1892:17: Floki.HTML.Tokenizer.doctype_name/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Doctype is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Doctype{s.token | name: [s.token.name | [c]]}
+
+      but got type:
+
+          dynamic()
+
+      where "s" was given the type:
+
+          # type: dynamic(%{..., token: term()})
+          # from: lib/floki/html/tokenizer.ex:1903:17
+          %Floki.HTML.Tokenizer.Doctype{...}
+
+      you must assign "s.token" to variable and pattern match on "%Floki.HTML.Tokenizer.Doctype{}"
+
+      type warning found at:
+      │
+ 1903 │     new_token = %Doctype{s.token | name: [s.token.name | [c]]}
+      │                 ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:1903:17: Floki.HTML.Tokenizer.doctype_name/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Doctype is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Doctype{s.token | force_quirks: :on}
+
+      but got type:
+
+          dynamic()
+
+      where "s" was given the type:
+
+          # type: dynamic(%{..., token: term()})
+          # from: lib/floki/html/tokenizer.ex:1924:13
+          %Floki.HTML.Tokenizer.Doctype{...}
+
+      you must assign "s.token" to variable and pattern match on "%Floki.HTML.Tokenizer.Doctype{}"
+
+      type warning found at:
+      │
+ 1924 │     token = %Doctype{s.token | force_quirks: :on}
+      │             ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:1924:13: Floki.HTML.Tokenizer.after_doctype_name/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Doctype is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Doctype{s.token | force_quirks: :on}
+
+      but got type:
+
+          dynamic()
+
+      where "s" was given the type:
+
+          # type: dynamic(%{..., token: term()})
+          # from: lib/floki/html/tokenizer.ex:1955:13
+          %Floki.HTML.Tokenizer.Doctype{...}
+
+      you must assign "s.token" to variable and pattern match on "%Floki.HTML.Tokenizer.Doctype{}"
+
+      type warning found at:
+      │
+ 1955 │     token = %Doctype{s.token | force_quirks: :on}
+      │             ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:1955:13: Floki.HTML.Tokenizer.after_doctype_name/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Doctype is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Doctype{s.token | public_id: ""}
+
+      but got type:
+
+          dynamic()
+
+      where "s" was given the type:
+
+          # type: dynamic(%{..., token: term()})
+          # from: lib/floki/html/tokenizer.ex:1972:15
+          %Floki.HTML.Tokenizer.Doctype{...}
+
+      you must assign "s.token" to variable and pattern match on "%Floki.HTML.Tokenizer.Doctype{}"
+
+      type warning found at:
+      │
+ 1972 │     doctype = %Doctype{s.token | public_id: ""}
+      │               ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:1972:15: Floki.HTML.Tokenizer.after_doctype_public_keyword/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Doctype is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Doctype{s.token | public_id: ""}
+
+      but got type:
+
+          dynamic()
+
+      where "s" was given the type:
+
+          # type: dynamic(%{..., token: term()})
+          # from: lib/floki/html/tokenizer.ex:1982:15
+          %Floki.HTML.Tokenizer.Doctype{...}
+
+      you must assign "s.token" to variable and pattern match on "%Floki.HTML.Tokenizer.Doctype{}"
+
+      type warning found at:
+      │
+ 1982 │     doctype = %Doctype{s.token | public_id: ""}
+      │               ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:1982:15: Floki.HTML.Tokenizer.after_doctype_public_keyword/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Doctype is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Doctype{s.token | force_quirks: :on}
+
+      but got type:
+
+          dynamic()
+
+      where "s" was given the type:
+
+          # type: dynamic(%{..., token: term()})
+          # from: lib/floki/html/tokenizer.ex:1992:15
+          %Floki.HTML.Tokenizer.Doctype{...}
+
+      you must assign "s.token" to variable and pattern match on "%Floki.HTML.Tokenizer.Doctype{}"
+
+      type warning found at:
+      │
+ 1992 │     doctype = %Doctype{s.token | force_quirks: :on}
+      │               ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:1992:15: Floki.HTML.Tokenizer.after_doctype_public_keyword/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Doctype is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Doctype{s.token | force_quirks: :on}
+
+      but got type:
+
+          dynamic()
+
+      where "s" was given the type:
+
+          # type: dynamic(%{..., token: term()})
+          # from: lib/floki/html/tokenizer.ex:2003:15
+          %Floki.HTML.Tokenizer.Doctype{...}
+
+      you must assign "s.token" to variable and pattern match on "%Floki.HTML.Tokenizer.Doctype{}"
+
+      type warning found at:
+      │
+ 2003 │     doctype = %Doctype{s.token | force_quirks: :on}
+      │               ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:2003:15: Floki.HTML.Tokenizer.after_doctype_public_keyword/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Doctype is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Doctype{s.token | force_quirks: :on}
+
+      but got type:
+
+          dynamic()
+
+      where "s" was given the type:
+
+          # type: dynamic(%{..., token: term()})
+          # from: lib/floki/html/tokenizer.ex:2014:15
+          %Floki.HTML.Tokenizer.Doctype{...}
+
+      you must assign "s.token" to variable and pattern match on "%Floki.HTML.Tokenizer.Doctype{}"
+
+      type warning found at:
+      │
+ 2014 │     doctype = %Doctype{s.token | force_quirks: :on}
+      │               ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:2014:15: Floki.HTML.Tokenizer.after_doctype_public_keyword/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Doctype is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Doctype{s.token | public_id: ""}
+
+      but got type:
+
+          dynamic()
+
+      where "s" was given the type:
+
+          # type: dynamic(%{..., token: term()})
+          # from: lib/floki/html/tokenizer.ex:2031:15
+          %Floki.HTML.Tokenizer.Doctype{...}
+
+      you must assign "s.token" to variable and pattern match on "%Floki.HTML.Tokenizer.Doctype{}"
+
+      type warning found at:
+      │
+ 2031 │     doctype = %Doctype{s.token | public_id: ""}
+      │               ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:2031:15: Floki.HTML.Tokenizer.before_doctype_public_identifier/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Doctype is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Doctype{s.token | public_id: ""}
+
+      but got type:
+
+          dynamic()
+
+      where "s" was given the type:
+
+          # type: dynamic(%{..., token: term()})
+          # from: lib/floki/html/tokenizer.ex:2041:15
+          %Floki.HTML.Tokenizer.Doctype{...}
+
+      you must assign "s.token" to variable and pattern match on "%Floki.HTML.Tokenizer.Doctype{}"
+
+      type warning found at:
+      │
+ 2041 │     doctype = %Doctype{s.token | public_id: ""}
+      │               ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:2041:15: Floki.HTML.Tokenizer.before_doctype_public_identifier/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Doctype is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Doctype{s.token | force_quirks: :on}
+
+      but got type:
+
+          dynamic()
+
+      where "s" was given the type:
+
+          # type: dynamic(%{..., token: term()})
+          # from: lib/floki/html/tokenizer.ex:2051:15
+          %Floki.HTML.Tokenizer.Doctype{...}
+
+      you must assign "s.token" to variable and pattern match on "%Floki.HTML.Tokenizer.Doctype{}"
+
+      type warning found at:
+      │
+ 2051 │     doctype = %Doctype{s.token | force_quirks: :on}
+      │               ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:2051:15: Floki.HTML.Tokenizer.before_doctype_public_identifier/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Doctype is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Doctype{s.token | force_quirks: :on}
+
+      but got type:
+
+          dynamic()
+
+      where "s" was given the type:
+
+          # type: dynamic(%{..., token: term()})
+          # from: lib/floki/html/tokenizer.ex:2062:15
+          %Floki.HTML.Tokenizer.Doctype{...}
+
+      you must assign "s.token" to variable and pattern match on "%Floki.HTML.Tokenizer.Doctype{}"
+
+      type warning found at:
+      │
+ 2062 │     doctype = %Doctype{s.token | force_quirks: :on}
+      │               ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:2062:15: Floki.HTML.Tokenizer.before_doctype_public_identifier/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Doctype is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Doctype{s.token | force_quirks: :on}
+
+      but got type:
+
+          dynamic()
+
+      where "s" was given the type:
+
+          # type: dynamic(%{..., token: term()})
+          # from: lib/floki/html/tokenizer.ex:2073:15
+          %Floki.HTML.Tokenizer.Doctype{...}
+
+      you must assign "s.token" to variable and pattern match on "%Floki.HTML.Tokenizer.Doctype{}"
+
+      type warning found at:
+      │
+ 2073 │     doctype = %Doctype{s.token | force_quirks: :on}
+      │               ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:2073:15: Floki.HTML.Tokenizer.before_doctype_public_identifier/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Doctype is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Doctype{s.token | public_id: [s.token.public_id | [65533]]}
+
+      but got type:
+
+          dynamic()
+
+      where "s" was given the type:
+
+          # type: dynamic(%{..., token: term()})
+          # from: lib/floki/html/tokenizer.ex:2090:15
+          %Floki.HTML.Tokenizer.Doctype{...}
+
+      you must assign "s.token" to variable and pattern match on "%Floki.HTML.Tokenizer.Doctype{}"
+
+      type warning found at:
+      │
+ 2090 │     doctype = %Doctype{s.token | public_id: [s.token.public_id | [@replacement_char]]}
+      │               ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:2090:15: Floki.HTML.Tokenizer.doctype_public_identifier_double_quoted/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Doctype is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Doctype{s.token | force_quirks: :on}
+
+      but got type:
+
+          dynamic()
+
+      where "s" was given the type:
+
+          # type: dynamic(%{..., token: term()})
+          # from: lib/floki/html/tokenizer.ex:2100:15
+          %Floki.HTML.Tokenizer.Doctype{...}
+
+      you must assign "s.token" to variable and pattern match on "%Floki.HTML.Tokenizer.Doctype{}"
+
+      type warning found at:
+      │
+ 2100 │     doctype = %Doctype{s.token | force_quirks: :on}
+      │               ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:2100:15: Floki.HTML.Tokenizer.doctype_public_identifier_double_quoted/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Doctype is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Doctype{s.token | force_quirks: :on}
+
+      but got type:
+
+          dynamic()
+
+      where "s" was given the type:
+
+          # type: dynamic(%{..., token: term()})
+          # from: lib/floki/html/tokenizer.ex:2111:15
+          %Floki.HTML.Tokenizer.Doctype{...}
+
+      you must assign "s.token" to variable and pattern match on "%Floki.HTML.Tokenizer.Doctype{}"
+
+      type warning found at:
+      │
+ 2111 │     doctype = %Doctype{s.token | force_quirks: :on}
+      │               ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:2111:15: Floki.HTML.Tokenizer.doctype_public_identifier_double_quoted/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Doctype is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Doctype{s.token | public_id: [s.token.public_id | [c]]}
+
+      but got type:
+
+          dynamic()
+
+      where "s" was given the type:
+
+          # type: dynamic(%{..., token: term()})
+          # from: lib/floki/html/tokenizer.ex:2122:15
+          %Floki.HTML.Tokenizer.Doctype{...}
+
+      you must assign "s.token" to variable and pattern match on "%Floki.HTML.Tokenizer.Doctype{}"
+
+      type warning found at:
+      │
+ 2122 │     doctype = %Doctype{s.token | public_id: [s.token.public_id | [c]]}
+      │               ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:2122:15: Floki.HTML.Tokenizer.doctype_public_identifier_double_quoted/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Doctype is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Doctype{s.token | public_id: [s.token.public_id | [65533]]}
+
+      but got type:
+
+          dynamic()
+
+      where "s" was given the type:
+
+          # type: dynamic(%{..., token: term()})
+          # from: lib/floki/html/tokenizer.ex:2134:15
+          %Floki.HTML.Tokenizer.Doctype{...}
+
+      you must assign "s.token" to variable and pattern match on "%Floki.HTML.Tokenizer.Doctype{}"
+
+      type warning found at:
+      │
+ 2134 │     doctype = %Doctype{s.token | public_id: [s.token.public_id | [@replacement_char]]}
+      │               ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:2134:15: Floki.HTML.Tokenizer.doctype_public_identifier_single_quoted/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Doctype is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Doctype{s.token | force_quirks: :on}
+
+      but got type:
+
+          dynamic()
+
+      where "s" was given the type:
+
+          # type: dynamic(%{..., token: term()})
+          # from: lib/floki/html/tokenizer.ex:2144:15
+          %Floki.HTML.Tokenizer.Doctype{...}
+
+      you must assign "s.token" to variable and pattern match on "%Floki.HTML.Tokenizer.Doctype{}"
+
+      type warning found at:
+      │
+ 2144 │     doctype = %Doctype{s.token | force_quirks: :on}
+      │               ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:2144:15: Floki.HTML.Tokenizer.doctype_public_identifier_single_quoted/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Doctype is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Doctype{s.token | force_quirks: :on}
+
+      but got type:
+
+          dynamic()
+
+      where "s" was given the type:
+
+          # type: dynamic(%{..., token: term()})
+          # from: lib/floki/html/tokenizer.ex:2155:15
+          %Floki.HTML.Tokenizer.Doctype{...}
+
+      you must assign "s.token" to variable and pattern match on "%Floki.HTML.Tokenizer.Doctype{}"
+
+      type warning found at:
+      │
+ 2155 │     doctype = %Doctype{s.token | force_quirks: :on}
+      │               ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:2155:15: Floki.HTML.Tokenizer.doctype_public_identifier_single_quoted/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Doctype is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Doctype{s.token | public_id: [s.token.public_id | [c]]}
+
+      but got type:
+
+          dynamic()
+
+      where "s" was given the type:
+
+          # type: dynamic(%{..., token: term()})
+          # from: lib/floki/html/tokenizer.ex:2166:15
+          %Floki.HTML.Tokenizer.Doctype{...}
+
+      you must assign "s.token" to variable and pattern match on "%Floki.HTML.Tokenizer.Doctype{}"
+
+      type warning found at:
+      │
+ 2166 │     doctype = %Doctype{s.token | public_id: [s.token.public_id | [c]]}
+      │               ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:2166:15: Floki.HTML.Tokenizer.doctype_public_identifier_single_quoted/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Doctype is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Doctype{s.token | system_id: ""}
+
+      but got type:
+
+          dynamic()
+
+      where "s" was given the type:
+
+          # type: dynamic(%{..., token: term()})
+          # from: lib/floki/html/tokenizer.ex:2182:15
+          %Floki.HTML.Tokenizer.Doctype{...}
+
+      you must assign "s.token" to variable and pattern match on "%Floki.HTML.Tokenizer.Doctype{}"
+
+      type warning found at:
+      │
+ 2182 │     doctype = %Doctype{s.token | system_id: ""}
+      │               ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:2182:15: Floki.HTML.Tokenizer.after_doctype_public_identifier/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Doctype is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Doctype{s.token | system_id: ""}
+
+      but got type:
+
+          dynamic()
+
+      where "s" was given the type:
+
+          # type: dynamic(%{..., token: term()})
+          # from: lib/floki/html/tokenizer.ex:2192:15
+          %Floki.HTML.Tokenizer.Doctype{...}
+
+      you must assign "s.token" to variable and pattern match on "%Floki.HTML.Tokenizer.Doctype{}"
+
+      type warning found at:
+      │
+ 2192 │     doctype = %Doctype{s.token | system_id: ""}
+      │               ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:2192:15: Floki.HTML.Tokenizer.after_doctype_public_identifier/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Doctype is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Doctype{s.token | force_quirks: :on}
+
+      but got type:
+
+          dynamic()
+
+      where "s" was given the type:
+
+          # type: dynamic(%{..., token: term()})
+          # from: lib/floki/html/tokenizer.ex:2202:15
+          %Floki.HTML.Tokenizer.Doctype{...}
+
+      you must assign "s.token" to variable and pattern match on "%Floki.HTML.Tokenizer.Doctype{}"
+
+      type warning found at:
+      │
+ 2202 │     doctype = %Doctype{s.token | force_quirks: :on}
+      │               ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:2202:15: Floki.HTML.Tokenizer.after_doctype_public_identifier/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Doctype is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Doctype{s.token | force_quirks: :on}
+
+      but got type:
+
+          dynamic()
+
+      where "s" was given the type:
+
+          # type: dynamic(%{..., token: term()})
+          # from: lib/floki/html/tokenizer.ex:2213:15
+          %Floki.HTML.Tokenizer.Doctype{...}
+
+      you must assign "s.token" to variable and pattern match on "%Floki.HTML.Tokenizer.Doctype{}"
+
+      type warning found at:
+      │
+ 2213 │     doctype = %Doctype{s.token | force_quirks: :on}
+      │               ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:2213:15: Floki.HTML.Tokenizer.after_doctype_public_identifier/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Doctype is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Doctype{s.token | system_id: ""}
+
+      but got type:
+
+          dynamic()
+
+      where "s" was given the type:
+
+          # type: dynamic(%{..., token: term()})
+          # from: lib/floki/html/tokenizer.ex:2233:15
+          %Floki.HTML.Tokenizer.Doctype{...}
+
+      you must assign "s.token" to variable and pattern match on "%Floki.HTML.Tokenizer.Doctype{}"
+
+      type warning found at:
+      │
+ 2233 │     doctype = %Doctype{s.token | system_id: ""}
+      │               ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:2233:15: Floki.HTML.Tokenizer.between_doctype_public_and_system_identifiers/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Doctype is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Doctype{s.token | system_id: ""}
+
+      but got type:
+
+          dynamic()
+
+      where "s" was given the type:
+
+          # type: dynamic(%{..., token: term()})
+          # from: lib/floki/html/tokenizer.ex:2239:15
+          %Floki.HTML.Tokenizer.Doctype{...}
+
+      you must assign "s.token" to variable and pattern match on "%Floki.HTML.Tokenizer.Doctype{}"
+
+      type warning found at:
+      │
+ 2239 │     doctype = %Doctype{s.token | system_id: ""}
+      │               ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:2239:15: Floki.HTML.Tokenizer.between_doctype_public_and_system_identifiers/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Doctype is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Doctype{s.token | force_quirks: :on}
+
+      but got type:
+
+          dynamic()
+
+      where "s" was given the type:
+
+          # type: dynamic(%{..., token: term()})
+          # from: lib/floki/html/tokenizer.ex:2245:15
+          %Floki.HTML.Tokenizer.Doctype{...}
+
+      you must assign "s.token" to variable and pattern match on "%Floki.HTML.Tokenizer.Doctype{}"
+
+      type warning found at:
+      │
+ 2245 │     doctype = %Doctype{s.token | force_quirks: :on}
+      │               ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:2245:15: Floki.HTML.Tokenizer.between_doctype_public_and_system_identifiers/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Doctype is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Doctype{s.token | force_quirks: :on}
+
+      but got type:
+
+          dynamic()
+
+      where "s" was given the type:
+
+          # type: dynamic(%{..., token: term()})
+          # from: lib/floki/html/tokenizer.ex:2256:15
+          %Floki.HTML.Tokenizer.Doctype{...}
+
+      you must assign "s.token" to variable and pattern match on "%Floki.HTML.Tokenizer.Doctype{}"
+
+      type warning found at:
+      │
+ 2256 │     doctype = %Doctype{s.token | force_quirks: :on}
+      │               ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:2256:15: Floki.HTML.Tokenizer.between_doctype_public_and_system_identifiers/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Doctype is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Doctype{s.token | system_id: ""}
+
+      but got type:
+
+          dynamic()
+
+      where "s" was given the type:
+
+          # type: dynamic(%{..., token: term()})
+          # from: lib/floki/html/tokenizer.ex:2272:15
+          %Floki.HTML.Tokenizer.Doctype{...}
+
+      you must assign "s.token" to variable and pattern match on "%Floki.HTML.Tokenizer.Doctype{}"
+
+      type warning found at:
+      │
+ 2272 │     doctype = %Doctype{s.token | system_id: ""}
+      │               ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:2272:15: Floki.HTML.Tokenizer.after_doctype_system_keyword/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Doctype is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Doctype{s.token | system_id: ""}
+
+      but got type:
+
+          dynamic()
+
+      where "s" was given the type:
+
+          # type: dynamic(%{..., token: term()})
+          # from: lib/floki/html/tokenizer.ex:2282:15
+          %Floki.HTML.Tokenizer.Doctype{...}
+
+      you must assign "s.token" to variable and pattern match on "%Floki.HTML.Tokenizer.Doctype{}"
+
+      type warning found at:
+      │
+ 2282 │     doctype = %Doctype{s.token | system_id: ""}
+      │               ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:2282:15: Floki.HTML.Tokenizer.after_doctype_system_keyword/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Doctype is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Doctype{s.token | force_quirks: :on}
+
+      but got type:
+
+          dynamic()
+
+      where "s" was given the type:
+
+          # type: dynamic(%{..., token: term()})
+          # from: lib/floki/html/tokenizer.ex:2292:15
+          %Floki.HTML.Tokenizer.Doctype{...}
+
+      you must assign "s.token" to variable and pattern match on "%Floki.HTML.Tokenizer.Doctype{}"
+
+      type warning found at:
+      │
+ 2292 │     doctype = %Doctype{s.token | force_quirks: :on}
+      │               ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:2292:15: Floki.HTML.Tokenizer.after_doctype_system_keyword/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Doctype is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Doctype{s.token | force_quirks: :on}
+
+      but got type:
+
+          dynamic()
+
+      where "s" was given the type:
+
+          # type: dynamic(%{..., token: term()})
+          # from: lib/floki/html/tokenizer.ex:2303:15
+          %Floki.HTML.Tokenizer.Doctype{...}
+
+      you must assign "s.token" to variable and pattern match on "%Floki.HTML.Tokenizer.Doctype{}"
+
+      type warning found at:
+      │
+ 2303 │     doctype = %Doctype{s.token | force_quirks: :on}
+      │               ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:2303:15: Floki.HTML.Tokenizer.after_doctype_system_keyword/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Doctype is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Doctype{s.token | force_quirks: :on}
+
+      but got type:
+
+          dynamic()
+
+      where "s" was given the type:
+
+          # type: dynamic(%{..., token: term()})
+          # from: lib/floki/html/tokenizer.ex:2314:15
+          %Floki.HTML.Tokenizer.Doctype{...}
+
+      you must assign "s.token" to variable and pattern match on "%Floki.HTML.Tokenizer.Doctype{}"
+
+      type warning found at:
+      │
+ 2314 │     doctype = %Doctype{s.token | force_quirks: :on}
+      │               ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:2314:15: Floki.HTML.Tokenizer.after_doctype_system_keyword/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Doctype is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Doctype{s.token | system_id: ""}
+
+      but got type:
+
+          dynamic()
+
+      where "s" was given the type:
+
+          # type: dynamic(%{..., token: term()})
+          # from: lib/floki/html/tokenizer.ex:2330:15
+          %Floki.HTML.Tokenizer.Doctype{...}
+
+      you must assign "s.token" to variable and pattern match on "%Floki.HTML.Tokenizer.Doctype{}"
+
+      type warning found at:
+      │
+ 2330 │     doctype = %Doctype{s.token | system_id: ""}
+      │               ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:2330:15: Floki.HTML.Tokenizer.before_doctype_system_identifier/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Doctype is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Doctype{s.token | system_id: ""}
+
+      but got type:
+
+          dynamic()
+
+      where "s" was given the type:
+
+          # type: dynamic(%{..., token: term()})
+          # from: lib/floki/html/tokenizer.ex:2340:15
+          %Floki.HTML.Tokenizer.Doctype{...}
+
+      you must assign "s.token" to variable and pattern match on "%Floki.HTML.Tokenizer.Doctype{}"
+
+      type warning found at:
+      │
+ 2340 │     doctype = %Doctype{s.token | system_id: ""}
+      │               ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:2340:15: Floki.HTML.Tokenizer.before_doctype_system_identifier/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Doctype is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Doctype{s.token | force_quirks: :on}
+
+      but got type:
+
+          dynamic()
+
+      where "s" was given the type:
+
+          # type: dynamic(%{..., token: term()})
+          # from: lib/floki/html/tokenizer.ex:2350:15
+          %Floki.HTML.Tokenizer.Doctype{...}
+
+      you must assign "s.token" to variable and pattern match on "%Floki.HTML.Tokenizer.Doctype{}"
+
+      type warning found at:
+      │
+ 2350 │     doctype = %Doctype{s.token | force_quirks: :on}
+      │               ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:2350:15: Floki.HTML.Tokenizer.before_doctype_system_identifier/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Doctype is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Doctype{s.token | force_quirks: :on}
+
+      but got type:
+
+          dynamic()
+
+      where "s" was given the type:
+
+          # type: dynamic(%{..., token: term()})
+          # from: lib/floki/html/tokenizer.ex:2361:15
+          %Floki.HTML.Tokenizer.Doctype{...}
+
+      you must assign "s.token" to variable and pattern match on "%Floki.HTML.Tokenizer.Doctype{}"
+
+      type warning found at:
+      │
+ 2361 │     doctype = %Doctype{s.token | force_quirks: :on}
+      │               ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:2361:15: Floki.HTML.Tokenizer.before_doctype_system_identifier/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Doctype is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Doctype{s.token | force_quirks: :on}
+
+      but got type:
+
+          dynamic()
+
+      where "s" was given the type:
+
+          # type: dynamic(%{..., token: term()})
+          # from: lib/floki/html/tokenizer.ex:2372:15
+          %Floki.HTML.Tokenizer.Doctype{...}
+
+      you must assign "s.token" to variable and pattern match on "%Floki.HTML.Tokenizer.Doctype{}"
+
+      type warning found at:
+      │
+ 2372 │     doctype = %Doctype{s.token | force_quirks: :on}
+      │               ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:2372:15: Floki.HTML.Tokenizer.before_doctype_system_identifier/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Doctype is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Doctype{s.token | system_id: [s.token.system_id | [65533]]}
+
+      but got type:
+
+          dynamic()
+
+      where "s" was given the type:
+
+          # type: dynamic(%{..., token: term()})
+          # from: lib/floki/html/tokenizer.ex:2389:15
+          %Floki.HTML.Tokenizer.Doctype{...}
+
+      you must assign "s.token" to variable and pattern match on "%Floki.HTML.Tokenizer.Doctype{}"
+
+      type warning found at:
+      │
+ 2389 │     doctype = %Doctype{s.token | system_id: [s.token.system_id | [@replacement_char]]}
+      │               ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:2389:15: Floki.HTML.Tokenizer.doctype_system_identifier_double_quoted/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Doctype is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Doctype{s.token | force_quirks: :on}
+
+      but got type:
+
+          dynamic()
+
+      where "s" was given the type:
+
+          # type: dynamic(%{..., token: term()})
+          # from: lib/floki/html/tokenizer.ex:2399:15
+          %Floki.HTML.Tokenizer.Doctype{...}
+
+      you must assign "s.token" to variable and pattern match on "%Floki.HTML.Tokenizer.Doctype{}"
+
+      type warning found at:
+      │
+ 2399 │     doctype = %Doctype{s.token | force_quirks: :on}
+      │               ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:2399:15: Floki.HTML.Tokenizer.doctype_system_identifier_double_quoted/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Doctype is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Doctype{s.token | force_quirks: :on}
+
+      but got type:
+
+          dynamic()
+
+      where "s" was given the type:
+
+          # type: dynamic(%{..., token: term()})
+          # from: lib/floki/html/tokenizer.ex:2410:15
+          %Floki.HTML.Tokenizer.Doctype{...}
+
+      you must assign "s.token" to variable and pattern match on "%Floki.HTML.Tokenizer.Doctype{}"
+
+      type warning found at:
+      │
+ 2410 │     doctype = %Doctype{s.token | force_quirks: :on}
+      │               ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:2410:15: Floki.HTML.Tokenizer.doctype_system_identifier_double_quoted/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Doctype is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Doctype{s.token | system_id: [s.token.system_id | [c]]}
+
+      but got type:
+
+          dynamic()
+
+      where "s" was given the type:
+
+          # type: dynamic(%{..., token: term()})
+          # from: lib/floki/html/tokenizer.ex:2421:15
+          %Floki.HTML.Tokenizer.Doctype{...}
+
+      you must assign "s.token" to variable and pattern match on "%Floki.HTML.Tokenizer.Doctype{}"
+
+      type warning found at:
+      │
+ 2421 │     doctype = %Doctype{s.token | system_id: [s.token.system_id | [c]]}
+      │               ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:2421:15: Floki.HTML.Tokenizer.doctype_system_identifier_double_quoted/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Doctype is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Doctype{s.token | system_id: [s.token.system_id | [65533]]}
+
+      but got type:
+
+          dynamic()
+
+      where "s" was given the type:
+
+          # type: dynamic(%{..., token: term()})
+          # from: lib/floki/html/tokenizer.ex:2433:15
+          %Floki.HTML.Tokenizer.Doctype{...}
+
+      you must assign "s.token" to variable and pattern match on "%Floki.HTML.Tokenizer.Doctype{}"
+
+      type warning found at:
+      │
+ 2433 │     doctype = %Doctype{s.token | system_id: [s.token.system_id | [@replacement_char]]}
+      │               ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:2433:15: Floki.HTML.Tokenizer.doctype_system_identifier_single_quoted/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Doctype is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Doctype{s.token | force_quirks: :on}
+
+      but got type:
+
+          dynamic()
+
+      where "s" was given the type:
+
+          # type: dynamic(%{..., token: term()})
+          # from: lib/floki/html/tokenizer.ex:2443:15
+          %Floki.HTML.Tokenizer.Doctype{...}
+
+      you must assign "s.token" to variable and pattern match on "%Floki.HTML.Tokenizer.Doctype{}"
+
+      type warning found at:
+      │
+ 2443 │     doctype = %Doctype{s.token | force_quirks: :on}
+      │               ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:2443:15: Floki.HTML.Tokenizer.doctype_system_identifier_single_quoted/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Doctype is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Doctype{s.token | force_quirks: :on}
+
+      but got type:
+
+          dynamic()
+
+      where "s" was given the type:
+
+          # type: dynamic(%{..., token: term()})
+          # from: lib/floki/html/tokenizer.ex:2454:15
+          %Floki.HTML.Tokenizer.Doctype{...}
+
+      you must assign "s.token" to variable and pattern match on "%Floki.HTML.Tokenizer.Doctype{}"
+
+      type warning found at:
+      │
+ 2454 │     doctype = %Doctype{s.token | force_quirks: :on}
+      │               ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:2454:15: Floki.HTML.Tokenizer.doctype_system_identifier_single_quoted/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Doctype is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Doctype{s.token | system_id: [s.token.system_id | [c]]}
+
+      but got type:
+
+          dynamic()
+
+      where "s" was given the type:
+
+          # type: dynamic(%{..., token: term()})
+          # from: lib/floki/html/tokenizer.ex:2465:15
+          %Floki.HTML.Tokenizer.Doctype{...}
+
+      you must assign "s.token" to variable and pattern match on "%Floki.HTML.Tokenizer.Doctype{}"
+
+      type warning found at:
+      │
+ 2465 │     doctype = %Doctype{s.token | system_id: [s.token.system_id | [c]]}
+      │               ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:2465:15: Floki.HTML.Tokenizer.doctype_system_identifier_single_quoted/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Doctype is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Doctype{s.token | force_quirks: :on}
+
+      but got type:
+
+          dynamic()
+
+      where "s" was given the type:
+
+          # type: dynamic(%{..., token: term()})
+          # from: lib/floki/html/tokenizer.ex:2481:15
+          %Floki.HTML.Tokenizer.Doctype{...}
+
+      you must assign "s.token" to variable and pattern match on "%Floki.HTML.Tokenizer.Doctype{}"
+
+      type warning found at:
+      │
+ 2481 │     doctype = %Doctype{s.token | force_quirks: :on}
+      │               ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:2481:15: Floki.HTML.Tokenizer.after_doctype_system_identifier/2
+
+      warning: a struct for Floki.HTML.Tokenizer.CharrefState is expected on struct update:
+
+          %Floki.HTML.Tokenizer.CharrefState{s.charref_state | done: true}
+
+      but got type:
+
+          dynamic()
+
+      where "s" was given the type:
+
+          # type: dynamic(%{..., charref_state: term()})
+          # from: lib/floki/html/tokenizer.ex:2604:21
+          %Floki.HTML.Tokenizer.CharrefState{...}
+
+      you must assign "s.charref_state" to variable and pattern match on "%Floki.HTML.Tokenizer.CharrefState{}"
+
+      type warning found at:
+      │
+ 2604 │     charref_state = %CharrefState{s.charref_state | done: true}
+      │                     ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:2604:21: Floki.HTML.Tokenizer.seek_charref/2
+
+      warning: this clause of defp charref_html_after_buffer/2 is never used (or it will always fail/warn when invoked)
+      │
+ 2694 │   defp charref_html_after_buffer(
+      │        ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:2694:8: Floki.HTML.Tokenizer.charref_html_after_buffer/2
+
+      warning: a struct for Floki.HTML.Tokenizer.Attribute is expected on struct update:
+
+          %Floki.HTML.Tokenizer.Attribute{attr | value: [attr.value | s.buffer]}
+
+      but got type:
+
+          dynamic()
+
+      where "attr" was given the type:
+
+          # type: dynamic()
+          # from: lib/floki/html/tokenizer.ex:2799:24
+          [attr | attrs] = s.token.attributes
+
+      when defining the variable "attr", you must also pattern match on "%Floki.HTML.Tokenizer.Attribute{}"
+
+      type warning found at:
+      │
+ 2800 │         new_attr = %Attribute{attr | value: [attr.value | s.buffer]}
+      │                    ~
+      │
+      └─ (floki 0.36.2) lib/floki/html/tokenizer.ex:2800:20: Floki.HTML.Tokenizer.character_reference_end/2
+
+     warning: the variable "namespace_size" is accessed inside size(...) of a bitstring but it was defined outside of the match. You must precede it with the pin operator
+     │
+ 111 │       <<^namespace::binary-size(namespace_size), ":", _::binary>> -> true
+     │                                 ~
+     │
+     └─ (floki 0.36.2) lib/floki/selector.ex:111:33: Floki.Selector.namespace_match?/2
+
+     warning: the variable "expected_namespace_size" is accessed inside size(...) of a bitstring but it was defined outside of the match. You must precede it with the pin operator
+     │
+ 128 │             _ns::binary-size(expected_namespace_size),
+     │                              ~
+     │
+     └─ (floki 0.36.2) lib/floki/selector.ex:128:30: Floki.Selector.type_match?/2
+
+==> hpax
+    warning: the variable "padding_size" is accessed inside size(...) of a bitstring but it was defined outside of the match. You must precede it with the pin operator
+    │
+ 79 │     <<padding::size(padding_size)>> = padding
+    │                     ~
+    │
+    └─ (hpax 1.0.0) lib/hpax/huffman.ex:79:21: HPAX.Huffman.decode/1
+
+    warning: the variable "prefix" is accessed inside size(...) of a bitstring but it was defined outside of the match. You must precede it with the pin operator
+    │
+ 50 │     with <<value::size(prefix), rest::binary>> <- bitstring do
+    │                        ~
+    │
+    └─ (hpax 1.0.0) lib/hpax/types.ex:50:24: HPAX.Types.decode_integer/2
+
+    warning: the variable "length" is accessed inside size(...) of a bitstring but it was defined outside of the match. You must precede it with the pin operator
+    │
+ 77 │          <<contents::binary-size(length), rest::binary>> <- rest do
+    │                                  ~
+    │
+    └─ (hpax 1.0.0) lib/hpax/types.ex:77:34: HPAX.Types.decode_binary/1
+
+==> rustler
+     warning: incompatible types given to throw_error/1:
+
+         throw_error(:no_artifacts)
+
+     given types:
+
+         -:no_artifacts-
+
+     but expected one of:
+
+         :rustup_not_installed or {:no_rustler_deps, term(), term()} or
+           {:unsupported_rustler_version, term(), term(), term()} or
+           {:cargo_toml_not_found or :nonexistent_crate_directory or :rust_version_not_installed or
+              :unknown_target, term()}
+
+     type warning found at:
+     │
+ 143 │       throw_error(:no_artifacts)
+     │       ~
+     │
+     └─ (rustler 0.37.1) lib/rustler/compiler.ex:143:7: Rustler.Compiler.handle_artifacts/2
+
+==> date_time_parser
+warning: pattern matching on 0.0 is equivalent to matching only on +0.0. Instead you must match on +0.0 or -0.0
+└─ (date_time_parser 1.2.0) lib/parser/serial.ex: DateTimeParser.Parser.Serial.time_from_serial/1
+
+warning: "xref: [exclude: ...]" in your mix.exs file is deprecated, instead use: "elixirc_options: [no_warn_undefined: ...]"
+  (mix 1.20.4) lib/mix/tasks/compile.elixir.ex:243: Mix.Tasks.Compile.Elixir.xref_exclude_opts/2
+  (mix 1.20.4) lib/mix/tasks/compile.elixir.ex:142: Mix.Tasks.Compile.Elixir.run/1
+  (mix 1.20.4) lib/mix/task.ex:502: anonymous fn/3 in Mix.Task.run_task/5
+  (mix 1.20.4) lib/mix/task.compiler.ex:299: Mix.Task.Compiler.run_compiler/2
+  (mix 1.20.4) lib/mix/task.compiler.ex:287: Mix.Task.Compiler.run/4
+  (mix 1.20.4) lib/mix/tasks/compile.all.ex:75: Mix.Tasks.Compile.All.do_run/2
+
+==> yaml_elixir
+    warning: unused require Record
+    │
+  2 │   require Record
+    │   ~
+    │
+    └─ lib/yaml_elixir/yaml_node_keyword_list.ex:2:3
+
+==> autumn
+     warning: the following clause will never match:
+
+         {:error, error} ->
+
+     because it attempts to match on the result of:
+
+         highlight(source, options)
+
+     which has type:
+
+         dynamic(not {:error, term()})
+
+     type warning found at:
+     │
+ 755 │       {:error, error} ->
+     │       ~~~~~~~~~~~~~~~~~~
+     │
+     └─ (autumn 0.5.5) lib/autumn.ex:755: Autumn.highlight!/2
+
+==> mdex
+    warning: unused require Logger
+    │
+ 43 │   require Logger
+    │   ~
+    │
+    └─ lib/mdex.ex:43:3
+
+     warning: the right-hand side of || (shown as ... below) will never be executed:
+
+         document || markdown || ...
+
+     because the left-hand side always evaluates to:
+
+         dynamic(not false and not nil)
+
+     where "document" was given the type:
+
+         # type: dynamic()
+         # from: lib/mdex.ex:312:16
+         document
+
+     where "markdown" was given the types:
+
+         # type: binary()
+         # from: lib/mdex.ex:310:15
+         markdown
+
+         # type: binary()
+         # from: lib/mdex.ex:310:39
+         is_binary(markdown)
+
+     type warning found at:
+     │
+ 312 │     markdown = document || markdown || ""
+     │     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     │
+     └─ (mdex 0.9.2) lib/mdex.ex:312: MDEx.to_html/2
+
+     warning: the right-hand side of || (shown as ... below) will never be executed:
+
+         document || markdown || ...
+
+     because the left-hand side always evaluates to:
+
+         dynamic(not false and not nil)
+
+     where "document" was given the type:
+
+         # type: dynamic()
+         # from: lib/mdex.ex:403:16
+         document
+
+     where "markdown" was given the types:
+
+         # type: binary()
+         # from: lib/mdex.ex:401:14
+         markdown
+
+         # type: binary()
+         # from: lib/mdex.ex:401:38
+         is_binary(markdown)
+
+     type warning found at:
+     │
+ 403 │     markdown = document || markdown || ""
+     │     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     │
+     └─ (mdex 0.9.2) lib/mdex.ex:403: MDEx.to_xml/2
+
+     warning: this clause of defp is_block_node?/1 is never used (or it will always fail/warn when invoked)
+     │
+ 141 │   defp is_block_node?(%MDEx.Document{}), do: true
+     │        ~
+     │
+     └─ (mdex 0.9.2) lib/mdex/tree.ex:141:8: MDEx.Tree.is_block_node?/1
+
+warning: "xref: [exclude: ...]" in your mix.exs file is deprecated, instead use: "elixirc_options: [no_warn_undefined: ...]"
+  (mix 1.20.4) lib/mix/tasks/compile.elixir.ex:243: Mix.Tasks.Compile.Elixir.xref_exclude_opts/2
+  (mix 1.20.4) lib/mix/tasks/compile.elixir.ex:142: Mix.Tasks.Compile.Elixir.run/1
+  (mix 1.20.4) lib/mix/task.ex:502: anonymous fn/3 in Mix.Task.run_task/5
+  (mix 1.20.4) lib/mix/task.compiler.ex:299: Mix.Task.Compiler.run_compiler/2
+  (mix 1.20.4) lib/mix/task.compiler.ex:287: Mix.Task.Compiler.run/4
+  (mix 1.20.4) lib/mix/tasks/compile.all.ex:75: Mix.Tasks.Compile.All.do_run/2
+
+==> plug
+     warning: unused require Bitwise
+     │
+ 105 │   require Bitwise
+     │   ~
+     │
+     └─ lib/plug/csrf_protection.ex:105:3
+
+     warning: the following clause will never match:
+
+         {:error, reason} ->
+
+     because it attempts to match on the result of:
+
+         IO.binwrite(device, contents)
+
+     which has type:
+
+         dynamic(not {:error, term()})
+
+     type warning found at:
+     │
+ 261 │       {:error, reason} ->
+     │       ~~~~~~~~~~~~~~~~~~~
+     │
+     └─ (plug 1.16.1) lib/plug/parsers/multipart.ex:261: Plug.Parsers.MULTIPART.binwrite!/2
+
+    warning: unused require Logger
+    │
+ 52 │   require Logger
+    │   ~
+    │
+    └─ lib/plug/request_id.ex:52:3
+
+     warning: the variable "prefix_size" is accessed inside size(...) of a bitstring but it was defined outside of the match. You must precede it with the pin operator
+     │
+ 160 │         <<prefix::binary-size(prefix_size), char, suffix::binary-size(suffix_size)>> = segment
+     │                               ~
+     │
+     └─ (plug 1.16.1) lib/plug/router/utils.ex:160:31: Plug.Router.Utils.build_path_clause/7
+
+     warning: the variable "suffix_size" is accessed inside size(...) of a bitstring but it was defined outside of the match. You must precede it with the pin operator
+     │
+ 160 │         <<prefix::binary-size(prefix_size), char, suffix::binary-size(suffix_size)>> = segment
+     │                                                                       ~
+     │
+     └─ (plug 1.16.1) lib/plug/router/utils.ex:160:71: Plug.Router.Utils.build_path_clause/7
+
+    warning: a struct for Plug.Conn is expected on struct update:
+
+        %Plug.Conn{
+          conn
+          | adapter: {Plug.Adapters.Test.Conn, state},
+            host: uri.host || conn.host || "www.example.com",
+            method: method,
+            owner: owner,
+            path_info: split_path(uri.path),
+            port: uri.port || conn_port,
+            remote_ip: conn.remote_ip || {127, 0, 0, 1},
+            req_headers: req_headers,
+            request_path: uri.path,
+            query_string: query,
+            query_params: query_params || %Plug.Conn.Unfetched{aspect: :query_params},
+            body_params: body_params || %Plug.Conn.Unfetched{aspect: :body_params},
+            params: params || %Plug.Conn.Unfetched{aspect: :params},
+            scheme: String.to_atom(String.downcase(uri.scheme || "http"))
+        }
+
+    but got type:
+
+        dynamic(%{..., adapter: {atom(), term()}, port: term(), req_headers: term()})
+
+    where "conn" was given the types:
+
+        # type: dynamic(%{..., req_headers: term()})
+        # from: lib/plug/adapters/test/conn.ex:21:7
+        body_or_params(body_or_params, query, conn.req_headers, method)
+
+        # type: dynamic(%{..., adapter: {atom(), term()}, req_headers: term()})
+        # from: lib/plug/adapters/test/conn.ex:30:22
+        get_from_adapter(conn, :get_http_protocol, :"HTTP/1.1")
+
+        # type: dynamic(%{..., adapter: {atom(), term()}, port: term(), req_headers: term()})
+        # from: lib/plug/adapters/test/conn.ex:39:30
+        conn.port != 0
+
+    when defining the variable "conn", you must also pattern match on "%Plug.Conn{}"
+
+    type warning found at:
+    │
+ 41 │     %Plug.Conn{
+    │     ~
+    │
+    └─ (plug 1.16.1) lib/plug/adapters/test/conn.ex:41:5: Plug.Adapters.Test.Conn.conn/4
+
+    warning: a struct for Plug.Conn is expected on struct update:
+
+        %Plug.Conn{conn | method: method}
+
+    but got type:
+
+        dynamic()
+
+    where "conn" was given the type:
+
+        # type: dynamic()
+        # from: lib/plug/method_override.ex:60:24
+        conn
+
+    when defining the variable "conn", you must also pattern match on "%Plug.Conn{}"
+
+    type warning found at:
+    │
+ 64 │       %Plug.Conn{conn | method: method}
+    │       ~
+    │
+    └─ (plug 1.16.1) lib/plug/method_override.ex:64:7: Plug.MethodOverride.override_method/2
+
+==> tz
+    warning: unused require Logger
+    │
+  4 │   require Logger
+    │   ~
+    │
+    └─ lib/tz/compiler.ex:4:3
+
+    warning: unused require Tz.IanaFileParser
+    │
+  5 │   require Tz.IanaFileParser
+    │   ~
+    │
+    └─ lib/tz/compiler.ex:5:3
+
+    warning: unused require Tz.PeriodsBuilder
+    │
+  6 │   require Tz.PeriodsBuilder
+    │   ~
+    │
+    └─ lib/tz/compiler.ex:6:3
+
+==> bandit
+    warning: the variable "max_frame_size" is accessed inside size(...) of a bitstring but it was defined outside of the match. You must precede it with the pin operator
+    │
+ 61 │         <<this_frame::binary-size(max_frame_size), rest::binary>> =
+    │                                   ~
+    │
+    └─ (bandit 1.5.7) lib/bandit/http2/frame/data.ex:61:35: Bandit.HTTP2.Frame.Serializable.Bandit.HTTP2.Frame.Data.serialize/2
+
+     warning: the variable "desired_length" is accessed inside size(...) of a bitstring but it was defined outside of the match. You must precede it with the pin operator
+     │
+ 341 │       <<to_send::binary-size(desired_length), rest::binary>> = IO.iodata_to_binary(data)
+     │                              ~
+     │
+     └─ (bandit 1.5.7) lib/bandit/http2/connection.ex:341:30: Bandit.HTTP2.Connection.split_data/2
+
+     warning: the variable "bytes_to_return" is accessed inside size(...) of a bitstring but it was defined outside of the match. You must precede it with the pin operator
+     │
+ 223 │           <<to_return::binary-size(bytes_to_return), rest::binary>> = buffer
+     │                                    ~
+     │
+     └─ (bandit 1.5.7) lib/bandit/http1/socket.ex:223:36: Bandit.HTTPTransport.Bandit.HTTP1.Socket.do_read_content_length_data!/4
+
+     warning: the variable "chunk_size" is accessed inside size(...) of a bitstring but it was defined outside of the match. You must precede it with the pin operator
+     │
+ 249 │             <<next_chunk::binary-size(chunk_size), ?\r, ?\n, rest::binary>> ->
+     │                                       ~
+     │
+     └─ (bandit 1.5.7) lib/bandit/http1/socket.ex:249:39: Bandit.HTTPTransport.Bandit.HTTP1.Socket.do_read_chunked_data!/5
+
+     warning: the variable "desired_length" is accessed inside size(...) of a bitstring but it was defined outside of the match. You must precede it with the pin operator
+     │
+ 478 │         <<to_send::binary-size(desired_length), rest::binary>> = IO.iodata_to_binary(data)
+     │                                ~
+     │
+     └─ (bandit 1.5.7) lib/bandit/http2/stream.ex:478:32: Bandit.HTTPTransport.Bandit.HTTP2.Stream.split_data/2
+
+    warning: unused require Integer
+    │
+ 41 │   require Integer
+    │   ~
+    │
+    └─ lib/bandit/http2/stream.ex:41:3
+
+     warning: the following clause will never match:
+
+         %Bandit.HTTP2.Stream{} = stream ->
+
+     because it attempts to match on the result of:
+
+         do_recv(stream, stream.read_timeout)
+
+     which has type:
+
+         dynamic(:timeout or {:headers, term(), term()})
+
+     type warning found at:
+     │
+ 130 │         %@for{} = stream ->
+     │                 ~
+     │
+     └─ (bandit 1.5.7) lib/bandit/http2/stream.ex:130:17: Bandit.HTTPTransport.Bandit.HTTP2.Stream.read_headers/1
+
+     warning: this clause of defp do_recv/2 is never used (or it will always fail/warn when invoked)
+     │
+ 313 │     defp do_recv(%@for{state: :remote_closed} = stream, timeout) do
+     │          ~
+     │
+     └─ (bandit 1.5.7) lib/bandit/http2/stream.ex:313:10: Bandit.HTTPTransport.Bandit.HTTP2.Stream.do_recv/2
+
+     warning: this clause of defp do_recv/2 is never used (or it will always fail/warn when invoked)
+     │
+ 331 │     defp do_recv(%@for{state: :closed} = stream, timeout) do
+     │          ~
+     │
+     └─ (bandit 1.5.7) lib/bandit/http2/stream.ex:331:10: Bandit.HTTPTransport.Bandit.HTTP2.Stream.do_recv/2
+
+    warning: the variable "max_frame_size" is accessed inside size(...) of a bitstring but it was defined outside of the match. You must precede it with the pin operator
+    │
+ 44 │         <<this_frame::binary-size(max_frame_size), rest::binary>> =
+    │                                   ~
+    │
+    └─ (bandit 1.5.7) lib/bandit/http2/frame/continuation.ex:44:35: Bandit.HTTP2.Frame.Serializable.Bandit.HTTP2.Frame.Continuation.serialize/2
+
+    warning: the following clause is redundant:
+
+        def handle_info({msg, _raw_socket, _data}, _state) when msg === :tcp or msg === :ssl
+
+    it has type:
+
+        dynamic({:ssl or :tcp, term(), term()}), dynamic()
+
+    previous clauses have already matched on the following types:
+
+        {:thousand_island_ready, term(), term(), term(), term()}, {nil, term()}
+        :timeout, {%ThousandIsland.Socket{}, term()}
+        {:plug_conn, :sent}, {term(), term()}
+        {:EXIT, term(), :normal}, {term(), term()}
+        term(), {term(), term()}
+        term(), term()
+
+    │
+  1 │ defmodule Bandit.HTTP1.Handler do
+    │ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    │
+    └─ (bandit 1.5.7) lib/bandit/http1/handler.ex:1: Bandit.HTTP1.Handler.handle_info/2
+
+     warning: the variable "deflated_size" is accessed inside size(...) of a bitstring but it was defined outside of the match. You must precede it with the pin operator
+     │
+ 134 │         <<deflated_data::binary-size(deflated_size), 0x00, 0x00, 0xFF, 0xFF>> -> deflated_data
+     │                                      ~
+     │
+     └─ (bandit 1.5.7) lib/bandit/websocket/permessage_deflate.ex:134:38: Bandit.WebSocket.PerMessageDeflate.deflate/2
+
+     warning: the variable "max_frame_size" is accessed inside size(...) of a bitstring but it was defined outside of the match. You must precede it with the pin operator
+     │
+ 127 │         <<this_frame::binary-size(max_frame_size), rest::binary>> =
+     │                                   ~
+     │
+     └─ (bandit 1.5.7) lib/bandit/http2/frame/headers.ex:127:35: Bandit.HTTP2.Frame.Serializable.Bandit.HTTP2.Frame.Headers.serialize/2
+
+==> tableau
+    warning: unused require Logger
+    │
+  6 │   require Logger
+    │   ~
+    │
+    └─ lib/tableau_dev_server/application.ex:6:3
+
+spec_lint: 2 specs checked, 1 finding(s), 0 gating and new, complete, exit 0 -> /private/tmp/spec-lint-adoption-m8/evidence/tableau/incremental.json

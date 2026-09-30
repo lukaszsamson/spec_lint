@@ -1,0 +1,586 @@
+==> spec_lint
+Compiling 47 files (.ex)
+Generated spec_lint app
+==> mime
+Compiling 1 file (.ex)
+Generated mime app
+==> jason
+Compiling 10 files (.ex)
+Generated jason app
+==> plug_crypto
+Compiling 5 files (.ex)
+Generated plug_crypto app
+==> hpax
+Compiling 4 files (.ex)
+    warning: the variable "prefix" is accessed inside size(...) of a bitstring but it was defined outside of the match. You must precede it with the pin operator
+    │
+ 50 │     with <<value::size(prefix), rest::binary>> <- bitstring do
+    │                        ~
+    │
+    └─ lib/hpax/types.ex:50:24: HPAX.Types.decode_integer/2
+
+    warning: the variable "length" is accessed inside size(...) of a bitstring but it was defined outside of the match. You must precede it with the pin operator
+    │
+ 77 │          <<contents::binary-size(length), rest::binary>> <- rest do
+    │                                  ~
+    │
+    └─ lib/hpax/types.ex:77:34: HPAX.Types.decode_binary/1
+
+    warning: the variable "padding_size" is accessed inside size(...) of a bitstring but it was defined outside of the match. You must precede it with the pin operator
+    │
+ 79 │     <<padding::size(padding_size)>> = padding
+    │                     ~
+    │
+    └─ lib/hpax/huffman.ex:79:21: HPAX.Huffman.decode/1
+
+Generated hpax app
+==> mint
+Compiling 1 file (.erl)
+warning: "xref: [exclude: ...]" in your mix.exs file is deprecated, instead use: "elixirc_options: [no_warn_undefined: ...]"
+  (mix 1.20.4) lib/mix/tasks/compile.elixir.ex:243: Mix.Tasks.Compile.Elixir.xref_exclude_opts/2
+  (mix 1.20.4) lib/mix/tasks/compile.elixir.ex:142: Mix.Tasks.Compile.Elixir.run/1
+  (mix 1.20.4) lib/mix/task.ex:502: anonymous fn/3 in Mix.Task.run_task/5
+  (mix 1.20.4) lib/mix/task.compiler.ex:299: Mix.Task.Compiler.run_compiler/2
+  (mix 1.20.4) lib/mix/task.compiler.ex:287: Mix.Task.Compiler.run/4
+  (mix 1.20.4) lib/mix/tasks/compile.all.ex:75: Mix.Tasks.Compile.All.do_run/2
+
+Compiling 20 files (.ex)
+     warning: the variable "length" is accessed inside size(...) of a bitstring but it was defined outside of the match. You must precede it with the pin operator
+     │
+ 732 │         <<body::binary-size(length), rest::binary>> = data
+     │                             ~
+     │
+     └─ lib/mint/http1.ex:732:29: Mint.HTTP1.decode_body/5
+
+     warning: the variable "length" is accessed inside size(...) of a bitstring but it was defined outside of the match. You must precede it with the pin operator
+     │
+ 806 │         <<body::binary-size(length), rest::binary>> = data
+     │                             ~
+     │
+     └─ lib/mint/http1.ex:806:29: Mint.HTTP1.decode_body/5
+
+     warning: the variable "data_length" is accessed inside size(...) of a bitstring but it was defined outside of the match. You must precede it with the pin operator
+     │
+ 274 │       <<data::size(data_length)-binary, padding::size(pad_length)-binary>> = rest
+     │                    ~
+     │
+     └─ lib/mint/http2/frame.ex:274:20: Mint.HTTP2.Frame.decode_padding/3
+
+     warning: the variable "pad_length" is accessed inside size(...) of a bitstring but it was defined outside of the match. You must precede it with the pin operator
+     │
+ 274 │       <<data::size(data_length)-binary, padding::size(pad_length)-binary>> = rest
+     │                                                       ~
+     │
+     └─ lib/mint/http2/frame.ex:274:55: Mint.HTTP2.Frame.decode_padding/3
+
+    warning: unused require Logger
+    │
+  4 │   require Logger
+    │   ~
+    │
+    └─ lib/mint/core/transport/ssl.ex:4:3
+
+      warning: the variable "chunk_size" is accessed inside size(...) of a bitstring but it was defined outside of the match. You must precede it with the pin operator
+      │
+ 1269 │     <<chunk::size(chunk_size)-binary, rest::binary>> = binary
+      │                   ~
+      │
+      └─ lib/mint/http2.ex:1269:19: Mint.HTTP2.split_payload_in_chunks/3
+
+Generated mint app
+==> mint_web_socket
+Compiling 7 files (.ex)
+     warning: the variable "payload_length" is accessed inside size(...) of a bitstring but it was defined outside of the match. You must precede it with the pin operator
+     │
+ 268 │          <<payload::binary-size(payload_length), more::bitstring>> <- rest do
+     │                                 ~
+     │
+     └─ lib/mint/web_socket/frame.ex:268:33: Mint.WebSocket.Frame.decode_payload_and_mask/2
+
+     warning: the variable "data_size" is accessed inside size(...) of a bitstring but it was defined outside of the match. You must precede it with the pin operator
+     │
+ 150 │       <<deflated::binary-size(data_size), 0x00, 0x00, 0xFF, 0xFF>> -> deflated
+     │                               ~
+     │
+     └─ lib/mint/web_socket/per_message_deflate.ex:150:31: Mint.WebSocket.PerMessageDeflate.deflate_data/2
+
+     warning: a struct for Mint.WebSocket.Extension is expected on struct update:
+
+         %Mint.WebSocket.Extension{client_extension | params: server_extension.params}
+
+     but got type:
+
+         dynamic()
+
+     where "client_extension" was given the type:
+
+         # type: dynamic()
+         # from: lib/mint/web_socket/extension.ex:219:34
+         {:ok, client_extension} <- Map.fetch(client_extension_mapping, server_extension.name)
+
+     when defining the variable "client_extension", you must also pattern match on "%Mint.WebSocket.Extension{}"
+
+     type warning found at:
+     │
+ 221 │          extension = %__MODULE__{client_extension | params: server_extension.params},
+     │                      ~
+     │
+     └─ lib/mint/web_socket/extension.ex:221:22: Mint.WebSocket.Extension.accept_extensions/3
+
+Generated mint_web_socket app
+==> phoenix
+===> Failed to restore /private/tmp/spec-lint-adoption-m8/projects/phoenix/deps/ranch/_build/prod/lib/.rebar3/rebar_compiler_erl/source.dag file. Discarding it.
+
+===> Analyzing applications...
+===> Compiling ranch
+==> phx_new
+Compiling 11 files (.ex)
+Generated phx_new app
+==> phoenix
+===> Failed to restore /private/tmp/spec-lint-adoption-m8/projects/phoenix/deps/cowlib/_build/prod/lib/.rebar3/rebar_compiler_erl/source.dag file. Discarding it.
+
+===> Analyzing applications...
+===> Compiling cowlib
+===> Failed to restore /private/tmp/spec-lint-adoption-m8/projects/phoenix/deps/telemetry/_build/prod/lib/.rebar3/rebar_compiler_erl/source.dag file. Discarding it.
+
+===> Analyzing applications...
+===> Compiling telemetry
+==> thousand_island
+Compiling 16 files (.ex)
+Generated thousand_island app
+==> phoenix
+===> Failed to restore /private/tmp/spec-lint-adoption-m8/projects/phoenix/deps/cowboy/_build/prod/lib/.rebar3/rebar_compiler_erl/source.dag file. Discarding it.
+
+===> Analyzing applications...
+===> Compiling cowboy
+==> phoenix_html
+Compiling 6 files (.ex)
+Generated phoenix_html app
+==> phoenix_template
+Compiling 4 files (.ex)
+     warning: the variable "prefix_size" is accessed inside size(...) of a bitstring but it was defined outside of the match. You must precede it with the pin operator
+     │
+ 505 │       <<prefix::binary-size(prefix_size), ^suffix::binary>> -> prefix
+     │                             ~
+     │
+     └─ lib/phoenix/template.ex:505:29: Phoenix.Template.unsuffix/2
+
+Generated phoenix_template app
+==> phoenix_pubsub
+Compiling 11 files (.ex)
+    warning: unused require Logger
+    │
+ 74 │   require Logger
+    │   ~
+    │
+    └─ lib/phoenix/tracker.ex:74:3
+
+    warning: a struct for Phoenix.Tracker.Replica is expected on struct update:
+
+        %Phoenix.Tracker.Replica{replica | status: :permdown}
+
+    but got type:
+
+        dynamic()
+
+    where "replica" was given the type:
+
+        # type: dynamic()
+        # from: lib/phoenix/tracker/replica.ex:72:17
+        replica
+
+    when defining the variable "replica", you must also pattern match on "%Phoenix.Tracker.Replica{}"
+
+    type warning found at:
+    │
+ 72 │   defp permdown(replica), do: %Replica{replica | status: :permdown}
+    │                               ~
+    │
+    └─ lib/phoenix/tracker/replica.ex:72:31: Phoenix.Tracker.Replica.permdown/1
+
+    warning: a struct for Phoenix.Tracker.Replica is expected on struct update:
+
+        %Phoenix.Tracker.Replica{replica | status: :down}
+
+    but got type:
+
+        dynamic()
+
+    where "replica" was given the type:
+
+        # type: dynamic()
+        # from: lib/phoenix/tracker/replica.ex:74:13
+        replica
+
+    when defining the variable "replica", you must also pattern match on "%Phoenix.Tracker.Replica{}"
+
+    type warning found at:
+    │
+ 74 │   defp down(replica), do: %Replica{replica | status: :down}
+    │                           ~
+    │
+    └─ lib/phoenix/tracker/replica.ex:74:27: Phoenix.Tracker.Replica.down/1
+
+    warning: a struct for Phoenix.Tracker.Replica is expected on struct update:
+
+        %Phoenix.Tracker.Replica{replica | last_heartbeat_at: now_ms()}
+
+    but got type:
+
+        dynamic()
+
+    where "replica" was given the type:
+
+        # type: dynamic()
+        # from: lib/phoenix/tracker/replica.ex:76:29
+        replica
+
+    when defining the variable "replica", you must also pattern match on "%Phoenix.Tracker.Replica{}"
+
+    type warning found at:
+    │
+ 77 │     %Replica{replica | last_heartbeat_at: now_ms()}
+    │     ~
+    │
+    └─ lib/phoenix/tracker/replica.ex:77:5: Phoenix.Tracker.Replica.touch_last_heartbeat/1
+
+    warning: a struct for Phoenix.Tracker.State is expected on struct update:
+
+        %Phoenix.Tracker.State{state | clouds: pruned_clouds, delta: new_delta}
+
+    but got type:
+
+        dynamic(%{
+          ...,
+          clouds: term(),
+          delta: %{..., clouds: term(), mode: :delta, values: map()},
+          values: term()
+        })
+
+    where "state" was given the types:
+
+        # type: dynamic(%{..., values: term()})
+        # from: lib/phoenix/tracker/state.ex:94:49
+        :ets.lookup(state.values, {topic, pid, key})
+
+        # type: dynamic(%{..., clouds: term(), values: term()})
+        # from: lib/phoenix/tracker/state.ex:95:21
+        delete_tag(state.clouds, tag)
+
+        # type: dynamic(%{
+          ...,
+          clouds: term(),
+          delta: %{..., clouds: term(), mode: :delta, values: map()},
+          values: term()
+        })
+        # from: lib/phoenix/tracker/state.ex:96:17
+        remove_delta_tag(state.delta, tag)
+
+    when defining the variable "state", you must also pattern match on "%Phoenix.Tracker.State{}"
+
+    type warning found at:
+    │
+ 97 │     state = bump_clock(%State{state | clouds: pruned_clouds, delta: new_delta})
+    │                        ~
+    │
+    └─ lib/phoenix/tracker/state.ex:97:24: Phoenix.Tracker.State.leave_join/5
+
+     warning: a struct for Phoenix.Tracker.State is expected on struct update:
+
+         %Phoenix.Tracker.State{delta | values: Map.put(delta.values, tag, {pid, topic, key, meta})}
+
+     but got type:
+
+         dynamic()
+
+     where "delta" was given the type:
+
+         # type: dynamic()
+         # from: lib/phoenix/tracker/state.ex:506:36
+         %Phoenix.Tracker.State{delta: delta} = state
+
+     when defining the variable "delta", you must also pattern match on "%Phoenix.Tracker.State{}"
+
+     type warning found at:
+     │
+ 510 │     new_delta = %State{delta | values: Map.put(delta.values, tag, {pid, topic, key, meta})}
+     │                 ~
+     │
+     └─ lib/phoenix/tracker/state.ex:510:17: Phoenix.Tracker.State.do_add/5
+
+     warning: a struct for Phoenix.Tracker.State is expected on struct update:
+
+         %Phoenix.Tracker.State{delta | clouds: put_tag(delta.clouds, {rep, new_clock})}
+
+     but got type:
+
+         dynamic()
+
+     where "delta" was given the type:
+
+         # type: dynamic()
+         # from: lib/phoenix/tracker/state.ex:586:99
+         %Phoenix.Tracker.State{mode: :normal, replica: rep, clouds: clouds, context: ctx, delta: delta} =
+           state
+
+     when defining the variable "delta", you must also pattern match on "%Phoenix.Tracker.State{}"
+
+     type warning found at:
+     │
+ 592 │            delta: %State{delta | clouds: put_tag(delta.clouds, {rep, new_clock})}}
+     │                   ~
+     │
+     └─ lib/phoenix/tracker/state.ex:592:19: Phoenix.Tracker.State.bump_clock/1
+
+     warning: a struct for Phoenix.Tracker.State is expected on struct update:
+
+         %Phoenix.Tracker.State{delta | range: {start_clock, new_end}}
+
+     but got type:
+
+         dynamic(%{..., range: {term(), term()}})
+
+     where "delta" was given the type:
+
+         # type: dynamic(%{..., range: {term(), term()}})
+         # from: lib/phoenix/tracker/state.ex:596:30
+         {start_clock, end_clock} = delta.range
+
+     when defining the variable "delta", you must also pattern match on "%Phoenix.Tracker.State{}"
+
+     type warning found at:
+     │
+ 600 │            delta: %State{delta | range: {start_clock, new_end}}}
+     │                   ~
+     │
+     └─ lib/phoenix/tracker/state.ex:600:19: Phoenix.Tracker.State.put_context/2
+
+Generated phoenix_pubsub app
+==> phoenix_view
+Compiling 1 file (.ex)
+     warning: the variable "prefix_size" is accessed inside size(...) of a bitstring but it was defined outside of the match. You must precede it with the pin operator
+     │
+ 655 │       <<prefix::binary-size(prefix_size), ^suffix::binary>> -> prefix
+     │                             ~
+     │
+     └─ lib/phoenix_view.ex:655:29: Phoenix.View.unsuffix/2
+
+Generated phoenix_view app
+==> plug
+Compiling 1 file (.erl)
+warning: "xref: [exclude: ...]" in your mix.exs file is deprecated, instead use: "elixirc_options: [no_warn_undefined: ...]"
+  (mix 1.20.4) lib/mix/tasks/compile.elixir.ex:243: Mix.Tasks.Compile.Elixir.xref_exclude_opts/2
+  (mix 1.20.4) lib/mix/tasks/compile.elixir.ex:142: Mix.Tasks.Compile.Elixir.run/1
+  (mix 1.20.4) lib/mix/task.ex:502: anonymous fn/3 in Mix.Task.run_task/5
+  (mix 1.20.4) lib/mix/task.compiler.ex:299: Mix.Task.Compiler.run_compiler/2
+  (mix 1.20.4) lib/mix/task.compiler.ex:287: Mix.Task.Compiler.run/4
+  (mix 1.20.4) lib/mix/tasks/compile.all.ex:75: Mix.Tasks.Compile.All.do_run/2
+
+Compiling 40 files (.ex)
+     warning: the variable "prefix_size" is accessed inside size(...) of a bitstring but it was defined outside of the match. You must precede it with the pin operator
+     │
+ 160 │         <<prefix::binary-size(prefix_size), char, suffix::binary-size(suffix_size)>> = segment
+     │                               ~
+     │
+     └─ lib/plug/router/utils.ex:160:31: Plug.Router.Utils.build_path_clause/7
+
+     warning: the variable "suffix_size" is accessed inside size(...) of a bitstring but it was defined outside of the match. You must precede it with the pin operator
+     │
+ 160 │         <<prefix::binary-size(prefix_size), char, suffix::binary-size(suffix_size)>> = segment
+     │                                                                       ~
+     │
+     └─ lib/plug/router/utils.ex:160:71: Plug.Router.Utils.build_path_clause/7
+
+    warning: unused require Logger
+    │
+ 59 │   require Logger
+    │   ~
+    │
+    └─ lib/plug/request_id.ex:59:3
+
+     warning: unused require Bitwise
+     │
+ 105 │   require Bitwise
+     │   ~
+     │
+     └─ lib/plug/csrf_protection.ex:105:3
+
+     warning: the following clause will never match:
+
+         {:error, reason} ->
+
+     because it attempts to match on the result of:
+
+         IO.binwrite(device, contents)
+
+     which has type:
+
+         dynamic(not {:error, term()})
+
+     type warning found at:
+     │
+ 261 │       {:error, reason} ->
+     │       ~~~~~~~~~~~~~~~~~~~
+     │
+     └─ lib/plug/parsers/multipart.ex:261: Plug.Parsers.MULTIPART.binwrite!/2
+
+Generated plug app
+==> phoenix
+===> Failed to restore /private/tmp/spec-lint-adoption-m8/projects/phoenix/deps/cowboy_telemetry/_build/prod/lib/.rebar3/rebar_compiler_erl/source.dag file. Discarding it.
+
+===> Analyzing applications...
+===> Compiling cowboy_telemetry
+==> plug_cowboy
+Compiling 5 files (.ex)
+Generated plug_cowboy app
+==> websock
+Compiling 1 file (.ex)
+Generated websock app
+==> bandit
+Compiling 54 files (.ex)
+    warning: the variable "required_length" is accessed inside size(...) of a bitstring but it was defined outside of the match. You must precede it with the pin operator
+    │
+ 82 │       <<payload::binary-size(required_length), rest::binary>> =
+    │                              ~
+    │
+    └─ lib/bandit/extractor.ex:82:30: Bandit.Extractor.pop_frame/1
+
+     warning: the variable "max_frame_size" is accessed inside size(...) of a bitstring but it was defined outside of the match. You must precede it with the pin operator
+     │
+ 127 │         <<this_frame::binary-size(max_frame_size), rest::binary>> =
+     │                                   ~
+     │
+     └─ lib/bandit/http2/frame/headers.ex:127:35: Bandit.HTTP2.Frame.Serializable.Bandit.HTTP2.Frame.Headers.serialize/2
+
+    warning: the variable "max_frame_size" is accessed inside size(...) of a bitstring but it was defined outside of the match. You must precede it with the pin operator
+    │
+ 44 │         <<this_frame::binary-size(max_frame_size), rest::binary>> =
+    │                                   ~
+    │
+    └─ lib/bandit/http2/frame/continuation.ex:44:35: Bandit.HTTP2.Frame.Serializable.Bandit.HTTP2.Frame.Continuation.serialize/2
+
+    warning: the variable "max_frame_size" is accessed inside size(...) of a bitstring but it was defined outside of the match. You must precede it with the pin operator
+    │
+ 61 │         <<this_frame::binary-size(max_frame_size), rest::binary>> =
+    │                                   ~
+    │
+    └─ lib/bandit/http2/frame/data.ex:61:35: Bandit.HTTP2.Frame.Serializable.Bandit.HTTP2.Frame.Data.serialize/2
+
+    warning: unused require Logger
+    │
+ 38 │   require Logger
+    │   ~
+    │
+    └─ lib/bandit/trace.ex:38:3
+
+     warning: the variable "desired_length" is accessed inside size(...) of a bitstring but it was defined outside of the match. You must precede it with the pin operator
+     │
+ 497 │         <<to_send::binary-size(desired_length), rest::binary>> = IO.iodata_to_binary(data)
+     │                                ~
+     │
+     └─ lib/bandit/http2/stream.ex:497:32: Bandit.HTTPTransport.Bandit.HTTP2.Stream.split_data/2
+
+     warning: the variable "max_to_return" is accessed inside size(...) of a bitstring but it was defined outside of the match. You must precede it with the pin operator
+     │
+ 218 │           <<to_return::binary-size(max_to_return), rest::binary>> = buffer
+     │                                    ~
+     │
+     └─ lib/bandit/http1/socket.ex:218:36: Bandit.HTTPTransport.Bandit.HTTP1.Socket.do_read_content_length_data!/4
+
+     warning: the variable "max_to_return" is accessed inside size(...) of a bitstring but it was defined outside of the match. You must precede it with the pin operator
+     │
+ 232 │             <<to_return::binary-size(max_to_return), rest::binary>> = to_return
+     │                                      ~
+     │
+     └─ lib/bandit/http1/socket.ex:232:38: Bandit.HTTPTransport.Bandit.HTTP1.Socket.do_read_content_length_data!/4
+
+     warning: the variable "chunk_size" is accessed inside size(...) of a bitstring but it was defined outside of the match. You must precede it with the pin operator
+     │
+ 251 │             <<next_chunk::binary-size(chunk_size), ?\r, ?\n, rest::binary>> ->
+     │                                       ~
+     │
+     └─ lib/bandit/http1/socket.ex:251:39: Bandit.HTTPTransport.Bandit.HTTP1.Socket.do_read_chunked_data!/5
+
+     warning: the variable "desired_length" is accessed inside size(...) of a bitstring but it was defined outside of the match. You must precede it with the pin operator
+     │
+ 349 │       <<to_send::binary-size(desired_length), rest::binary>> = IO.iodata_to_binary(data)
+     │                              ~
+     │
+     └─ lib/bandit/http2/connection.ex:349:30: Bandit.HTTP2.Connection.split_data/2
+
+     warning: the variable "deflated_size" is accessed inside size(...) of a bitstring but it was defined outside of the match. You must precede it with the pin operator
+     │
+ 134 │         <<deflated_data::binary-size(deflated_size), 0x00, 0x00, 0xFF, 0xFF>> -> deflated_data
+     │                                      ~
+     │
+     └─ lib/bandit/websocket/permessage_deflate.ex:134:38: Bandit.WebSocket.PerMessageDeflate.deflate/2
+
+    warning: unused require Integer
+    │
+ 41 │   require Integer
+    │   ~
+    │
+    └─ lib/bandit/http2/stream.ex:41:3
+
+     warning: the following clause will never match:
+
+         %Bandit.HTTP2.Stream{} = stream ->
+
+     because it attempts to match on the result of:
+
+         do_recv(stream, stream.read_timeout)
+
+     which has type:
+
+         dynamic(:timeout or {:headers, term(), term()})
+
+     type warning found at:
+     │
+ 135 │         %@for{} = stream ->
+     │                 ~
+     │
+     └─ lib/bandit/http2/stream.ex:135:17: Bandit.HTTPTransport.Bandit.HTTP2.Stream.read_headers/1
+
+     warning: this clause of defp do_recv/2 is never used (or it will always fail/warn when invoked)
+     │
+ 321 │     defp do_recv(%@for{state: :remote_closed} = stream, timeout) do
+     │          ~
+     │
+     └─ lib/bandit/http2/stream.ex:321:10: Bandit.HTTPTransport.Bandit.HTTP2.Stream.do_recv/2
+
+    warning: the following clause is redundant:
+
+        def handle_info({msg, _raw_socket, _data}, _state) when msg === :tcp or msg === :ssl
+
+    it has type:
+
+        dynamic({:ssl or :tcp, term(), term()}), dynamic()
+
+    previous clauses have already matched on the following types:
+
+        {:thousand_island_ready, term(), term(), term(), term()}, {nil, term()}
+        :timeout, {%ThousandIsland.Socket{}, term()}
+        {:plug_conn, :sent}, {term(), term()}
+        {:EXIT, term(), :normal}, {term(), term()}
+        term(), {term(), term()}
+        term(), term()
+
+    │
+  1 │ defmodule Bandit.HTTP1.Handler do
+    │ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    │
+    └─ lib/bandit/http1/handler.ex:1: Bandit.HTTP1.Handler.handle_info/2
+
+     warning: this clause of defp do_recv/2 is never used (or it will always fail/warn when invoked)
+     │
+ 339 │     defp do_recv(%@for{state: :closed} = stream, timeout) do
+     │          ~
+     │
+     └─ lib/bandit/http2/stream.ex:339:10: Bandit.HTTPTransport.Bandit.HTTP2.Stream.do_recv/2
+
+Generated bandit app
+==> websock_adapter
+Compiling 4 files (.ex)
+Generated websock_adapter app
+==> phoenix
+** (Mix) unsupported compiler pipeline for phoenix: alias compile can replace compiler output; compiler provenance requires Mix's built-in compile tasks (only one self-invocation with --warnings-as-errors or --no-all-warnings is accepted)

@@ -1,0 +1,38 @@
+{
+  "adapter": "1.20.4+759443e",
+  "findings": [
+    {
+      "adapter": "1.20.4+759443e",
+      "blocked": [],
+      "clause": null,
+      "evidence": "structured_possible",
+      "expires": null,
+      "fingerprint": "sha256:9676c443445696621eb2b100db078634a99b826a2cdd062c69a1472b5980c16b",
+      "mfa": "Tableau.Extension.key/1",
+      "name": "possible_missing_return",
+      "owner": null,
+      "reason": null,
+      "rule": "SL002",
+      "slice": 0
+    }
+  ],
+  "inventory": [
+    {
+      "mfa": "Tableau.Extension.enabled?/1",
+      "module": "Tableau.Extension",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "exact"
+    },
+    {
+      "mfa": "Tableau.Extension.key/1",
+      "module": "Tableau.Extension",
+      "reason": null,
+      "slice": 0,
+      "status": "compared",
+      "translation": "exact"
+    }
+  ],
+  "version": 1
+}

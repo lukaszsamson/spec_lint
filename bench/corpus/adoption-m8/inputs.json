@@ -1,0 +1,58 @@
+[
+  {
+    "project": "phoenix",
+    "revision": "dab9f79496df49f2f61d0eab20e550dd8d551ed5",
+    "lock_sha256": "183b999e412a100f608544dee58d8876337c041b2da8c306715dac8064a7bcd8",
+    "source_dirty": false,
+    "env": "test",
+    "injection": "one local path dependency"
+  },
+  {
+    "project": "livebook",
+    "revision": "1f6b12e047ad54f016a0c00460557b2f42d1f8d6",
+    "lock_sha256": "3d77ed918fb6f150c5525206ae38881665a276e60c66ec88ad633d98531e934a",
+    "source_dirty": false,
+    "env": "test",
+    "injection": "one local path dependency"
+  },
+  {
+    "project": "nerves_hub_web",
+    "revision": "8a37ac9f22ff9b5157b9f05094dc7518cef299a0",
+    "lock_sha256": "c7582944e6a32981944b96357d64c44d0910be1c42e1a835dea885d677d70435",
+    "source_dirty": false,
+    "env": "test",
+    "injection": "one local path dependency"
+  },
+  {
+    "project": "absinthe",
+    "revision": "66cec3445d1228a5b9b8df1184d30c6993ea1b79",
+    "lock_sha256": "4261d18552a3ac5fb7aa0c0a7675e294be7fb3cb19a658ec76c68e53048c4ca1",
+    "source_dirty": false,
+    "env": "test",
+    "injection": "one local path dependency"
+  },
+  {
+    "project": "gettext",
+    "revision": "e3180f138bda49c7607b709ec74133c47c24c81d",
+    "lock_sha256": "620efc764c47f2dda60b78795649be460c84726f561280d3edb48fe94f5443f7",
+    "source_dirty": false,
+    "env": "test",
+    "injection": "one local path dependency"
+  },
+  {
+    "project": "tableau",
+    "revision": "4922d7a2eb583203e2eb0b50a7b75fc02cfa7390",
+    "lock_sha256": "994fbc35f6ccc5f8efb5bbed89d0e3a62711eff1ef9d2abd9a3b4c4c1317ac69",
+    "source_dirty": false,
+    "env": "test",
+    "injection": "one local path dependency"
+  },
+  {
+    "project": "credo",
+    "revision": "a006b49aa56b9bfce0e1e74ef7ea3c445827c681",
+    "lock_sha256": "6f12cd2012bd11ca4fb3d67547f164823bc14f34b4ef17ddce1b8d6e9630ae20",
+    "source_dirty": false,
+    "env": "test",
+    "injection": "one local path dependency"
+  }
+]

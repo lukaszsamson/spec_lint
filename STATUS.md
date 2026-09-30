@@ -5,6 +5,47 @@ Date 2026-09-30. `DESIGN.md` is the authoritative design,
 Phase 4 follows the review of the Phase 3 implementation at `0cc9c50`;
 previous results below are historical and are superseded where noted.
 
+## M8 delivered: focused qualification and public-task campaign
+
+Implementation `4b87020` accepts built-in compile self-aliases only as one
+self-invocation with `--warnings-as-errors` and/or `--no-all-warnings`, parsed
+as Mix parses aliases. Suppressive, artifact-changing, unknown and duplicate
+options, malformed quoting and multiple steps are refused. Dependency
+forcing remains covered. Attribution is now explicitly heuristic:
+`possibly_inherited_spec` and its reported line replace the experimental
+`inherited_spec` metadata; evidence policy and fingerprints are unchanged.
+
+The seven-project public-task campaign used exact 1.20.4 in `MIX_ENV=test`:
+Absinthe, Gettext, Tableau and Credo complete and repeat with identical
+findings/ledgers and no Elixir compilation progress. All four baseline CI
+runs exit 0. Phoenix's function alias and Livebook's custom suffix remain
+refused; NervesHubWeb fails its `~> 1.18.0` requirement before any lint report.
+All source locks are unchanged, originals and holdouts untouched. See
+[public-task results](bench/corpus/adoption-m8/README.md).
+
+Seven Absinthe gates are one independently witnessed declared-type defect
+family, not seven recall gains. Tableau's one advisory is a real tuple
+return outside its declared atom return, confirmed by a retained executable
+witness. It remains non-gating; the frozen 18-family denominator is unchanged.
+Absinthe wall times were confounded by host pressure (first/incremental
+123.81/369.56 s, approximately equal user CPU). These are not passes against
+the frozen raw-analysis budgets or a Linux memory-cap qualification.
+
+All three [Ubuntu lanes](bench/corpus/adoption-m8/github-quality.md) passed on
+`4b87020`, including full suites under both gating compilers and actual
+upstream diagnostics. [Local qualification](bench/corpus/adoption-m8/quality/README.md)
+passed 518 tests on c24c235 and 520 on 1.20.4, plus format, strict Credo,
+Dialyzer and both production self-checks. Skips and exclusions are recorded
+separately.
+
+The [memory experiment](bench/memory/README.md) preserves analysis/evidence
+inventory while reducing peak RSS from 2.91 GB to 0.48 GB by discarding module
+graphs. It excludes rules, reachability and baseline reconciliation, so no
+production memory improvement is claimed. Compact normal-report execution
+is the next implementation priority, subject to full-policy equivalence.
+The Phoenix.View issue still reproduces against pinned upstream source;
+its existing issue/PR history is linked and no duplicate was filed.
+
 ## Post-release review hardening completed (2026-09-30)
 
 Implementation `1bb9594` is qualified for experimental CI on the exact

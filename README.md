@@ -251,7 +251,8 @@ A finding whose spec annotation resembles a macro-injected spec carries a
 heuristic `note` and `possibly_inherited_spec: true` in the JSON `data`. This
 source-location signal cannot prove that a macro injected the spec or identify
 a library as its owner. Inspect the spec and its source before deciding how
-to address the finding.
+to address the finding. This presentation field replaces the experimental
+`inherited_spec` field; fingerprints and baseline matching are unchanged.
 
 ### Exit status
 

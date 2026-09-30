@@ -434,8 +434,7 @@ which is heuristic and does not establish library ownership by itself.
 Before filing: check current phoenix_view (and Phoenix 1.7+ component-based
 error rendering, which may no longer use it), search for duplicates, and
 propose either no spec on the overridable default or a return type that
-admits the documented override (for example String.t() | no_return, or
-term()).
+admits its full documented rendering contract. See the verification below.
 
 M8 verification (2026-09-30): the declaration remains in upstream main at
 87159b55dea9f68147943f46a2996727b7d20268, lib/phoenix_view.ex.
@@ -450,3 +449,23 @@ Do not assume binary() is the complete callback contract: views also
 return structured JSON data. Any proposed replacement type must account
 for the documented rendering contract; removing the inherited spec is
 an alternative to discuss with maintainers.
+Executable M8 witness: bench/upstream/phoenix_view_override.exs installs
+that exact public Phoenix.View revision with Phoenix.Template 1.0.4, inspects
+the real compiled spec and asserts the in-domain runtime return. It passed
+on exact Elixir 1.20.4 / OTP 28.5.0.1; dependencies emit compiler warnings,
+which are not SpecLint findings. It contains no private application source.
+
+13. LIBRARY (tableau): Extension.key/1 DECLARES atom(), RETURNS {:ok, key}
+
+M8 public-task corpus, pinned revision
+4922d7a2eb583203e2eb0b50a7b75fc02cfa7390. Not a compiler bug; not filed.
+The public function is marked @doc false and specified key(module()) :: atom().
+With a module exporting __tableau_extension_key__/0 returning :campaign,
+the actual return is {:ok, :campaign}; absent that export it returns :error.
+The first value is outside atom(), for an input inside module(). This is
+an incorrect return declaration, not evidence that the runtime code is wrong.
+SpecLint reports it as an advisory, not an established gate. The runtime
+witness is bench/corpus/adoption-m8/witnesses.exs (tableau mode); triage and
+measured reports are beside it. No addition to the frozen recall denominator.
+Check current upstream and duplicate history before proposing a library fix;
+the tuple payload type should follow the intended extension-key contract.

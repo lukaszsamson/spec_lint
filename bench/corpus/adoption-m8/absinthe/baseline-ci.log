@@ -1,0 +1,67 @@
+src/erlex_parser.yrl:none: warning: conflicts: 27 shift/reduce, 0 reduce/reduce
+src/opentelemetry.erl:377:5: warning: ambiguous call of overridden auto-imported BIF link/2 --
+use erlang:link/2 or "-compile({no_auto_import,[link/2]})." to resolve name clash
+==> dataloader
+    warning: unused require Logger
+    │
+ 87 │   require Logger
+    │   ~
+    │
+    └─ lib/dataloader.ex:87:3
+
+==> absinthe
+    warning: unused require Logger
+    │
+ 63 │   require Logger
+    │   ~
+    │
+    └─ lib/absinthe/middleware/batch.ex:63:3
+
+    warning: unknown key .middleware in expression:
+
+        field.middleware
+
+    the given type does not have the given key:
+
+        dynamic(not %{..., middleware: term()})
+
+    where "field" was given the type:
+
+        # type: dynamic(not %{..., middleware: term()})
+        # from: lib/absinthe/phase/schema/inline_functions.ex
+        {field_ident, field}
+
+    type warning found at:
+    │
+ 73 │           middleware = Absinthe.Middleware.expand(schema, field.middleware, field, type)
+    │                                                                 ~~~~~~~~~~
+    │
+    └─ lib/absinthe/phase/schema/inline_functions.ex:73:65: Absinthe.Phase.Schema.InlineFunctions.inline_middleware/3
+
+    warning: the following clause cannot match because the previous clauses already matched all possible values:
+
+        _ ->
+
+    it attempts to match on the result of:
+
+        Decimal.nan?(decimal)
+
+    which has the already matched type:
+
+        dynamic(false)
+
+    type warning found at:
+    │
+ 25 │       if Decimal.nan?(decimal), do: :error, else: {:ok, decimal}
+    │       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    │
+    └─ lib/absinthe/type/custom/decimal.ex:25: Absinthe.Type.Custom.Decimal.parse/1
+
+    warning: unused require Logger
+    │
+  2 │   require Logger
+    │   ~
+    │
+    └─ lib/mix/tasks/absinthe.schema.json.ex:2:3
+
+spec_lint: 447 specs checked, 9 finding(s), 0 gating and new, complete, exit 0 -> /private/tmp/spec-lint-adoption-m8/evidence/absinthe/baseline-ci.json
