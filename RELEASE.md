@@ -47,8 +47,9 @@ carry custom stages before `:erlang` (`elixir_make`, `phoenix_swagger`,
 `file_system` and similar), with the `:yecc`/`:leex` generators in any
 order and multiplicity; it must end with `:erlang`, `:elixir`, `:app`.
 A custom stage after `:erlang`, a missing or reordered built-in stage, an
-alias of `compile`, `compile.all` or a built-in stage (including a
-dependency's `compile: ["compile --warnings-as-errors"]`), and a custom
+alias of `compile`, `compile.all` or a built-in stage other than a
+flag-only self-alias (a dependency's `compile: ["compile
+--warnings-as-errors"]` is accepted), and a custom
 dependency `:compile` command are refused with exit 2. The checks assume
 trusted project code: code running inside the compilation can forge
 compiler events and have a foreign BEAM recorded, as it already could

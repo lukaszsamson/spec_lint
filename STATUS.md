@@ -62,11 +62,30 @@ Only aggregate numbers are recorded here.
   Accepted prefix stages seen in its dependencies: `file_system` (an
   alias-implemented stage), `elixir_make` and `appsignal`.
 - **Umbrella A**: 14 apps. All 14 application pipelines pass the new
-  rule, including one `[:phoenix_swagger] ++ Mix.compilers()`. The run is
-  still refused (exit 2) because one Hex dependency aliases `compile` to
-  `compile --warnings-as-errors`; compile aliases stay refused by design,
-  so no report was produced. The refusal takes 15 s once dependencies are
-  recorded.
+  rule, including one `[:phoenix_swagger] ++ Mix.compilers()`. The run was
+  first refused (exit 2) because one Hex dependency aliases `compile` to
+  `compile --warnings-as-errors`. After the follow-up that accepts
+  flag-only self-aliases of a built-in compile task (below), it completes:
+  421 specs compared (453 slices; 110 established, 6 compatible after
+  approximation, 6 possible mismatch, 331 unknown), 6 findings, 5 gates,
+  exit 1; first run 314 s (full dependency rebuild from a plain Mix build),
+  second run 54 s with no Elixir module recompiled (a NIF prefix stage
+  prints on every run) and a report identical in findings and ledger;
+  `mix spec_lint.baseline` 47 s, then `--ci` exit 0. The five gates are the
+  inherited `template_not_found/2` spec (`inherited_spec: true`, line of
+  the `use`); the reported finding is the `possible_domain_escape` omission
+  that the anonymised adoption fixture reproduces.
+
+### M7 follow-up: flag-only compile self-aliases accepted
+
+An alias of `compile`, `compile.all` or a built-in stage is accepted when
+every step is the aliased task itself followed only by option flags. Mix
+runs the built-in task with those flags and passes SpecLint's arguments
+(`--force`) to the last step, so no step can replace or reorder compiler
+output. Any other step (another task, a positional argument, a function),
+and an empty alias, stay refused. Tests: a flag-only self-alias accepted
+and forced through the alias; five replacing shapes refused; a dependency's
+flag-only self-alias accepted and its replacing alias refused.
 
 Defect fixed: dependencies compiled by `mix spec_lint` were left looking
 outdated to Mix. The Elixir compiler writes a fetchable dependency's SCM
@@ -118,9 +137,10 @@ affected, because an incremental run does not recompile those modules.
   applications and dependencies; the built-in stage list lives only in
   `BuildRecord.builtin_stages/0`; the pipeline checks are split (shape,
   aliases, task modules); `check_pipeline/1` uses named helpers. New tests:
-  compile self-alias and built-in-stage aliases beside a custom stage
-  refused, a dependency's compile self-alias refused and its alias prefix
-  stage accepted, custom stages around `:erlang`, status of unrecorded and
+  replacing compile aliases and built-in-stage aliases beside a custom
+  stage refused, a flag-only compile self-alias accepted (and forced through
+  the alias), a dependency's flag-only self-alias and alias prefix stage
+  accepted and its replacing alias refused, custom stages around `:erlang`, status of unrecorded and
   invalid records under a pipeline. Record-layout assertions use
   `BuildRecord.version/0`, and message assertions were shortened. The
   umbrella stage creates its directory before writing.

@@ -163,11 +163,13 @@ dev/test by `phoenix_live_reload`), `elixir_make` (`bcrypt_elixir`),
 after `:erlang`, a missing or reordered built-in stage, compile-task aliases,
 replacement compile tasks and dependencies with a custom `:compile` command
 cause exit 2. A custom stage may be a compiler task or, as in
-`file_system`, an alias of `compile.<stage>`; aliases of `compile`,
-`compile.all` or a built-in stage are refused, including a dependency's
-self-alias such as `compile: ["compile --warnings-as-errors"]` (some Hex
-packages define one; such a project cannot be linted until the alias is
-removed). SpecLint's own runtime
+`file_system`, an alias of `compile.<stage>`. An alias of `compile`,
+`compile.all` or a built-in stage is accepted only when it is a flag-only
+self-alias, every step being the aliased task with option flags (some Hex
+packages define `compile: ["compile --warnings-as-errors"]`): Mix then runs
+the built-in task, and the last step still receives SpecLint's `--force`.
+Any other step (another task, a positional argument, a function) is
+refused. SpecLint's own runtime
 self-check uses `MIX_ENV=prod`, without its Credo/Dialyxir development
 dependencies; `mix spec_lint --ci` on this development checkout, whose
 Credo dependency pulls in `file_system`, is accepted as well.

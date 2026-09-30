@@ -288,9 +288,10 @@ defmodule SpecLint.Integration.DependencyProvenanceTest do
   end
 
   # Adoption: a Hex dependency defining `compile: ["compile --warnings-as-errors"]`
-  # is refused (compile aliases can replace compiler output), while an
-  # alias-implemented prefix stage (as in file_system) is accepted.
-  test "a dependency's compile self-alias is refused, an alias prefix stage accepted",
+  # is accepted (a flag-only self-alias runs the built-in task), a replacing
+  # alias is refused, and an alias-implemented prefix stage (as in
+  # file_system) is accepted.
+  test "a dependency's flag-only compile self-alias and alias prefix stage are accepted",
        context do
     file = Path.join(context.dep, "mix.exs")
     original = File.read!(file)
@@ -301,6 +302,20 @@ defmodule SpecLint.Integration.DependencyProvenanceTest do
         original,
         "app: :stored_dependency,",
         ~s(app: :stored_dependency, aliases: [compile: ["compile --warnings-as-errors"]],)
+      )
+    )
+
+    {status, json, output} = Fixture.lint(context.dir)
+    assert status == if(diagnostic_only?(), do: 2, else: 0), output
+    assert json != nil
+    assert read(context.dep_record)["compilers"] == ~w(yecc leex erlang elixir app)
+
+    File.write!(
+      file,
+      String.replace(
+        original,
+        "app: :stored_dependency,",
+        ~s(app: :stored_dependency, aliases: [compile: ["compile", "loadpaths"]],)
       )
     )
 

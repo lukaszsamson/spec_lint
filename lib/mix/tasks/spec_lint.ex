@@ -254,19 +254,49 @@ defmodule Mix.Tasks.SpecLint do
   # a compiler task. Aliasing compile, compile.all or a built-in stage
   # would replace the tasks whose events attest artifacts; this includes a
   # self-alias such as `compile: ["compile --warnings-as-errors"]`.
+  # An alias of a built-in compile task is accepted only when it is a
+  # flag-only self-alias: every step is the aliased task itself with option
+  # flags (`compile: ["compile --warnings-as-errors"]`, as some Hex packages
+  # define). Mix then runs the built-in task with those flags, and the last
+  # step still receives the arguments SpecLint passes (`--force`). Any other
+  # step (another task, a positional argument, a function) could replace or
+  # reorder compiler output and is refused.
   defp check_compile_aliases do
     aliases = Mix.Project.config()[:aliases] || []
 
-    case Enum.find(builtin_tasks(), &Keyword.has_key?(aliases, String.to_atom(&1))) do
+    case Enum.find(builtin_tasks(), &replacing_alias?(aliases, &1)) do
       nil ->
         :ok
 
       task ->
         {:error,
          "alias #{task} can replace compiler output; compiler provenance requires " <>
-           "Mix's built-in compile tasks"}
+           "Mix's built-in compile tasks (only a flag-only self-alias such as " <>
+           ~s(`#{task}: ["#{task} --flag"]` is accepted\))}
     end
   end
+
+  defp replacing_alias?(aliases, task) do
+    case Keyword.fetch(aliases, String.to_atom(task)) do
+      :error ->
+        false
+
+      {:ok, steps} when is_list(steps) and steps != [] ->
+        not Enum.all?(steps, &self_step?(&1, task))
+
+      {:ok, _other} ->
+        true
+    end
+  end
+
+  defp self_step?(step, task) when is_binary(step) do
+    case String.split(step) do
+      [^task | flags] -> Enum.all?(flags, &String.starts_with?(&1, "-"))
+      _other -> false
+    end
+  end
+
+  defp self_step?(_step, _task), do: false
 
   defp check_builtin_tasks do
     mix_ebin = Path.join(List.to_string(:code.lib_dir(:mix)), "ebin")

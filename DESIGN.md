@@ -603,8 +603,10 @@ evidence is reused. A custom stage after `:erlang` is refused (exit 2
 naming the stage) because compiler events do not attest output bytes and
 a later stage could replace attested BEAMs; so are missing or reordered
 built-in stages, aliases of `compile`, `compile.all` or a built-in stage
-(including a self-alias such as `compile: ["compile --warnings-as-errors"]`),
-and built-in task modules not loaded from Mix's ebin. The same rules apply
+whose steps are not all the aliased task itself with option flags (a
+flag-only self-alias such as `compile: ["compile --warnings-as-errors"]`
+runs the built-in task and is accepted; the last step still receives
+`--force`), and built-in task modules not loaded from Mix's ebin. The same rules apply
 to umbrella children and source-backed Mix dependencies, which receive the
 same per-artifact production records before owned applications compile.
 

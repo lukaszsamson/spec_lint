@@ -357,9 +357,10 @@ Delivered (2026-09-30):
   `template_not_found/2` inherited spec.
 - Acceptance on two private umbrellas (aggregate numbers in STATUS.md,
   "Milestone 7"): one complete with a byte-identical second run, baseline
-  and edit/revert checks; the other still refused (exit 2) by a Hex
-  dependency's `compile: ["compile --warnings-as-errors"]` alias, which
-  stays refused by design.
+  and edit/revert checks; the other was first refused (exit 2) by a Hex
+  dependency's `compile: ["compile --warnings-as-errors"]` alias. Flag-only
+  self-aliases of a built-in compile task are accepted since `M7 follow-up`
+  below, and that umbrella then completes too.
 - `bench/corpus/oss_inventory.md`: pipelines and compile aliases of 33
   public checkouts, for the public campaign.
 - The fifteen-corpus campaign was not re-run: no analysis logic changed,
@@ -371,9 +372,7 @@ Remaining:
    `mix spec_lint --ci` through the Mix task (not the raw-BEAM runner) on
    the projects with custom prefix stages and generator prefixes, and
    record the selected environment, cold and incremental compile overhead,
-   and completion. Decide separately whether a compile self-alias that only
-   adds flags (`compile --warnings-as-errors`) can be accepted; until then
-   such projects exit 2.
+   and completion.
 2. Memory reduction (see "Memory follow-up after qualification").
 3. Upstream inference work (M6), unchanged.
 4. Phoenix.View's injected `@spec template_not_found(binary, map) ::

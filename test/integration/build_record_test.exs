@@ -371,17 +371,23 @@ defmodule SpecLint.Integration.BuildRecordTest do
   end
 
   # Review: the aliases accepted for custom prefix stages must not admit
-  # an alias of compile itself (a Hex package with
-  # `compile: ["compile --warnings-as-errors"]` was refused in adoption) or
-  # of a built-in stage next to an accepted custom stage.
-  test "self-aliases of compile and aliases of built-in stages stay refused beside custom stages",
+  # an alias of compile that can replace its output, or an alias of a
+  # built-in stage next to an accepted custom stage. The one exception is a
+  # flag-only self-alias (a Hex package with
+  # `compile: ["compile --warnings-as-errors"]` blocked adoption): Mix runs
+  # the built-in task with those flags.
+  test "replacing aliases of compile and of built-in stages stay refused beside custom stages",
        %{dir: dir, record: record} do
     {_status, _json, _output} = Fixture.lint(dir)
     previous = File.read!(record)
 
     for {aliases, task} <- [
-          {~s(compile: ["compile --warnings-as-errors"]), "compile"},
-          {~s("compile.watcher": fn _ -> :ok end, "compile.erlang": ["compile.erlang"]),
+          {~s(compile: ["compile.elixir"]), "compile"},
+          {~s(compile: ["compile", "format"]), "compile"},
+          {~s(compile: ["compile lib"]), "compile"},
+          {~s(compile: [fn _ -> :ok end]), "compile"},
+          {~s(compile: []), "compile"},
+          {~s("compile.watcher": fn _ -> :ok end, "compile.erlang": ["compile.erlang", "format"]),
            "compile.erlang"},
           {~s("compile.watcher": fn _ -> :ok end, "compile.yecc": fn _ -> :ok end),
            "compile.yecc"}
@@ -393,6 +399,28 @@ defmodule SpecLint.Integration.BuildRecordTest do
       assert output =~ "unsupported compiler pipeline for consumer: alias #{task} ", output
       assert File.read!(record) == previous
     end
+  end
+
+  test "a flag-only self-alias of compile is accepted and still forced", %{
+    dir: dir,
+    record: record
+  } do
+    with_compilers!(
+      dir,
+      ~s|Mix.compilers(), aliases: [compile: ["compile --no-all-warnings"]]|,
+      ""
+    )
+
+    {status, json, output} = Fixture.lint(dir)
+    assert_native_verdict(status, json, output)
+    assert read(record)["compilers"] == ~w(yecc leex erlang elixir app)
+
+    # The forced recompile after another build's record goes through the alias.
+    other_build!(record)
+    {status, json, output} = Fixture.lint(dir)
+    assert_recompiled(output)
+    assert_native_verdict(status, json, output)
+    assert_recorded_as_built(dir, record)
   end
 
   # Mix.Task.run/2 does nothing when `compile` already ran in the VM, so a
