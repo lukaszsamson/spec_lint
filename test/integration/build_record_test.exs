@@ -33,6 +33,21 @@ defmodule SpecLint.Integration.BuildRecordTest do
   end
   """
 
+  # Writes lib/generated.ex once, like a source generator.
+  @generate """
+  defmodule Mix.Tasks.Compile.Generate do
+    use Mix.Task.Compiler
+    def run(_args) do
+      if File.exists?("lib/generated.ex") do
+        {:noop, []}
+      else
+        File.write!("lib/generated.ex", "defmodule Generated do\n  def value, do: :ok\nend\n")
+        {:ok, []}
+      end
+    end
+  end
+  """
+
   setup do
     dir = Fixture.tmp_dir!("build-record")
     on_exit(fn -> File.rm_rf!(dir) end)
@@ -151,7 +166,8 @@ defmodule SpecLint.Integration.BuildRecordTest do
     {status, json, output} = Fixture.lint(dir)
     assert status == 2, output
     assert json == nil
-    assert output =~ "unsupported compiler pipeline"
+    assert output =~ "unsupported compiler pipeline for consumer"
+    assert output =~ "stage :cache runs after :erlang"
     refute File.exists?(record)
 
     {output, status} = Fixture.mix(dir, ["spec_lint.baseline"])
@@ -181,7 +197,7 @@ defmodule SpecLint.Integration.BuildRecordTest do
     for compilers <- [
           [],
           [:erlang, :app],
-          [:leex, :leex, :yecc, :erlang, :elixir, :app],
+          [:leex, :yecc, :erlang, :erlang, :elixir, :app],
           [:leex, :yecc, :elixir, :erlang, :app],
           [:leex, :yecc, :erlang, :app, :elixir]
         ] do
@@ -200,6 +216,117 @@ defmodule SpecLint.Integration.BuildRecordTest do
       assert output =~ "unsupported compiler pipeline for consumer"
       assert File.read!(record) == previous
     end
+  end
+
+  test "duplicated generators and custom prefix stages are verified", %{dir: dir, record: record} do
+    # :watcher is implemented by an alias, as file_system does.
+    with_compilers!(
+      dir,
+      "[:leex, :generate, :yecc, :watcher, :leex] ++ Mix.compilers(), " <>
+        "aliases: [\"compile.watcher\": fn _ -> :ok end]",
+      @generate
+    )
+
+    Fixture.write!(dir, "src/probe_parser.yrl", """
+    Nonterminals value.
+    Terminals integer.
+    Rootsymbol value.
+    value -> integer : '$1'.
+    """)
+
+    {status, json, output} = Fixture.lint(dir)
+    assert_native_verdict(status, json, output)
+    beams = read(record)["beams"]
+
+    for file <- ~w(Elixir.IntoProbe.beam Elixir.Generated.beam probe_parser.beam) do
+      assert Map.has_key?(beams, file), inspect(Map.keys(beams))
+    end
+
+    assert read(record)["compilers"] == ~w(leex generate yecc watcher leex erlang elixir app)
+
+    assert_recorded_as_built(dir, record)
+
+    previous = File.read!(record)
+    {status, json, output} = Fixture.lint(dir)
+    refute output =~ "recompiling"
+    assert_native_verdict(status, json, output)
+    assert File.read!(record) == previous
+  end
+
+  test "a prefix stage rewriting a verified BEAM of an unchanged module is refused",
+       %{dir: dir, record: record} do
+    with_compilers!(dir, "[:restore] ++ Mix.compilers()", """
+    defmodule Mix.Tasks.Compile.Restore do
+      use Mix.Task.Compiler
+      def run(_args) do
+        if File.exists?("cached.beam") do
+          File.rename!("cached.beam", Path.join(Mix.Project.compile_path(), "Elixir.IntoProbe.beam"))
+          {:ok, []}
+        else
+          {:noop, []}
+        end
+      end
+    end
+    """)
+
+    {status, json, output} = Fixture.lint(dir)
+    assert_native_verdict(status, json, output)
+    previous = File.read!(record)
+    beam = Path.join(dir, "_build/dev/lib/consumer/ebin/Elixir.IntoProbe.beam")
+    cached = Path.join(dir, "cached.beam")
+    File.cp!(beam, cached)
+    swap_checker_version!(cached, :elixir_checker_v0)
+    restored = File.read!(cached)
+
+    # The record is current, so nothing is forced; the prefix stage replaces
+    # the BEAM of a module Mix does not recompile, and no event names it.
+    {status, json, output} = Fixture.lint(dir)
+    assert status == 2, output
+    assert json == nil
+    assert output =~ "cannot verify compiler provenance for consumer: Elixir.IntoProbe.beam"
+    assert File.read!(beam) == restored
+    assert File.read!(record) == previous
+
+    # The changed artifact makes the next run recompile: the Elixir stage
+    # runs after the prefix stage and its event attests the new output.
+    {status, json, output} = Fixture.lint(dir)
+    assert output =~ "recompiling consumer with #{adapter_id()}: BEAM files changed", output
+    assert_native_verdict(status, json, output)
+    refute File.read!(beam) == restored
+    assert {:ok, checker} = SpecLint.Beam.checker_version(beam)
+    assert checker == running_checker()
+    assert_recorded_as_built(dir, record)
+  end
+
+  test "a changed list of prefix stages forces recompilation", %{dir: dir, record: record} do
+    with_compilers!(dir, "[:generate] ++ Mix.compilers()", @generate)
+    {status, json, output} = Fixture.lint(dir)
+    assert_native_verdict(status, json, output)
+
+    with_compilers!(
+      dir,
+      "[:generate, :other] ++ Mix.compilers()",
+      @generate <>
+        """
+        defmodule Mix.Tasks.Compile.Other do
+          use Mix.Task.Compiler
+          def run(_args), do: {:noop, []}
+        end
+        """
+    )
+
+    {status, json, output} = Fixture.lint(dir)
+
+    assert output =~ "recompiling consumer with #{adapter_id()}: compiler pipeline changed",
+           output
+
+    assert_recompiled(output)
+    assert_native_verdict(status, json, output)
+    assert read(record)["compilers"] == ~w(yecc leex generate other erlang elixir app)
+    assert_recorded_as_built(dir, record)
+
+    {_status, _json, output} = Fixture.lint(dir)
+    refute output =~ "recompiling"
   end
 
   test "compile aliases cannot restore a cache after emitted modules", %{dir: dir, record: record} do
@@ -240,6 +367,31 @@ defmodule SpecLint.Integration.BuildRecordTest do
       assert output =~ "unsupported compiler pipeline for consumer: alias #{task}"
       assert File.read!(record) == previous
       refute File.read!(beam) == File.read!(Path.join(dir, "cached.beam"))
+    end
+  end
+
+  # Review: the aliases accepted for custom prefix stages must not admit
+  # an alias of compile itself (a Hex package with
+  # `compile: ["compile --warnings-as-errors"]` was refused in adoption) or
+  # of a built-in stage next to an accepted custom stage.
+  test "self-aliases of compile and aliases of built-in stages stay refused beside custom stages",
+       %{dir: dir, record: record} do
+    {_status, _json, _output} = Fixture.lint(dir)
+    previous = File.read!(record)
+
+    for {aliases, task} <- [
+          {~s(compile: ["compile --warnings-as-errors"]), "compile"},
+          {~s("compile.watcher": fn _ -> :ok end, "compile.erlang": ["compile.erlang"]),
+           "compile.erlang"},
+          {~s("compile.watcher": fn _ -> :ok end, "compile.yecc": fn _ -> :ok end),
+           "compile.yecc"}
+        ] do
+      with_compilers!(dir, "[:watcher] ++ Mix.compilers(), aliases: [#{aliases}]", "")
+      {status, json, output} = Fixture.lint(dir)
+      assert status == 2, output
+      assert json == nil
+      assert output =~ "unsupported compiler pipeline for consumer: alias #{task} ", output
+      assert File.read!(record) == previous
     end
   end
 
@@ -476,6 +628,19 @@ defmodule SpecLint.Integration.BuildRecordTest do
         assert_native_verdict(status, report(dir), output)
         assert_recorded_as_built(dir, record)
     end
+  end
+
+  # Sets the compilers of the fixture's mix.exs and appends `tasks`.
+  defp with_compilers!(dir, compilers, tasks) do
+    file = Path.join(dir, "mix.exs")
+    original = Process.get({:original_mix, dir}) || File.read!(file)
+    Process.put({:original_mix, dir}, original)
+
+    File.write!(
+      file,
+      String.replace(original, "app: :consumer,", "app: :consumer, compilers: #{compilers},") <>
+        "\n" <> tasks
+    )
   end
 
   defp swap_checker_version!(beam, version) do

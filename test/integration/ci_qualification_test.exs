@@ -227,6 +227,63 @@ defmodule SpecLint.Integration.CiQualificationTest do
     assert output =~ "--app nope matches no owned application (owned: app_a, app_b)"
   end
 
+  test "an umbrella child's custom prefix stage is recorded and verified", %{dir: dir} do
+    file = Path.join(dir, "apps/app_b/mix.exs")
+    original = File.read!(file)
+    generated = Path.join(dir, "apps/app_b/lib/app_b/generated.ex")
+
+    on_exit(fn ->
+      File.write!(file, original)
+      File.rm(generated)
+    end)
+
+    File.write!(
+      file,
+      String.replace(
+        original,
+        "app: :app_b,",
+        "app: :app_b, compilers: [:generate] ++ Mix.compilers(),"
+      ) <>
+        """
+
+        defmodule Mix.Tasks.Compile.Generate do
+          use Mix.Task.Compiler
+          def run(_args) do
+            # Mix runs a non-recursive task from the umbrella root.
+            path = Path.join(__DIR__, "lib/app_b/generated.ex")
+            if File.exists?(path) do
+              {:noop, []}
+            else
+              File.mkdir_p!(Path.dirname(path))
+              File.write!(path, "defmodule AppB.Generated do\n  def value, do: :ok\nend\n")
+              {:ok, []}
+            end
+          end
+        end
+        """
+    )
+
+    {status, json, output} = lint(dir)
+    assert status == 0, output
+    assert beam_modules(json) == ["AppA", "AppA.Util", "AppB", "AppB.Generated"]
+
+    for {app, compilers} <- [
+          {"app_a", ~w(yecc leex erlang elixir app)},
+          {"app_b", ~w(yecc leex generate erlang elixir app)}
+        ] do
+      record =
+        Path.join(dir, "_build/dev/lib/#{app}/.mix/spec_lint.build")
+        |> File.read!()
+        |> JSON.decode!()
+
+      assert record["compilers"] == compilers
+    end
+
+    {status, _json, output} = lint(dir)
+    assert status == 0, output
+    refute output =~ "recompiling"
+  end
+
   test "a compile alias cannot hide a removed child ebin", %{dir: dir} do
     {0, _json, _output} = lint(dir)
     File.rm_rf!(Path.join(dir, "_build/dev/lib/app_b/ebin"))

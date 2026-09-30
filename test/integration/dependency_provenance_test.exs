@@ -219,6 +219,113 @@ defmodule SpecLint.Integration.DependencyProvenanceTest do
     assert File.read!(context.record) == previous
   end
 
+  test "a custom prefix stage in a dependency is recorded and verified", context do
+    file = Path.join(context.dep, "mix.exs")
+
+    File.write!(
+      file,
+      String.replace(
+        File.read!(file),
+        "app: :stored_dependency,",
+        "app: :stored_dependency, compilers: [:yecc, :generate_dependency] ++ Mix.compilers(),"
+      ) <>
+        """
+
+        defmodule Mix.Tasks.Compile.GenerateDependency do
+          use Mix.Task.Compiler
+          def run(_args) do
+            if File.exists?("lib/generated_dependency.ex") do
+              {:noop, []}
+            else
+              File.write!("lib/generated_dependency.ex",
+                "defmodule GeneratedDependency do\n  def value, do: :ok\nend\n")
+              {:ok, []}
+            end
+          end
+        end
+        """
+    )
+
+    {status, json, output} = Fixture.lint(context.dir)
+    assert status == if(diagnostic_only?(), do: 2, else: 0), output
+    assert json != nil
+    dep_record = read(context.dep_record)
+    assert dep_record["compilers"] == ~w(leex yecc generate_dependency erlang elixir app)
+    assert Map.has_key?(dep_record["beams"], "Elixir.GeneratedDependency.beam")
+    assert Map.has_key?(read(context.record)["dependencies"], "stored_dependency")
+
+    previous = File.read!(context.dep_record)
+    {again, _json, output} = Fixture.lint(context.dir)
+    assert again == status, output
+    refute output =~ "recompiling"
+    assert File.read!(context.dep_record) == previous
+  end
+
+  # Mix's deps.compile stores the dependency list of a fetchable dependency
+  # in its SCM manifest after compiling it. Without that, the next Mix
+  # command sees the dependency as outdated, deletes its build directory
+  # (and its record) and recompiles it, so every run rebuilt everything.
+  test "a fetchable dependency compiled by spec_lint stays up to date for Mix", context do
+    use_git_middle!(context)
+    {_output, 0} = Fixture.mix(context.dir, ["deps.get"])
+    {status, json, output} = Fixture.lint(context.dir)
+    assert status == if(diagnostic_only?(), do: 2, else: 0), output
+    assert json != nil
+
+    middle_record =
+      Path.join(context.dir, "_build/dev/lib/middle_dependency/.mix/spec_lint.build")
+
+    previous = File.read!(middle_record)
+
+    {output, 0} = Fixture.mix(context.dir, ["deps"])
+    refute output =~ "outdated", output
+
+    {again, _json, output} = Fixture.lint(context.dir)
+    assert again == status, output
+    refute output =~ "recompiling", output
+    refute output =~ "Generated middle_dependency", output
+    assert File.read!(middle_record) == previous
+  end
+
+  # Adoption: a Hex dependency defining `compile: ["compile --warnings-as-errors"]`
+  # is refused (compile aliases can replace compiler output), while an
+  # alias-implemented prefix stage (as in file_system) is accepted.
+  test "a dependency's compile self-alias is refused, an alias prefix stage accepted",
+       context do
+    file = Path.join(context.dep, "mix.exs")
+    original = File.read!(file)
+
+    File.write!(
+      file,
+      String.replace(
+        original,
+        "app: :stored_dependency,",
+        ~s(app: :stored_dependency, aliases: [compile: ["compile --warnings-as-errors"]],)
+      )
+    )
+
+    {status, json, output} = Fixture.lint(context.dir)
+    assert status == 2, output
+    assert json == nil
+    assert output =~ "unsupported compiler pipeline for stored_dependency: alias compile ", output
+    refute File.exists?(context.record)
+
+    File.write!(
+      file,
+      String.replace(
+        original,
+        "app: :stored_dependency,",
+        "app: :stored_dependency, compilers: [:watcher] ++ Mix.compilers(), " <>
+          ~s(aliases: ["compile.watcher": fn _ -> :ok end],)
+      )
+    )
+
+    {status, json, output} = Fixture.lint(context.dir)
+    assert status == if(diagnostic_only?(), do: 2, else: 0), output
+    assert json != nil
+    assert read(context.dep_record)["compilers"] == ~w(yecc leex watcher erlang elixir app)
+  end
+
   test "custom cache compilation in a dependency is refused", context do
     {_status, _json, _output} = Fixture.lint(context.dir)
     file = Path.join(context.dep, "mix.exs")
@@ -243,6 +350,7 @@ defmodule SpecLint.Integration.DependencyProvenanceTest do
     assert status == 2, output
     assert json == nil
     assert output =~ "unsupported compiler pipeline for stored_dependency"
+    assert output =~ "stage :restore_cache runs after :erlang"
     refute File.exists?(context.record)
   end
 
@@ -262,6 +370,77 @@ defmodule SpecLint.Integration.DependencyProvenanceTest do
     assert status == if(diagnostic_only?(), do: 2, else: 0), output
     assert json != nil
     assert File.exists?(context.dep_record)
+  end
+
+  # Makes the middle dependency a git (fetchable) dependency of the consumer.
+  defp use_git_middle!(context) do
+    middle = Path.join(Path.dirname(context.dir), "middle")
+    file = Path.join(middle, "mix.exs")
+    dependency = Path.join(Path.dirname(context.dir), "dependency")
+
+    File.write!(
+      file,
+      String.replace(File.read!(file), inspect("../dependency"), inspect(dependency))
+    )
+
+    for args <- [
+          ~w(init -q .),
+          ~w(add -A),
+          ~w(-c user.email=t@example.com -c user.name=t commit -qm m)
+        ] do
+      {_, 0} = System.cmd("git", args, cd: middle, stderr_to_stdout: true)
+    end
+
+    consumer = Path.join(context.dir, "mix.exs")
+
+    File.write!(
+      consumer,
+      String.replace(
+        File.read!(consumer),
+        ~s({:middle_dependency, path: "../middle"}),
+        "{:middle_dependency, git: #{inspect(middle)}}"
+      )
+    )
+  end
+
+  # Review (high): the manifest fix above called Mix.Dep.ElixirSCM.update/4,
+  # which Elixir 1.20 does not have (update/3 there), and the API check
+  # made every run on the 1.20 lane exit 2 before compiling anything.
+  @tag :cross_compiler
+  test "a fetchable dependency stays up to date under the other qualified compiler", context do
+    other = System.get_env("SPEC_LINT_OTHER_ELIXIR") || flunk("set SPEC_LINT_OTHER_ELIXIR")
+    use_git_middle!(context)
+
+    mix = fn args ->
+      System.cmd(Path.join(other, "mix"), args,
+        cd: context.dir,
+        env: Fixture.env([{"PATH", other <> ":" <> System.get_env("PATH")}]),
+        stderr_to_stdout: true
+      )
+    end
+
+    {revision, 0} =
+      System.cmd(Path.join(other, "elixir"), ["-e", "IO.write(System.build_info()[:revision])"])
+
+    expected = if String.starts_with?(revision, "648b2a9"), do: 2, else: 0
+    lint = ["spec_lint", "--ci", "--format", "json", "--output", "other.json"]
+
+    {_output, 0} = mix.(["deps.get"])
+    {output, status} = mix.(lint)
+    refute output =~ "evidence API is unavailable", output
+    assert status == expected, output
+    assert File.exists?(Path.join(context.dir, "other.json"))
+
+    middle_record =
+      Path.join(context.dir, "_build/dev/lib/middle_dependency/.mix/spec_lint.build")
+
+    previous = File.read!(middle_record)
+    {output, 0} = mix.(["deps"])
+    refute output =~ "outdated", output
+
+    {output, ^status} = mix.(lint)
+    refute output =~ "recompiling", output
+    assert File.read!(middle_record) == previous
   end
 
   defp read(path), do: path |> File.read!() |> JSON.decode!()

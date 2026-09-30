@@ -89,7 +89,99 @@ defmodule SpecLint.BuildRecordTest do
     record = BuildRecord.path(app) |> File.read!() |> JSON.decode!()
     File.write!(BuildRecord.path(app), JSON.encode!(%{record | "version" => 1}))
     assert BuildRecord.status(app, capabilities) == {:mismatch, :invalid_record}
-    assert BuildRecord.verified_beams(app, capabilities) == %{}
+    assert BuildRecord.status(app, capabilities, Mix.compilers()) == {:mismatch, :invalid_record}
+    assert BuildRecord.verified_beams(app, capabilities, Mix.compilers()) == %{}
+  end
+
+  test "version 3 records without a compiler pipeline require a rebuild",
+       %{app: app, capabilities: capabilities} do
+    assert :ok = BuildRecord.write(app, capabilities)
+    record = BuildRecord.path(app) |> File.read!() |> JSON.decode!()
+    assert record["version"] == BuildRecord.version()
+    legacy = record |> Map.delete("compilers") |> Map.put("version", BuildRecord.version() - 1)
+    File.write!(BuildRecord.path(app), JSON.encode!(legacy))
+    assert BuildRecord.status(app, capabilities) == {:mismatch, :invalid_record}
+    assert BuildRecord.verified_beams(app, capabilities, Mix.compilers()) == %{}
+  end
+
+  test "supported compiler pipelines: generators and custom stages before :erlang" do
+    suffix = [:erlang, :elixir, :app]
+
+    for prefix <- [
+          [:yecc, :leex],
+          [:leex, :yecc],
+          [:yecc, :leex, :yecc],
+          [:leex, :leex, :yecc],
+          [:elixir_make, :yecc, :leex],
+          [:yecc, :leex, :phoenix_swagger, :file_system],
+          [:leex, :custom, :yecc, :custom]
+        ] do
+      assert BuildRecord.check_pipeline(prefix ++ suffix) == :ok, inspect(prefix)
+    end
+
+    for {compilers, message} <- [
+          {[:yecc, :leex], "missing built-in stage :erlang"},
+          {[:leex, :erlang, :elixir, :app], "missing built-in stage :yecc"},
+          {[:yecc, :leex, :erlang, :app], "missing built-in stage :elixir"},
+          {[:yecc, :leex, :elixir, :erlang, :app], "built-in stage :elixir runs before :erlang"},
+          {[:yecc, :leex, :erlang, :app, :elixir],
+           "built-in stage :app is repeated or out of order"},
+          {[:yecc, :leex, :erlang, :elixir, :app, :elixir],
+           "built-in stage :elixir is repeated or out of order"},
+          {[:yecc, :leex, :erlang, :erlang, :elixir, :app],
+           "built-in stage :erlang is repeated or out of order"},
+          {[:yecc, :leex, :erlang, :elixir, :app, :cache], "stage :cache runs after :erlang"},
+          {[:yecc, :leex, :erlang, :cache, :elixir, :app], "stage :cache runs after :erlang"},
+          {[:yecc, :erlang, :leex, :elixir, :app], "stage :leex runs after :erlang"},
+          {[:yecc, :leex, :cache, :erlang, :cache, :elixir, :app],
+           "stage :cache runs after :erlang"},
+          {[:yecc, :leex, :erlang, :elixir], "missing built-in stage :app"},
+          {[], "missing built-in stage :yecc"}
+        ] do
+      assert {:error, reason} = BuildRecord.check_pipeline(compilers)
+      assert reason =~ message, inspect(compilers)
+    end
+  end
+
+  test "a record under another compiler pipeline is stale and lends no evidence",
+       %{app: app, capabilities: capabilities} do
+    pipeline = [:gen, :yecc, :leex, :erlang, :elixir, :app]
+    assert BuildRecord.status(app, capabilities, pipeline) == :unrecorded
+    evidence = BuildRecord.compiled_beams(app, MapSet.new([Compare]))
+    assert :ok = BuildRecord.write(app, capabilities, evidence, %{}, pipeline)
+    assert BuildRecord.status(app, capabilities, pipeline) == :verified
+    assert map_size(BuildRecord.verified_beams(app, capabilities, pipeline)) == 1
+
+    changed = [:other | pipeline]
+
+    assert BuildRecord.status(app, capabilities, changed) ==
+             {:mismatch,
+              {:changed_pipeline, Enum.map(pipeline, &Atom.to_string/1),
+               Enum.map(changed, &Atom.to_string/1)}}
+
+    assert BuildRecord.describe(BuildRecord.status(app, capabilities, changed)) =~
+             "compiler pipeline changed"
+
+    assert BuildRecord.verified_beams(app, capabilities, changed) == %{}
+    # status/2 (SpecLint.Run) checks artifacts, not the pipeline
+    # (documented: the Mix task rebuilds on a changed pipeline first).
+    assert BuildRecord.status(app, capabilities) == :verified
+
+    # A changed artifact is reported as such under any pipeline.
+    File.write!(Path.join(app.ebin, "Elixir.Extra.beam"), "not recorded")
+
+    assert {:mismatch, {:changed_beams, ["Elixir.Extra.beam"]}} =
+             BuildRecord.status(app, capabilities, pipeline)
+
+    File.rm!(Path.join(app.ebin, "Elixir.Extra.beam"))
+
+    # An explicit attestation names no pipeline and matches none.
+    assert :ok = BuildRecord.write(app, capabilities)
+
+    assert {:mismatch, {:changed_pipeline, nil, _}} =
+             BuildRecord.status(app, capabilities, pipeline)
+
+    assert BuildRecord.verified_beams(app, capabilities, pipeline) == %{}
   end
 
   test "a build without a record is analysed and reported as unrecorded", %{project: project} do

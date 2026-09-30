@@ -65,10 +65,23 @@ defmodule Mix.Tasks.SpecLint do
 
   use Mix.Task
 
+  alias Mix.Dep.ElixirSCM
   alias Mix.Dep.Loader, as: DepLoader
   alias SpecLint.{BuildRecord, CLI, Compiler, Config, Explain, Project, Report, Run}
   alias SpecLint.BuildRecord.Capture
   alias SpecLint.Report.Json
+
+  # What a compilation records (`record_build!/4`): per owned application
+  # the artifacts already verified for this build and pipeline (`prior`)
+  # and its compiler list (`pipelines`), and the snapshots of the verified
+  # dependencies inferred from (`dependencies`). `force?` says whether the
+  # compile must be forced. Shared by owned applications and dependencies.
+  @typep plan :: %{
+           force?: boolean(),
+           prior: %{atom() => map()},
+           dependencies: %{String.t() => map()},
+           pipelines: %{atom() => [atom()]}
+         }
 
   @impl true
   @spec run([String.t()]) :: :ok
@@ -125,11 +138,11 @@ defmodule Mix.Tasks.SpecLint do
   def compile! do
     capabilities = compiler_capabilities()
     project = Project.current()
-    {force?, prior, dependencies} = compile_plan!(project, capabilities)
-    args = if force?, do: ["--force", "--return-errors"], else: ["--return-errors"]
-    if force?, do: reenable_compile()
+    plan = compile_plan!(project, capabilities)
+    args = if plan.force?, do: ["--force", "--return-errors"], else: ["--return-errors"]
+    if plan.force?, do: reenable_compile()
 
-    compile_and_record!(args, force?, capabilities, prior, dependencies)
+    compile_and_record!(args, capabilities, plan)
     :ok
   end
 
@@ -140,15 +153,30 @@ defmodule Mix.Tasks.SpecLint do
     end
   end
 
-  defp compile_plan!(_project, nil), do: {false, %{}, %{}}
+  @spec compile_plan!(Project.t(), Compiler.capabilities() | nil) :: plan()
+  defp compile_plan!(_project, nil),
+    do: %{force?: false, prior: %{}, dependencies: %{}, pipelines: %{}}
 
   defp compile_plan!(project, capabilities) do
-    check_compiler_pipeline!()
+    pipelines = check_compiler_pipeline!()
     {dependencies_changed?, dependencies} = compile_dependencies!(project, capabilities)
-    prior = Map.new(project.apps, &{&1.app, BuildRecord.verified_beams(&1, capabilities)})
-    owned_stale? = stale_build?(project, capabilities)
+    plan(project, capabilities, pipelines, dependencies, dependencies_changed?)
+  end
 
-    if dependencies_changed? and not owned_stale? do
+  # After the dependencies `project` infers from are compiled and recorded:
+  # the evidence verified under the current pipeline is read before the
+  # compile, and the compile is forced when a record is stale or a
+  # dependency was rebuilt.
+  @spec plan(Project.t(), Compiler.capabilities(), map(), map(), boolean()) :: plan()
+  defp plan(project, capabilities, pipelines, dependencies, dependencies_changed?) do
+    prior =
+      Map.new(project.apps, fn app ->
+        {app.app, BuildRecord.verified_beams(app, capabilities, pipeline!(pipelines, app))}
+      end)
+
+    stale? = stale_build?(project, capabilities, pipelines)
+
+    if dependencies_changed? and not stale? do
       Enum.each(project.apps, fn app ->
         Mix.shell().info(
           "spec_lint: recompiling #{app.app} with #{capabilities.adapter_id}: dependency signatures rebuilt"
@@ -156,77 +184,118 @@ defmodule Mix.Tasks.SpecLint do
       end)
     end
 
-    {owned_stale? or dependencies_changed?, prior, dependencies}
+    %{
+      force?: stale? or dependencies_changed?,
+      prior: prior,
+      dependencies: dependencies,
+      pipelines: pipelines
+    }
+  end
+
+  defp pipeline!(pipelines, app) do
+    case Map.fetch(pipelines, app.app) do
+      {:ok, compilers} ->
+        compilers
+
+      :error ->
+        Mix.raise("unsupported compiler pipeline: no compiler list for #{app.app}",
+          exit_status: 2
+        )
+    end
   end
 
   # Compiler events identify modules, not output bytes. A custom compiler
-  # can replace an earlier compiler's output from a cache without publishing
-  # an event. Final-file digests would then attest the wrong producer.
+  # after :erlang can replace an earlier compiler's output from a cache
+  # without publishing an event, and final-file digests would then attest
+  # the wrong producer. Custom stages before :erlang are supported (see
+  # "Supported compiler pipelines" in SpecLint.BuildRecord). Returns the
+  # compiler list of every application compiled here, keyed like the
+  # applications of `SpecLint.Project.current/0`, for its record.
   defp check_compiler_pipeline! do
-    check_current_compilers!()
+    compilers = check_project_pipeline!()
 
     if Mix.Project.umbrella?() do
-      Enum.each(Enum.sort(Mix.Project.apps_paths() || %{}), fn {app, path} ->
-        Mix.Project.in_project(app, path, fn _ -> check_current_compilers!() end)
+      Map.new(Enum.sort(Mix.Project.apps_paths() || %{}), fn {app, path} ->
+        {app, Mix.Project.in_project(app, path, fn _ -> check_project_pipeline!() end)}
       end)
+    else
+      %{Mix.Project.config()[:app] => compilers}
     end
   end
 
-  defp check_current_compilers! do
+  # The checks for the current Mix project (the umbrella root, a child or
+  # a dependency); returns its compiler list.
+  defp check_project_pipeline! do
     compilers = Mix.Task.Compiler.compilers()
-    supported = [:yecc, :leex, :erlang, :elixir, :app]
+    name = Mix.Project.config()[:app] || "umbrella"
 
-    # Both generators emit only .erl source. Either order is safe before
-    # the fixed artifact-producing Erlang, Elixir, and app stages.
-    generators_swapped = [:leex, :yecc, :erlang, :elixir, :app]
-
-    unless compilers in [supported, generators_swapped] do
-      Mix.raise(
-        "unsupported compiler pipeline for #{Mix.Project.config()[:app] || "umbrella"}: " <>
-          "#{inspect(compilers)}; compiler provenance requires Mix's built-in compilers " <>
-          "with both generators before erlang, elixir, and app in order because " <>
-          "compiler events do not attest output bytes",
-        exit_status: 2
-      )
+    with :ok <- check_pipeline_shape(compilers),
+         :ok <- check_compile_aliases(),
+         :ok <- check_builtin_tasks() do
+      compilers
+    else
+      {:error, reason} ->
+        Mix.raise("unsupported compiler pipeline for #{name}: #{reason}", exit_status: 2)
     end
+  end
 
-    tasks = ["compile", "compile.all" | Enum.map(supported, &"compile.#{&1}")]
+  defp check_pipeline_shape(compilers) do
+    case BuildRecord.check_pipeline(compilers) do
+      :ok -> :ok
+      {:error, reason} -> {:error, "#{inspect(compilers)}: #{reason}"}
+    end
+  end
+
+  defp builtin_tasks,
+    do: ["compile", "compile.all" | Enum.map(BuildRecord.builtin_stages(), &"compile.#{&1}")]
+
+  # A prefix stage may be implemented by an alias (file_system defines
+  # `compile.file_system` that way): it runs at the stage's position like
+  # a compiler task. Aliasing compile, compile.all or a built-in stage
+  # would replace the tasks whose events attest artifacts; this includes a
+  # self-alias such as `compile: ["compile --warnings-as-errors"]`.
+  defp check_compile_aliases do
     aliases = Mix.Project.config()[:aliases] || []
 
-    Enum.each(tasks, fn task ->
-      if Keyword.has_key?(aliases, String.to_atom(task)) do
-        Mix.raise(
-          "unsupported compiler pipeline for #{Mix.Project.config()[:app] || "umbrella"}: " <>
-            "alias #{task} can replace compiler output; compiler provenance requires " <>
-            "Mix's built-in compile tasks",
-          exit_status: 2
-        )
-      end
+    case Enum.find(builtin_tasks(), &Keyword.has_key?(aliases, String.to_atom(&1))) do
+      nil ->
+        :ok
 
-      module = Mix.Task.get(task)
-      expected = Path.join([List.to_string(:code.lib_dir(:mix)), "ebin", "#{module}.beam"])
-
-      unless module != nil and :code.which(module) == String.to_charlist(expected) do
-        Mix.raise(
-          "unsupported compiler pipeline: task #{task} is not Mix's built-in task",
-          exit_status: 2
-        )
-      end
-    end)
+      task ->
+        {:error,
+         "alias #{task} can replace compiler output; compiler provenance requires " <>
+           "Mix's built-in compile tasks"}
+    end
   end
 
-  defp compile_and_record!(args, force?, capabilities, prior, dependencies) do
+  defp check_builtin_tasks do
+    mix_ebin = Path.join(List.to_string(:code.lib_dir(:mix)), "ebin")
+
+    replaced =
+      Enum.find(builtin_tasks(), fn task ->
+        module = Mix.Task.get(task)
+
+        module == nil or
+          :code.which(module) != String.to_charlist(Path.join(mix_ebin, "#{module}.beam"))
+      end)
+
+    if replaced,
+      do: {:error, "task #{replaced} is not Mix's built-in task"},
+      else: :ok
+  end
+
+  defp compile_and_record!(args, capabilities, plan) do
     capture = if capabilities, do: Capture.start()
 
     try do
       "compile"
       |> Mix.Task.run(args)
-      |> check_compile!(force?)
+      |> check_compile!(plan.force?)
 
       if capabilities do
         compiled = Capture.finish(capture)
         check_dependencies!(Project.current(), capabilities)
-        record_build!(Project.current(), capabilities, prior, compiled, dependencies)
+        record_build!(Project.current(), capabilities, plan, compiled)
       end
     after
       if capture, do: Capture.stop(capture)
@@ -280,12 +349,39 @@ defmodule Mix.Tasks.SpecLint do
 
   defp compile_dependency!(dep, {upstream_changed?, snapshots}, capabilities) do
     if Mix.Dep.mix?(dep) and is_nil(dep.opts[:compile]) do
-      DepLoader.with_system_env(dep, fn ->
-        compile_in_dependency!(dep, upstream_changed?, snapshots, capabilities)
-      end)
+      {changed?, snapshots} =
+        DepLoader.with_system_env(dep, fn ->
+          compile_in_dependency!(dep, upstream_changed?, snapshots, capabilities)
+        end)
+
+      if changed?, do: touch_fetchable(dep)
+      {changed?, snapshots}
     else
       check_external_dependency!(dep)
       {upstream_changed?, snapshots}
+    end
+  end
+
+  # What deps.compile does after compiling a fetchable dependency: it
+  # rewrites the dependency's SCM manifest. Since 1.21 the compiler writes
+  # that manifest without the dependency list, which deps.compile completes
+  # (`update/4`); otherwise the next Mix command sees the dependency as
+  # outdated, deletes its build directory (and record) and recompiles it.
+  # Elixir 1.20 stores no dependency list (`update/3`). The private API is
+  # checked by `check_dependency_api!/0` and called through a variable
+  # module, so each compiler line compiles only the arity it has.
+  # deps.compile then also runs `will_recompile`, which makes the root
+  # project recompile; spec_lint already forces owned applications to
+  # recompile after any dependency changed (`plan/5`).
+  defp touch_fetchable(dep, scm_manifest \\ ElixirSCM) do
+    if dep.scm.fetchable?() do
+      manifest = Path.join(dep.opts[:build], ".mix")
+
+      if function_exported?(scm_manifest, :update, 4) do
+        scm_manifest.update(manifest, dep.scm, dep.opts[:lock], Enum.map(dep.deps, & &1.app))
+      else
+        scm_manifest.update(manifest, dep.scm, dep.opts[:lock])
+      end
     end
   end
 
@@ -296,10 +392,9 @@ defmodule Mix.Tasks.SpecLint do
   end
 
   defp compile_mix_dependency!(upstream_changed?, snapshots, capabilities) do
-    check_compiler_pipeline!()
+    pipelines = check_compiler_pipeline!()
     dependency = Project.current()
-    prior = Map.new(dependency.apps, &{&1.app, BuildRecord.verified_beams(&1, capabilities)})
-    force? = stale_build?(dependency, capabilities) or upstream_changed?
+    plan = plan(dependency, capabilities, pipelines, snapshots, upstream_changed?)
     reenable_compile()
 
     args = [
@@ -310,16 +405,19 @@ defmodule Mix.Tasks.SpecLint do
       "--no-code-path-pruning"
     ]
 
-    args = if force?, do: ["--force" | args], else: args
+    args = if plan.force?, do: ["--force" | args], else: args
     capture = Capture.start()
 
     try do
       result = Mix.Task.run("compile", args)
-      check_compile!(result, force?)
+      check_compile!(result, plan.force?)
       compiled = Capture.finish(capture)
       check_dependency_build!(dependency)
-      record_build!(dependency, capabilities, prior, compiled, snapshots)
-      changed? = force? or Enum.any?(compiled, fn {_app, modules} -> MapSet.size(modules) > 0 end)
+      record_build!(dependency, capabilities, plan, compiled)
+
+      changed? =
+        plan.force? or Enum.any?(compiled, fn {_app, modules} -> MapSet.size(modules) > 0 end)
+
       {changed?, dependency_snapshots(dependency, snapshots)}
     after
       Capture.stop(capture)
@@ -348,18 +446,23 @@ defmodule Mix.Tasks.SpecLint do
       {Mix.Dep, :cached, 0},
       {Mix.Dep, :mix?, 1},
       {Mix.Dep, :in_dependency, 2},
-      {Mix.Dep.Loader, :with_system_env, 2}
+      {Mix.Dep.Loader, :with_system_env, 2},
+      # update/4 (with the dependency list) since 1.21, update/3 in 1.20.
+      [{ElixirSCM, :update, 4}, {ElixirSCM, :update, 3}]
     ]
 
-    Enum.each(required, fn {module, function, arity} ->
-      unless Code.ensure_loaded?(module) and function_exported?(module, function, arity) do
-        Mix.raise(
-          "dependency compiler evidence API is unavailable: #{inspect(module)}.#{function}/#{arity}",
-          exit_status: 2
-        )
-      end
-    end)
+    for alternatives <- required,
+        alternatives = List.wrap(alternatives),
+        not Enum.any?(alternatives, &exported?/1) do
+      names = Enum.map_join(alternatives, " or ", fn {m, f, a} -> "#{inspect(m)}.#{f}/#{a}" end)
+      Mix.raise("dependency compiler evidence API is unavailable: #{names}", exit_status: 2)
+    end
+
+    :ok
   end
+
+  defp exported?({module, function, arity}),
+    do: Code.ensure_loaded?(module) and function_exported?(module, function, arity)
 
   defp check_external_dependency!(dep) do
     ebin = Path.join(dep.opts[:build], "ebin")
@@ -396,10 +499,11 @@ defmodule Mix.Tasks.SpecLint do
     end)
   end
 
-  defp stale_build?(project, capabilities) do
+  defp stale_build?(project, capabilities, pipelines) do
     stale =
       for app <- project.apps,
-          (status = BuildRecord.status(app, capabilities)) != :verified,
+          (status = BuildRecord.status(app, capabilities, pipeline!(pipelines, app))) !=
+            :verified,
           do: {app, status}
 
     for {app, status} <- stale, File.dir?(app.ebin) do
@@ -417,15 +521,19 @@ defmodule Mix.Tasks.SpecLint do
     stale != []
   end
 
-  defp record_build!(project, capabilities, prior, compiled, dependencies) do
+  @spec record_build!(Project.t(), Compiler.capabilities(), plan(), %{atom() => MapSet.t()}) ::
+          :ok
+  defp record_build!(project, capabilities, plan, compiled) do
     for app <- project.apps, File.dir?(app.ebin) do
       evidence =
         Map.merge(
-          Map.get(prior, app.app, %{}),
+          Map.get(plan.prior, app.app, %{}),
           BuildRecord.compiled_beams(app, Map.get(compiled, app.app, MapSet.new()))
         )
 
-      case BuildRecord.write(app, capabilities, evidence, dependencies) do
+      compilers = pipeline!(plan.pipelines, app)
+
+      case BuildRecord.write(app, capabilities, evidence, plan.dependencies, compilers) do
         :ok ->
           :ok
 
