@@ -12,7 +12,7 @@ defmodule SpecLint.Rule do
   reporters render for the findings they show.
   """
 
-  alias SpecLint.{Analysis, Baseline, Bound, Compiler, Evidence, Issue}
+  alias SpecLint.{Analysis, Baseline, Bound, Compiler, Evidence, InheritedSpec, Issue}
 
   @typedoc "One slice of a function with its evidence (`nil` when not compared)."
   @type slice_context :: %{
@@ -94,6 +94,7 @@ defmodule SpecLint.Rule do
       })
 
     {module, _name, _arity} = function.mfa
+    {details, data} = inherited_note(function, slice, attrs)
 
     %Issue{
       rule: rule.id(),
@@ -107,11 +108,27 @@ defmodule SpecLint.Rule do
       file: context.file,
       line: function.line,
       message: Keyword.fetch!(attrs, :message),
-      details: Keyword.get(attrs, :details, []),
+      details: details,
       prerequisites: Keyword.get(attrs, :prerequisites, []),
-      data: Keyword.get(attrs, :data, %{}),
+      data: data,
       fingerprint: fingerprint
     }
+  end
+
+  # A spec injected by a macro (`SpecLint.InheritedSpec`) is noted in the
+  # details and the data. Presentation only: gating, evidence and the
+  # fingerprint never read it.
+  defp inherited_note(function, slice, attrs) do
+    details = Keyword.get(attrs, :details, [])
+    data = Keyword.get(attrs, :data, %{})
+
+    with %{spec: spec} <- slice,
+         {:inherited, line} <- InheritedSpec.detect(spec, function) do
+      {details ++ [{"note", InheritedSpec.note(line)}],
+       Map.merge(data, %{inherited_spec: true, inherited_spec_line: line})}
+    else
+      _ -> {details, data}
+    end
   end
 
   defp inferred_for(_function, slice, :contributing) do

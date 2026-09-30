@@ -13,7 +13,7 @@ defmodule SpecLint.Beam do
     * `debug_info` - the `:elixir_v1` debug info: definitions, the first line
       of each definition, the definitions whose metadata marks them
       `generated: true`, the overridable defaults the module did not
-      override, the source file, and the `__protocol__`/`__impl__`
+      override, the source file, the `defmodule` line, and the `__protocol__`/`__impl__`
       attributes the compiler's type checker reads (`checker_attributes`).
 
   An overridable default that was not overridden (a `defoverridable`
@@ -35,6 +35,7 @@ defmodule SpecLint.Beam do
           generated: [{atom(), arity()}],
           overridable_defaults: [{atom(), arity()}],
           file: String.t() | nil,
+          line: pos_integer() | nil,
           checker_attributes: keyword()
         }
 
@@ -249,6 +250,7 @@ defmodule SpecLint.Beam do
            generated: generated_definitions(definitions),
            overridable_defaults: overridable_defaults(definitions),
            file: Map.get(map, :file),
+           line: module_line(map),
            checker_attributes:
              map |> Map.get(:attributes, []) |> Keyword.take([:__protocol__, :__impl__])
          }}
@@ -257,6 +259,12 @@ defmodule SpecLint.Beam do
         {:error, reason}
     end
   end
+
+  # The `defmodule` line: `anno` in current debug info, `line` in older.
+  defp module_line(%{anno: {line, _column}}) when is_integer(line), do: line
+  defp module_line(%{anno: line}) when is_integer(line), do: line
+  defp module_line(%{line: line}) when is_integer(line), do: line
+  defp module_line(_map), do: nil
 
   defp definition_lines(definitions) do
     for {fun_arity, _kind, meta, _clauses} <- definitions,

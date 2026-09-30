@@ -61,6 +61,8 @@ defmodule SpecLint.Analysis do
   @type function_result :: %{
           mfa: mfa(),
           line: pos_integer() | nil,
+          definition_column?: boolean(),
+          module_line: pos_integer() | nil,
           status: status(),
           slices: [slice()],
           inferred: [SpecLint.Compiler.clause()],
@@ -245,6 +247,8 @@ defmodule SpecLint.Analysis do
     base = %{
       mfa: {beam.module, name, arity},
       line: line(beam, fun_arity),
+      definition_column?: definition_column?(beam, fun_arity),
+      module_line: module_line(beam),
       status: :compared,
       slices: [],
       inferred: [],
@@ -351,4 +355,18 @@ defmodule SpecLint.Analysis do
 
   defp line(%Beam{debug_info: {:ok, %{lines: lines}}}, fun_arity), do: Map.get(lines, fun_arity)
   defp line(%Beam{}, _fun_arity), do: nil
+
+  # Whether the definition carries a column, that is, the compiler ran with
+  # columns (`SpecLint.InheritedSpec`).
+  defp definition_column?(%Beam{debug_info: {:ok, %{definitions: definitions}}}, fun_arity) do
+    case List.keyfind(definitions, fun_arity, 0) do
+      {^fun_arity, _kind, meta, _clauses} -> Keyword.has_key?(meta, :column)
+      nil -> false
+    end
+  end
+
+  defp definition_column?(%Beam{}, _fun_arity), do: false
+
+  defp module_line(%Beam{debug_info: {:ok, %{line: line}}}), do: line
+  defp module_line(%Beam{}), do: nil
 end
