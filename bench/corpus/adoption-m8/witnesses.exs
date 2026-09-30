@@ -8,13 +8,14 @@ case System.argv() do
     for input <- inputs do
       result = Absinthe.Blueprint.Input.parse(input)
       %{source_location: nil} = result
-      IO.inspect({input, result.__struct__, result.source_location})
+      IO.puts(inspect({input, result.__struct__, result.source_location}))
     end
 
     IO.puts("All seven native input constructors return nil source_location.")
 
   ["tableau"] ->
     defmodule SpecLintCampaignExtension do
+      @spec __tableau_extension_key__() :: atom()
       def __tableau_extension_key__, do: :campaign
     end
 
