@@ -428,11 +428,25 @@ routinely override template_not_found/2 to return a rendered binary (the
 generated ErrorView does). The injected spec stays attached to the override,
 so the override's inferred return (binary) contradicts the declared
 no_return: SpecLint reports SL006 unexpected_return, correctly, but the spec
-is owned by the library, not the application. SpecLint now marks such
-findings with an inherited-spec note (bare-line spec annotation).
+is owned by the library, not the application. SpecLint presents a possible-inheritance note (bare-line spec annotation),
+which is heuristic and does not establish library ownership by itself.
 
 Before filing: check current phoenix_view (and Phoenix 1.7+ component-based
 error rendering, which may no longer use it), search for duplicates, and
 propose either no spec on the overridable default or a return type that
 admits the documented override (for example String.t() | no_return, or
 term()).
+
+M8 verification (2026-09-30): the declaration remains in upstream main at
+87159b55dea9f68147943f46a2996727b7d20268, lib/phoenix_view.ex.
+https://github.com/phoenixframework/phoenix_view/blob/87159b55dea9f68147943f46a2996727b7d20268/lib/phoenix_view.ex
+Prior related work exists and must be considered before filing:
+https://github.com/phoenixframework/phoenix_view/pull/7 (merged removal of
+an overridable spec in the then lib/phoenix/template.ex; linked Elixir
+issue 11574), and https://github.com/phoenixframework/phoenix_view/issues/8
+(closed Dialyzer no-local-return discussion after 1.1.1). This is not a
+newly discovered problem family. No issue or comment was submitted.
+Do not assume binary() is the complete callback contract: views also
+return structured JSON data. Any proposed replacement type must account
+for the documented rendering contract; removing the inherited spec is
+an alternative to discuss with maintainers.

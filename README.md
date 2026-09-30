@@ -164,12 +164,14 @@ after `:erlang`, a missing or reordered built-in stage, compile-task aliases,
 replacement compile tasks and dependencies with a custom `:compile` command
 cause exit 2. A custom stage may be a compiler task or, as in
 `file_system`, an alias of `compile.<stage>`. An alias of `compile`,
-`compile.all` or a built-in stage is accepted only when it is a flag-only
-self-alias, every step being the aliased task with option flags (some Hex
-packages define `compile: ["compile --warnings-as-errors"]`): Mix then runs
-the built-in task, and the last step still receives SpecLint's `--force`.
-Any other step (another task, a positional argument, a function) is
-refused. SpecLint's own runtime
+`compile.all` or a built-in stage is accepted only as a list containing one
+self-invocation, with optional `--warnings-as-errors` and `--no-all-warnings`
+(each at most once). For example, `compile: ["compile --warnings-as-errors"]`
+is accepted. These flags affect diagnostics; flags that suppress compilation,
+change artifacts, or are unknown are refused, as are additional steps,
+functions and positional arguments. Parsing follows Mix's `OptionParser.split/1`.
+Mix passes SpecLint's arguments, including `--force`, to that self-invocation.
+SpecLint's own runtime
 self-check uses `MIX_ENV=prod`, without its Credo/Dialyxir development
 dependencies; `mix spec_lint --ci` on this development checkout, whose
 Credo dependency pulls in `file_system`, is accepted as well.
@@ -245,11 +247,11 @@ build on new reported candidates as well, use `--warnings-as-errors`. That
 is an explicit heuristic policy, separate from the established
 contradictions, and a baseline acknowledges its findings like any other.
 
-A finding whose spec was injected by a macro (a library's `__using__/1` that
-emits `@spec`, then the application overrides the definition) carries a
-`note` saying so, and `inherited_spec: true` in the JSON `data`. The spec is
-not written next to the definition: baseline the finding or fix the spec
-upstream.
+A finding whose spec annotation resembles a macro-injected spec carries a
+heuristic `note` and `possibly_inherited_spec: true` in the JSON `data`. This
+source-location signal cannot prove that a macro injected the spec or identify
+a library as its owner. Inspect the spec and its source before deciding how
+to address the finding.
 
 ### Exit status
 

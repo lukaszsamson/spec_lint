@@ -115,17 +115,17 @@ defmodule SpecLint.Rule do
     }
   end
 
-  # A spec injected by a macro (`SpecLint.InheritedSpec`) is noted in the
-  # details and the data. Presentation only: gating, evidence and the
+  # Source locations resembling macro injection (`SpecLint.InheritedSpec`)
+  # are noted in the details and data. Presentation only: gating, evidence and the
   # fingerprint never read it.
   defp inherited_note(function, slice, attrs) do
     details = Keyword.get(attrs, :details, [])
     data = Keyword.get(attrs, :data, %{})
 
     with %{spec: spec} <- slice,
-         {:inherited, line} <- InheritedSpec.detect(spec, function) do
+         {:possibly_inherited, line} <- InheritedSpec.detect(spec, function) do
       {details ++ [{"note", InheritedSpec.note(line)}],
-       Map.merge(data, %{inherited_spec: true, inherited_spec_line: line})}
+       Map.merge(data, %{possibly_inherited_spec: true, possibly_inherited_spec_line: line})}
     else
       _ -> {details, data}
     end

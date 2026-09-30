@@ -12,6 +12,7 @@ defmodule SpecLint.AdoptionRegressionsTest do
 
   alias SpecLint.AdoptionFixtures.{Charges, Consumer, Evaluated, Order}
   alias SpecLint.{Analysis, Config, Evidence, InheritedSpec, Issue, Policy}
+  alias SpecLint.Report.Json
 
   describe "an omitted error tuple in the first of three clauses" do
     test "the in-domain witness returns the undeclared value" do
@@ -39,7 +40,7 @@ defmodule SpecLint.AdoptionRegressionsTest do
 
       refute issue.gate
       refute Policy.gate?(issue, %Config{profile: :review})
-      refute issue.data[:inherited_spec]
+      refute issue.data[:possibly_inherited_spec]
       refute Enum.any?(Issue.rendered_details(issue), fn {label, _} -> label == "note" end)
     end
   end
@@ -56,7 +57,7 @@ defmodule SpecLint.AdoptionRegressionsTest do
       function = analysed(Consumer, :template_not_found, 2)
       assert function.definition_column?
       assert is_integer(function.module_line) and function.module_line < line
-      assert InheritedSpec.detect(hd(injected), function) == {:inherited, line}
+      assert InheritedSpec.detect(hd(injected), function) == {:possibly_inherited, line}
       assert InheritedSpec.detect(hd(written), function) == :not_detected
 
       # Without columns, or without the module line, nothing can be said.
@@ -80,8 +81,18 @@ defmodule SpecLint.AdoptionRegressionsTest do
       run = run!([Evaluated])
 
       for issue <- issues(run, {Evaluated, :from_quote, 1}) do
-        refute issue.data[:inherited_spec]
+        refute issue.data[:possibly_inherited_spec]
       end
+    end
+
+    test "an explicit in-module AST line can mimic the heuristic signal" do
+      function = analysed(Consumer, :template_not_found, 2)
+      # A bare annotation after the module line is ambiguous: it could be a
+      # macro call or an AST constructed inside the module with line metadata.
+      synthetic_in_module_ast = {:type, function.module_line + 1, :fun, []}
+
+      assert InheritedSpec.detect(synthetic_in_module_ast, function) ==
+               {:possibly_inherited, function.module_line + 1}
     end
 
     test "a spec injected with quote location: :keep carries the call line" do
@@ -92,7 +103,7 @@ defmodule SpecLint.AdoptionRegressionsTest do
       call_line =
         source |> String.split("\n") |> Enum.find_index(&(&1 =~ "  KeepLibrary.kept_spec()"))
 
-      assert InheritedSpec.detect(spec, function) == {:inherited, call_line + 1}
+      assert InheritedSpec.detect(spec, function) == {:possibly_inherited, call_line + 1}
     end
 
     test "the spec line is the use line, not the definition line" do
@@ -113,12 +124,35 @@ defmodule SpecLint.AdoptionRegressionsTest do
       assert [issue] = issues(run, {Consumer, :template_not_found, 2})
       assert %Issue{rule: "SL006", evidence: :unexpected_return} = issue
 
-      assert issue.data.inherited_spec == true
-      assert is_integer(issue.data.inherited_spec_line)
+      assert issue.data.possibly_inherited_spec == true
+      assert is_integer(issue.data.possibly_inherited_spec_line)
 
       assert {"note", note} = List.keyfind(Issue.rendered_details(issue), "note", 0)
-      assert note =~ "not written next to the definition"
-      assert note =~ "Baseline"
+      assert note =~ "may not be written next to the definition"
+      assert note =~ "heuristic"
+      assert note =~ "inspect the spec"
+
+      assert {:ok, report} =
+               run |> Json.envelope() |> Json.encode() |> IO.iodata_to_binary() |> JSON.decode()
+
+      report_issue =
+        Enum.find(
+          report["findings"],
+          &(&1["subject"] == "SpecLint.AdoptionFixtures.Consumer.template_not_found/2")
+        )
+
+      assert report_issue["data"]["possibly_inherited_spec"] == true
+      assert is_integer(report_issue["data"]["possibly_inherited_spec_line"])
+      refute Map.has_key?(report_issue["data"], "inherited_spec")
+      refute Map.has_key?(report_issue["data"], "inherited_spec_line")
+      assert report_issue["fingerprint"] == issue.fingerprint
+      assert report_issue["evidence"] == Atom.to_string(issue.evidence)
+      assert report_issue["gate"] == issue.gate
+
+      assert Enum.any?(report_issue["details"], fn
+               ["note", text] -> text =~ "heuristic" and text =~ "inspect the spec"
+               _ -> false
+             end)
 
       # Gated exactly as before (SL006 gates in the review profile).
       assert Policy.gate?(issue, %Config{profile: :review})
@@ -127,7 +161,7 @@ defmodule SpecLint.AdoptionRegressionsTest do
       assert [_ | _] = own = issues(run, {Consumer, :own_spec, 1})
 
       for other <- own do
-        refute other.data[:inherited_spec]
+        refute other.data[:possibly_inherited_spec]
       end
     end
   end

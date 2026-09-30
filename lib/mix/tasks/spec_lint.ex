@@ -249,18 +249,14 @@ defmodule Mix.Tasks.SpecLint do
   defp builtin_tasks,
     do: ["compile", "compile.all" | Enum.map(BuildRecord.builtin_stages(), &"compile.#{&1}")]
 
-  # A prefix stage may be implemented by an alias (file_system defines
-  # `compile.file_system` that way): it runs at the stage's position like
-  # a compiler task. Aliasing compile, compile.all or a built-in stage
-  # would replace the tasks whose events attest artifacts; this includes a
-  # self-alias such as `compile: ["compile --warnings-as-errors"]`.
-  # An alias of a built-in compile task is accepted only when it is a
-  # flag-only self-alias: every step is the aliased task itself with option
-  # flags (`compile: ["compile --warnings-as-errors"]`, as some Hex packages
-  # define). Mix then runs the built-in task with those flags, and the last
-  # step still receives the arguments SpecLint passes (`--force`). Any other
-  # step (another task, a positional argument, a function) could replace or
-  # reorder compiler output and is refused.
+  # Prefix-stage aliases run at the stage's position like compiler tasks.
+  # Built-in tasks accept only a single self-invocation with options that
+  # affect diagnostics, never emitted artifacts or compilation. Mix passes
+  # caller arguments (including SpecLint's --force) to that self-invocation.
+  # Multiple steps are refused: Mix clears caller arguments after the first
+  # self-invocation, so later steps would not receive --force.
+  @self_alias_flags ~w(--warnings-as-errors --no-all-warnings)
+
   defp check_compile_aliases do
     aliases = Mix.Project.config()[:aliases] || []
 
@@ -271,8 +267,8 @@ defmodule Mix.Tasks.SpecLint do
       task ->
         {:error,
          "alias #{task} can replace compiler output; compiler provenance requires " <>
-           "Mix's built-in compile tasks (only a flag-only self-alias such as " <>
-           ~s(`#{task}: ["#{task} --flag"]` is accepted\))}
+           "Mix's built-in compile tasks (only one self-invocation with " <>
+           "--warnings-as-errors or --no-all-warnings is accepted)"}
     end
   end
 
@@ -281,8 +277,8 @@ defmodule Mix.Tasks.SpecLint do
       :error ->
         false
 
-      {:ok, steps} when is_list(steps) and steps != [] ->
-        not Enum.all?(steps, &self_step?(&1, task))
+      {:ok, [step]} ->
+        not self_step?(step, task)
 
       {:ok, _other} ->
         true
@@ -290,10 +286,16 @@ defmodule Mix.Tasks.SpecLint do
   end
 
   defp self_step?(step, task) when is_binary(step) do
-    case String.split(step) do
-      [^task | flags] -> Enum.all?(flags, &String.starts_with?(&1, "-"))
-      _other -> false
+    case OptionParser.split(step) do
+      [^task | flags] ->
+        Enum.all?(flags, &(&1 in @self_alias_flags)) and
+          length(flags) == length(Enum.uniq(flags))
+
+      _other ->
+        false
     end
+  rescue
+    _error in [ArgumentError, RuntimeError] -> false
   end
 
   defp self_step?(_step, _task), do: false

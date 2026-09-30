@@ -1,6 +1,6 @@
 defmodule SpecLint.InheritedSpec do
   @moduledoc """
-  Detects a spec that was not written next to its definition: one injected
+  Heuristically flags a spec that may not have been written next to its definition, such as one injected
   by a macro, typically a library's `__using__/1` that emits
   `@spec f(...) :: ...`, `def f(...)` and `defoverridable f: n`, after which
   the application overrides `f`.
@@ -24,7 +24,8 @@ defmodule SpecLint.InheritedSpec do
   body, after its `defmodule` line, so a bare line that is not after the
   module's `defmodule` line (or a module whose line is unknown) is
   `:not_detected`. Such a spec whose AST carries a line inside the module
-  cannot be told apart from an injected one.
+  cannot be told apart from an injected one. This source-location heuristic
+  cannot prove macro injection or identify a library as the spec's owner.
 
   The macro that did the injection is not recorded in the BEAM, so it is
   not reported, and the line is presented as "reported line".
@@ -45,23 +46,24 @@ defmodule SpecLint.InheritedSpec do
         }
 
   @doc """
-  Whether the spec clause `spec` (a `Code.Typespec.fetch_specs/1` entry) of
-  the function described by `origin` was injected by a macro. Returns
-  `{:inherited, line}` or `:not_detected`.
+  Whether the annotation of `spec` (a `Code.Typespec.fetch_specs/1` entry)
+  resembles macro injection. This cannot prove the spec's origin. Returns
+  `{:possibly_inherited, line}` or `:not_detected`.
   """
-  @spec detect(tuple() | term(), origin()) :: {:inherited, pos_integer()} | :not_detected
+  @spec detect(tuple() | term(), origin()) ::
+          {:possibly_inherited, pos_integer()} | :not_detected
   def detect({:type, line, kind, _}, %{definition_column?: true, module_line: module_line})
       when kind in [:fun, :bounded_fun] and is_integer(line) and is_integer(module_line) and
              line > module_line,
-      do: {:inherited, line}
+      do: {:possibly_inherited, line}
 
   def detect(_spec, _origin), do: :not_detected
 
-  @doc "The sentence added to a finding's details when the spec was injected."
+  @doc "The sentence added to a finding's details when the spec resembles macro injection."
   @spec note(pos_integer()) :: String.t()
   def note(line) do
-    "this spec was not written next to the definition: it looks injected by a macro " <>
-      "(reported line #{line}, the line of the macro call such as `use`). " <>
-      "Baseline the finding or fix the spec upstream."
+    "this spec may not be written next to the definition: its source-location pattern " <>
+      "resembles macro injection (reported line #{line}, often the macro call such as `use`). " <>
+      "This is heuristic; inspect the spec and its source before deciding how to address it."
   end
 end

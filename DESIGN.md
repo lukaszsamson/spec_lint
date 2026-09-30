@@ -603,10 +603,12 @@ evidence is reused. A custom stage after `:erlang` is refused (exit 2
 naming the stage) because compiler events do not attest output bytes and
 a later stage could replace attested BEAMs; so are missing or reordered
 built-in stages, aliases of `compile`, `compile.all` or a built-in stage
-whose steps are not all the aliased task itself with option flags (a
-flag-only self-alias such as `compile: ["compile --warnings-as-errors"]`
-runs the built-in task and is accepted; the last step still receives
-`--force`), and built-in task modules not loaded from Mix's ebin. The same rules apply
+unless they contain exactly one self-invocation with only the diagnostic
+flags `--warnings-as-errors` and `--no-all-warnings` (no duplicates), and
+built-in task modules not loaded from Mix's ebin. The alias is parsed using
+Mix's `OptionParser.split/1`; unknown, compilation-suppressing and
+artifact-changing options are refused. The self-invocation receives
+SpecLint's arguments, including `--force`. The same rules apply
 to umbrella children and source-backed Mix dependencies, which receive the
 same per-artifact production records before owned applications compile.
 
@@ -935,15 +937,17 @@ A spec the module evaluates itself from an AST without line metadata
 (`Code.string_to_quoted!/1` or a `quote` evaluated in the module body) also
 has a bare line, the AST's default line 1, which is not a macro call; a
 macro call lies after the module's `defmodule` line (the debug chunk's
-module `anno`). `SpecLint.InheritedSpec` reports `{:inherited, line}` only
+module `anno`). `SpecLint.InheritedSpec` reports `{:possibly_inherited, line}` only
 when the line follows that `defmodule` line; when the definition has no
 column (columns off) or the module line is unknown it says nothing.
 `quote location: :keep` still yields the bare call line. A finding on such a
-spec gets `data.inherited_spec: true`, `data.inherited_spec_line` and a
-`note` detail telling the user the spec was not written next to the
-definition (baseline it or fix it upstream). Not knowable: the macro's name
-or origin module; a spec built by unquoting an AST that keeps its columns is
-missed (no false positive). Gating, evidence classes, fingerprints and the
+spec gets `data.possibly_inherited_spec: true`,
+`data.possibly_inherited_spec_line` and a heuristic `note` detail. The
+source-location pattern cannot prove macro injection or identify a library
+as owner; a spec built by an in-module AST with line metadata after the module
+line can produce the same signal. Inspect the spec and its source before
+deciding how to address the finding. A spec built by unquoting an AST that
+keeps its columns is missed. Gating, evidence classes, fingerprints and the
 evaluation inventory never read the note.
 
 Inline suppression: **deferred**. Persisted attributes carry no source

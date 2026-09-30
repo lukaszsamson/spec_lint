@@ -61,7 +61,9 @@ defmodule SpecLint.BuildRecord do
 
   `check_pipeline/1` sees only the list. The Mix task additionally refuses
   (exit 2) an alias of `compile`, `compile.all` or a built-in stage
-  (`compile.elixir`, ...), and a built-in task whose module is not loaded
+  (`compile.elixir`, ...), except one self-invocation with the diagnostic
+  flags `--warnings-as-errors` and/or `--no-all-warnings` (each at most once),
+  and a built-in task whose module is not loaded
   from Mix's own ebin: those would replace the tasks whose events attest
   artifacts.
 

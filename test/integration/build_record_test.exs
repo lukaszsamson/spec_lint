@@ -387,6 +387,15 @@ defmodule SpecLint.Integration.BuildRecordTest do
           {~s(compile: ["compile lib"]), "compile"},
           {~s(compile: [fn _ -> :ok end]), "compile"},
           {~s(compile: []), "compile"},
+          {~s(compile: ["compile --no-compile"]), "compile"},
+          {~s(compile: ["compile --no-debug-info"]), "compile"},
+          {~s(compile: ["compile --no-deps-check"]), "compile"},
+          {~s(compile: ["compile --unknown"]), "compile"},
+          {~s(compile: ["compile --warnings-as-errors --no-warnings-as-errors"]), "compile"},
+          {~s(compile: ["compile --warnings-as-errors=false"]), "compile"},
+          {~s(compile: ["compile --warnings-as-errors --warnings-as-errors"]), "compile"},
+          {~s(compile: ["compile --no-all-warnings", "compile --no-all-warnings"]), "compile"},
+          {~s(compile: ["compile '--no-all-warnings"]), "compile"},
           {~s("compile.watcher": fn _ -> :ok end, "compile.erlang": ["compile.erlang", "format"]),
            "compile.erlang"},
           {~s("compile.watcher": fn _ -> :ok end, "compile.yecc": fn _ -> :ok end),
@@ -407,7 +416,7 @@ defmodule SpecLint.Integration.BuildRecordTest do
   } do
     with_compilers!(
       dir,
-      ~s|Mix.compilers(), aliases: [compile: ["compile --no-all-warnings"]]|,
+      ~s|Mix.compilers(), aliases: [compile: ["compile '--no-all-warnings'"]]|,
       ""
     )
 
