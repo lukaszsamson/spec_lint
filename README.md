@@ -5,18 +5,19 @@ compiler infers. Requires Elixir 1.18 or later; 1.20 infers much more
 (argument types from guards and patterns), so 1.18 and 1.19 find less.
 
 ```elixir
-# mix.exs (not yet published to Hex)
-{:spec_lint, github: "lukaszsamson/spec_lint", only: [:dev, :test], runtime: false}
+# mix.exs
+{:spec_lint, "~> 0.1", only: [:dev, :test], runtime: false}
 ```
 
 ```
 $ mix spec_lint
-lib/my_app/accounts.ex:41: error: MyApp.Accounts.lookup/1: inferred return {:ok, integer()} is disjoint from the spec return atom()
+lib/my_app/accounts.ex:41: error: MyApp.Accounts.lookup/1: inferred return {:ok, term()} is disjoint from the spec return atom()
     @spec lookup(integer()) :: atom()
-    inferred: (integer()) -> {:ok, integer()}
+    inferred: (term()) -> dynamic({:ok, term()})
 lib/my_app/deposits.ex:88: warning: MyApp.Deposits.request/3: inferred return includes {:error, :merchant_inactive}, which the spec does not declare
     @spec request(t(), binary(), keyword()) :: {:ok, t()} | {:error, :not_found}
-    inferred: (%MyApp.Deposit{...}, binary(), list()) -> {:ok, %MyApp.Deposit{...}} or {:error, :merchant_inactive} or {:error, :not_found}
+    inferred: (%MyApp.Deposit{status: :inactive}, binary(), term()) -> {:error, :merchant_inactive}
+    inferred: (%MyApp.Deposit{status: :active}, binary(), term()) -> dynamic({:ok, term()} or {:error, :not_found})
 spec_lint: 421 spec clauses checked, 1 error(s), 1 warning(s)
 ```
 
@@ -48,9 +49,11 @@ Warnings are clauses and return values the spec does not declare:
 - `unexpected_return`: the spec says `no_return()` and the compiler
   infers a return.
 
-Erlang `-nominal` types are read on Elixir 1.21 and treated as any
-term before that; record types (`#name{}`, classic or OTP 29 native)
-are any term, since the BEAM does not say which kind they are.
+Spec clauses that use a construct the translator cannot read (a `when`
+constraint other than `x :: type`) are skipped and counted. Erlang
+`-nominal` types are read on Elixir 1.21 and treated as any term before
+that; record types (`#name{}`, classic or OTP 29 native) are any term,
+since the BEAM does not say which kind they are.
 
 Inference is conservative, so an inferred type wider than the spec is
 normal and silent. Values that flow straight from arguments or callbacks
@@ -86,6 +89,18 @@ Exit status is 0 when there is no error (and no warning with
 Specs injected by a library macro (for example Phoenix.View's
 `template_not_found/2`) are reported against the module that overrides
 the function; ignore them here or fix the spec upstream.
+
+## Development
+
+```
+mix test
+mix credo --strict
+mix format --check-formatted
+```
+
+CI runs the suite on Elixir 1.18 (OTP 27), 1.19 (OTP 28) and 1.20
+(OTP 28 and 29). `UPSTREAM_BUGS.txt` records the library spec mistakes
+and compiler precision limits found while building the tool.
 
 ## License
 

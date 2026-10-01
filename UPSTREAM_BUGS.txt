@@ -1,3 +1,8 @@
+NOTE (2026-10-01): this file predates the rewrite of SpecLint into a minimal
+tool. The bench/ paths, rule names (SL001...) and evidence classes it refers
+to no longer exist in the repository; the library and compiler observations
+themselves still stand at the pinned revisions.
+
 UPSTREAM REPORTS AND INVESTIGATIONS
 Written: 2026-09-29
 Repository reviewed: 0cc9c50, including the clause-local qualification work.
