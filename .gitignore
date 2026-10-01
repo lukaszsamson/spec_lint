@@ -1,7 +1,8 @@
-/_build/
+/_build*/
 /deps/
 /doc/
 /cover/
+/tmp/
 /test/tmp/
 /priv/plts/
 *.ez
