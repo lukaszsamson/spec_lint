@@ -12,7 +12,7 @@ defmodule SpecLint.MixProject do
         links: %{"GitHub" => "https://github.com/lukaszsamson/spec_lint"},
         files: ~w(lib mix.exs README.md LICENSE NOTICE THIRD_PARTY_NOTICES.md)
       ],
-      elixir: "~> 1.20",
+      elixir: "~> 1.19",
       elixirc_paths: elixirc_paths(Mix.env()),
       deps: deps(),
       dialyzer: [plt_add_apps: [:mix], flags: [:unmatched_returns, :error_handling]]

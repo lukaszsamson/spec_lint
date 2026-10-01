@@ -38,15 +38,13 @@ defmodule SpecLint do
       dynamic: 1,
       list: 1,
       empty?: 1,
-      map_fetch_key: 2,
       non_empty_list: 2,
       open_map: 0,
       subtype?: 2,
       term: 0,
       to_quoted_string: 1,
       tuple: 1,
-      tuple_fetch: 2,
-      upper_bound: 1
+      tuple_fetch: 2
     ]
 
   import SpecLint.Descr
@@ -270,6 +268,10 @@ defmodule SpecLint do
   # inside the spec type, or is a catch-all (`term()` minus the literals of
   # the earlier clauses, which the compiler already subtracts) that meets
   # the spec type. Requires exactly translated arguments.
+  # Elixir 1.19 does not subtract the earlier clauses from a catch-all's
+  # domain, so a catch-all after `def f(nil)` would look reachable for nil.
+  @catch_all? Version.match?(System.version(), ">= 1.20.0")
+
   defp clause_conflicts(_base, _inferred, _arg_types, _spec_return, false), do: []
 
   defp clause_conflicts(base, inferred, arg_types, spec_return, true) do
@@ -277,7 +279,7 @@ defmodule SpecLint do
         Enum.zip(clause_args, arg_types)
         |> Enum.all?(fn {c, s} ->
           c = upper_bound(c)
-          subtype?(c, s) or (near_top?(c) and not disjoint?(c, s))
+          subtype?(c, s) or (@catch_all? and near_top?(c) and not disjoint?(c, s))
         end),
         return = upper_bound(clause_return),
         not empty?(return),
@@ -388,6 +390,8 @@ defmodule SpecLint do
 
   defp kind(:non_empty_list), do: non_empty_list(term(), term())
   defp kind(:list), do: list(term())
+  defp kind(:bitstring), do: bitstring()
+  defp kind(:bitstring_no_binary), do: bitstring_no_binary()
   defp kind(name), do: apply(Module.Types.Descr, name, [])
 
   defp atom_escape?(extra) do

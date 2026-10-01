@@ -8,12 +8,15 @@ permissions:
 jobs:
   test:
     runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        elixir: ['1.19', '1.20']
     steps:
       - uses: actions/checkout@v4
       - uses: erlef/setup-beam@v1
         with:
           otp-version: '28'
-          elixir-version: '1.20'
+          elixir-version: ${{ matrix.elixir }}
       - run: mix deps.get
       - run: mix format --check-formatted
       - run: mix credo --strict

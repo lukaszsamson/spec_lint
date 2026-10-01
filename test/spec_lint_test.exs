@@ -24,21 +24,47 @@ defmodule SpecLintTest do
     assert f.file == "test/support/fixtures.ex"
     assert is_integer(f.line)
     assert f.spec == ["@spec return_conflict(integer()) :: atom()"]
-    assert f.inferred == ["(term()) -> dynamic({:ok, term()})"]
+    assert f.inferred == [inferred("(term()) -> dynamic({:ok, term()})")]
   end
 
   test "a clause returning outside the spec is a warning", %{by_function: by} do
     assert [%{severity: :warning, check: :clause_conflict} = f] = by[:clause_conflict]
-    assert f.message =~ "(:b) returns :error"
-    assert [%{check: :clause_conflict, message: m}] = by[:catch_all]
-    assert m =~ "(:y, term()) returns :nope"
-    assert [%{check: :clause_conflict, message: m}] = by[:shadowed]
-    assert m =~ "(not nil) returns :b"
-    assert by[:caught] == nil
+    assert f.message =~ "(#{inferred(":b")}) returns :error"
+    # Catch-all positions are accepted only from 1.20 on, where the
+    # compiler subtracts the earlier clauses from a clause's domain. On
+    # 1.19 the catch-all after `caught(nil)` still looks reachable for nil
+    # and its return is reported as a missing return.
+    if Version.match?(System.version(), ">= 1.20.0") do
+      assert by[:caught] == nil
+      assert [%{check: :clause_conflict, message: m}] = by[:catch_all]
+      assert m =~ "(:y, term()) returns :nope"
+      assert [%{check: :clause_conflict, message: m}] = by[:shadowed]
+      assert m =~ "(not nil) returns :b"
+    else
+      assert [%{check: :missing_return}] = by[:caught]
+      assert [%{check: :missing_return}] = by[:catch_all]
+      assert [%{check: :missing_return}] = by[:shadowed]
+    end
   end
 
-  test "a spec domain no clause accepts is an error", %{by_function: by} do
-    assert [%{severity: :error, check: :domain_rejected}] = by[:domain_rejected]
+  # Elixir 1.19 infers no argument types from guards, so it rejects nothing.
+  if Version.match?(System.version(), ">= 1.20.0") do
+    test "a spec domain no clause accepts is an error", %{by_function: by} do
+      assert [%{severity: :error, check: :domain_rejected}] = by[:domain_rejected]
+    end
+  end
+
+  # Elixir 1.19 prints inferred argument types as dynamic(...).
+  defp inferred(string) do
+    if Version.match?(System.version(), ">= 1.20.0") do
+      string
+    else
+      case string do
+        "term()" -> "dynamic()"
+        "(term()) -> " <> rest -> "(dynamic()) -> " <> rest
+        other -> "dynamic(#{other})"
+      end
+    end
   end
 
   test "an undeclared tuple payload is a missing-return warning", %{by_function: by} do
@@ -105,7 +131,6 @@ defmodule SpecLintTest do
         fun: 2,
         integer: 0,
         list: 1,
-        map_fetch_key: 2,
         open_map: 0,
         subtype?: 2,
         term: 0,

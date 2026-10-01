@@ -15,7 +15,6 @@ defmodule SpecLint.Typespec do
       atom: 0,
       atom: 1,
       binary: 0,
-      bitstring: 0,
       boolean: 0,
       closed_map: 1,
       dynamic: 0,

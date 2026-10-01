@@ -1,7 +1,8 @@
 # SpecLint
 
 Checks `@spec` declarations against the type signatures the Elixir
-compiler infers. Requires Elixir 1.20 or later.
+compiler infers. Requires Elixir 1.19 or later; 1.20 infers much more
+(argument types from guards and patterns), so 1.19 finds less.
 
 ```elixir
 # mix.exs (not yet published to Hex)
