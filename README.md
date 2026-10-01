@@ -48,6 +48,10 @@ Warnings are clauses and return values the spec does not declare:
 - `unexpected_return`: the spec says `no_return()` and the compiler
   infers a return.
 
+Erlang `-nominal` types are read on Elixir 1.21 and treated as any
+term before that; record types (`#name{}`, classic or OTP 29 native)
+are any term, since the BEAM does not say which kind they are.
+
 Inference is conservative, so an inferred type wider than the spec is
 normal and silent. Values that flow straight from arguments or callbacks
 are `dynamic()` to the compiler and cannot be checked; those omissions

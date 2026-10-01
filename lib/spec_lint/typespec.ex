@@ -29,7 +29,6 @@ defmodule SpecLint.Typespec do
       none: 0,
       open_map: 0,
       open_map: 1,
-      open_tuple: 1,
       pid: 0,
       port: 0,
       reference: 0,
@@ -206,9 +205,10 @@ defmodule SpecLint.Typespec do
       else: {fun_of_arity(length(args)), false}
   end
 
-  # A record is a tuple tagged with its name; its fields are not in the BEAM.
-  defp builtin(:record, [{:atom, _, name} | _fields], _env, _d),
-    do: {open_tuple([atom([name])]), false}
+  # A record type is `#name{}` whether the record is a classic tuple-based
+  # one or an OTP 29 native record (a distinct term type the lattice does
+  # not have); the BEAM does not say which, so it is any term, inexact.
+  defp builtin(:record, _name_and_fields, _env, _d), do: {term(), false}
 
   defp builtin(name, args, _env, _d), do: throw({:unsupported, {name, length(args)}})
 

@@ -207,6 +207,14 @@ defmodule SpecLintTest do
                descr |> map_fetch_key(:__struct__) |> elem(1) |> atom_fetch()
     end
 
+    test "record types are any term, inexact (native records are not tuples)" do
+      for args <- [[{:atom, 0, :vec}], [{:tuple, 0, [{:atom, 0, :mod}, {:atom, 0, :vec}]}]] do
+        spec = {:type, 0, :fun, [{:type, 0, :product, []}, {:type, 0, :record, args}]}
+        assert {:ok, [], {descr, false}} = SpecLint.Typespec.spec(spec, Fixtures)
+        assert equal?(descr, term())
+      end
+    end
+
     test "unknown types are any term, inexact" do
       spec = {:type, 0, :fun, [{:type, 0, :product, []}, {:user_type, 0, :nope, []}]}
       assert {:ok, [], {descr, false}} = SpecLint.Typespec.spec(spec, Fixtures)
