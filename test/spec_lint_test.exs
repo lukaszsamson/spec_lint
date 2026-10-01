@@ -127,8 +127,6 @@ defmodule SpecLintTest do
         binary: 0,
         closed_map: 1,
         equal?: 2,
-        fun: 1,
-        fun: 2,
         integer: 0,
         list: 1,
         open_map: 0,
@@ -187,15 +185,16 @@ defmodule SpecLintTest do
 
       assert {descr, true} = translate("%{a: integer()}")
       assert equal?(descr, closed_map(a: field(integer(), false)))
-      assert {descr, true} = translate("(integer() -> atom())")
-      assert equal?(descr, fun([integer()], atom()))
+      assert {descr, exact?} = translate("(integer() -> atom())")
+      assert {expected, ^exact?} = fun_type([integer()], atom(), true)
+      assert equal?(descr, expected)
     end
 
     test "inexact translations over-approximate" do
       assert {descr, false} = translate("pos_integer()")
       assert equal?(descr, integer())
       assert {descr, false} = translate("(pos_integer() -> atom())")
-      assert equal?(descr, fun(1))
+      assert equal?(descr, fun_of_arity(1))
       assert {descr, false} = translate("x")
       assert equal?(descr, term())
     end

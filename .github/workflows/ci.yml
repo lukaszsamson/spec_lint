@@ -10,12 +10,18 @@ jobs:
     runs-on: ubuntu-24.04
     strategy:
       matrix:
-        elixir: ['1.19', '1.20']
+        include:
+          - elixir: '1.18'
+            otp: '27'
+          - elixir: '1.19'
+            otp: '28'
+          - elixir: '1.20'
+            otp: '28'
     steps:
       - uses: actions/checkout@v4
       - uses: erlef/setup-beam@v1
         with:
-          otp-version: '28'
+          otp-version: ${{ matrix.otp }}
           elixir-version: ${{ matrix.elixir }}
       - run: mix deps.get
       - run: mix format --check-formatted

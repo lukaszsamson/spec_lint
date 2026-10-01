@@ -159,14 +159,19 @@ defmodule SpecLint do
   end
 
   # The ExCk chunk: `{version, %{exports: [{{name, arity}, %{sig: signature}}]}}`
-  # where an inferred signature is `{:infer, domain, [{arg_types, return}]}`.
+  # where an inferred signature holds `[{arg_types, return}]` clauses.
   defp signatures(exck) do
     {_version, %{exports: exports}} = :erlang.binary_to_term(exck)
 
-    for {fa, %{sig: {:infer, _domain, [_ | _] = clauses}}} <- exports,
-        into: %{},
-        do: {fa, clauses}
+    for {fa, %{sig: sig}} <- exports, [_ | _] = clauses <- [infer_clauses(sig)], into: %{} do
+      {fa, clauses}
+    end
   end
+
+  # `{:infer, domain, clauses}` since Elixir 1.19, `{:infer, clauses}` on 1.18.
+  defp infer_clauses({:infer, _domain, clauses}), do: clauses
+  defp infer_clauses({:infer, clauses}), do: clauses
+  defp infer_clauses(_other), do: []
 
   defp locations({:debug_info_v1, backend, data}, module) do
     case backend.debug_info(:elixir_v1, module, data, []) do
@@ -183,14 +188,24 @@ defmodule SpecLint do
 
   defp function(base, clauses, inferred) do
     Enum.reduce(clauses, {[], 0, []}, fn clause, {findings, n, skipped} ->
-      case Typespec.spec(clause, base.module) do
-        {:ok, args, return} ->
-          {findings ++ slice(base, args, return, inferred), n + 1, skipped}
+      case compare(base, clause, inferred) do
+        {:ok, slice_findings} ->
+          {findings ++ slice_findings, n + 1, skipped}
 
         {:error, reason} ->
           {findings, n, skipped ++ [{base.module, base.function, base.arity, reason}]}
       end
     end)
+  end
+
+  # A crash inside the compiler's type operations (Elixir 1.18 cannot
+  # enumerate a negated map type with a `__struct__` key) skips the clause.
+  defp compare(base, clause, inferred) do
+    with {:ok, args, return} <- Typespec.spec(clause, base.module) do
+      {:ok, slice(base, args, return, inferred)}
+    end
+  rescue
+    error -> {:error, {:compiler_error, Exception.message(error)}}
   end
 
   defp slice(base, args, {spec_return, _exact}, inferred) do

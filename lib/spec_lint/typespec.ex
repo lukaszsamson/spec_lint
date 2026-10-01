@@ -22,8 +22,6 @@ defmodule SpecLint.Typespec do
       empty_map: 0,
       float: 0,
       fun: 0,
-      fun: 1,
-      fun: 2,
       integer: 0,
       list: 1,
       non_empty_list: 1,
@@ -204,8 +202,8 @@ defmodule SpecLint.Typespec do
     {ret, ret_exact} = translate(return, env, d)
 
     if args_exact,
-      do: {fun(arg_descrs, ret), ret_exact},
-      else: {fun(length(args)), false}
+      do: fun_type(arg_descrs, ret, ret_exact),
+      else: {fun_of_arity(length(args)), false}
   end
 
   # A record is a tuple tagged with its name; its fields are not in the BEAM.
