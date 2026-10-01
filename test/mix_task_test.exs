@@ -57,6 +57,42 @@ defmodule Mix.Tasks.SpecLintTest do
 
     {_output, 1} = spec_lint(root, ["--warnings-as-errors"])
 
+    File.write!(
+      Path.join(root, ".spec_lint.exs"),
+      "[ignore: [{TaskProject, :bad, 1}], warnings_as_errors: true]"
+    )
+
+    {_output, 1} = spec_lint(root, [])
+    {output, 0} = spec_lint(root, ["--no-warnings-as-errors"])
+    assert output =~ "1 warning(s)"
+
+    {output, 0} = spec_lint(root, ["--module", "TaskProject", "--no-warnings-as-errors"])
+    assert output =~ "2 spec clauses checked"
+
+    {output, 1} = spec_lint(root, ["--module", "TaskProject", "--module", "TaskProject.Missing"])
+    assert output =~ "does not match a project module"
+
+    for {args, message} <- [
+          {["--format", "yaml"], "--format must be console or json"},
+          {["--format", "json"], "--format json requires --output FILE"},
+          {["extra"], "unexpected positional arguments"}
+        ] do
+      {output, 1} = spec_lint(root, args)
+      assert output =~ message
+    end
+
+    {output, 0} =
+      spec_lint(root, ["--no-warnings-as-errors", "--format", "json", "--output", "out.json"])
+
+    assert output =~ "1 warning(s)"
+    [finding] = root |> Path.join("out.json") |> File.read!() |> JSON.decode!()
+    assert finding["module"] == "TaskProject"
+    assert finding["check"] == "missing_return"
+    assert finding["severity"] == "warning"
+    assert finding["arity"] == 1
+    assert is_list(finding["spec"])
+    assert is_list(finding["inferred"])
+
     {output, 1} = spec_lint(root, ["--config", "missing.exs"])
     assert output =~ "config file missing.exs does not exist"
 

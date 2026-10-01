@@ -6,6 +6,7 @@ defmodule SpecLint.MixProject do
       app: :spec_lint,
       version: "0.1.0",
       description: "Checks Elixir @spec declarations against compiler-inferred signatures",
+      docs: [main: "readme", extras: ["README.md", "CHANGELOG.md"], source_ref: "v0.1.0"],
       source_url: "https://github.com/lukaszsamson/spec_lint",
       package: [
         licenses: ["Apache-2.0"],
@@ -26,6 +27,7 @@ defmodule SpecLint.MixProject do
 
   defp deps do
     [
+      {:ex_doc, "~> 0.40", only: :dev, runtime: false},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false}
     ]

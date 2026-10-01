@@ -1,5 +1,8 @@
 defmodule SpecLint do
   @moduledoc """
+  Internal, unstable programmatic API. The supported public interfaces are
+  the Mix task, its configuration, and its JSON findings file.
+
   Compares `@spec` declarations with the signatures the Elixir compiler
   infers for the same functions.
 

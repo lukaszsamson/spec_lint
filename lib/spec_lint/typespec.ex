@@ -1,7 +1,9 @@
 defmodule SpecLint.Typespec do
   @moduledoc """
-  Translates typespec ASTs (as returned by `Code.Typespec`) into the
-  compiler's own types (`Module.Types.Descr`).
+  Internal, unstable compiler translator; not a supported public API.
+
+  Translates typespec ASTs (as returned by <code>Code.Typespec</code>) into the
+  compiler's own types (<code>Module.Types.Descr</code>).
 
   Every translation is `{descr, exact?}`. The lattice cannot express integer
   ranges, sized binaries, charlists as strings and a few other refinements;
