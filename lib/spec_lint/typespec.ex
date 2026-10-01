@@ -42,7 +42,7 @@ defmodule SpecLint.Typespec do
   @depth 8
 
   @typedoc "A translated type: the descr and whether it is exact."
-  @type translated :: {Module.Types.Descr.t(), boolean()}
+  @type translated :: {term(), boolean()}
 
   @doc """
   Translates one spec clause of `module`: `{:ok, args, return}` with one

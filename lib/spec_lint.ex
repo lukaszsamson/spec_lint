@@ -285,7 +285,7 @@ defmodule SpecLint do
   # the spec type. Requires exactly translated arguments.
   # Elixir 1.19 does not subtract the earlier clauses from a catch-all's
   # domain, so a catch-all after `def f(nil)` would look reachable for nil.
-  @catch_all? Version.match?(System.version(), ">= 1.20.0")
+  defp catch_all?, do: Version.match?(System.version(), ">= 1.20.0")
 
   defp clause_conflicts(_base, _inferred, _arg_types, _spec_return, false), do: []
 
@@ -294,7 +294,7 @@ defmodule SpecLint do
         Enum.zip(clause_args, arg_types)
         |> Enum.all?(fn {c, s} ->
           c = upper_bound(c)
-          subtype?(c, s) or (@catch_all? and near_top?(c) and not disjoint?(c, s))
+          subtype?(c, s) or (catch_all?() and near_top?(c) and not disjoint?(c, s))
         end),
         return = upper_bound(clause_return),
         not empty?(return),
