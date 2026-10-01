@@ -1,2 +1,0 @@
-Elixir 1.20.4 revision 759443e OTP 29
-VERDICT: not applicable (Module.Types.Descr constructors differ before 1.21)

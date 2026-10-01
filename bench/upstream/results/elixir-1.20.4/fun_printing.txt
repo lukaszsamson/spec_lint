@@ -1,9 +1,0 @@
-Elixir 1.20.4 revision 759443e OTP 29
-to_quoted_string(fun(2))                        = (none(), none() -> term())
-to_quoted_string(fun([none(), none()], term())) = (none(), none() -> term())
-equal?(fun(2), fun([none(), none()], term()))   = false
-subtype?(fun(2), arrow)                         = false
-subtype?(arrow, fun(2))                         = true
-to_quoted_string(fun(1))                        = (none() -> term())
-to_quoted_string(fun(0))                        = (-> term())
-VERDICT: reproduces

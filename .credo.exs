@@ -2,7 +2,7 @@
   configs: [
     %{
       name: "default",
-      files: %{included: ["lib/", "test/", "bench/"], excluded: ["deps/", "_build/", "priv/"]},
+      files: %{included: ["lib/", "test/"], excluded: ["deps/", "_build/", "test/tmp/"]},
       strict: true,
       checks: %{
         extra: [

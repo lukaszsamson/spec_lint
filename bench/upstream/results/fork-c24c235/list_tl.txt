@@ -1,8 +1,0 @@
-Elixir 1.21.0-dev revision c24c235 OTP 28
-t            = non_empty_list(atom()) and not non_empty_list(:y)
-list_tl(t)   = list(atom()) and not non_empty_list(:y)
-subtype?(non_empty_list(:y), list_tl(t))  = false
-disjoint?(non_empty_list(:y), list_tl(t)) = true
-disjoint?(non_empty_list(:y), t)          = true  (correct: true)
-equal?(list_tl(t), list(atom()))          = false
-VERDICT: reproduces

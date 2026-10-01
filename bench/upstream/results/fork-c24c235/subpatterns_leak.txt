@@ -1,7 +1,0 @@
-Elixir 1.21.0-dev revision c24c235 OTP 28
-stored LeakWith.a/1: non_empty_list(term(), term()) -> dynamic()
-stored LeakWith.b/1: empty_list() or non_empty_list(term(), term()) -> integer()
-stored LeakWith.b/1: term() -> dynamic()
-stored LeakWithout.b/1: empty_list() or non_empty_list(term(), term()) -> integer()
-stored LeakWithout.b/1: not empty_list() and not non_empty_list(term(), term()) -> dynamic(not empty_list() and not non_empty_list(term(), term()))
-VERDICT: reproduces

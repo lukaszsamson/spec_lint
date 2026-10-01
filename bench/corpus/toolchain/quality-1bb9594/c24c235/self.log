@@ -1,5 +1,0 @@
-Compiling 3 files (.ex)
-spec_lint: recompiling spec_lint with 1.21.0-dev+c24c235: BEAM files changed after SpecLint recorded the build (Elixir.Mix.Tasks.SpecLint.beam, Elixir.SpecLint.BuildRecord.beam, Elixir.SpecLint.Run.beam)
-Compiling 46 files (.ex)
-Generated spec_lint app
-spec_lint: 419 specs checked, 0 finding(s), 0 gating and new, complete, exit 0 -> $QUALIFICATION_PATH/self.json

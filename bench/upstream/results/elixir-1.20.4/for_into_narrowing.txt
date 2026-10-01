@@ -1,8 +1,0 @@
-Elixir 1.20.4 revision 759443e OTP 29
-diagnostics: none
-stored caller/0: () -> dynamic()
-stored f/2: (term(), term()) -> dynamic()
-stored literal/1: (term()) -> dynamic(bitstring() or list(term()))
-runtime  f(true, :ok) = :ok
-runtime  literal(true) = [:ok]
-VERDICT: does not reproduce

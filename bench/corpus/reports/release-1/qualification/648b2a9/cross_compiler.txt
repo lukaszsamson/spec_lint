@@ -1,3 +1,0 @@
-Excluding tags: [:test, {:adapter, SpecLint.Compiler.V120}]
-Including tags: [:cross_compiler]
-Result: 1 passed, 448 excluded

@@ -1,3 +1,0 @@
-label 648b2a9
-$SCRATCH/release-toolchains/elixir-648b2a9/bin/elixir
-Elixir 1.21.0-dev (648b2a9) (compiled with Erlang/OTP 28)

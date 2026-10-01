@@ -1,3 +1,0 @@
-label c24c235
-$SCRATCH/release-toolchains/elixir-c24c235/bin/elixir
-Elixir 1.21.0-dev (c24c235) (compiled with Erlang/OTP 28)

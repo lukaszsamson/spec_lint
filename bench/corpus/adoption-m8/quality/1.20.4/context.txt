@@ -1,4 +1,0 @@
-compiler=1.20.4
-source_copy=<source-copy>
-erl_flags=+S 4:4 +SDcpu 2 +SDio 2
-4b87020d783ba05465bbbe84b2a19de04f5e8247
