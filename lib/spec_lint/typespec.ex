@@ -262,24 +262,25 @@ defmodule SpecLint.Typespec do
       {term(), false}
     else
       case fetch_type(mod, name, length(args)) do
-        {:ok, params, body} ->
-          # Argument ASTs are written in the caller's module: qualify bare
-          # user types before switching the context to the callee.
-          args = Enum.map(args, &qualify(&1, env.module))
-
-          subst =
-            params
-            |> Enum.zip(args)
-            |> Map.new(fn {{:var, _, param}, arg} -> {param, arg} end)
-
-          translate(substitute(body, subst), %{module: mod, stack: [key | env.stack]}, d - 1)
-
+        {:ok, params, body} -> expand_body(params, body, args, key, env, d)
         # A type that cannot be read (an Erlang module without debug info,
         # a missing module) is any term: sound, but inexact.
-        :error ->
-          {term(), false}
+        :error -> {term(), false}
       end
     end
+  end
+
+  # Argument ASTs are written in the caller's module: qualify bare user
+  # types before switching the context to the callee.
+  defp expand_body(params, body, args, {mod, _, _} = key, env, d) do
+    args = Enum.map(args, &qualify(&1, env.module))
+
+    subst =
+      params
+      |> Enum.zip(args)
+      |> Map.new(fn {{:var, _, param}, arg} -> {param, arg} end)
+
+    translate(substitute(body, subst), %{module: mod, stack: [key | env.stack]}, d - 1)
   end
 
   # Type definitions are read from the module's BEAM once per process.

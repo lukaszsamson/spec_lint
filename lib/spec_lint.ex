@@ -11,10 +11,13 @@ defmodule SpecLint do
 
     * `return_conflict` (error): the inferred return is disjoint from the
       spec return, so no value the function returns satisfies the spec;
-    * `clause_conflict` (error): a clause that accepts only spec-conforming
-      arguments returns a value disjoint from the spec return;
     * `domain_rejected` (error): no inferred clause accepts the spec's
       arguments, so the compiler would warn on every conforming call;
+    * `clause_conflict` (warning): a clause that accepts only
+      spec-conforming arguments returns a value disjoint from the spec
+      return. A warning, not an error: the compiler keeps clauses that can
+      never match (`def f(:b = x) when is_integer(x)`), so a stored clause
+      is not proof of reachable behaviour;
     * `missing_return` (warning): the inferred return has a literal shape
       the spec does not declare, such as an `{:error, _}` tuple, an atom
       or a struct the spec never mentions;
@@ -143,8 +146,8 @@ defmodule SpecLint do
           arity: arity,
           file: file,
           line: lines[{name, arity}],
-          spec: Enum.map(clauses, &spec_string(name, &1)),
-          inferred: Enum.map(signatures[{name, arity}], &signature_string/1)
+          spec_clauses: clauses,
+          inferred_clauses: signatures[{name, arity}]
         }
 
         function(base, clauses, signatures[{name, arity}])
@@ -210,42 +213,48 @@ defmodule SpecLint do
           else: []
 
       {_used, applied} ->
-        applied = upper_bound(applied)
+        returns(base, inferred, arg_types, args_exact?, upper_bound(applied), spec_return)
+    end
+  end
 
-        cond do
-          empty?(spec_return) ->
-            if empty?(applied) or near_top?(applied),
-              do: [],
-              else: [
-                finding(
-                  base,
-                  :warning,
-                  :unexpected_return,
-                  "declared no_return(), inferred return #{str(applied)}"
-                )
-              ]
+  defp returns(base, inferred, arg_types, args_exact?, applied, spec_return) do
+    cond do
+      empty?(spec_return) ->
+        unexpected_return(base, applied)
 
-          empty?(applied) ->
-            []
+      empty?(applied) ->
+        []
 
-          disjoint?(applied, spec_return) ->
-            [
-              finding(
-                base,
-                :error,
-                :return_conflict,
-                "inferred return #{str(applied)} is disjoint from the spec return " <>
-                  str(spec_return)
-              )
-            ]
+      disjoint?(applied, spec_return) ->
+        [
+          finding(
+            base,
+            :error,
+            :return_conflict,
+            "inferred return #{str(applied)} is disjoint from the spec return " <>
+              str(spec_return)
+          )
+        ]
 
-          true ->
-            case clause_conflicts(base, inferred, arg_types, spec_return, args_exact?) do
-              [] -> missing_returns(base, inferred, arg_types, spec_return)
-              conflicts -> conflicts
-            end
+      true ->
+        case clause_conflicts(base, inferred, arg_types, spec_return, args_exact?) do
+          [] -> missing_returns(base, inferred, arg_types, spec_return)
+          conflicts -> conflicts
         end
     end
+  end
+
+  defp unexpected_return(base, applied) do
+    if empty?(applied) or near_top?(applied),
+      do: [],
+      else: [
+        finding(
+          base,
+          :warning,
+          :unexpected_return,
+          "declared no_return(), inferred return #{str(applied)}"
+        )
+      ]
   end
 
   # The inferred clauses whose domains meet the spec domain, in order.
@@ -275,7 +284,7 @@ defmodule SpecLint do
         disjoint?(return, spec_return) do
       finding(
         base,
-        :error,
+        :warning,
         :clause_conflict,
         "the clause accepting (#{Enum.map_join(clause_args, ", ", &str/1)}) returns " <>
           "#{str(return)}, disjoint from the spec return #{str(spec_return)}"
@@ -407,9 +416,10 @@ defmodule SpecLint do
         tagged = tuple([atom([tag]) | List.duplicate(term(), size - 1)])
         spec_tagged = intersection(spec_tuples, tagged)
 
+        extra_tagged = intersection(extra_tuples, tagged)
+
         empty?(spec_tagged) or
-          (depth > 0 and
-             payload_escape?(intersection(extra_tuples, tagged), spec_tagged, size, kinds?, depth))
+          (depth > 0 and payload_escape?(extra_tagged, spec_tagged, size, kinds?, depth))
       end)
     else
       _ -> false
@@ -479,8 +489,18 @@ defmodule SpecLint do
 
   defp zip_not_disjoint?([], []), do: true
 
-  defp finding(base, severity, check, message),
-    do: Map.merge(base, %{severity: severity, check: check, message: message})
+  # Types are printed only for reported findings.
+  defp finding(base, severity, check, message) do
+    base
+    |> Map.drop([:spec_clauses, :inferred_clauses])
+    |> Map.merge(%{
+      severity: severity,
+      check: check,
+      message: message,
+      spec: Enum.map(base.spec_clauses, &spec_string(base.function, &1)),
+      inferred: Enum.map(base.inferred_clauses, &signature_string/1)
+    })
+  end
 
   defp str(descr), do: to_quoted_string(descr)
 

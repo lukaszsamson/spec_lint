@@ -8,9 +8,10 @@ defmodule Mix.Tasks.SpecLint do
       mix spec_lint [--warnings-as-errors] [--format json] [--output FILE]
                     [--module Mod ...] [--config FILE]
 
-  Errors are contradictions the compiler's types prove (a return disjoint
-  from the spec, a spec domain no clause accepts). Warnings are return
-  values the spec does not declare; see `SpecLint` for the checks.
+  Errors are contradictions in the compiler's types (a return disjoint
+  from the spec, a spec domain no clause accepts). Warnings are clauses
+  and return values the spec does not declare; see `SpecLint` for the
+  checks.
 
   ## Configuration
 
@@ -47,25 +48,14 @@ defmodule Mix.Tasks.SpecLint do
   def run(args) do
     {opts, _positional} = OptionParser.parse!(args, strict: @switches)
     Mix.Task.run("compile")
-    config = read_config(opts[:config] || ".spec_lint.exs")
-
-    modules =
-      case Keyword.get_values(opts, :module) do
-        [] -> nil
-        names -> Enum.map(names, &Module.concat([&1]))
-      end
+    config = read_config(opts[:config])
 
     %{findings: findings, specs: specs, skipped: skipped} =
-      SpecLint.run(ebins(), ignore: config[:ignore] || [], modules: modules)
+      SpecLint.run(ebins(), ignore: config[:ignore] || [], modules: modules(opts))
 
     errors = Enum.count(findings, &(&1.severity == :error))
     warnings = length(findings) - errors
-    output = if opts[:format] == "json", do: json(findings), else: console(findings)
-
-    case opts[:output] do
-      nil -> if output != "", do: Mix.shell().info(output)
-      path -> File.write!(path, output)
-    end
+    write(if(opts[:format] == "json", do: json(findings), else: console(findings)), opts[:output])
 
     Mix.shell().info(
       "spec_lint: #{specs} spec clauses checked, #{errors} error(s), #{warnings} warning(s)" <>
@@ -85,12 +75,28 @@ defmodule Mix.Tasks.SpecLint do
       end) <> ")"
   end
 
+  defp modules(opts) do
+    case Keyword.get_values(opts, :module) do
+      [] -> nil
+      names -> Enum.map(names, &Module.concat([&1]))
+    end
+  end
+
+  defp write("", nil), do: :ok
+  defp write(output, nil), do: Mix.shell().info(output)
+  defp write(output, path), do: File.write!(path, output)
+
+  # The default config file may be absent; an explicit one must exist.
+  defp read_config(nil) do
+    if File.exists?(".spec_lint.exs"), do: read_config(".spec_lint.exs"), else: []
+  end
+
   defp read_config(path) do
     if File.exists?(path) do
       {config, _binding} = Code.eval_file(path)
       config
     else
-      []
+      Mix.raise("spec_lint: config file #{path} does not exist")
     end
   end
 

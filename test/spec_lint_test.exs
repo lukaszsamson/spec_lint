@@ -11,7 +11,11 @@ defmodule SpecLintTest do
   end
 
   test "every spec clause of the fixture module is compared", %{specs: specs} do
-    assert specs == 19
+    assert specs == 20
+  end
+
+  test "a clause the compiler keeps but that can never match is not an error", %{by_function: by} do
+    assert [%{severity: :warning, check: :clause_conflict}] = by[:dead_clause]
   end
 
   test "a return disjoint from the spec return is an error", %{by_function: by} do
@@ -23,8 +27,8 @@ defmodule SpecLintTest do
     assert f.inferred == ["(term()) -> dynamic({:ok, term()})"]
   end
 
-  test "a clause returning outside the spec is an error", %{by_function: by} do
-    assert [%{severity: :error, check: :clause_conflict} = f] = by[:clause_conflict]
+  test "a clause returning outside the spec is a warning", %{by_function: by} do
+    assert [%{severity: :warning, check: :clause_conflict} = f] = by[:clause_conflict]
     assert f.message =~ "(:b) returns :error"
     assert [%{check: :clause_conflict, message: m}] = by[:catch_all]
     assert m =~ "(:y, term()) returns :nope"

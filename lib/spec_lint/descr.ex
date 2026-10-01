@@ -5,6 +5,11 @@ defmodule SpecLint.Descr do
 
   alias Module.Types.Descr
 
+  @spec union(term(), term()) :: term()
+  @spec intersection(term(), term()) :: term()
+  @spec difference(term(), term()) :: term()
+  @spec field(term(), boolean()) :: term()
+
   if Code.ensure_loaded?(Descr) and function_exported?(Descr, :opt_union, 2) do
     def union(left, right), do: Descr.opt_union(left, right)
     def intersection(left, right), do: Descr.opt_intersection(left, right)

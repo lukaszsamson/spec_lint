@@ -4,8 +4,8 @@ Checks `@spec` declarations against the type signatures the Elixir
 compiler infers. Requires Elixir 1.20 or later.
 
 ```elixir
-# mix.exs
-{:spec_lint, "~> 0.2", only: [:dev, :test], runtime: false}
+# mix.exs (not yet published to Hex)
+{:spec_lint, github: "lukaszsamson/spec_lint", only: [:dev, :test], runtime: false}
 ```
 
 ```
@@ -25,18 +25,21 @@ The compiler stores an inferred signature for every function in the
 `ExCk` chunk of each BEAM file. `mix spec_lint` compiles the project,
 translates each spec clause into the compiler's own types, applies the
 inferred signature to the spec's argument types with the compiler's own
-application rule, and compares the returns. No source is re-analysed and
-no code runs.
+application rule, and compares the returns. Nothing beyond the normal
+compilation (and the config file) is executed; no project function is
+called.
 
-Errors are contradictions the compiler's types prove:
+Errors are contradictions in the compiler's types:
 
 - `return_conflict`: the inferred return is disjoint from the spec return.
-- `clause_conflict`: a clause that accepts only spec-conforming arguments
-  returns a value disjoint from the spec return.
 - `domain_rejected`: no clause accepts the spec's arguments, so the
   compiler would warn on every conforming call.
 
-Warnings are return values the spec does not declare:
+Warnings are clauses and return values the spec does not declare:
+
+- `clause_conflict`: a clause that accepts only spec-conforming arguments
+  returns a value disjoint from the spec return. The compiler keeps
+  clauses that can never match, so this is not proof.
 
 - `missing_return`: the inferred return has a literal shape the spec
   lacks, such as an `{:error, _}` tuple, an atom or a struct the spec

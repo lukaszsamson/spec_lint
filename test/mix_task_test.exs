@@ -57,6 +57,9 @@ defmodule Mix.Tasks.SpecLintTest do
 
     {_output, 1} = spec_lint(root, ["--warnings-as-errors"])
 
+    {output, 1} = spec_lint(root, ["--config", "missing.exs"])
+    assert output =~ "config file missing.exs does not exist"
+
     File.write!(Path.join(root, ".spec_lint.exs"), "[ignore: [TaskProject]]")
     {output, 0} = spec_lint(root, ["--format", "json", "--output", "out.json"])
     assert output =~ "0 error(s), 0 warning(s)"

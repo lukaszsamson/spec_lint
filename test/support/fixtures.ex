@@ -25,6 +25,11 @@ defmodule SpecLint.Fixtures do
   def shadowed(nil), do: :a
   def shadowed(_), do: :b
 
+  @spec dead_clause(:a | :b) :: :ok | :fine
+  def dead_clause(:a), do: :ok
+  def dead_clause(:b = x) when is_integer(x), do: {:error, x}
+  def dead_clause(x) when is_atom(x), do: :fine
+
   @spec domain_rejected(atom()) :: atom()
   def domain_rejected(x) when is_integer(x), do: x
 
