@@ -8,3 +8,4 @@
 *.ez
 spec_lint-*.tar
 erl_crash.dump
+/UPSTREAM_BUGS.txt

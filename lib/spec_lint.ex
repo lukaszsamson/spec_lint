@@ -306,8 +306,8 @@ defmodule SpecLint do
         base,
         :warning,
         :clause_conflict,
-        "the clause accepting (#{Enum.map_join(clause_args, ", ", &str/1)}) returns " <>
-          "#{str(return)}, disjoint from the spec return #{str(spec_return)}"
+        "inferred clause (#{Enum.map_join(clause_args, ", ", &str/1)}) -> #{str(return)} " <>
+          "has a return disjoint from the spec return #{str(spec_return)}"
       )
     end
   end

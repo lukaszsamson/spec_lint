@@ -135,8 +135,7 @@ mix docs --warnings-as-errors
 ```
 
 CI runs the suite on Elixir 1.18 (OTP 27), 1.19 (OTP 28) and 1.20
-(OTP 28 and 29). `UPSTREAM_BUGS.txt` records the library spec mistakes
-and compiler precision limits found while building the tool.
+(OTP 28 and 29).
 
 ## License
 

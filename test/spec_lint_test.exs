@@ -29,7 +29,7 @@ defmodule SpecLintTest do
 
   test "a clause returning outside the spec is a warning", %{by_function: by} do
     assert [%{severity: :warning, check: :clause_conflict} = f] = by[:clause_conflict]
-    assert f.message =~ "(#{inferred(":b")}) returns :error"
+    assert f.message =~ "(#{inferred(":b")}) -> :error"
     # Catch-all positions are accepted only from 1.20 on, where the
     # compiler subtracts the earlier clauses from a clause's domain. On
     # 1.19 the catch-all after `caught(nil)` still looks reachable for nil
@@ -37,9 +37,9 @@ defmodule SpecLintTest do
     if Version.match?(System.version(), ">= 1.20.0") do
       assert by[:caught] == nil
       assert [%{check: :clause_conflict, message: m}] = by[:catch_all]
-      assert m =~ "(:y, term()) returns :nope"
+      assert m =~ "(:y, term()) -> :nope"
       assert [%{check: :clause_conflict, message: m}] = by[:shadowed]
-      assert m =~ "(not nil) returns :b"
+      assert m =~ "(not nil) -> :b"
     else
       assert [%{check: :missing_return}] = by[:caught]
       assert [%{check: :missing_return}] = by[:catch_all]
