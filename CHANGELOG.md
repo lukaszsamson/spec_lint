@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.1.1
 
 `missing_return` no longer reports, for a multi-clause spec, a return
 that another spec clause declares for arguments the inferred clause also

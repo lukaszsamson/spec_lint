@@ -4,9 +4,9 @@ defmodule SpecLint.MixProject do
   def project do
     [
       app: :spec_lint,
-      version: "0.1.0",
+      version: "0.1.1",
       description: "Checks Elixir @spec declarations against compiler-inferred signatures",
-      docs: [main: "readme", extras: ["README.md", "CHANGELOG.md"], source_ref: "v0.1.0"],
+      docs: [main: "readme", extras: ["README.md", "CHANGELOG.md"], source_ref: "v0.1.1"],
       source_url: "https://github.com/lukaszsamson/spec_lint",
       package: [
         licenses: ["Apache-2.0"],
