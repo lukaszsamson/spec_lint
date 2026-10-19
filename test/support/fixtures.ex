@@ -50,6 +50,16 @@ defmodule SpecLint.Fixtures do
   @spec dynamic_no_return(term()) :: no_return()
   def dynamic_no_return(x), do: x
 
+  @spec multi_clause_extra(:on) :: :off
+  @spec multi_clause_extra(:off) :: :on
+  def multi_clause_extra(x) when x in [:on, :off] do
+    cond do
+      x == :on -> :off
+      x == :off -> :on
+      true -> :broken
+    end
+  end
+
   ## Silent
 
   @spec caught(nil) :: :a
@@ -79,4 +89,12 @@ defmodule SpecLint.Fixtures do
 
   @spec user_type(Item.t()) :: Item.t()
   def user_type(%Item{} = item), do: item
+
+  @spec multi_clause(:on) :: :off
+  @spec multi_clause(:off) :: :on
+  def multi_clause(x) when x in [:on, :off], do: if(x == :on, do: :off, else: :on)
+
+  @spec multi_clause_list(0) :: []
+  @spec multi_clause_list(pos_integer()) :: [:x, ...]
+  def multi_clause_list(n) when is_integer(n), do: List.duplicate(:x, n)
 end

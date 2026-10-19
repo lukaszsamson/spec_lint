@@ -190,8 +190,15 @@ defmodule SpecLint do
   defp locations(_missing, _module), do: {nil, %{}}
 
   defp function(base, clauses, inferred) do
-    Enum.reduce(clauses, {[], 0, []}, fn clause, {findings, n, skipped} ->
-      case compare(base, clause, inferred) do
+    translated = Enum.map(clauses, &translate(&1, base.module))
+
+    # Every translated spec clause as `{arg_types, return}`, for the
+    # missing-return check of multi-clause specs.
+    specs =
+      for {:ok, args, {return, _exact}} <- translated, do: {Enum.map(args, &elem(&1, 0)), return}
+
+    Enum.reduce(translated, {[], 0, []}, fn translation, {findings, n, skipped} ->
+      case compare(base, translation, inferred, specs) do
         {:ok, slice_findings} ->
           {findings ++ slice_findings, n + 1, skipped}
 
@@ -203,15 +210,21 @@ defmodule SpecLint do
 
   # A crash inside the compiler's type operations (Elixir 1.18 cannot
   # enumerate a negated map type with a `__struct__` key) skips the clause.
-  defp compare(base, clause, inferred) do
-    with {:ok, args, return} <- Typespec.spec(clause, base.module) do
-      {:ok, slice(base, args, return, inferred)}
-    end
+  defp translate(clause, module) do
+    Typespec.spec(clause, module)
   rescue
     error -> {:error, {:compiler_error, Exception.message(error)}}
   end
 
-  defp slice(base, args, {spec_return, _exact}, inferred) do
+  defp compare(_base, {:error, reason}, _inferred, _specs), do: {:error, reason}
+
+  defp compare(base, {:ok, args, return}, inferred, specs) do
+    {:ok, slice(base, args, return, inferred, specs)}
+  rescue
+    error -> {:error, {:compiler_error, Exception.message(error)}}
+  end
+
+  defp slice(base, args, {spec_return, _exact}, inferred, specs) do
     arg_types = Enum.map(args, &elem(&1, 0))
     args_exact? = Enum.all?(args, &elem(&1, 1))
 
@@ -229,11 +242,11 @@ defmodule SpecLint do
           else: []
 
       {_used, applied} ->
-        returns(base, inferred, arg_types, args_exact?, upper_bound(applied), spec_return)
+        returns(base, inferred, arg_types, args_exact?, upper_bound(applied), spec_return, specs)
     end
   end
 
-  defp returns(base, inferred, arg_types, args_exact?, applied, spec_return) do
+  defp returns(base, inferred, arg_types, args_exact?, applied, spec_return, specs) do
     cond do
       empty?(spec_return) ->
         unexpected_return(base, applied)
@@ -254,7 +267,7 @@ defmodule SpecLint do
 
       true ->
         case clause_conflicts(base, inferred, arg_types, spec_return, args_exact?) do
-          [] -> missing_returns(base, inferred, arg_types, spec_return)
+          [] -> missing_returns(base, inferred, arg_types, spec_return, specs)
           conflicts -> conflicts
         end
     end
@@ -324,14 +337,19 @@ defmodule SpecLint do
   # specialise a clause's return to the arguments, so `x + 1` returns
   # `integer() or float()` for any number and the float is noise unless
   # the clause takes numbers only where the spec allows them.
-  defp missing_returns(base, inferred, arg_types, spec_return) do
+  # For the same reason a clause that also accepts the arguments of other
+  # spec clauses may return what those clauses declare: `not/1`, inferred
+  # as `(boolean()) -> boolean()`, returns `true` under `not true :: false`
+  # only for the `false` input that `not false :: true` covers.
+  defp missing_returns(base, inferred, arg_types, spec_return, specs) do
     extras =
       for {clause_args, clause_return} <- contributing(inferred, arg_types),
           return = upper_bound(clause_return),
           not near_top?(return),
-          extra = difference(return, spec_return),
+          allowed = allowed_return(clause_args, spec_return, specs),
+          extra = difference(return, allowed),
           not empty?(extra),
-          escape?(extra, spec_return, contained?(clause_args, arg_types), 2),
+          escape?(extra, allowed, contained?(clause_args, arg_types), 2),
           do: extra
 
     case extras do
@@ -350,6 +368,14 @@ defmodule SpecLint do
           )
         ]
     end
+  end
+
+  # The spec return plus the returns of the spec clauses whose arguments
+  # the inferred clause also accepts.
+  defp allowed_return(clause_args, spec_return, specs) do
+    Enum.reduce(specs, spec_return, fn {args, return}, acc ->
+      if zip_not_disjoint?(args, clause_args), do: union(acc, return), else: acc
+    end)
   end
 
   # Whether a clause accepts nothing outside the spec domain.

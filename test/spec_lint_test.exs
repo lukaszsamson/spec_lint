@@ -11,7 +11,7 @@ defmodule SpecLintTest do
   end
 
   test "every spec clause of the fixture module is compared", %{specs: specs} do
-    assert specs == 20
+    assert specs == 26
   end
 
   test "a clause the compiler keeps but that can never match is not an error", %{by_function: by} do
@@ -81,6 +81,15 @@ defmodule SpecLintTest do
     assert m2 =~ "Item"
   end
 
+  test "a return no spec clause declares is a missing-return warning", %{by_function: by} do
+    assert [_ | _] = findings = by[:multi_clause_extra]
+
+    for f <- findings do
+      assert %{check: :missing_return, message: m} = f
+      assert m =~ "includes :broken,"
+    end
+  end
+
   test "a return under a no_return() spec is a warning", %{by_function: by} do
     assert [%{severity: :warning, check: :unexpected_return}] = by[:unexpected_return]
   end
@@ -95,7 +104,9 @@ defmodule SpecLintTest do
           :wider_spec,
           :refined,
           :correlated,
-          :user_type
+          :user_type,
+          :multi_clause,
+          :multi_clause_list
         ] do
       assert by[function] == nil, "#{function} reported #{inspect(by[function])}"
     end
