@@ -349,7 +349,7 @@ defmodule SpecLint do
           allowed = allowed_return(clause_args, spec_return, specs),
           extra = difference(return, allowed),
           not empty?(extra),
-          escape?(extra, allowed, contained?(clause_args, arg_types), 2),
+          escape?(extra, allowed, return, contained?(clause_args, arg_types), 2),
           do: extra
 
     case extras do
@@ -405,10 +405,11 @@ defmodule SpecLint do
     Enum.count(@whole_kinds, fn kind -> subtype?(kind(kind), descr) end) >= 6
   end
 
-  defp escape?(extra, spec, kinds?, depth) do
+  # `return` is the type `extra` was cut from, at the same position.
+  defp escape?(extra, spec, return, kinds?, depth) do
     not near_top?(union(extra, spec)) and
-      ((kinds? and kind_escape?(extra, spec)) or atom_escape?(extra) or
-         tuple_escape?(extra, spec, kinds?, depth) or map_escape?(extra, spec, kinds?))
+      ((kinds? and kind_escape?(extra, spec, return)) or atom_escape?(extra) or
+         tuple_escape?(extra, spec, return, kinds?, depth) or map_escape?(extra, spec, kinds?))
   end
 
   @kinds [
@@ -425,11 +426,24 @@ defmodule SpecLint do
     :open_map
   ]
 
-  defp kind_escape?(extra, spec) do
+  defp kind_escape?(extra, spec, return) do
     Enum.any?(@kinds, fn kind ->
-      kind = kind(kind)
-      not empty?(intersection(extra, kind)) and empty?(intersection(spec, kind))
+      not empty?(intersection(extra, kind(kind))) and empty?(intersection(spec, kind(kind))) and
+        not widened?(kind, spec, return)
     end)
+  end
+
+  # Arithmetic with an operand not known to be an integer (`x + 1`,
+  # `now - seconds`) is inferred as `integer() or float()`. A return that
+  # holds both number kinds where the spec declares one of them is that
+  # widening, not a second kind; a float alone (`x / 2`) still escapes.
+  defp widened?(:float, spec, return), do: both_numbers?(spec, :integer, return)
+  defp widened?(:integer, spec, return), do: both_numbers?(spec, :float, return)
+  defp widened?(_kind, _spec, _return), do: false
+
+  defp both_numbers?(spec, declared, return) do
+    not empty?(intersection(spec, kind(declared))) and
+      not empty?(intersection(return, kind(declared)))
   end
 
   defp kind(:non_empty_list), do: non_empty_list(term(), term())
@@ -443,7 +457,7 @@ defmodule SpecLint do
     not empty?(atoms) and match?({:finite, _}, atom_fetch(atoms))
   end
 
-  defp tuple_escape?(extra, spec, kinds?, depth) do
+  defp tuple_escape?(extra, spec, return, kinds?, depth) do
     Enum.any?(0..@max_tuple, fn size ->
       shape = tuple(List.duplicate(term(), size))
       extra_tuples = intersection(extra, shape)
@@ -452,12 +466,12 @@ defmodule SpecLint do
         empty?(extra_tuples) -> false
         empty?(intersection(spec, shape)) -> true
         size == 0 -> false
-        true -> tag_escape?(extra_tuples, intersection(spec, shape), size, kinds?, depth)
+        true -> tag_escape?(extra_tuples, intersection(spec, shape), return, size, kinds?, depth)
       end
     end)
   end
 
-  defp tag_escape?(extra_tuples, spec_tuples, size, kinds?, depth) do
+  defp tag_escape?(extra_tuples, spec_tuples, return, size, kinds?, depth) do
     with {_optional?, first} <- tuple_fetch(extra_tuples, 0),
          {:finite, tags} <- atom_fetch(intersection(first, atom())) do
       Enum.any?(tags, fn tag ->
@@ -465,21 +479,26 @@ defmodule SpecLint do
         spec_tagged = intersection(spec_tuples, tagged)
 
         extra_tagged = intersection(extra_tuples, tagged)
+        return_tagged = intersection(return, tagged)
 
         empty?(spec_tagged) or
-          (depth > 0 and payload_escape?(extra_tagged, spec_tagged, size, kinds?, depth))
+          (depth > 0 and
+             payload_escape?(extra_tagged, spec_tagged, return_tagged, size, kinds?, depth))
       end)
     else
       _ -> false
     end
   end
 
-  defp payload_escape?(extra_tagged, spec_tagged, size, kinds?, depth) do
+  defp payload_escape?(extra_tagged, spec_tagged, return_tagged, size, kinds?, depth) do
     Enum.any?(1..(size - 1)//1, fn index ->
       with {_, extra_element} <- tuple_fetch(extra_tagged, index),
-           {_, spec_element} <- tuple_fetch(spec_tagged, index) do
+           {_, spec_element} <- tuple_fetch(spec_tagged, index),
+           {_, return_element} <- tuple_fetch(return_tagged, index) do
         difference = difference(extra_element, spec_element)
-        not empty?(difference) and escape?(difference, spec_element, kinds?, depth - 1)
+
+        not empty?(difference) and
+          escape?(difference, spec_element, return_element, kinds?, depth - 1)
       else
         _ -> false
       end

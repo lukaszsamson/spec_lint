@@ -11,7 +11,7 @@ defmodule SpecLintTest do
   end
 
   test "every spec clause of the fixture module is compared", %{specs: specs} do
-    assert specs == 26
+    assert specs == 29
   end
 
   test "a clause the compiler keeps but that can never match is not an error", %{by_function: by} do
@@ -90,6 +90,17 @@ defmodule SpecLintTest do
     end
   end
 
+  # Whole kinds count only for clauses inside the spec domain, which needs
+  # the argument types Elixir 1.20 infers from guards.
+  if Version.match?(System.version(), ">= 1.20.0") do
+    test "a float from division under an integer spec is a missing-return warning", %{
+      by_function: by
+    } do
+      assert [%{check: :missing_return, message: m}] = by[:halved]
+      assert m =~ "includes float()"
+    end
+  end
+
   test "a return under a no_return() spec is a warning", %{by_function: by} do
     assert [%{severity: :warning, check: :unexpected_return}] = by[:unexpected_return]
   end
@@ -106,7 +117,9 @@ defmodule SpecLintTest do
           :correlated,
           :user_type,
           :multi_clause,
-          :multi_clause_list
+          :multi_clause_list,
+          :widened,
+          :widened_payload
         ] do
       assert by[function] == nil, "#{function} reported #{inspect(by[function])}"
     end

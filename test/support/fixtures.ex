@@ -44,6 +44,9 @@ defmodule SpecLint.Fixtures do
   @spec missing_struct(integer()) :: {:ok, integer()}
   def missing_struct(n), do: if(n == 0, do: %Item{id: 0}, else: {:ok, n})
 
+  @spec halved(integer()) :: integer() | nil
+  def halved(n) when is_integer(n), do: if(n > 0, do: n / 2, else: nil)
+
   @spec unexpected_return(term()) :: no_return()
   def unexpected_return(_), do: :ok
 
@@ -93,6 +96,13 @@ defmodule SpecLint.Fixtures do
   @spec multi_clause(:on) :: :off
   @spec multi_clause(:off) :: :on
   def multi_clause(x) when x in [:on, :off], do: if(x == :on, do: :off, else: :on)
+
+  @spec widened(integer()) :: integer()
+  def widened(n) when is_integer(n), do: n + Process.get(:offset, 0)
+
+  @spec widened_payload(integer()) :: {:ok, integer()} | :error
+  def widened_payload(n) when is_integer(n),
+    do: if(n > 0, do: {:ok, n - Process.get(:offset, 0)}, else: :error)
 
   @spec multi_clause_list(0) :: []
   @spec multi_clause_list(pos_integer()) :: [:x, ...]
