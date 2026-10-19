@@ -16,7 +16,12 @@ defmodule SpecLint.MixProject do
       elixir: "~> 1.18",
       elixirc_paths: elixirc_paths(Mix.env()),
       deps: deps(),
-      dialyzer: [plt_add_apps: [:mix], flags: [:unmatched_returns, :error_handling]]
+      dialyzer: [
+        plt_add_apps: [:mix],
+        flags: [:unmatched_returns, :error_handling],
+        plt_local_path: "priv/plts",
+        plt_core_path: "priv/plts"
+      ]
     ]
   end
 

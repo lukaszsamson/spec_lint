@@ -29,3 +29,16 @@ jobs:
       - run: mix format --check-formatted
       - run: mix credo --strict
       - run: mix test
+      - run: MIX_ENV=dev mix compile --force --warnings-as-errors
+        if: matrix.elixir == '1.20' && matrix.otp == '29'
+      - run: mix spec_lint
+        if: matrix.elixir == '1.20' && matrix.otp == '29'
+      - uses: actions/cache@v4
+        if: matrix.elixir == '1.20' && matrix.otp == '29'
+        with:
+          path: priv/plts
+          key: ${{ runner.os }}-plt-29-1.20-${{ hashFiles('**/mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-plt-29-1.20-
+      - run: mix dialyzer --format github
+        if: matrix.elixir == '1.20' && matrix.otp == '29'
